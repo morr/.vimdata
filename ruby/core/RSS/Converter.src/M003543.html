@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (RSS::Converter)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rss/converter.rb, line 9</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">to_enc</span>, <span class="ruby-identifier">from_enc</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">normalized_to_enc</span> = <span class="ruby-identifier">to_enc</span>.<span class="ruby-identifier">downcase</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/-/</span>, <span class="ruby-value str">'_'</span>)
+      <span class="ruby-identifier">from_enc</span> <span class="ruby-operator">||=</span> <span class="ruby-value str">'utf-8'</span>
+      <span class="ruby-identifier">normalized_from_enc</span> = <span class="ruby-identifier">from_enc</span>.<span class="ruby-identifier">downcase</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/-/</span>, <span class="ruby-value str">'_'</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">normalized_to_enc</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">normalized_from_enc</span>
+        <span class="ruby-identifier">def_same_enc</span>()
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">def_diff_enc</span> = <span class="ruby-node">&quot;def_to_#{normalized_to_enc}_from_#{normalized_from_enc}&quot;</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">def_diff_enc</span>)
+          <span class="ruby-identifier">__send__</span>(<span class="ruby-identifier">def_diff_enc</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">def_else_enc</span>(<span class="ruby-identifier">to_enc</span>, <span class="ruby-identifier">from_enc</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

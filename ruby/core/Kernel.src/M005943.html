@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>autoload? (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     autoload(module, filename)   =&gt; nil
+ *
+ *  Registers _filename_ to be loaded (using &lt;code&gt;Kernel::require&lt;/code&gt;)
+ *  the first time that _module_ (which may be a &lt;code&gt;String&lt;/code&gt; or
+ *  a symbol) is accessed.
+ *
+ *     autoload(:MyModule, &quot;/usr/local/lib/modules/my_module.rb&quot;)
+ */
+
+static VALUE
+rb_f_autoload_p(obj, sym)
+    VALUE obj;
+    VALUE sym;
+{
+    /* use ruby_cbase as same as rb_f_autoload. */
+    if (NIL_P(ruby_cbase)) {
+        return Qfalse;
+    }
+    return rb_mod_autoload_p(ruby_cbase, sym);
+}</pre>
+</body>
+</html>

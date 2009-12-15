@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>lstrip! (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.lstrip!   =&gt; self or nil
+ *  
+ *  Removes leading whitespace from &lt;i&gt;str&lt;/i&gt;, returning &lt;code&gt;nil&lt;/code&gt; if no
+ *  change was made. See also &lt;code&gt;String#rstrip!&lt;/code&gt; and
+ *  &lt;code&gt;String#strip!&lt;/code&gt;.
+ *     
+ *     &quot;  hello  &quot;.lstrip   #=&gt; &quot;hello  &quot;
+ *     &quot;hello&quot;.lstrip!      #=&gt; nil
+ */
+
+static VALUE
+rb_str_lstrip_bang(str)
+    VALUE str;
+{
+    char *s, *t, *e;
+
+    s = RSTRING(str)-&gt;ptr;
+    if (!s || RSTRING(str)-&gt;len == 0) return Qnil;
+    e = t = s + RSTRING(str)-&gt;len;
+    /* remove spaces at head */
+    while (s &lt; t &amp;&amp; ISSPACE(*s)) s++;
+
+    if (s &gt; RSTRING(str)-&gt;ptr) {
+        rb_str_modify(str);
+        RSTRING(str)-&gt;len = t-s;
+        memmove(RSTRING(str)-&gt;ptr, s, RSTRING(str)-&gt;len);
+        RSTRING(str)-&gt;ptr[RSTRING(str)-&gt;len] = '\0';
+        return str;
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

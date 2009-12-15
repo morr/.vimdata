@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>superclass (Class)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     class.superclass -&gt; a_super_class or nil
+ *  
+ *  Returns the superclass of &lt;i&gt;class&lt;/i&gt;, or &lt;code&gt;nil&lt;/code&gt;.
+ *     
+ *     File.superclass     #=&gt; IO
+ *     IO.superclass       #=&gt; Object
+ *     Object.superclass   #=&gt; nil
+ *     
+ */
+
+static VALUE
+rb_class_superclass(klass)
+    VALUE klass;
+{
+    VALUE super = RCLASS(klass)-&gt;super;
+
+    if (!super) {
+        rb_raise(rb_eTypeError, &quot;uninitialized class&quot;);
+    }
+    if (FL_TEST(klass, FL_SINGLETON)) {
+        super = RBASIC(klass)-&gt;klass;
+    }
+    while (TYPE(super) == T_ICLASS) {
+        super = RCLASS(super)-&gt;super;
+    }
+    if (!super) {
+        return Qnil;
+    }
+    return super;
+}</pre>
+</body>
+</html>

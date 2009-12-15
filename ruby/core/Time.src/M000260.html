@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>eql? (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *  time.eql?(other_time)
+ *
+ * Return &lt;code&gt;true&lt;/code&gt; if &lt;i&gt;time&lt;/i&gt; and &lt;i&gt;other_time&lt;/i&gt; are
+ * both &lt;code&gt;Time&lt;/code&gt; objects with the same seconds and fractional
+ * seconds.
+ */
+
+static VALUE
+time_eql(time1, time2)
+    VALUE time1, time2;
+{
+    struct time_object *tobj1, *tobj2;
+
+    GetTimeval(time1, tobj1);
+    if (TYPE(time2) == T_DATA &amp;&amp; RDATA(time2)-&gt;dfree == time_free) {
+        GetTimeval(time2, tobj2);
+        if (tobj1-&gt;tv.tv_sec == tobj2-&gt;tv.tv_sec) {
+            if (tobj1-&gt;tv.tv_usec == tobj2-&gt;tv.tv_usec) return Qtrue;
+        }
+    }
+    return Qfalse;
+}</pre>
+</body>
+</html>

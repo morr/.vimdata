@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>progids (WIN32OLE_TYPE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE_TYPE.progids
+ * 
+ *  Returns array of ProgID.
+ */
+static VALUE
+foletype_s_progids(self)
+    VALUE self;
+{
+    HKEY hclsids, hclsid;
+    DWORD i;
+    LONG err;
+    VALUE clsid;
+    VALUE v = rb_str_new2(&quot;&quot;);
+    VALUE progids = rb_ary_new();
+
+    err = reg_open_key(HKEY_CLASSES_ROOT, &quot;CLSID&quot;, &amp;hclsids);
+    if(err != ERROR_SUCCESS) {
+        return progids;
+    }
+    for(i = 0; ; i++) {
+        clsid = reg_enum_key(hclsids, i);
+        if (clsid == Qnil)
+            break;
+        err = reg_open_vkey(hclsids, clsid, &amp;hclsid);
+        if (err != ERROR_SUCCESS)
+            continue;
+        if ((v = reg_get_val(hclsid, &quot;ProgID&quot;)) != Qnil) 
+            rb_ary_push(progids, v);
+        if ((v = reg_get_val(hclsid, &quot;VersionIndependentProgID&quot;)) != Qnil)
+            rb_ary_push(progids, v);
+        RegCloseKey(hclsid);
+    }
+    RegCloseKey(hclsids);
+    return progids;
+}</pre>
+</body>
+</html>

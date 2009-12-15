@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: XSD::Charset</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">XSD::Charset</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/xsd/charset_rb.html">
+                xsd/charset.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M010346">charset_label</a>&nbsp;&nbsp;
+      <a href="#M010347">charset_str</a>&nbsp;&nbsp;
+      <a href="#M010340">encoding</a>&nbsp;&nbsp;
+      <a href="#M010341">encoding=</a>&nbsp;&nbsp;
+      <a href="#M010345">encoding_conv</a>&nbsp;&nbsp;
+      <a href="#M010344">encoding_from_xml</a>&nbsp;&nbsp;
+      <a href="#M010343">encoding_to_xml</a>&nbsp;&nbsp;
+      <a href="#M010339">init</a>&nbsp;&nbsp;
+      <a href="#M010352">is_ces</a>&nbsp;&nbsp;
+      <a href="#M010350">is_euc</a>&nbsp;&nbsp;
+      <a href="#M010351">is_sjis</a>&nbsp;&nbsp;
+      <a href="#M010348">is_us_ascii</a>&nbsp;&nbsp;
+      <a href="#M010349">is_utf8</a>&nbsp;&nbsp;
+      <a href="#M010342">xml_encoding_label</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="Charset/CharsetConversionError.html" class="link">XSD::Charset::CharsetConversionError</a><br />
+Class <a href="Charset/CharsetError.html" class="link">XSD::Charset::CharsetError</a><br />
+Class <a href="Charset/UnknownCharsetError.html" class="link">XSD::Charset::UnknownCharsetError</a><br />
+Class <a href="Charset/XSDError.html" class="link">XSD::Charset::XSDError</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EncodingConvertMap</td>
+          <td>=</td>
+          <td class="context-item-value">{}</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Maps
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CharsetMap</td>
+          <td>=</td>
+          <td class="context-item-value">{     'NONE' =&gt; 'us-ascii',     'EUC' =&gt; 'euc-jp',     'SJIS' =&gt; 'shift_jis',     'UTF8' =&gt; 'utf-8',     'X_ISO_8859_1' =&gt; 'iso-8859-1',     'X_UNKNOWN' =&gt; nil,   }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">USASCIIRegexp</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.new(&quot;\\A#{us_ascii}*\\z&quot;, nil, &quot;NONE&quot;)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EUCRegexp</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.new(&quot;\\A#{character_euc}*\\z&quot;, nil, &quot;NONE&quot;)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SJISRegexp</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.new(&quot;\\A#{character_sjis}*\\z&quot;, nil, &quot;NONE&quot;)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">UTF8Regexp</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.new(&quot;\\A#{character_utf8}*\\z&quot;, nil, &quot;NONE&quot;)</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M010346" class="m-detail">
+        <a name="M010346"></a>
+
+        <div class="method-heading">
+          <a href="#M010346" class="method-signature">
+          <span class="method-name">charset_label</span><span class="method-args">(encoding)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010346-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010346-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 116</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">charset_label</span>(<span class="ruby-identifier">encoding</span>)
+    <span class="ruby-constant">CharsetMap</span>[<span class="ruby-identifier">encoding</span>.<span class="ruby-identifier">upcase</span>]
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M010347" class="m-detail">
+        <a name="M010347"></a>
+
+        <div class="method-heading">
+          <a href="#M010347" class="method-signature">
+          <span class="method-name">charset_str</span><span class="method-args">(label)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010347-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010347-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 120</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">charset_str</span>(<span class="ruby-identifier">label</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-constant">CharsetMap</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:key</span>)
+      <span class="ruby-constant">CharsetMap</span>.<span class="ruby-identifier">key</span>(<span class="ruby-identifier">label</span>.<span class="ruby-identifier">downcase</span>) <span class="ruby-operator">||</span> <span class="ruby-value str">'X_UNKNOWN'</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-constant">CharsetMap</span>.<span class="ruby-identifier">index</span>(<span class="ruby-identifier">label</span>.<span class="ruby-identifier">downcase</span>) <span class="ruby-operator">||</span> <span class="ruby-value str">'X_UNKNOWN'</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M010340" class="m-detail">
+        <a name="M010340"></a>
+
+        <div class="method-heading">
+          <a href="#M010340" class="method-signature">
+          <span class="method-name">encoding</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+handlers
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010340-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010340-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 84</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">encoding</span>
+    <span class="ruby-ivar">@internal_encoding</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M010341" class="m-detail">
+        <a name="M010341"></a>
+
+        <div class="method-heading">
+          <a href="#M010341" class="method-signature">
+          <span class="method-name">encoding=</span><span class="method-args">(encoding)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010341-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010341-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 88</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">encoding=</span>(<span class="ruby-identifier">encoding</span>)
+    <span class="ruby-identifier">warn</span>(<span class="ruby-node">&quot;xsd charset is set to #{encoding}&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$DEBUG</span>
+    <span class="ruby-ivar">@internal_encoding</span> = <span class="ruby-identifier">encoding</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M010345" class="m-detail">
+        <a name="M010345"></a>
+
+        <div class="method-heading">
+          <a href="#M010345" class="method-signature">
+          <span class="method-name">encoding_conv</span><span class="method-args">(str, enc_from, enc_to)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010345-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010345-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 105</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">encoding_conv</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">enc_from</span>, <span class="ruby-identifier">enc_to</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">enc_from</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">enc_to</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">enc_from</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'NONE'</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">enc_to</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'NONE'</span>
+      <span class="ruby-identifier">str</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">converter</span> = <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-identifier">enc_from</span>, <span class="ruby-identifier">enc_to</span>]]
+      <span class="ruby-identifier">converter</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">CharsetConversionError</span>.<span class="ruby-identifier">new</span>(
+        <span class="ruby-node">&quot;Converter not found: #{enc_from} -&gt; #{enc_to}&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M010344" class="m-detail">
+        <a name="M010344"></a>
+
+        <div class="method-heading">
+          <a href="#M010344" class="method-signature">
+          <span class="method-name">encoding_from_xml</span><span class="method-args">(str, charset)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010344-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010344-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 101</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">encoding_from_xml</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">charset</span>)
+    <span class="ruby-identifier">encoding_conv</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">charset_str</span>(<span class="ruby-identifier">charset</span>), <span class="ruby-ivar">@internal_encoding</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M010343" class="m-detail">
+        <a name="M010343"></a>
+
+        <div class="method-heading">
+          <a href="#M010343" class="method-signature">
+          <span class="method-name">encoding_to_xml</span><span class="method-args">(str, charset)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010343-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010343-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 97</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">encoding_to_xml</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">charset</span>)
+    <span class="ruby-identifier">encoding_conv</span>(<span class="ruby-identifier">str</span>, <span class="ruby-ivar">@internal_encoding</span>, <span class="ruby-identifier">charset_str</span>(<span class="ruby-identifier">charset</span>))
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M010339" class="m-detail">
+        <a name="M010339"></a>
+
+        <div class="method-heading">
+          <a href="#M010339" class="method-signature">
+          <span class="method-name">init</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010339-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010339-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 26</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">init</span>
+    <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'UTF8'</span>, <span class="ruby-value str">'X_ISO8859_1'</span>]] =
+      <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">'U*'</span>).<span class="ruby-identifier">pack</span>(<span class="ruby-value str">'C*'</span>) }
+    <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'X_ISO8859_1'</span>, <span class="ruby-value str">'UTF8'</span>]] =
+      <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">'C*'</span>).<span class="ruby-identifier">pack</span>(<span class="ruby-value str">'U*'</span>) }
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">require</span> <span class="ruby-value str">'xsd/iconvcharset'</span>
+      <span class="ruby-ivar">@internal_encoding</span> = <span class="ruby-value str">'UTF8'</span>
+      <span class="ruby-identifier">sjtag</span> = (<span class="ruby-regexp re">/(mswin|bccwin|mingw|cygwin|emx)/</span> <span class="ruby-operator">=~</span> <span class="ruby-constant">RUBY_PLATFORM</span>) <span class="ruby-operator">?</span> <span class="ruby-value str">'cp932'</span> <span class="ruby-operator">:</span>
+        <span class="ruby-value str">'shift_jis'</span>
+      <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'UTF8'</span>, <span class="ruby-value str">'EUC'</span> ]] =
+        <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">IconvCharset</span>.<span class="ruby-identifier">safe_iconv</span>(<span class="ruby-value str">&quot;euc-jp&quot;</span>, <span class="ruby-value str">&quot;utf-8&quot;</span>, <span class="ruby-identifier">str</span>) }
+      <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'EUC'</span> , <span class="ruby-value str">'UTF8'</span>]] =
+        <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">IconvCharset</span>.<span class="ruby-identifier">safe_iconv</span>(<span class="ruby-value str">&quot;utf-8&quot;</span>, <span class="ruby-value str">&quot;euc-jp&quot;</span>, <span class="ruby-identifier">str</span>) }
+      <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'EUC'</span> , <span class="ruby-value str">'SJIS'</span>]] =
+        <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">IconvCharset</span>.<span class="ruby-identifier">safe_iconv</span>(<span class="ruby-identifier">sjtag</span>, <span class="ruby-value str">&quot;euc-jp&quot;</span>, <span class="ruby-identifier">str</span>) }
+      <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'UTF8'</span>, <span class="ruby-value str">'SJIS'</span>]] =
+        <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">IconvCharset</span>.<span class="ruby-identifier">safe_iconv</span>(<span class="ruby-identifier">sjtag</span>, <span class="ruby-value str">&quot;utf-8&quot;</span>, <span class="ruby-identifier">str</span>) }
+      <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'SJIS'</span>, <span class="ruby-value str">'UTF8'</span>]] =
+        <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">IconvCharset</span>.<span class="ruby-identifier">safe_iconv</span>(<span class="ruby-value str">&quot;utf-8&quot;</span>, <span class="ruby-identifier">sjtag</span>, <span class="ruby-identifier">str</span>) }
+      <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'SJIS'</span>, <span class="ruby-value str">'EUC'</span> ]] =
+        <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">IconvCharset</span>.<span class="ruby-identifier">safe_iconv</span>(<span class="ruby-value str">&quot;euc-jp&quot;</span>, <span class="ruby-identifier">sjtag</span>, <span class="ruby-identifier">str</span>) }
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LoadError</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">require</span> <span class="ruby-value str">'nkf'</span>
+        <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'EUC'</span> , <span class="ruby-value str">'SJIS'</span>]] =
+          <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">NKF</span>.<span class="ruby-identifier">nkf</span>(<span class="ruby-value str">'-sXm0'</span>, <span class="ruby-identifier">str</span>) }
+        <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'SJIS'</span>, <span class="ruby-value str">'EUC'</span> ]] =
+          <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">NKF</span>.<span class="ruby-identifier">nkf</span>(<span class="ruby-value str">'-eXm0'</span>, <span class="ruby-identifier">str</span>) }
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LoadError</span>
+      <span class="ruby-keyword kw">end</span>
+  
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">require</span> <span class="ruby-value str">'uconv'</span>
+        <span class="ruby-ivar">@internal_encoding</span> = <span class="ruby-value str">'UTF8'</span>
+        <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'UTF8'</span>, <span class="ruby-value str">'EUC'</span> ]] = <span class="ruby-constant">Uconv</span>.<span class="ruby-identifier">method</span>(<span class="ruby-identifier">:u8toeuc</span>)
+        <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'UTF8'</span>, <span class="ruby-value str">'SJIS'</span>]] = <span class="ruby-constant">Uconv</span>.<span class="ruby-identifier">method</span>(<span class="ruby-identifier">:u8tosjis</span>)
+        <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'EUC'</span> , <span class="ruby-value str">'UTF8'</span>]] = <span class="ruby-constant">Uconv</span>.<span class="ruby-identifier">method</span>(<span class="ruby-identifier">:euctou8</span>)
+        <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'SJIS'</span>, <span class="ruby-value str">'UTF8'</span>]] = <span class="ruby-constant">Uconv</span>.<span class="ruby-identifier">method</span>(<span class="ruby-identifier">:sjistou8</span>)
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LoadError</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M010352" class="m-detail">
+        <a name="M010352"></a>
+
+        <div class="method-heading">
+          <a href="#M010352" class="method-signature">
+          <span class="method-name">is_ces</span><span class="method-args">(str, code = $KCODE)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010352-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010352-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 170</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">is_ces</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">code</span> = <span class="ruby-identifier">$KCODE</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">code</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'NONE'</span>
+      <span class="ruby-identifier">is_us_ascii</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'UTF8'</span>
+      <span class="ruby-identifier">is_utf8</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'EUC'</span>
+      <span class="ruby-identifier">is_euc</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'SJIS'</span>
+      <span class="ruby-identifier">is_sjis</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">UnknownCharsetError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;Unknown charset: #{code}&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M010350" class="m-detail">
+        <a name="M010350"></a>
+
+        <div class="method-heading">
+          <a href="#M010350" class="method-signature">
+          <span class="method-name">is_euc</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010350-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010350-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 162</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">is_euc</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-constant">EUCRegexp</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">str</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M010351" class="m-detail">
+        <a name="M010351"></a>
+
+        <div class="method-heading">
+          <a href="#M010351" class="method-signature">
+          <span class="method-name">is_sjis</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010351-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010351-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 166</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">is_sjis</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-constant">SJISRegexp</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">str</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M010348" class="m-detail">
+        <a name="M010348"></a>
+
+        <div class="method-heading">
+          <a href="#M010348" class="method-signature">
+          <span class="method-name">is_us_ascii</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010348-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010348-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 154</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">is_us_ascii</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-constant">USASCIIRegexp</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">str</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M010349" class="m-detail">
+        <a name="M010349"></a>
+
+        <div class="method-heading">
+          <a href="#M010349" class="method-signature">
+          <span class="method-name">is_utf8</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010349-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010349-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 158</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">is_utf8</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-constant">UTF8Regexp</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">str</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M010342" class="m-detail">
+        <a name="M010342"></a>
+
+        <div class="method-heading">
+          <a href="#M010342" class="method-signature">
+          <span class="method-name">xml_encoding_label</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M010342-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M010342-source">
+<pre>
+<span class="ruby-comment cmt"># File xsd/charset.rb, line 93</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">xml_encoding_label</span>
+    <span class="ruby-identifier">charset_label</span>(<span class="ruby-ivar">@internal_encoding</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 4 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

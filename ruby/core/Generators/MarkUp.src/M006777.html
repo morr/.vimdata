@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>markup (Generators::MarkUp)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/generators/html_generator.rb, line 209</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">markup</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">remove_para</span>=<span class="ruby-keyword kw">false</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-value str">''</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">str</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@markup</span>
+        <span class="ruby-ivar">@markup</span> = <span class="ruby-constant">SM</span><span class="ruby-operator">::</span><span class="ruby-constant">SimpleMarkup</span>.<span class="ruby-identifier">new</span>
+
+        <span class="ruby-comment cmt"># class names, variable names, or instance variables</span>
+        <span class="ruby-ivar">@markup</span>.<span class="ruby-identifier">add_special</span>(<span class="ruby-regexp re">/(
+                               \w+(::\w+)*[.\#]\w+(\([\.\w+\*\/\+\-\=\&lt;\&gt;]+\))?  # A::B.meth(**) (for operator in Fortran95)
+                             | \#\w+(\([.\w\*\/\+\-\=\&lt;\&gt;]+\))?  #  meth(**) (for operator in Fortran95)
+                             | \b([A-Z]\w*(::\w+)*[.\#]\w+)  #    A::B.meth
+                             | \b([A-Z]\w+(::\w+)*)       #    A::B..
+                             | \#\w+[!?=]?                #    #meth_name 
+                             | \b\w+([_\/\.]+\w+)*[!?=]?  #    meth_name
+                             )/</span><span class="ruby-identifier">x</span>, 
+                            <span class="ruby-identifier">:CROSSREF</span>)
+
+        <span class="ruby-comment cmt"># external hyperlinks</span>
+        <span class="ruby-ivar">@markup</span>.<span class="ruby-identifier">add_special</span>(<span class="ruby-regexp re">/((link:|https?:|mailto:|ftp:|www\.)\S+\w)/</span>, <span class="ruby-identifier">:HYPERLINK</span>)
+
+        <span class="ruby-comment cmt"># and links of the form  &lt;text&gt;[&lt;url&gt;]</span>
+        <span class="ruby-ivar">@markup</span>.<span class="ruby-identifier">add_special</span>(<span class="ruby-regexp re">/(((\{.*?\})|\b\S+?)\[\S+?\.\S+?\])/</span>, <span class="ruby-identifier">:TIDYLINK</span>)
+<span class="ruby-comment cmt">#        @markup.add_special(/\b(\S+?\[\S+?\.\S+?\])/, :TIDYLINK)</span>
+
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@html_formatter</span>
+        <span class="ruby-ivar">@html_formatter</span> = <span class="ruby-constant">HyperlinkHtml</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">path</span>, <span class="ruby-keyword kw">self</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-comment cmt"># Convert leading comment markers to spaces, but only</span>
+      <span class="ruby-comment cmt"># if all non-blank lines have them</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">str</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^(?&gt;\s*)[^\#]/</span>
+        <span class="ruby-identifier">content</span> = <span class="ruby-identifier">str</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">content</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/^\s*(#+)/</span>)  { <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">tr</span>(<span class="ruby-value str">'#'</span>,<span class="ruby-value str">' '</span>) }
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">res</span> = <span class="ruby-ivar">@markup</span>.<span class="ruby-identifier">convert</span>(<span class="ruby-identifier">content</span>, <span class="ruby-ivar">@html_formatter</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">remove_para</span>
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^&lt;p&gt;/</span>, <span class="ruby-value str">''</span>)
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/&lt;\/p&gt;$/</span>, <span class="ruby-value str">''</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">res</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

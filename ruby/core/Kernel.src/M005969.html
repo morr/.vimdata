@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>fork (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Kernel.fork  [{ block }]   =&gt; fixnum or nil
+ *     Process.fork [{ block }]   =&gt; fixnum or nil
+ *
+ *  Creates a subprocess. If a block is specified, that block is run
+ *  in the subprocess, and the subprocess terminates with a status of
+ *  zero. Otherwise, the +fork+ call returns twice, once in
+ *  the parent, returning the process ID of the child, and once in
+ *  the child, returning _nil_. The child process can exit using
+ *  &lt;code&gt;Kernel.exit!&lt;/code&gt; to avoid running any
+ *  &lt;code&gt;at_exit&lt;/code&gt; functions. The parent process should
+ *  use &lt;code&gt;Process.wait&lt;/code&gt; to collect the termination statuses
+ *  of its children or use &lt;code&gt;Process.detach&lt;/code&gt; to register
+ *  disinterest in their status; otherwise, the operating system
+ *  may accumulate zombie processes.
+ *
+ *  The thread calling fork is the only thread in the created child process.
+ *  fork doesn't copy other threads.
+ */
+
+static VALUE
+rb_f_fork(obj)
+    VALUE obj;
+{
+#if !defined(__human68k__) &amp;&amp; !defined(_WIN32) &amp;&amp; !defined(__MACOS__) &amp;&amp; !defined(__EMX__) &amp;&amp; !defined(__VMS)
+    int pid;
+
+    rb_secure(2);
+
+#ifndef __VMS
+    fflush(stdout);
+    fflush(stderr);
+#endif
+
+    switch (pid = fork()) {
+      case 0:
+#ifdef linux
+        after_exec();
+#endif
+        rb_thread_atfork();
+        if (rb_block_given_p()) {
+            int status;
+
+            rb_protect(rb_yield, Qundef, &amp;status);
+            ruby_stop(status);
+        }
+        return Qnil;
+
+      case -1:
+        rb_sys_fail(&quot;fork(2)&quot;);
+        return Qnil;
+
+      default:
+        return INT2FIX(pid);
+    }
+#else
+    rb_notimplement();
+#endif
+}</pre>
+</body>
+</html>

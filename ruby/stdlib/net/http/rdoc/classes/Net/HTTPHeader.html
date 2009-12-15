@@ -1,0 +1,1153 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Net::HTTPHeader</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Net::HTTPHeader</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/net/http_rb.html">
+                net/http.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Header module.
+</p>
+<p>
+Provides access to @header in the mixed-into class as a hash-like object,
+except with case-insensitive keys. Also provides methods for accessing
+commonly-used header values in a more convenient format.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000608">[]</a>&nbsp;&nbsp;
+      <a href="#M000609">[]=</a>&nbsp;&nbsp;
+      <a href="#M000610">add_field</a>&nbsp;&nbsp;
+      <a href="#M000640">basic_auth</a>&nbsp;&nbsp;
+      <a href="#M000623">canonical_each</a>&nbsp;&nbsp;
+      <a href="#M000629">chunked?</a>&nbsp;&nbsp;
+      <a href="#M000627">content_length</a>&nbsp;&nbsp;
+      <a href="#M000628">content_length=</a>&nbsp;&nbsp;
+      <a href="#M000630">content_range</a>&nbsp;&nbsp;
+      <a href="#M000632">content_type</a>&nbsp;&nbsp;
+      <a href="#M000637">content_type=</a>&nbsp;&nbsp;
+      <a href="#M000619">delete</a>&nbsp;&nbsp;
+      <a href="#M000614">each</a>&nbsp;&nbsp;
+      <a href="#M000622">each_capitalized</a>&nbsp;&nbsp;
+      <a href="#M000617">each_capitalized_name</a>&nbsp;&nbsp;
+      <a href="#M000613">each_header</a>&nbsp;&nbsp;
+      <a href="#M000616">each_key</a>&nbsp;&nbsp;
+      <a href="#M000615">each_name</a>&nbsp;&nbsp;
+      <a href="#M000618">each_value</a>&nbsp;&nbsp;
+      <a href="#M000612">fetch</a>&nbsp;&nbsp;
+      <a href="#M000639">form_data=</a>&nbsp;&nbsp;
+      <a href="#M000611">get_fields</a>&nbsp;&nbsp;
+      <a href="#M000607">initialize_http_header</a>&nbsp;&nbsp;
+      <a href="#M000620">key?</a>&nbsp;&nbsp;
+      <a href="#M000633">main_type</a>&nbsp;&nbsp;
+      <a href="#M000641">proxy_basic_auth</a>&nbsp;&nbsp;
+      <a href="#M000624">range</a>&nbsp;&nbsp;
+      <a href="#M000626">range=</a>&nbsp;&nbsp;
+      <a href="#M000631">range_length</a>&nbsp;&nbsp;
+      <a href="#M000636">set_content_type</a>&nbsp;&nbsp;
+      <a href="#M000638">set_form_data</a>&nbsp;&nbsp;
+      <a href="#M000625">set_range</a>&nbsp;&nbsp;
+      <a href="#M000634">sub_type</a>&nbsp;&nbsp;
+      <a href="#M000621">to_hash</a>&nbsp;&nbsp;
+      <a href="#M000635">type_params</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">size</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">length</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000608" class="method-detail">
+        <a name="M000608"></a>
+
+        <div class="method-heading">
+          <a href="#M000608" class="method-signature">
+          <span class="method-name">[]</span><span class="method-args">(key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the header field corresponding to the case-insensitive key. For
+example, a key of &quot;Content-Type&quot; might return
+&quot;text/html&quot;
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000608-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000608-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1154</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]</span>(<span class="ruby-identifier">key</span>)
+      <span class="ruby-identifier">a</span> = <span class="ruby-ivar">@header</span>[<span class="ruby-identifier">key</span>.<span class="ruby-identifier">downcase</span>] <span class="ruby-keyword kw">or</span> <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">a</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000609" class="method-detail">
+        <a name="M000609"></a>
+
+        <div class="method-heading">
+          <a href="#M000609" class="method-signature">
+          <span class="method-name">[]=</span><span class="method-args">(key, val)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the header field corresponding to the case-insensitive key.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000609-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000609-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1160</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]=</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">val</span>)
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">val</span>
+        <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">delete</span> <span class="ruby-identifier">key</span>.<span class="ruby-identifier">downcase</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">val</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@header</span>[<span class="ruby-identifier">key</span>.<span class="ruby-identifier">downcase</span>] = [<span class="ruby-identifier">val</span>]
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000610" class="method-detail">
+        <a name="M000610"></a>
+
+        <div class="method-heading">
+          <a href="#M000610" class="method-signature">
+          <span class="method-name">add_field</span><span class="method-args">(key, val)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+[Ruby 1.8.3] Adds header field instead of replace. Second argument
+<tt>val</tt> must be a String. See also #[]=, #[] and <a
+href="HTTPHeader.html#M000611">get_fields</a>.
+</p>
+<pre>
+  request.add_field 'X-My-Header', 'a'
+  p request['X-My-Header']              #=&gt; &quot;a&quot;
+  p request.get_fields('X-My-Header')   #=&gt; [&quot;a&quot;]
+  request.add_field 'X-My-Header', 'b'
+  p request['X-My-Header']              #=&gt; &quot;a, b&quot;
+  p request.get_fields('X-My-Header')   #=&gt; [&quot;a&quot;, &quot;b&quot;]
+  request.add_field 'X-My-Header', 'c'
+  p request['X-My-Header']              #=&gt; &quot;a, b, c&quot;
+  p request.get_fields('X-My-Header')   #=&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000610-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000610-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1183</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_field</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">val</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">key</span>.<span class="ruby-identifier">downcase</span>)
+        <span class="ruby-ivar">@header</span>[<span class="ruby-identifier">key</span>.<span class="ruby-identifier">downcase</span>].<span class="ruby-identifier">push</span> <span class="ruby-identifier">val</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@header</span>[<span class="ruby-identifier">key</span>.<span class="ruby-identifier">downcase</span>] = [<span class="ruby-identifier">val</span>]
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000640" class="method-detail">
+        <a name="M000640"></a>
+
+        <div class="method-heading">
+          <a href="#M000640" class="method-signature">
+          <span class="method-name">basic_auth</span><span class="method-args">(account, password)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the Authorization: header for &quot;Basic&quot; authorization.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000640-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000640-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1439</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">basic_auth</span>(<span class="ruby-identifier">account</span>, <span class="ruby-identifier">password</span>)
+      <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'authorization'</span>] = [<span class="ruby-identifier">basic_encode</span>(<span class="ruby-identifier">account</span>, <span class="ruby-identifier">password</span>)]
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000623" class="method-detail">
+        <a name="M000623"></a>
+
+        <div class="method-heading">
+          <span class="method-name">canonical_each</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTPHeader.html#M000622">each_capitalized</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000629" class="method-detail">
+        <a name="M000629"></a>
+
+        <div class="method-heading">
+          <a href="#M000629" class="method-signature">
+          <span class="method-name">chunked?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns &quot;true&quot; if the &quot;transfer-encoding&quot; header is
+present and set to &quot;chunked&quot;. This is an <a
+href="HTTP.html">HTTP</a>/1.1 feature, allowing the the content to be sent
+in &quot;chunks&quot; without at the outset stating the entire content
+length.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000629-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000629-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1350</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">chunked?</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'transfer-encoding'</span>]
+      <span class="ruby-identifier">field</span> = <span class="ruby-keyword kw">self</span>[<span class="ruby-value str">'Transfer-Encoding'</span>]
+      (<span class="ruby-regexp re">/(?:\A|[^\-\w])chunked(?![\-\w])/i</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">field</span>) <span class="ruby-operator">?</span> <span class="ruby-keyword kw">true</span> <span class="ruby-operator">:</span> <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000627" class="method-detail">
+        <a name="M000627"></a>
+
+        <div class="method-heading">
+          <a href="#M000627" class="method-signature">
+          <span class="method-name">content_length</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an Integer object which represents the Content-Length: header field
+or <tt>nil</tt> if that field is not provided.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000627-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000627-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1331</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">content_length</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">key?</span>(<span class="ruby-value str">'Content-Length'</span>)
+      <span class="ruby-identifier">len</span> = <span class="ruby-keyword kw">self</span>[<span class="ruby-value str">'Content-Length'</span>].<span class="ruby-identifier">slice</span>(<span class="ruby-regexp re">/\d+/</span>) <span class="ruby-keyword kw">or</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPHeaderSyntaxError</span>, <span class="ruby-value str">'wrong Content-Length format'</span>
+      <span class="ruby-identifier">len</span>.<span class="ruby-identifier">to_i</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000628" class="method-detail">
+        <a name="M000628"></a>
+
+        <div class="method-heading">
+          <a href="#M000628" class="method-signature">
+          <span class="method-name">content_length=</span><span class="method-args">(len)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000628-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000628-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1338</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">content_length=</span>(<span class="ruby-identifier">len</span>)
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">len</span>
+        <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">delete</span> <span class="ruby-value str">'content-length'</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'content-length'</span>] = [<span class="ruby-identifier">len</span>.<span class="ruby-identifier">to_i</span>.<span class="ruby-identifier">to_s</span>]
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000630" class="method-detail">
+        <a name="M000630"></a>
+
+        <div class="method-heading">
+          <a href="#M000630" class="method-signature">
+          <span class="method-name">content_range</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a Range object which represents Content-Range: header field. This
+indicates, for a partial entity body, where this fragment fits inside the
+full entity body, as <a href="HTTPHeader.html#M000624">range</a> of byte
+offsets.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000630-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000630-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1359</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">content_range</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'content-range'</span>]
+      <span class="ruby-identifier">m</span> = <span class="ruby-regexp re">%r&lt;bytes\s+(\d+)-(\d+)/(\d+|\*)&gt;i</span>.<span class="ruby-identifier">match</span>(<span class="ruby-keyword kw">self</span>[<span class="ruby-value str">'Content-Range'</span>]) <span class="ruby-keyword kw">or</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPHeaderSyntaxError</span>, <span class="ruby-value str">'wrong Content-Range format'</span>
+      <span class="ruby-identifier">m</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">m</span>[<span class="ruby-value">2</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000632" class="method-detail">
+        <a name="M000632"></a>
+
+        <div class="method-heading">
+          <a href="#M000632" class="method-signature">
+          <span class="method-name">content_type</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a content type string such as &quot;text/html&quot;. This method
+returns nil if Content-Type: header field does not exist.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000632-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000632-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1374</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">content_type</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">main_type</span>()
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">sub_type</span>()
+      <span class="ruby-keyword kw">then</span> <span class="ruby-node">&quot;#{main_type()}/#{sub_type()}&quot;</span>
+      <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">main_type</span>()
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000637" class="method-detail">
+        <a name="M000637"></a>
+
+        <div class="method-heading">
+          <span class="method-name">content_type=</span><span class="method-args">(type, params = {})</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTPHeader.html#M000636">set_content_type</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000619" class="method-detail">
+        <a name="M000619"></a>
+
+        <div class="method-heading">
+          <a href="#M000619" class="method-signature">
+          <span class="method-name">delete</span><span class="method-args">(key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Removes a header field.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000619-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000619-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1246</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">delete</span>(<span class="ruby-identifier">key</span>)
+      <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">key</span>.<span class="ruby-identifier">downcase</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000614" class="method-detail">
+        <a name="M000614"></a>
+
+        <div class="method-heading">
+          <span class="method-name">each</span><span class="method-args">(</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTPHeader.html#M000613">each_header</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000622" class="method-detail">
+        <a name="M000622"></a>
+
+        <div class="method-heading">
+          <a href="#M000622" class="method-signature">
+          <span class="method-name">each_capitalized</span><span class="method-args">() {|capitalize(k), v.join(', ')| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+As for <a href="HTTPHeader.html#M000613">each_header</a>, except the keys
+are provided in capitalized form.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000622-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000622-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1261</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_capitalized</span>
+      <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">capitalize</span>(<span class="ruby-identifier">k</span>), <span class="ruby-identifier">v</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000617" class="method-detail">
+        <a name="M000617"></a>
+
+        <div class="method-heading">
+          <a href="#M000617" class="method-signature">
+          <span class="method-name">each_capitalized_name</span><span class="method-args">() {|+key+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Iterates for <a href="HTTPHeader.html#M000614">each</a> capitalized header
+names.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000617-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000617-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1232</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_capitalized_name</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)   <span class="ruby-comment cmt">#:yield: +key+</span>
+      <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">each_key</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">capitalize</span>(<span class="ruby-identifier">k</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000613" class="method-detail">
+        <a name="M000613"></a>
+
+        <div class="method-heading">
+          <a href="#M000613" class="method-signature">
+          <span class="method-name">each_header</span><span class="method-args">( {|+key+, +value+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Iterates for <a href="HTTPHeader.html#M000614">each</a> header names and
+values.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000613-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000613-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1216</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_header</span>   <span class="ruby-comment cmt">#:yield: +key+, +value+</span>
+      <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">va</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">k</span>, <span class="ruby-identifier">va</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000616" class="method-detail">
+        <a name="M000616"></a>
+
+        <div class="method-heading">
+          <span class="method-name">each_key</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTPHeader.html#M000615">each_name</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000615" class="method-detail">
+        <a name="M000615"></a>
+
+        <div class="method-heading">
+          <a href="#M000615" class="method-signature">
+          <span class="method-name">each_name</span><span class="method-args">() {|+key+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Iterates for <a href="HTTPHeader.html#M000614">each</a> header names.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000615-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000615-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1225</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_name</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)   <span class="ruby-comment cmt">#:yield: +key+</span>
+      <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">each_key</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000618" class="method-detail">
+        <a name="M000618"></a>
+
+        <div class="method-heading">
+          <a href="#M000618" class="method-signature">
+          <span class="method-name">each_value</span><span class="method-args">( {|+value+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Iterates for <a href="HTTPHeader.html#M000614">each</a> header values.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000618-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000618-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1239</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_value</span>   <span class="ruby-comment cmt">#:yield: +value+</span>
+      <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">each_value</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">va</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">va</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000612" class="method-detail">
+        <a name="M000612"></a>
+
+        <div class="method-heading">
+          <a href="#M000612" class="method-signature">
+          <span class="method-name">fetch</span><span class="method-args">(key, *args) {|+key+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the header field corresponding to the case-insensitive key. Returns
+the default value <tt>args</tt>, or the result of the block, or nil, if
+there&#8216;s no header field named key. See Hash#fetch
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000612-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000612-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1210</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">key</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)   <span class="ruby-comment cmt">#:yield: +key+</span>
+      <span class="ruby-identifier">a</span> = <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">key</span>.<span class="ruby-identifier">downcase</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-identifier">a</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000639" class="method-detail">
+        <a name="M000639"></a>
+
+        <div class="method-heading">
+          <span class="method-name">form_data=</span><span class="method-args">(params, sep = '&amp;')</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTPHeader.html#M000638">set_form_data</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000611" class="method-detail">
+        <a name="M000611"></a>
+
+        <div class="method-heading">
+          <a href="#M000611" class="method-signature">
+          <span class="method-name">get_fields</span><span class="method-args">(key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+[Ruby 1.8.3] Returns an array of header field strings corresponding to the
+case-insensitive <tt>key</tt>. This method allows you to get duplicated
+header fields without any processing. See also #[].
+</p>
+<pre>
+  p response.get_fields('Set-Cookie')
+    #=&gt; [&quot;session=al98axx; expires=Fri, 31-Dec-1999 23:58:23&quot;,
+         &quot;query=rubyscript; expires=Fri, 31-Dec-1999 23:58:23&quot;]
+  p response['Set-Cookie']
+    #=&gt; &quot;session=al98axx; expires=Fri, 31-Dec-1999 23:58:23, query=rubyscript; expires=Fri, 31-Dec-1999 23:58:23&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000611-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000611-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1202</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">get_fields</span>(<span class="ruby-identifier">key</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@header</span>[<span class="ruby-identifier">key</span>.<span class="ruby-identifier">downcase</span>]
+      <span class="ruby-ivar">@header</span>[<span class="ruby-identifier">key</span>.<span class="ruby-identifier">downcase</span>].<span class="ruby-identifier">dup</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000607" class="method-detail">
+        <a name="M000607"></a>
+
+        <div class="method-heading">
+          <a href="#M000607" class="method-signature">
+          <span class="method-name">initialize_http_header</span><span class="method-args">(initheader)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000607-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000607-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1137</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_http_header</span>(<span class="ruby-identifier">initheader</span>)
+      <span class="ruby-ivar">@header</span> = {}
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">initheader</span>
+      <span class="ruby-identifier">initheader</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;net/http: warning: duplicated HTTP header: #{key}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">key?</span>(<span class="ruby-identifier">key</span>) <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">$VERBOSE</span>
+        <span class="ruby-ivar">@header</span>[<span class="ruby-identifier">key</span>.<span class="ruby-identifier">downcase</span>] = [<span class="ruby-identifier">value</span>.<span class="ruby-identifier">strip</span>]
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000620" class="method-detail">
+        <a name="M000620"></a>
+
+        <div class="method-heading">
+          <a href="#M000620" class="method-signature">
+          <span class="method-name">key?</span><span class="method-args">(key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+true if <tt>key</tt> header exists.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000620-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000620-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1251</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">key?</span>(<span class="ruby-identifier">key</span>)
+      <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">key</span>.<span class="ruby-identifier">downcase</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000633" class="method-detail">
+        <a name="M000633"></a>
+
+        <div class="method-heading">
+          <a href="#M000633" class="method-signature">
+          <span class="method-name">main_type</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a content type string such as &quot;text&quot;. This method returns
+nil if Content-Type: header field does not exist.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000633-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000633-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1384</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">main_type</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'content-type'</span>]
+      <span class="ruby-keyword kw">self</span>[<span class="ruby-value str">'Content-Type'</span>].<span class="ruby-identifier">split</span>(<span class="ruby-value str">';'</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">'/'</span>)[<span class="ruby-value">0</span>].<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">strip</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000641" class="method-detail">
+        <a name="M000641"></a>
+
+        <div class="method-heading">
+          <a href="#M000641" class="method-signature">
+          <span class="method-name">proxy_basic_auth</span><span class="method-args">(account, password)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set Proxy-Authorization: header for &quot;Basic&quot; authorization.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000641-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000641-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1444</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">proxy_basic_auth</span>(<span class="ruby-identifier">account</span>, <span class="ruby-identifier">password</span>)
+      <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'proxy-authorization'</span>] = [<span class="ruby-identifier">basic_encode</span>(<span class="ruby-identifier">account</span>, <span class="ruby-identifier">password</span>)]
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000624" class="method-detail">
+        <a name="M000624"></a>
+
+        <div class="method-heading">
+          <a href="#M000624" class="method-signature">
+          <span class="method-name">range</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an Array of Range objects which represents Range: header field, or
+<tt>nil</tt> if there is no such header.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000624-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000624-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1276</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">range</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'range'</span>]
+      <span class="ruby-keyword kw">self</span>[<span class="ruby-value str">'Range'</span>].<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/,/</span>).<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">spec</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">m</span> = <span class="ruby-regexp re">/bytes\s*=\s*(\d+)?\s*-\s*(\d+)?/i</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">spec</span>) <span class="ruby-keyword kw">or</span>
+                <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPHeaderSyntaxError</span>, <span class="ruby-node">&quot;wrong Range: #{spec}&quot;</span>
+        <span class="ruby-identifier">d1</span> = <span class="ruby-identifier">m</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_i</span>
+        <span class="ruby-identifier">d2</span> = <span class="ruby-identifier">m</span>[<span class="ruby-value">2</span>].<span class="ruby-identifier">to_i</span>
+        <span class="ruby-keyword kw">if</span>    <span class="ruby-identifier">m</span>[<span class="ruby-value">1</span>] <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">m</span>[<span class="ruby-value">2</span>] <span class="ruby-keyword kw">then</span>  <span class="ruby-identifier">d1</span><span class="ruby-operator">..</span><span class="ruby-identifier">d2</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">m</span>[<span class="ruby-value">1</span>]          <span class="ruby-keyword kw">then</span>  <span class="ruby-identifier">d1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>
+        <span class="ruby-keyword kw">elsif</span>          <span class="ruby-identifier">m</span>[<span class="ruby-value">2</span>] <span class="ruby-keyword kw">then</span> <span class="ruby-operator">-</span><span class="ruby-identifier">d2</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPHeaderSyntaxError</span>, <span class="ruby-value str">'range is not specified'</span>
+        <span class="ruby-keyword kw">end</span>
+      }
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000626" class="method-detail">
+        <a name="M000626"></a>
+
+        <div class="method-heading">
+          <span class="method-name">range=</span><span class="method-args">(r, e = nil)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTPHeader.html#M000625">set_range</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000631" class="method-detail">
+        <a name="M000631"></a>
+
+        <div class="method-heading">
+          <a href="#M000631" class="method-signature">
+          <span class="method-name">range_length</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The length of the <a href="HTTPHeader.html#M000624">range</a> represented
+in Content-Range: header.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000631-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000631-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1367</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">range_length</span>
+      <span class="ruby-identifier">r</span> = <span class="ruby-identifier">content_range</span>() <span class="ruby-keyword kw">or</span> <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">r</span>.<span class="ruby-identifier">end</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">begin</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000636" class="method-detail">
+        <a name="M000636"></a>
+
+        <div class="method-heading">
+          <a href="#M000636" class="method-signature">
+          <span class="method-name">set_content_type</span><span class="method-args">(type, params = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set Content-Type: header field by <tt>type</tt> and <tt>params</tt>.
+<tt>type</tt> must be a String, <tt>params</tt> must be a Hash.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000636-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000636-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1414</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_content_type</span>(<span class="ruby-identifier">type</span>, <span class="ruby-identifier">params</span> = {})
+      <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'content-type'</span>] = [<span class="ruby-identifier">type</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">params</span>.<span class="ruby-identifier">map</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span><span class="ruby-node">&quot;; #{k}=#{v}&quot;</span>}.<span class="ruby-identifier">join</span>(<span class="ruby-value str">''</span>)]
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000638" class="method-detail">
+        <a name="M000638"></a>
+
+        <div class="method-heading">
+          <a href="#M000638" class="method-signature">
+          <span class="method-name">set_form_data</span><span class="method-args">(params, sep = '&amp;')</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set header fields and a body from HTML form data. <tt>params</tt> should be
+a Hash containing HTML form data. Optional argument <tt>sep</tt> means data
+record separator.
+</p>
+<p>
+This method also set Content-Type: header field to
+application/x-www-form-urlencoded.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000638-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000638-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1426</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_form_data</span>(<span class="ruby-identifier">params</span>, <span class="ruby-identifier">sep</span> = <span class="ruby-value str">'&amp;'</span>)
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">body</span> = <span class="ruby-identifier">params</span>.<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-node">&quot;#{urlencode(k.to_s)}=#{urlencode(v.to_s)}&quot;</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">sep</span>)
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">content_type</span> = <span class="ruby-value str">'application/x-www-form-urlencoded'</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000625" class="method-detail">
+        <a name="M000625"></a>
+
+        <div class="method-heading">
+          <a href="#M000625" class="method-signature">
+          <span class="method-name">set_range</span><span class="method-args">(r, e = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set Range: header from Range (arg r) or beginning index and length from it
+(arg idx&amp;len).
+</p>
+<pre>
+  req.range = (0..1023)
+  req.set_range 0, 1023
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000625-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000625-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1298</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_range</span>(<span class="ruby-identifier">r</span>, <span class="ruby-identifier">e</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">r</span>
+        <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">delete</span> <span class="ruby-value str">'range'</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">r</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">r</span> = (<span class="ruby-identifier">r</span><span class="ruby-operator">...</span><span class="ruby-identifier">r</span><span class="ruby-operator">+</span><span class="ruby-identifier">e</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">r</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Numeric</span>
+        <span class="ruby-identifier">n</span> = <span class="ruby-identifier">r</span>.<span class="ruby-identifier">to_i</span>
+        <span class="ruby-identifier">rangestr</span> = (<span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-node">&quot;0-#{n-1}&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;-#{-n}&quot;</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Range</span>
+        <span class="ruby-identifier">first</span> = <span class="ruby-identifier">r</span>.<span class="ruby-identifier">first</span>
+        <span class="ruby-identifier">last</span> = <span class="ruby-identifier">r</span>.<span class="ruby-identifier">last</span>
+        <span class="ruby-identifier">last</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">exclude_end?</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">last</span> <span class="ruby-operator">==</span> <span class="ruby-value">-1</span>
+          <span class="ruby-identifier">rangestr</span> = (<span class="ruby-identifier">first</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-node">&quot;#{first}-&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;-#{-first}&quot;</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPHeaderSyntaxError</span>, <span class="ruby-value str">'range.first is negative'</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">first</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPHeaderSyntaxError</span>, <span class="ruby-value str">'range.last is negative'</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">last</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPHeaderSyntaxError</span>, <span class="ruby-value str">'must be .first &lt; .last'</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">first</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">last</span>
+          <span class="ruby-identifier">rangestr</span> = <span class="ruby-node">&quot;#{first}-#{last}&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-value str">'Range/Integer is required'</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'range'</span>] = [<span class="ruby-node">&quot;bytes=#{rangestr}&quot;</span>]
+      <span class="ruby-identifier">r</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000634" class="method-detail">
+        <a name="M000634"></a>
+
+        <div class="method-heading">
+          <a href="#M000634" class="method-signature">
+          <span class="method-name">sub_type</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a content type string such as &quot;html&quot;. This method returns
+nil if Content-Type: header field does not exist or sub-type is not given
+(e.g. &quot;Content-Type: text&quot;).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000634-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000634-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1392</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sub_type</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'content-type'</span>]
+      <span class="ruby-identifier">main</span>, <span class="ruby-identifier">sub</span> = <span class="ruby-operator">*</span><span class="ruby-keyword kw">self</span>[<span class="ruby-value str">'Content-Type'</span>].<span class="ruby-identifier">split</span>(<span class="ruby-value str">';'</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">'/'</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">sub</span>
+      <span class="ruby-identifier">sub</span>.<span class="ruby-identifier">strip</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000621" class="method-detail">
+        <a name="M000621"></a>
+
+        <div class="method-heading">
+          <a href="#M000621" class="method-signature">
+          <span class="method-name">to_hash</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a Hash consist of header names and values.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000621-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000621-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1256</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_hash</span>
+      <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">dup</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000635" class="method-detail">
+        <a name="M000635"></a>
+
+        <div class="method-heading">
+          <a href="#M000635" class="method-signature">
+          <span class="method-name">type_params</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns content type parameters as a Hash as like {&quot;charset&quot;
+=&gt; &quot;iso-2022-jp&quot;}.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000635-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000635-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1401</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">type_params</span>
+      <span class="ruby-identifier">result</span> = {}
+      <span class="ruby-identifier">list</span> = <span class="ruby-keyword kw">self</span>[<span class="ruby-value str">'Content-Type'</span>].<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">';'</span>)
+      <span class="ruby-identifier">list</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-identifier">list</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">param</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span> = <span class="ruby-operator">*</span><span class="ruby-identifier">param</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">'='</span>, <span class="ruby-value">2</span>)
+        <span class="ruby-identifier">result</span>[<span class="ruby-identifier">k</span>.<span class="ruby-identifier">strip</span>] = <span class="ruby-identifier">v</span>.<span class="ruby-identifier">strip</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">result</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: OpenSSL::PKey::DSA</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">OpenSSL::PKey::DSA</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/openssl/ossl_pkey_dh_c.html">
+                openssl/ossl_pkey_dh.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                cPKey
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001474">params</a>&nbsp;&nbsp;
+      <a href="#M001473">public_key</a>&nbsp;&nbsp;
+      <a href="#M001472">to_text</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">export</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">to_pem</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">export</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">to_s</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001474" class="m-detail">
+        <a name="M001474"></a>
+
+        <div class="method-heading">
+          <a href="#M001474" class="method-signature">
+          <span class="method-name">params</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Stores all parameters of key to the hash INSECURE: PRIVATE INFORMATIONS CAN
+LEAK OUT!!! Don&#8216;t use :-)) (I&#8216;s up to you)
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001474-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001474-source">
+<pre>
+/*
+ * Stores all parameters of key to the hash
+ * INSECURE: PRIVATE INFORMATIONS CAN LEAK OUT!!!
+ * Don't use :-)) (I's up to you)
+ */
+static VALUE
+ossl_dsa_get_params(VALUE self)
+{
+    EVP_PKEY *pkey;
+    VALUE hash;
+
+    GetPKeyDSA(self, pkey);
+
+    hash = rb_hash_new();
+
+    rb_hash_aset(hash, rb_str_new2(&quot;p&quot;), ossl_bn_new(pkey-&gt;pkey.dsa-&gt;p));
+    rb_hash_aset(hash, rb_str_new2(&quot;q&quot;), ossl_bn_new(pkey-&gt;pkey.dsa-&gt;q));
+    rb_hash_aset(hash, rb_str_new2(&quot;g&quot;), ossl_bn_new(pkey-&gt;pkey.dsa-&gt;g));
+    rb_hash_aset(hash, rb_str_new2(&quot;pub_key&quot;), ossl_bn_new(pkey-&gt;pkey.dsa-&gt;pub_key));
+    rb_hash_aset(hash, rb_str_new2(&quot;priv_key&quot;), ossl_bn_new(pkey-&gt;pkey.dsa-&gt;priv_key));
+    
+    return hash;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001473" class="m-detail">
+        <a name="M001473"></a>
+
+        <div class="method-heading">
+          <a href="#M001473" class="method-signature">
+          <span class="method-name">public_key</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Makes new instance <a href="DSA.html">DSA</a> PUBLIC_KEY from PRIVATE_KEY
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001473-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001473-source">
+<pre>
+/*
+ * Makes new instance DSA PUBLIC_KEY from PRIVATE_KEY
+ */
+static VALUE
+ossl_dsa_to_public_key(VALUE self)
+{
+    EVP_PKEY *pkey;
+    DSA *dsa;
+    VALUE obj;
+        
+    GetPKeyDSA(self, pkey);
+    /* err check performed by dsa_instance */
+    dsa = DSAPublicKey_dup(pkey-&gt;pkey.dsa);
+    obj = dsa_instance(CLASS_OF(self), dsa);
+    if (obj == Qfalse) {
+        DSA_free(dsa);
+        ossl_raise(eDSAError, NULL);
+    }
+    return obj;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001472" class="m-detail">
+        <a name="M001472"></a>
+
+        <div class="method-heading">
+          <a href="#M001472" class="method-signature">
+          <span class="method-name">to_text</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Prints all parameters of key to buffer INSECURE: PRIVATE INFORMATIONS CAN
+LEAK OUT!!! Don&#8216;t use :-)) (I&#8216;s up to you)
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001472-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001472-source">
+<pre>
+/*
+ * Prints all parameters of key to buffer
+ * INSECURE: PRIVATE INFORMATIONS CAN LEAK OUT!!!
+ * Don't use :-)) (I's up to you)
+ */
+static VALUE
+ossl_dsa_to_text(VALUE self)
+{
+    EVP_PKEY *pkey;
+    BIO *out;
+    VALUE str;
+
+    GetPKeyDSA(self, pkey);
+    if (!(out = BIO_new(BIO_s_mem()))) {
+        ossl_raise(eDSAError, NULL);
+    }
+    if (!DSA_print(out, pkey-&gt;pkey.dsa, 0)) { /* offset = 0 */
+        BIO_free(out);
+        ossl_raise(eDSAError, NULL);
+    }
+    str = ossl_membio2str(out);
+
+    return str;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 3 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

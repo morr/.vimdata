@@ -1,0 +1,1356 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Process</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Process</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/process_c.html">
+                process.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The <tt><a href="Process.html">Process</a></tt> module is a collection of
+methods used to manipulate processes.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M003151">abort</a>&nbsp;&nbsp;
+      <a href="#M003158">detach</a>&nbsp;&nbsp;
+      <a href="#M003175">egid</a>&nbsp;&nbsp;
+      <a href="#M003176">egid=</a>&nbsp;&nbsp;
+      <a href="#M003173">euid</a>&nbsp;&nbsp;
+      <a href="#M003174">euid=</a>&nbsp;&nbsp;
+      <a href="#M003150">exit</a>&nbsp;&nbsp;
+      <a href="#M003149">exit!</a>&nbsp;&nbsp;
+      <a href="#M003148">fork</a>&nbsp;&nbsp;
+      <a href="#M003162">getpgid</a>&nbsp;&nbsp;
+      <a href="#M003165">getpriority</a>&nbsp;&nbsp;
+      <a href="#M003167">getrlimit</a>&nbsp;&nbsp;
+      <a href="#M003171">gid</a>&nbsp;&nbsp;
+      <a href="#M003172">gid=</a>&nbsp;&nbsp;
+      <a href="#M003178">groups</a>&nbsp;&nbsp;
+      <a href="#M003179">groups=</a>&nbsp;&nbsp;
+      <a href="#M003177">initgroups</a>&nbsp;&nbsp;
+      <a href="#M003152">kill</a>&nbsp;&nbsp;
+      <a href="#M003180">maxgroups</a>&nbsp;&nbsp;
+      <a href="#M003181">maxgroups=</a>&nbsp;&nbsp;
+      <a href="#M003159">pid</a>&nbsp;&nbsp;
+      <a href="#M003160">ppid</a>&nbsp;&nbsp;
+      <a href="#M003163">setpgid</a>&nbsp;&nbsp;
+      <a href="#M003161">setpgrp</a>&nbsp;&nbsp;
+      <a href="#M003166">setpriority</a>&nbsp;&nbsp;
+      <a href="#M003168">setrlimit</a>&nbsp;&nbsp;
+      <a href="#M003164">setsid</a>&nbsp;&nbsp;
+      <a href="#M003182">times</a>&nbsp;&nbsp;
+      <a href="#M003169">uid</a>&nbsp;&nbsp;
+      <a href="#M003170">uid=</a>&nbsp;&nbsp;
+      <a href="#M003153">wait</a>&nbsp;&nbsp;
+      <a href="#M003154">wait2</a>&nbsp;&nbsp;
+      <a href="#M003157">waitall</a>&nbsp;&nbsp;
+      <a href="#M003155">waitpid</a>&nbsp;&nbsp;
+      <a href="#M003156">waitpid2</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="Process/GID.html" class="link">Process::GID</a><br />
+Module <a href="Process/Sys.html" class="link">Process::Sys</a><br />
+Module <a href="Process/UID.html" class="link">Process::UID</a><br />
+Class <a href="Process/Status.html" class="link">Process::Status</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">WNOHANG</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(WNOHANG)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">WNOHANG</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(0)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">WUNTRACED</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(WUNTRACED)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">WUNTRACED</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(0)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PRIO_PROCESS</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(PRIO_PROCESS)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PRIO_PGRP</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(PRIO_PGRP)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PRIO_USER</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(PRIO_USER)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIM_INFINITY</td>
+          <td>=</td>
+          <td class="context-item-value">RLIM2NUM(RLIM_INFINITY)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIM_SAVED_MAX</td>
+          <td>=</td>
+          <td class="context-item-value">RLIM2NUM(RLIM_SAVED_MAX)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIM_SAVED_CUR</td>
+          <td>=</td>
+          <td class="context-item-value">RLIM2NUM(RLIM_SAVED_CUR)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIMIT_CORE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(RLIMIT_CORE)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIMIT_CPU</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(RLIMIT_CPU)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIMIT_DATA</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(RLIMIT_DATA)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIMIT_FSIZE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(RLIMIT_FSIZE)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIMIT_NOFILE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(RLIMIT_NOFILE)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIMIT_STACK</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(RLIMIT_STACK)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIMIT_AS</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(RLIMIT_AS)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIMIT_MEMLOCK</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(RLIMIT_MEMLOCK)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIMIT_NPROC</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(RLIMIT_NPROC)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIMIT_RSS</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(RLIMIT_RSS)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RLIMIT_SBSIZE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(RLIMIT_SBSIZE)</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M003151" class="method-detail">
+        <a name="M003151"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003151.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003151.html');return false;">
+          <span class="method-name">abort<br />
+Kernel::abort<br />
+Process::abort<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Terminate execution immediately, effectively by calling <tt><a
+href="Kernel.html#M005930">Kernel.exit(1)</a></tt>. If <em>msg</em> is
+given, it is written to STDERR prior to terminating.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003158" class="method-detail">
+        <a name="M003158"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003158.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003158.html');return false;">
+          <span class="method-name">Process.detach(pid)   => thread<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Some operating systems retain the status of terminated child processes
+until the parent collects that status (normally using some variant of
+<tt><a href="Process.html#M003153">wait</a>()</tt>. If the parent never
+collects this status, the child stays around as a <em>zombie</em> process.
+<tt>Process::detach</tt> prevents this by setting up a separate Ruby thread
+whose sole job is to reap the status of the process <em><a
+href="Process.html#M003159">pid</a></em> when it terminates. Use <tt><a
+href="Process.html#M003158">detach</a></tt> only when you do not intent to
+explicitly <a href="Process.html#M003153">wait</a> for the child to
+terminate. <tt><a href="Process.html#M003158">detach</a></tt> only checks
+the status periodically (currently once each second).
+</p>
+<p>
+The waiting thread returns the <a href="Process.html#M003150">exit</a>
+status of the detached process when it terminates, so you can use <tt><a
+href="Thread.html#M000462">Thread#join</a></tt> to know the result. If
+specified <em><a href="Process.html#M003159">pid</a></em> is not a valid
+child process ID, the thread returns <tt>nil</tt> immediately.
+</p>
+<p>
+In this first example, we don&#8216;t reap the first child process, so it
+appears as a zombie in the process status display.
+</p>
+<pre>
+   p1 = fork { sleep 0.1 }
+   p2 = fork { sleep 0.2 }
+   Process.waitpid(p2)
+   sleep 2
+   system(&quot;ps -ho pid,state -p #{p1}&quot;)
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   27389 Z
+</pre>
+<p>
+In the next example, <tt>Process::detach</tt> is used to reap the child
+automatically.
+</p>
+<pre>
+   p1 = fork { sleep 0.1 }
+   p2 = fork { sleep 0.2 }
+   Process.detach(p1)
+   Process.waitpid(p2)
+   sleep 2
+   system(&quot;ps -ho pid,state -p #{p1}&quot;)
+</pre>
+<p>
+<em>(produces no output)</em>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003175" class="method-detail">
+        <a name="M003175"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003175.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003175.html');return false;">
+          <span class="method-name">Process.egid          => fixnum<br />
+Process::GID.eid      => fixnum<br />
+Process::Sys.geteid   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the effective group ID for this process. Not available on all
+platforms.
+</p>
+<pre>
+   Process.egid   #=&gt; 500
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003176" class="method-detail">
+        <a name="M003176"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003176.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003176.html');return false;">
+          <span class="method-name">Process.egid = fixnum   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the effective group ID for this process. Not available on all
+platforms.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003173" class="method-detail">
+        <a name="M003173"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003173.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003173.html');return false;">
+          <span class="method-name">Process.euid           => fixnum<br />
+Process::UID.eid       => fixnum<br />
+Process::Sys.geteuid   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the effective user ID for this process.
+</p>
+<pre>
+   Process.euid   #=&gt; 501
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003174" class="method-detail">
+        <a name="M003174"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003174.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003174.html');return false;">
+          <span class="method-name">Process.euid= integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the effective user ID for this process. Not available on all
+platforms.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003150" class="method-detail">
+        <a name="M003150"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003150.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003150.html');return false;">
+          <span class="method-name">exit(integer=0)<br />
+Kernel::exit(integer=0)<br />
+Process::exit(integer=0)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Initiates the termination of the Ruby script by raising the <tt><a
+href="SystemExit.html">SystemExit</a></tt> exception. This exception may be
+caught. The optional parameter is used to return a status code to the
+invoking environment.
+</p>
+<pre>
+   begin
+     exit
+     puts &quot;never get here&quot;
+   rescue SystemExit
+     puts &quot;rescued a SystemExit exception&quot;
+   end
+   puts &quot;after begin block&quot;
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   rescued a SystemExit exception
+   after begin block
+</pre>
+<p>
+Just prior to termination, Ruby executes any <tt>at_exit</tt> functions
+(see Kernel::at_exit) and runs any object finalizers (see
+ObjectSpace::define_finalizer).
+</p>
+<pre>
+   at_exit { puts &quot;at_exit function&quot; }
+   ObjectSpace.define_finalizer(&quot;string&quot;,  proc { puts &quot;in finalizer&quot; })
+   exit
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   at_exit function
+   in finalizer
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003149" class="method-detail">
+        <a name="M003149"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003149.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003149.html');return false;">
+          <span class="method-name">Process.exit!(fixnum=-1)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Exits the process immediately. No <a href="Process.html#M003150">exit</a>
+handlers are run. <em>fixnum</em> is returned to the underlying system as
+the <a href="Process.html#M003150">exit</a> status.
+</p>
+<pre>
+   Process.exit!(0)
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003148" class="method-detail">
+        <a name="M003148"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003148.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003148.html');return false;">
+          <span class="method-name">Kernel.fork  [{ block }]   => fixnum or nil<br />
+Process.fork [{ block }]   => fixnum or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a subprocess. If a block is specified, that block is run in the
+subprocess, and the subprocess terminates with a status of zero. Otherwise,
+the <tt><a href="Process.html#M003148">fork</a></tt> call returns twice,
+once in the parent, returning the process ID of the child, and once in the
+child, returning <em>nil</em>. The child process can <a
+href="Process.html#M003150">exit</a> using <tt><a
+href="Kernel.html#M005930">Kernel.exit</a>!</tt> to avoid running any
+<tt>at_exit</tt> functions. The parent process should use <tt><a
+href="Process.html#M003153">Process.wait</a></tt> to collect the
+termination statuses of its children or use <tt><a
+href="Process.html#M003158">Process.detach</a></tt> to register disinterest
+in their status; otherwise, the operating system may accumulate zombie
+processes.
+</p>
+<p>
+The thread calling <a href="Process.html#M003148">fork</a> is the only
+thread in the created child process. <a
+href="Process.html#M003148">fork</a> doesn&#8216;t copy other threads.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003162" class="method-detail">
+        <a name="M003162"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003162.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003162.html');return false;">
+          <span class="method-name">Process.getpgid(pid)   => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the process group ID for the given process id. Not available on all
+platforms.
+</p>
+<pre>
+   Process.getpgid(Process.ppid())   #=&gt; 25527
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003165" class="method-detail">
+        <a name="M003165"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003165.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003165.html');return false;">
+          <span class="method-name">Process.getpriority(kind, integer)   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Gets the scheduling priority for specified process, process group, or user.
+<em>kind</em> indicates the kind of entity to find: one of
+<tt>Process::PRIO_PGRP</tt>, <tt>Process::PRIO_USER</tt>, or
+<tt>Process::PRIO_PROCESS</tt>. <em>integer</em> is an id indicating the
+particular process, process group, or user (an id of 0 means
+<em>current</em>). Lower priorities are more favorable for scheduling. Not
+available on all platforms.
+</p>
+<pre>
+   Process.getpriority(Process::PRIO_USER, 0)      #=&gt; 19
+   Process.getpriority(Process::PRIO_PROCESS, 0)   #=&gt; 19
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003167" class="method-detail">
+        <a name="M003167"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003167.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003167.html');return false;">
+          <span class="method-name">Process.getrlimit(resource)   => [cur_limit, max_limit]<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Gets the resource limit of the process. <em>cur_limit</em> means current
+(soft) limit and <em>max_limit</em> means maximum (hard) limit.
+</p>
+<p>
+<em>resource</em> indicates the kind of resource to limit: such as
+<tt>Process::RLIMIT_CORE</tt>, <tt>Process::RLIMIT_CPU</tt>, etc. See <a
+href="Process.html#M003168">Process.setrlimit</a> for details.
+</p>
+<p>
+<em>cur_limit</em> and <em>max_limit</em> may be
+<tt>Process::RLIM_INFINITY</tt>, <tt>Process::RLIM_SAVED_MAX</tt> or
+<tt>Process::RLIM_SAVED_CUR</tt>. See <a
+href="Process.html#M003168">Process.setrlimit</a> and the system <a
+href="Process.html#M003167">getrlimit</a>(2) manual for details.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003171" class="method-detail">
+        <a name="M003171"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003171.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003171.html');return false;">
+          <span class="method-name">Process.gid           => fixnum<br />
+Process::GID.rid      => fixnum<br />
+Process::Sys.getgid   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the (real) group ID for this process.
+</p>
+<pre>
+   Process.gid   #=&gt; 500
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003172" class="method-detail">
+        <a name="M003172"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003172.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003172.html');return false;">
+          <span class="method-name">Process.gid= fixnum   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the group ID for this process.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003178" class="method-detail">
+        <a name="M003178"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003178.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003178.html');return false;">
+          <span class="method-name">Process.groups   => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get an <tt><a href="Array.html">Array</a></tt> of the gids of <a
+href="Process.html#M003178">groups</a> in the supplemental group access
+list for this process.
+</p>
+<pre>
+   Process.groups   #=&gt; [27, 6, 10, 11]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003179" class="method-detail">
+        <a name="M003179"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003179.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003179.html');return false;">
+          <span class="method-name">Process.groups= array   => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Set.html">Set</a> the supplemental group access list to the given
+<tt><a href="Array.html">Array</a></tt> of group IDs.
+</p>
+<pre>
+   Process.groups   #=&gt; [0, 1, 2, 3, 4, 6, 10, 11, 20, 26, 27]
+   Process.groups = [27, 6, 10, 11]   #=&gt; [27, 6, 10, 11]
+   Process.groups   #=&gt; [27, 6, 10, 11]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003177" class="method-detail">
+        <a name="M003177"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003177.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003177.html');return false;">
+          <span class="method-name">Process.initgroups(username, gid)   => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Initializes the supplemental group access list by reading the system group
+database and using all <a href="Process.html#M003178">groups</a> of which
+the given user is a member. The group with the specified <em><a
+href="Process.html#M003171">gid</a></em> is also added to the list. Returns
+the resulting <tt><a href="Array.html">Array</a></tt> of the gids of all
+the <a href="Process.html#M003178">groups</a> in the supplementary group
+access list. Not available on all platforms.
+</p>
+<pre>
+   Process.groups   #=&gt; [0, 1, 2, 3, 4, 6, 10, 11, 20, 26, 27]
+   Process.initgroups( &quot;mgranger&quot;, 30 )   #=&gt; [30, 6, 10, 11]
+   Process.groups   #=&gt; [30, 6, 10, 11]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003152" class="method-detail">
+        <a name="M003152"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003152.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003152.html');return false;">
+          <span class="method-name">Process.kill(signal, pid, ...)    => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends the given signal to the specified process id(s), or to the current
+process if <em><a href="Process.html#M003159">pid</a></em> is zero.
+<em>signal</em> may be an integer signal number or a POSIX signal name
+(either with or without a <tt>SIG</tt> prefix). If <em>signal</em> is
+negative (or starts with a minus sign), kills process <a
+href="Process.html#M003178">groups</a> instead of processes. Not all
+signals are available on all platforms.
+</p>
+<pre>
+   pid = fork do
+      Signal.trap(&quot;HUP&quot;) { puts &quot;Ouch!&quot;; exit }
+      # ... do some work ...
+   end
+   # ...
+   Process.kill(&quot;HUP&quot;, pid)
+   Process.wait
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   Ouch!
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003180" class="method-detail">
+        <a name="M003180"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003180.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003180.html');return false;">
+          <span class="method-name">Process.maxgroups   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the maximum number of gids allowed in the supplemental group access
+list.
+</p>
+<pre>
+   Process.maxgroups   #=&gt; 32
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003181" class="method-detail">
+        <a name="M003181"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003181.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003181.html');return false;">
+          <span class="method-name">Process.maxgroups= fixnum   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the maximum number of gids allowed in the supplemental group access
+list.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003159" class="method-detail">
+        <a name="M003159"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003159.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003159.html');return false;">
+          <span class="method-name">Process.pid   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the process id of this process. Not available on all platforms.
+</p>
+<pre>
+   Process.pid   #=&gt; 27415
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003160" class="method-detail">
+        <a name="M003160"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003160.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003160.html');return false;">
+          <span class="method-name">Process.ppid   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the process id of the parent of this process. Always returns 0 on
+NT. Not available on all platforms.
+</p>
+<pre>
+   puts &quot;I am #{Process.pid}&quot;
+   Process.fork { puts &quot;Dad is #{Process.ppid}&quot; }
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   I am 27417
+   Dad is 27417
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003163" class="method-detail">
+        <a name="M003163"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003163.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003163.html');return false;">
+          <span class="method-name">Process.setpgid(pid, integer)   => 0<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the process group ID of <em><a
+href="Process.html#M003159">pid</a></em> (0 indicates this process) to
+<em>integer</em>. Not available on all platforms.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003161" class="method-detail">
+        <a name="M003161"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003161.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003161.html');return false;">
+          <span class="method-name">Process.setpgrp   => 0<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt><a href="Process.html#M003163">setpgid</a>(0,0)</tt>. Not
+available on all platforms.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003166" class="method-detail">
+        <a name="M003166"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003166.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003166.html');return false;">
+          <span class="method-name">Process.setpriority(kind, integer, priority)   => 0<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="Process.html#M003165">Process#getpriority</a></tt>.
+</p>
+<pre>
+   Process.setpriority(Process::PRIO_USER, 0, 19)      #=&gt; 0
+   Process.setpriority(Process::PRIO_PROCESS, 0, 19)   #=&gt; 0
+   Process.getpriority(Process::PRIO_USER, 0)          #=&gt; 19
+   Process.getpriority(Process::PRIO_PROCESS, 0)       #=&gt; 19
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003168" class="method-detail">
+        <a name="M003168"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003168.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003168.html');return false;">
+          <span class="method-name">Process.setrlimit(resource, cur_limit, max_limit)        => nil<br />
+Process.setrlimit(resource, cur_limit)                   => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the resource limit of the process. <em>cur_limit</em> means current
+(soft) limit and <em>max_limit</em> means maximum (hard) limit.
+</p>
+<p>
+If <em>max_limit</em> is not given, <em>cur_limit</em> is used.
+</p>
+<p>
+<em>resource</em> indicates the kind of resource to limit. The list of
+resources are OS dependent. Ruby may support following resources.
+</p>
+<dl>
+<dt>Process::RLIMIT_CORE</dt><dd>core size (bytes) (SUSv3)
+
+</dd>
+<dt>Process::RLIMIT_CPU</dt><dd>CPU time (seconds) (SUSv3)
+
+</dd>
+<dt>Process::RLIMIT_DATA</dt><dd>data segment (bytes) (SUSv3)
+
+</dd>
+<dt>Process::RLIMIT_FSIZE</dt><dd>file size (bytes) (SUSv3)
+
+</dd>
+<dt>Process::RLIMIT_NOFILE</dt><dd>file descriptors (number) (SUSv3)
+
+</dd>
+<dt>Process::RLIMIT_STACK</dt><dd>stack size (bytes) (SUSv3)
+
+</dd>
+<dt>Process::RLIMIT_AS</dt><dd>total available memory (bytes) (SUSv3, NetBSD, FreeBSD, OpenBSD but
+4.4BSD-Lite)
+
+</dd>
+<dt>Process::RLIMIT_MEMLOCK</dt><dd>total size for mlock(2) (bytes) (4.4BSD, GNU/Linux)
+
+</dd>
+<dt>Process::RLIMIT_NPROC</dt><dd>number of processes for the user (number) (4.4BSD, GNU/Linux)
+
+</dd>
+<dt>Process::RLIMIT_RSS</dt><dd>resident memory size (bytes) (4.2BSD, GNU/Linux)
+
+</dd>
+<dt>Process::RLIMIT_SBSIZE</dt><dd>all socket buffers (bytes) (NetBSD, FreeBSD)
+
+</dd>
+</dl>
+<p>
+Other <tt>Process::RLIMIT_???</tt> constants may be defined.
+</p>
+<p>
+<em>cur_limit</em> and <em>max_limit</em> may be
+<tt>Process::RLIM_INFINITY</tt>, which means that the resource is not
+limited. They may be <tt>Process::RLIM_SAVED_MAX</tt> or
+<tt>Process::RLIM_SAVED_CUR</tt> too. See system <a
+href="Process.html#M003168">setrlimit</a>(2) manual for details.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003164" class="method-detail">
+        <a name="M003164"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003164.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003164.html');return false;">
+          <span class="method-name">Process.setsid   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Establishes this process as a new session and process group leader, with no
+controlling tty. Returns the session id. Not available on all platforms.
+</p>
+<pre>
+   Process.setsid   #=&gt; 27422
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003182" class="method-detail">
+        <a name="M003182"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003182.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003182.html');return false;">
+          <span class="method-name">Process.times   => aStructTms<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <tt>Tms</tt> structure (see <tt>Struct::Tms</tt> on page 388)
+that contains user and system CPU <a href="Process.html#M003182">times</a>
+for this process.
+</p>
+<pre>
+   t = Process.times
+   [ t.utime, t.stime ]   #=&gt; [0.0, 0.02]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003169" class="method-detail">
+        <a name="M003169"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003169.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003169.html');return false;">
+          <span class="method-name">Process.uid           => fixnum<br />
+Process::UID.rid      => fixnum<br />
+Process::Sys.getuid   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the (real) user ID of this process.
+</p>
+<pre>
+   Process.uid   #=&gt; 501
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003170" class="method-detail">
+        <a name="M003170"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003170.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003170.html');return false;">
+          <span class="method-name">Process.uid= integer   => numeric<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the (integer) user ID for this process. Not available on all
+platforms.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003153" class="method-detail">
+        <a name="M003153"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003153.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003153.html');return false;">
+          <span class="method-name">Process.wait()                     => fixnum<br />
+Process.wait(pid=-1, flags=0)      => fixnum<br />
+Process.waitpid(pid=-1, flags=0)   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Waits for a child process to <a href="Process.html#M003150">exit</a>,
+returns its process id, and sets <tt>$?</tt> to a <tt><a
+href="Process/Status.html">Process::Status</a></tt> object containing
+information on that process. Which child it waits on depends on the value
+of <em><a href="Process.html#M003159">pid</a></em>:
+</p>
+<table>
+<tr><td valign="top">&gt; 0:</td><td>Waits for the child whose process ID equals <em><a
+href="Process.html#M003159">pid</a></em>.
+
+</td></tr>
+<tr><td valign="top">0:</td><td>Waits for any child whose process group ID equals that of the calling
+process.
+
+</td></tr>
+<tr><td valign="top">-1:</td><td>Waits for any child process (the default if no <em><a
+href="Process.html#M003159">pid</a></em> is given).
+
+</td></tr>
+<tr><td valign="top">&lt; -1:</td><td>Waits for any child whose process group ID equals the absolute value of
+<em><a href="Process.html#M003159">pid</a></em>.
+
+</td></tr>
+</table>
+<p>
+The <em>flags</em> argument may be a logical or of the flag values
+<tt>Process::WNOHANG</tt> (do not block if no child available) or
+<tt>Process::WUNTRACED</tt> (return stopped children that haven&#8216;t
+been reported). Not all flags are available on all platforms, but a flag
+value of zero will work on all platforms.
+</p>
+<p>
+Calling this method raises a <tt>SystemError</tt> if there are no child
+processes. Not available on all platforms.
+</p>
+<pre>
+   include Process
+   fork { exit 99 }                 #=&gt; 27429
+   wait                             #=&gt; 27429
+   $?.exitstatus                    #=&gt; 99
+
+   pid = fork { sleep 3 }           #=&gt; 27440
+   Time.now                         #=&gt; Wed Apr 09 08:57:09 CDT 2003
+   waitpid(pid, Process::WNOHANG)   #=&gt; nil
+   Time.now                         #=&gt; Wed Apr 09 08:57:09 CDT 2003
+   waitpid(pid, 0)                  #=&gt; 27440
+   Time.now                         #=&gt; Wed Apr 09 08:57:12 CDT 2003
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003154" class="method-detail">
+        <a name="M003154"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003154.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003154.html');return false;">
+          <span class="method-name">Process.wait2(pid=-1, flags=0)      => [pid, status]<br />
+Process.waitpid2(pid=-1, flags=0)   => [pid, status]<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Waits for a child process to <a href="Process.html#M003150">exit</a> (see
+Process::waitpid for exact semantics) and returns an array containing the
+process id and the <a href="Process.html#M003150">exit</a> status (a <tt><a
+href="Process/Status.html">Process::Status</a></tt> object) of that child.
+Raises a <tt>SystemError</tt> if there are no child processes.
+</p>
+<pre>
+   Process.fork { exit 99 }   #=&gt; 27437
+   pid, status = Process.wait2
+   pid                        #=&gt; 27437
+   status.exitstatus          #=&gt; 99
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003157" class="method-detail">
+        <a name="M003157"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003157.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003157.html');return false;">
+          <span class="method-name">Process.waitall   => [ [pid1,status1], ...]<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Waits for all children, returning an array of <em><a
+href="Process.html#M003159">pid</a></em>/<em>status</em> pairs (where
+<em>status</em> is a <tt><a
+href="Process/Status.html">Process::Status</a></tt> object).
+</p>
+<pre>
+   fork { sleep 0.2; exit 2 }   #=&gt; 27432
+   fork { sleep 0.1; exit 1 }   #=&gt; 27433
+   fork {            exit 0 }   #=&gt; 27434
+   p Process.waitall
+</pre>
+<p>
+<em>produces</em>:
+</p>
+<pre>
+   [[27434, #&lt;Process::Status: pid=27434,exited(0)&gt;],
+    [27433, #&lt;Process::Status: pid=27433,exited(1)&gt;],
+    [27432, #&lt;Process::Status: pid=27432,exited(2)&gt;]]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003155" class="method-detail">
+        <a name="M003155"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003155.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003155.html');return false;">
+          <span class="method-name">Process.wait()                     => fixnum<br />
+Process.wait(pid=-1, flags=0)      => fixnum<br />
+Process.waitpid(pid=-1, flags=0)   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Waits for a child process to <a href="Process.html#M003150">exit</a>,
+returns its process id, and sets <tt>$?</tt> to a <tt><a
+href="Process/Status.html">Process::Status</a></tt> object containing
+information on that process. Which child it waits on depends on the value
+of <em><a href="Process.html#M003159">pid</a></em>:
+</p>
+<table>
+<tr><td valign="top">&gt; 0:</td><td>Waits for the child whose process ID equals <em><a
+href="Process.html#M003159">pid</a></em>.
+
+</td></tr>
+<tr><td valign="top">0:</td><td>Waits for any child whose process group ID equals that of the calling
+process.
+
+</td></tr>
+<tr><td valign="top">-1:</td><td>Waits for any child process (the default if no <em><a
+href="Process.html#M003159">pid</a></em> is given).
+
+</td></tr>
+<tr><td valign="top">&lt; -1:</td><td>Waits for any child whose process group ID equals the absolute value of
+<em><a href="Process.html#M003159">pid</a></em>.
+
+</td></tr>
+</table>
+<p>
+The <em>flags</em> argument may be a logical or of the flag values
+<tt>Process::WNOHANG</tt> (do not block if no child available) or
+<tt>Process::WUNTRACED</tt> (return stopped children that haven&#8216;t
+been reported). Not all flags are available on all platforms, but a flag
+value of zero will work on all platforms.
+</p>
+<p>
+Calling this method raises a <tt>SystemError</tt> if there are no child
+processes. Not available on all platforms.
+</p>
+<pre>
+   include Process
+   fork { exit 99 }                 #=&gt; 27429
+   wait                             #=&gt; 27429
+   $?.exitstatus                    #=&gt; 99
+
+   pid = fork { sleep 3 }           #=&gt; 27440
+   Time.now                         #=&gt; Wed Apr 09 08:57:09 CDT 2003
+   waitpid(pid, Process::WNOHANG)   #=&gt; nil
+   Time.now                         #=&gt; Wed Apr 09 08:57:09 CDT 2003
+   waitpid(pid, 0)                  #=&gt; 27440
+   Time.now                         #=&gt; Wed Apr 09 08:57:12 CDT 2003
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003156" class="method-detail">
+        <a name="M003156"></a>
+
+        <div class="method-heading">
+          <a href="Process.src/M003156.html" target="Code" class="method-signature"
+            onclick="popupCode('Process.src/M003156.html');return false;">
+          <span class="method-name">Process.wait2(pid=-1, flags=0)      => [pid, status]<br />
+Process.waitpid2(pid=-1, flags=0)   => [pid, status]<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Waits for a child process to <a href="Process.html#M003150">exit</a> (see
+Process::waitpid for exact semantics) and returns an array containing the
+process id and the <a href="Process.html#M003150">exit</a> status (a <tt><a
+href="Process/Status.html">Process::Status</a></tt> object) of that child.
+Raises a <tt>SystemError</tt> if there are no child processes.
+</p>
+<pre>
+   Process.fork { exit 99 }   #=&gt; 27437
+   pid, status = Process.wait2
+   pid                        #=&gt; 27437
+   status.exitstatus          #=&gt; 99
+</pre>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>syscall (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     syscall(fixnum [, args...])   =&gt; integer
+ *  
+ *  Calls the operating system function identified by _fixnum_,
+ *  passing in the arguments, which must be either +String+
+ *  objects, or +Integer+ objects that ultimately fit within
+ *  a native +long+. Up to nine parameters may be passed (14
+ *  on the Atari-ST). The function identified by _fixnum_ is system
+ *  dependent. On some Unix systems, the numbers may be obtained from a
+ *  header file called &lt;code&gt;syscall.h&lt;/code&gt;.
+ *     
+ *     syscall 4, 1, &quot;hello\n&quot;, 6   # '4' is write(2) on our box
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     hello
+ */
+
+static VALUE
+rb_f_syscall(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+#if defined(HAVE_SYSCALL) &amp;&amp; !defined(__CHECKER__)
+#ifdef atarist
+    unsigned long arg[14]; /* yes, we really need that many ! */
+#else
+    unsigned long arg[8];
+#endif
+    int retval = -1;
+    int i = 1;
+    int items = argc - 1;
+
+    /* This probably won't work on machines where sizeof(long) != sizeof(int)
+     * or where sizeof(long) != sizeof(char*).  But such machines will
+     * not likely have syscall implemented either, so who cares?
+     */
+
+    rb_secure(2);
+    if (argc == 0)
+        rb_raise(rb_eArgError, &quot;too few arguments for syscall&quot;);
+    if (argc &gt; sizeof(arg) / sizeof(arg[0]))
+        rb_raise(rb_eArgError, &quot;too many arguments for syscall&quot;);
+    arg[0] = NUM2LONG(argv[0]); argv++;
+    while (items--) {
+        VALUE v = rb_check_string_type(*argv);
+
+        if (!NIL_P(v)) {
+            StringValue(v);
+            rb_str_modify(v);
+            arg[i] = (unsigned long)StringValueCStr(v);
+        }
+        else {
+            arg[i] = (unsigned long)NUM2LONG(*argv);
+        }
+        argv++;
+        i++;
+    }
+    TRAP_BEG;
+    switch (argc) {
+      case 1:
+        retval = syscall(arg[0]);
+        break;
+      case 2:
+        retval = syscall(arg[0],arg[1]);
+        break;
+      case 3:
+        retval = syscall(arg[0],arg[1],arg[2]);
+        break;
+      case 4:
+        retval = syscall(arg[0],arg[1],arg[2],arg[3]);
+        break;
+      case 5:
+        retval = syscall(arg[0],arg[1],arg[2],arg[3],arg[4]);
+        break;
+      case 6:
+        retval = syscall(arg[0],arg[1],arg[2],arg[3],arg[4],arg[5]);
+        break;
+      case 7:
+        retval = syscall(arg[0],arg[1],arg[2],arg[3],arg[4],arg[5],arg[6]);
+        break;
+      case 8:
+        retval = syscall(arg[0],arg[1],arg[2],arg[3],arg[4],arg[5],arg[6],
+          arg[7]);
+        break;
+#ifdef atarist
+      case 9:
+        retval = syscall(arg[0],arg[1],arg[2],arg[3],arg[4],arg[5],arg[6],
+          arg[7], arg[8]);
+        break;
+      case 10:
+        retval = syscall(arg[0],arg[1],arg[2],arg[3],arg[4],arg[5],arg[6],
+          arg[7], arg[8], arg[9]);
+        break;
+      case 11:
+        retval = syscall(arg[0],arg[1],arg[2],arg[3],arg[4],arg[5],arg[6],
+          arg[7], arg[8], arg[9], arg[10]);
+        break;
+      case 12:
+        retval = syscall(arg[0],arg[1],arg[2],arg[3],arg[4],arg[5],arg[6],
+          arg[7], arg[8], arg[9], arg[10], arg[11]);
+        break;
+      case 13:
+        retval = syscall(arg[0],arg[1],arg[2],arg[3],arg[4],arg[5],arg[6],
+          arg[7], arg[8], arg[9], arg[10], arg[11], arg[12]);
+        break;
+      case 14:
+        retval = syscall(arg[0],arg[1],arg[2],arg[3],arg[4],arg[5],arg[6],
+          arg[7], arg[8], arg[9], arg[10], arg[11], arg[12], arg[13]);
+        break;
+#endif /* atarist */
+    }
+    TRAP_END;
+    if (retval &lt; 0) rb_sys_fail(0);
+    return INT2NUM(retval);
+#else
+    rb_notimplement();
+    return Qnil;                /* not reached */
+#endif
+}</pre>
+</body>
+</html>

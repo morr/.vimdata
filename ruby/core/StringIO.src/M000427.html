@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>putc (StringIO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   strio.putc(obj)    -&gt; obj
+ *
+ * See IO#putc.
+ */
+static VALUE
+strio_putc(self, ch)
+    VALUE self, ch;
+{
+    struct StringIO *ptr = writable(StringIO(self));
+    int c = NUM2CHR(ch);
+    long olen;
+
+    check_modifiable(ptr);
+    olen = RSTRING(ptr-&gt;string)-&gt;len;
+    if (ptr-&gt;flags &amp; FMODE_APPEND) {
+        ptr-&gt;pos = olen;
+    }
+    strio_extend(ptr, ptr-&gt;pos, 1);
+    RSTRING(ptr-&gt;string)-&gt;ptr[ptr-&gt;pos++] = c;
+    OBJ_INFECT(ptr-&gt;string, self);
+    return ch;
+}</pre>
+</body>
+</html>

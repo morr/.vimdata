@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>start (GServer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/gserver.rb, line 185</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">start</span>(<span class="ruby-identifier">maxConnections</span> = <span class="ruby-value">-1</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;running&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">stopped?</span>
+    <span class="ruby-ivar">@shutdown</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-ivar">@maxConnections</span> = <span class="ruby-identifier">maxConnections</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">maxConnections</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+    <span class="ruby-ivar">@@servicesMutex</span>.<span class="ruby-identifier">synchronize</span>  {
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">GServer</span>.<span class="ruby-identifier">in_service?</span>(<span class="ruby-ivar">@port</span>,<span class="ruby-ivar">@host</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Port already in use: #{host}:#{@port}!&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@tcpServer</span> = <span class="ruby-constant">TCPServer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@host</span>,<span class="ruby-ivar">@port</span>)
+      <span class="ruby-ivar">@port</span> = <span class="ruby-ivar">@tcpServer</span>.<span class="ruby-identifier">addr</span>[<span class="ruby-value">1</span>]
+      <span class="ruby-ivar">@@services</span>[<span class="ruby-ivar">@host</span>] = {} <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@@services</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-ivar">@host</span>)
+      <span class="ruby-ivar">@@services</span>[<span class="ruby-ivar">@host</span>][<span class="ruby-ivar">@port</span>] = <span class="ruby-keyword kw">self</span>;
+    }
+    <span class="ruby-ivar">@tcpServerThread</span> = <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">new</span> {
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">starting</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@audit</span>
+        <span class="ruby-keyword kw">while</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@shutdown</span>
+          <span class="ruby-ivar">@connectionsMutex</span>.<span class="ruby-identifier">synchronize</span>  {
+             <span class="ruby-keyword kw">while</span> <span class="ruby-ivar">@connections</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-ivar">@maxConnections</span>
+               <span class="ruby-ivar">@connectionsCV</span>.<span class="ruby-identifier">wait</span>(<span class="ruby-ivar">@connectionsMutex</span>)
+             <span class="ruby-keyword kw">end</span>
+          }
+          <span class="ruby-identifier">client</span> = <span class="ruby-ivar">@tcpServer</span>.<span class="ruby-identifier">accept</span>
+          <span class="ruby-ivar">@connections</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">client</span>)  { <span class="ruby-operator">|</span><span class="ruby-identifier">myClient</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">begin</span>
+              <span class="ruby-identifier">myPort</span> = <span class="ruby-identifier">myClient</span>.<span class="ruby-identifier">peeraddr</span>[<span class="ruby-value">1</span>]
+              <span class="ruby-identifier">serve</span>(<span class="ruby-identifier">myClient</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@audit</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">connecting</span>(<span class="ruby-identifier">myClient</span>)
+            <span class="ruby-keyword kw">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">detail</span>
+              <span class="ruby-identifier">error</span>(<span class="ruby-identifier">detail</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@debug</span>
+            <span class="ruby-keyword kw">ensure</span>
+              <span class="ruby-keyword kw">begin</span>
+                <span class="ruby-identifier">myClient</span>.<span class="ruby-identifier">close</span>
+              <span class="ruby-keyword kw">rescue</span>
+              <span class="ruby-keyword kw">end</span>
+              <span class="ruby-ivar">@connectionsMutex</span>.<span class="ruby-identifier">synchronize</span> {
+                <span class="ruby-ivar">@connections</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>)
+                <span class="ruby-ivar">@connectionsCV</span>.<span class="ruby-identifier">signal</span>
+              }
+              <span class="ruby-identifier">disconnecting</span>(<span class="ruby-identifier">myPort</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@audit</span>
+            <span class="ruby-keyword kw">end</span>
+          }
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">detail</span>
+        <span class="ruby-identifier">error</span>(<span class="ruby-identifier">detail</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@debug</span>
+      <span class="ruby-keyword kw">ensure</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-ivar">@tcpServer</span>.<span class="ruby-identifier">close</span>
+        <span class="ruby-keyword kw">rescue</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@shutdown</span>
+          <span class="ruby-ivar">@connectionsMutex</span>.<span class="ruby-identifier">synchronize</span>  {
+             <span class="ruby-keyword kw">while</span> <span class="ruby-ivar">@connections</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+               <span class="ruby-ivar">@connectionsCV</span>.<span class="ruby-identifier">wait</span>(<span class="ruby-ivar">@connectionsMutex</span>)
+             <span class="ruby-keyword kw">end</span>
+          }
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-ivar">@connections</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;stop&quot;</span> }
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-ivar">@tcpServerThread</span> = <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-ivar">@@servicesMutex</span>.<span class="ruby-identifier">synchronize</span>  {
+          <span class="ruby-ivar">@@services</span>[<span class="ruby-ivar">@host</span>].<span class="ruby-identifier">delete</span>(<span class="ruby-ivar">@port</span>)
+        }
+        <span class="ruby-identifier">stopping</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@audit</span>
+      <span class="ruby-keyword kw">end</span>
+    }
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>* (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* 
+ *  call-seq:
+ *     array * int     -&gt;    an_array
+ *     array * str     -&gt;    a_string
+ *
+ *  Repetition---With a String argument, equivalent to
+ *  self.join(str). Otherwise, returns a new array
+ *  built by concatenating the _int_ copies of _self_.
+ *
+ *
+ *     [ 1, 2, 3 ] * 3    #=&gt; [ 1, 2, 3, 1, 2, 3, 1, 2, 3 ]
+ *     [ 1, 2, 3 ] * &quot;,&quot;  #=&gt; &quot;1,2,3&quot;
+ *
+ */
+
+static VALUE
+rb_ary_times(ary, times)
+    VALUE ary, times;
+{
+    VALUE ary2, tmp;
+    long i, len;
+
+    tmp = rb_check_string_type(times);
+    if (!NIL_P(tmp)) {
+        return rb_ary_join(ary, tmp);
+    }
+
+    len = NUM2LONG(times);
+    if (len == 0) return ary_new(rb_obj_class(ary), 0);
+    if (len &lt; 0) {
+        rb_raise(rb_eArgError, &quot;negative argument&quot;);
+    }
+    if (ARY_MAX_SIZE/len &lt; RARRAY(ary)-&gt;len) {
+        rb_raise(rb_eArgError, &quot;argument too big&quot;);
+    }
+    len *= RARRAY(ary)-&gt;len;
+
+    ary2 = ary_new(rb_obj_class(ary), len);
+    RARRAY(ary2)-&gt;len = len;
+
+    for (i=0; i&lt;len; i+=RARRAY(ary)-&gt;len) {
+        MEMCPY(RARRAY(ary2)-&gt;ptr+i, RARRAY(ary)-&gt;ptr, VALUE, RARRAY(ary)-&gt;len);
+    }
+    OBJ_INFECT(ary2, ary);
+
+    return ary2;
+}</pre>
+</body>
+</html>

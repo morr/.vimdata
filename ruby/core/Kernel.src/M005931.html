@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>abort (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     abort
+ *     Kernel::abort
+ *     Process::abort
+ *  
+ *  Terminate execution immediately, effectively by calling
+ *  &lt;code&gt;Kernel.exit(1)&lt;/code&gt;. If _msg_ is given, it is written
+ *  to STDERR prior to terminating.
+ */
+
+VALUE
+rb_f_abort(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    rb_secure(4);
+    if (argc == 0) {
+        if (!NIL_P(ruby_errinfo)) {
+            error_print();
+        }
+        rb_exit(EXIT_FAILURE);
+    }
+    else {
+        VALUE mesg;
+
+        rb_scan_args(argc, argv, &quot;1&quot;, &amp;mesg);
+        StringValue(mesg);
+        rb_io_puts(1, &amp;mesg, rb_stderr);
+        terminate_process(EXIT_FAILURE, mesg);
+    }
+    return Qnil;                /* not reached */
+}</pre>
+</body>
+</html>

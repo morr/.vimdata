@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>&lt;=&gt; (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str &lt;=&gt; other_str   =&gt; -1, 0, +1
+ *  
+ *  Comparison---Returns -1 if &lt;i&gt;other_str&lt;/i&gt; is less than, 0 if
+ *  &lt;i&gt;other_str&lt;/i&gt; is equal to, and +1 if &lt;i&gt;other_str&lt;/i&gt; is greater than
+ *  &lt;i&gt;str&lt;/i&gt;. If the strings are of different lengths, and the strings are
+ *  equal when compared up to the shortest length, then the longer string is
+ *  considered greater than the shorter one. If the variable &lt;code&gt;$=&lt;/code&gt; is
+ *  &lt;code&gt;false&lt;/code&gt;, the comparison is based on comparing the binary values
+ *  of each character in the string. In older versions of Ruby, setting
+ *  &lt;code&gt;$=&lt;/code&gt; allowed case-insensitive comparisons; this is now deprecated
+ *  in favor of using &lt;code&gt;String#casecmp&lt;/code&gt;.
+ *
+ *  &lt;code&gt;&lt;=&gt;&lt;/code&gt; is the basis for the methods &lt;code&gt;&lt;&lt;/code&gt;,
+ *  &lt;code&gt;&lt;=&lt;/code&gt;, &lt;code&gt;&gt;&lt;/code&gt;, &lt;code&gt;&gt;=&lt;/code&gt;, and &lt;code&gt;between?&lt;/code&gt;,
+ *  included from module &lt;code&gt;Comparable&lt;/code&gt;.  The method
+ *  &lt;code&gt;String#==&lt;/code&gt; does not use &lt;code&gt;Comparable#==&lt;/code&gt;.
+ *     
+ *     &quot;abcdef&quot; &lt;=&gt; &quot;abcde&quot;     #=&gt; 1
+ *     &quot;abcdef&quot; &lt;=&gt; &quot;abcdef&quot;    #=&gt; 0
+ *     &quot;abcdef&quot; &lt;=&gt; &quot;abcdefg&quot;   #=&gt; -1
+ *     &quot;abcdef&quot; &lt;=&gt; &quot;ABCDEF&quot;    #=&gt; 1
+ */
+
+static VALUE
+rb_str_cmp_m(str1, str2)
+    VALUE str1, str2;
+{
+    long result;
+
+    if (TYPE(str2) != T_STRING) {
+        if (!rb_respond_to(str2, rb_intern(&quot;to_str&quot;))) {
+            return Qnil;
+        }
+        else if (!rb_respond_to(str2, rb_intern(&quot;&lt;=&gt;&quot;))) {
+            return Qnil;
+        }
+        else {
+            VALUE tmp = rb_funcall(str2, rb_intern(&quot;&lt;=&gt;&quot;), 1, str1);
+
+            if (NIL_P(tmp)) return Qnil;
+            if (!FIXNUM_P(tmp)) {
+                return rb_funcall(LONG2FIX(0), '-', 1, tmp);
+            }
+            result = -FIX2LONG(tmp);
+        }
+    }
+    else {
+        result = rb_str_cmp(str1, str2);
+    }
+    return LONG2NUM(result);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>freeze (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.freeze    =&gt; obj
+ *  
+ *  Prevents further modifications to &lt;i&gt;obj&lt;/i&gt;. A
+ *  &lt;code&gt;TypeError&lt;/code&gt; will be raised if modification is attempted.
+ *  There is no way to unfreeze a frozen object. See also
+ *  &lt;code&gt;Object#frozen?&lt;/code&gt;.
+ *     
+ *     a = [ &quot;a&quot;, &quot;b&quot;, &quot;c&quot; ]
+ *     a.freeze
+ *     a &lt;&lt; &quot;z&quot;
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     prog.rb:3:in `&lt;&lt;': can't modify frozen array (TypeError)
+ *      from prog.rb:3
+ */
+
+VALUE
+rb_obj_freeze(obj)
+    VALUE obj;
+{
+    if (!OBJ_FROZEN(obj)) {
+        if (rb_safe_level() &gt;= 4 &amp;&amp; !OBJ_TAINTED(obj)) {
+            rb_raise(rb_eSecurityError, &quot;Insecure: can't freeze object&quot;);
+        }
+        OBJ_FREEZE(obj);
+    }
+    return obj;
+}</pre>
+</body>
+</html>

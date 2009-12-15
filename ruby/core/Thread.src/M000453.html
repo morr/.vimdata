@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>wakeup (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     thr.wakeup   =&gt; thr
+ *  
+ *  Marks &lt;i&gt;thr&lt;/i&gt; as eligible for scheduling (it may still remain blocked on
+ *  I/O, however). Does not invoke the scheduler (see &lt;code&gt;Thread#run&lt;/code&gt;).
+ *     
+ *     c = Thread.new { Thread.stop; puts &quot;hey!&quot; }
+ *     c.wakeup
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     hey!
+ */
+
+VALUE
+rb_thread_wakeup(thread)
+    VALUE thread;
+{
+    if (!RTEST(rb_thread_wakeup_alive(thread)))
+        rb_raise(rb_eThreadError, &quot;killed thread&quot;);
+    return thread;
+}</pre>
+</body>
+</html>

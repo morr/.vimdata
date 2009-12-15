@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>exec (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     exec(command [, arg, ...])
+ *
+ *  Replaces the current process by running the given external _command_.
+ *  If +exec+ is given a single argument, that argument is
+ *  taken as a line that is subject to shell expansion before being
+ *  executed. If multiple arguments are given, the second and subsequent
+ *  arguments are passed as parameters to _command_ with no shell
+ *  expansion. If the first argument is a two-element array, the first
+ *  element is the command to be executed, and the second argument is
+ *  used as the &lt;code&gt;argv[0]&lt;/code&gt; value, which may show up in process
+ *  listings. In MSDOS environments, the command is executed in a
+ *  subshell; otherwise, one of the &lt;code&gt;exec(2)&lt;/code&gt; system calls is
+ *  used, so the running command may inherit some of the environment of
+ *  the original program (including open file descriptors).
+ *
+ *     exec &quot;echo *&quot;       # echoes list of files in current directory
+ *     # never get here
+ *
+ *
+ *     exec &quot;echo&quot;, &quot;*&quot;    # echoes an asterisk
+ *     # never get here
+ */
+
+VALUE
+rb_f_exec(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE prog = 0;
+    VALUE tmp;
+    struct rb_exec_arg earg;
+
+    if (argc == 0) {
+        rb_last_status = Qnil;
+        rb_raise(rb_eArgError, &quot;wrong number of arguments&quot;);
+    }
+
+    tmp = rb_check_array_type(argv[0]);
+    if (!NIL_P(tmp)) {
+        if (RARRAY(tmp)-&gt;len != 2) {
+            rb_raise(rb_eArgError, &quot;wrong first argument&quot;);
+        }
+        prog = RARRAY(tmp)-&gt;ptr[0];
+        argv[0] = RARRAY(tmp)-&gt;ptr[1];
+        SafeStringValue(prog);
+    }
+    proc_prepare_args(&amp;earg, argc, argv, prog);
+    proc_exec_args((VALUE)&amp;earg);
+    rb_sys_fail(RSTRING(argv[0])-&gt;ptr);
+    return Qnil;                /* dummy */
+}</pre>
+</body>
+</html>

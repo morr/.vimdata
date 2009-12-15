@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each (Struct)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     struct.each {|obj| block }  =&gt; struct
+ *  
+ *  Calls &lt;i&gt;block&lt;/i&gt; once for each instance variable, passing the
+ *  value as a parameter.
+ *     
+ *     Customer = Struct.new(:name, :address, :zip)
+ *     joe = Customer.new(&quot;Joe Smith&quot;, &quot;123 Maple, Anytown NC&quot;, 12345)
+ *     joe.each {|x| puts(x) }
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     Joe Smith
+ *     123 Maple, Anytown NC
+ *     12345
+ */
+
+static VALUE
+rb_struct_each(s)
+    VALUE s;
+{
+    long i;
+
+    for (i=0; i&lt;RSTRUCT(s)-&gt;len; i++) {
+        rb_yield(RSTRUCT(s)-&gt;ptr[i]);
+    }
+    return s;
+}</pre>
+</body>
+</html>

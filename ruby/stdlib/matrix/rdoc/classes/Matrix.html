@@ -1,0 +1,2032 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Matrix</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Matrix</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/matrix_rb.html">
+                matrix.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The <tt><a href="Matrix.html">Matrix</a></tt> class represents a
+mathematical matrix, and provides methods for creating special-case
+matrices (<a href="Matrix.html#M000452">zero</a>, <a
+href="Matrix.html#M000451">identity</a>, <a
+href="Matrix.html#M000449">diagonal</a>, singular, vector), operating on
+them arithmetically and algebraically, and determining their mathematical
+properties (<a href="Matrix.html#M000483">trace</a>, <a
+href="Matrix.html#M000482">rank</a>, <a
+href="Matrix.html#M000476">inverse</a>, <a
+href="Matrix.html#M000480">determinant</a>).
+</p>
+<p>
+Note that although matrices should theoretically be rectangular, this is
+not enforced by the class.
+</p>
+<p>
+Also note that the <a href="Matrix.html#M000480">determinant</a> of integer
+matrices may be incorrectly calculated unless you also <tt>require
+&#8216;mathn&#8216;</tt>. This may be fixed in the future.
+</p>
+<h2>Method Catalogue</h2>
+<p>
+To create a matrix:
+</p>
+<ul>
+<li><tt> <a href="Matrix.html">Matrix</a>[*<a
+href="Matrix.html#M000447">rows</a>] </tt>
+
+</li>
+<li><tt> <a href="Matrix.html">Matrix</a>.[](*<a
+href="Matrix.html#M000447">rows</a>) </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000447">Matrix.rows</a>(<a
+href="Matrix.html#M000447">rows</a>, copy = true) </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000448">Matrix.columns(columns)</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000449">Matrix.diagonal(*values)</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000450">Matrix.scalar</a>(n, value) </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000450">Matrix.scalar</a>(n, value) </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000451">Matrix.identity(n)</a> </tt>
+
+</li>
+<li><tt> Matrix.unit(n) </tt>
+
+</li>
+<li><tt> Matrix.I(n) </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000452">Matrix.zero(n)</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000453">Matrix.row_vector(row)</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000454">Matrix.column_vector(column)</a> </tt>
+
+</li>
+</ul>
+<p>
+To access <a href="Matrix.html">Matrix</a>
+elements/columns/rows/submatrices/properties:
+</p>
+<ul>
+<li><tt> [](i, j) </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000457">row_size</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000458">column_size</a> </tt>
+
+</li>
+<li><tt> row(i) </tt>
+
+</li>
+<li><tt> column(j) </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000461">collect</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000462">map</a> </tt>
+
+</li>
+<li><tt> minor(*param) </tt>
+
+</li>
+</ul>
+<p>
+Properties of a matrix:
+</p>
+<ul>
+<li><tt> regular? </tt>
+
+</li>
+<li><tt> singular? </tt>
+
+</li>
+<li><tt> square? </tt>
+
+</li>
+</ul>
+<p>
+<a href="Matrix.html">Matrix</a> arithmetic:
+</p>
+<ul>
+<li><tt> *(m) </tt>
+
+</li>
+<li><tt> +(m) </tt>
+
+</li>
+<li><tt> -(m) </tt>
+
+</li>
+<li><tt> #/(m) </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000476">inverse</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000477">inv</a> </tt>
+
+</li>
+<li><tt> ** </tt>
+
+</li>
+</ul>
+<p>
+<a href="Matrix.html">Matrix</a> functions:
+</p>
+<ul>
+<li><tt> <a href="Matrix.html#M000480">determinant</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000481">det</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000482">rank</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000483">trace</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000484">tr</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000485">transpose</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000486">t</a> </tt>
+
+</li>
+</ul>
+<p>
+Conversion to other data types:
+</p>
+<ul>
+<li><tt> coerce(other) </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000488">row_vectors</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000489">column_vectors</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000490">to_a</a> </tt>
+
+</li>
+</ul>
+<p>
+String representations:
+</p>
+<ul>
+<li><tt> <a href="Matrix.html#M000491">to_s</a> </tt>
+
+</li>
+<li><tt> <a href="Matrix.html#M000492">inspect</a> </tt>
+
+</li>
+</ul>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000472">*</a>&nbsp;&nbsp;
+      <a href="#M000479">**</a>&nbsp;&nbsp;
+      <a href="#M000473">+</a>&nbsp;&nbsp;
+      <a href="#M000474">-</a>&nbsp;&nbsp;
+      <a href="#M000475">/</a>&nbsp;&nbsp;
+      <a href="#M000467">==</a>&nbsp;&nbsp;
+      <a href="#M000456">[]</a>&nbsp;&nbsp;
+      <a href="#M000446">[]</a>&nbsp;&nbsp;
+      <a href="#M000470">clone</a>&nbsp;&nbsp;
+      <a href="#M000487">coerce</a>&nbsp;&nbsp;
+      <a href="#M000461">collect</a>&nbsp;&nbsp;
+      <a href="#M000460">column</a>&nbsp;&nbsp;
+      <a href="#M000458">column_size</a>&nbsp;&nbsp;
+      <a href="#M000454">column_vector</a>&nbsp;&nbsp;
+      <a href="#M000489">column_vectors</a>&nbsp;&nbsp;
+      <a href="#M000448">columns</a>&nbsp;&nbsp;
+      <a href="#M000469">compare_by_row_vectors</a>&nbsp;&nbsp;
+      <a href="#M000481">det</a>&nbsp;&nbsp;
+      <a href="#M000480">determinant</a>&nbsp;&nbsp;
+      <a href="#M000449">diagonal</a>&nbsp;&nbsp;
+      <a href="#M000468">eql?</a>&nbsp;&nbsp;
+      <a href="#M000471">hash</a>&nbsp;&nbsp;
+      <a href="#M000451">identity</a>&nbsp;&nbsp;
+      <a href="#M000492">inspect</a>&nbsp;&nbsp;
+      <a href="#M000477">inv</a>&nbsp;&nbsp;
+      <a href="#M000476">inverse</a>&nbsp;&nbsp;
+      <a href="#M000478">inverse_from</a>&nbsp;&nbsp;
+      <a href="#M000462">map</a>&nbsp;&nbsp;
+      <a href="#M000463">minor</a>&nbsp;&nbsp;
+      <a href="#M000455">new</a>&nbsp;&nbsp;
+      <a href="#M000482">rank</a>&nbsp;&nbsp;
+      <a href="#M000464">regular?</a>&nbsp;&nbsp;
+      <a href="#M000459">row</a>&nbsp;&nbsp;
+      <a href="#M000457">row_size</a>&nbsp;&nbsp;
+      <a href="#M000453">row_vector</a>&nbsp;&nbsp;
+      <a href="#M000488">row_vectors</a>&nbsp;&nbsp;
+      <a href="#M000447">rows</a>&nbsp;&nbsp;
+      <a href="#M000450">scalar</a>&nbsp;&nbsp;
+      <a href="#M000465">singular?</a>&nbsp;&nbsp;
+      <a href="#M000466">square?</a>&nbsp;&nbsp;
+      <a href="#M000486">t</a>&nbsp;&nbsp;
+      <a href="#M000490">to_a</a>&nbsp;&nbsp;
+      <a href="#M000491">to_s</a>&nbsp;&nbsp;
+      <a href="#M000484">tr</a>&nbsp;&nbsp;
+      <a href="#M000483">trace</a>&nbsp;&nbsp;
+      <a href="#M000485">transpose</a>&nbsp;&nbsp;
+      <a href="#M000452">zero</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name">ExceptionForMatrix</span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">identity</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">unit</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">identity</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">I</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000446" class="method-detail">
+        <a name="M000446"></a>
+
+        <div class="method-heading">
+          <a href="#M000446" class="method-signature">
+          <span class="method-name">[]</span><span class="method-args">(*rows)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a matrix where each argument is a <a
+href="Matrix.html#M000459">row</a>.
+</p>
+<pre>
+  Matrix[ [25, 93], [-1, 66] ]
+     =&gt;  25 93
+         -1 66
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000446-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000446-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 122</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Matrix</span>.<span class="ruby-operator">[]</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">rows</span>)
+    <span class="ruby-identifier">new</span>(<span class="ruby-identifier">:init_rows</span>, <span class="ruby-identifier">rows</span>, <span class="ruby-keyword kw">false</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000454" class="method-detail">
+        <a name="M000454"></a>
+
+        <div class="method-heading">
+          <a href="#M000454" class="method-signature">
+          <span class="method-name">column_vector</span><span class="method-args">(column)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a single-<a href="Matrix.html#M000460">column</a> matrix where the
+values of that <a href="Matrix.html#M000460">column</a> are as given in
+<tt><a href="Matrix.html#M000460">column</a></tt>.
+</p>
+<pre>
+  Matrix.column_vector([4,5,6])
+    =&gt; 4
+       5
+       6
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000454-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000454-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 233</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">column_vector</span>(<span class="ruby-identifier">column</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">column</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Vector</span>
+      <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">columns</span>([<span class="ruby-identifier">column</span>.<span class="ruby-identifier">to_a</span>])
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Array</span>
+      <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">columns</span>([<span class="ruby-identifier">column</span>])
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">columns</span>([[<span class="ruby-identifier">column</span>]])
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000448" class="method-detail">
+        <a name="M000448"></a>
+
+        <div class="method-heading">
+          <a href="#M000448" class="method-signature">
+          <span class="method-name">columns</span><span class="method-args">(columns)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a matrix using <tt><a href="Matrix.html#M000448">columns</a></tt>
+as an array of <a href="Matrix.html#M000460">column</a> vectors.
+</p>
+<pre>
+  Matrix.columns([[25, 93], [-1, 66]])
+     =&gt;  25 -1
+         93 66
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000448-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000448-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 144</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">columns</span>(<span class="ruby-identifier">columns</span>)
+    <span class="ruby-identifier">rows</span> = (<span class="ruby-value">0</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">columns</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">collect</span> {
+      <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+      (<span class="ruby-value">0</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">columns</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">collect</span> {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">columns</span>[<span class="ruby-identifier">j</span>][<span class="ruby-identifier">i</span>]
+      }
+    }
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">rows</span>(<span class="ruby-identifier">rows</span>, <span class="ruby-keyword kw">false</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000449" class="method-detail">
+        <a name="M000449"></a>
+
+        <div class="method-heading">
+          <a href="#M000449" class="method-signature">
+          <span class="method-name">diagonal</span><span class="method-args">(*values)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a matrix where the <a href="Matrix.html#M000449">diagonal</a>
+elements are composed of <tt>values</tt>.
+</p>
+<pre>
+  Matrix.diagonal(9, 5, -3)
+    =&gt;  9  0  0
+        0  5  0
+        0  0 -3
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000449-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000449-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 162</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">diagonal</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+    <span class="ruby-identifier">size</span> = <span class="ruby-identifier">values</span>.<span class="ruby-identifier">size</span>
+    <span class="ruby-identifier">rows</span> = (<span class="ruby-value">0</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">size</span>  <span class="ruby-operator">-</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">collect</span> {
+      <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">row</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">size</span>).<span class="ruby-identifier">fill</span>(<span class="ruby-value">0</span>, <span class="ruby-value">0</span>, <span class="ruby-identifier">size</span>)
+      <span class="ruby-identifier">row</span>[<span class="ruby-identifier">j</span>] = <span class="ruby-identifier">values</span>[<span class="ruby-identifier">j</span>]
+      <span class="ruby-identifier">row</span>
+    }
+    <span class="ruby-identifier">rows</span>(<span class="ruby-identifier">rows</span>, <span class="ruby-keyword kw">false</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000451" class="method-detail">
+        <a name="M000451"></a>
+
+        <div class="method-heading">
+          <a href="#M000451" class="method-signature">
+          <span class="method-name">identity</span><span class="method-args">(n)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates an <tt>n</tt> by <tt>n</tt> <a
+href="Matrix.html#M000451">identity</a> matrix.
+</p>
+<pre>
+  Matrix.identity(2)
+    =&gt; 1 0
+       0 1
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000451-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000451-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 190</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">identity</span>(<span class="ruby-identifier">n</span>)
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">scalar</span>(<span class="ruby-identifier">n</span>, <span class="ruby-value">1</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000455" class="method-detail">
+        <a name="M000455"></a>
+
+        <div class="method-heading">
+          <a href="#M000455" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(init_method, *argv)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This method is used by the other methods that create matrices, and is of no
+use to general users.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000455-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000455-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 248</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">init_method</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">argv</span>)
+    <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">init_method</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">argv</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000453" class="method-detail">
+        <a name="M000453"></a>
+
+        <div class="method-heading">
+          <a href="#M000453" class="method-signature">
+          <span class="method-name">row_vector</span><span class="method-args">(row)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a single-<a href="Matrix.html#M000459">row</a> matrix where the
+values of that <a href="Matrix.html#M000459">row</a> are as given in <tt><a
+href="Matrix.html#M000459">row</a></tt>.
+</p>
+<pre>
+  Matrix.row_vector([4,5,6])
+    =&gt; 4 5 6
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000453-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000453-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 214</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">row_vector</span>(<span class="ruby-identifier">row</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">row</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Vector</span>
+      <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">rows</span>([<span class="ruby-identifier">row</span>.<span class="ruby-identifier">to_a</span>], <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Array</span>
+      <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">rows</span>([<span class="ruby-identifier">row</span>.<span class="ruby-identifier">dup</span>], <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">rows</span>([[<span class="ruby-identifier">row</span>]], <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000447" class="method-detail">
+        <a name="M000447"></a>
+
+        <div class="method-heading">
+          <a href="#M000447" class="method-signature">
+          <span class="method-name">rows</span><span class="method-args">(rows, copy = true)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a matrix where <tt><a href="Matrix.html#M000447">rows</a></tt> is
+an array of arrays, each of which is a <a
+href="Matrix.html#M000459">row</a> to the matrix. If the optional argument
+<tt>copy</tt> is false, use the given arrays as the internal structure of
+the matrix without copying.
+</p>
+<pre>
+  Matrix.rows([[25, 93], [-1, 66]])
+     =&gt;  25 93
+         -1 66
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000447-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000447-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 133</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">rows</span>(<span class="ruby-identifier">rows</span>, <span class="ruby-identifier">copy</span> = <span class="ruby-keyword kw">true</span>)
+    <span class="ruby-identifier">new</span>(<span class="ruby-identifier">:init_rows</span>, <span class="ruby-identifier">rows</span>, <span class="ruby-identifier">copy</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000450" class="method-detail">
+        <a name="M000450"></a>
+
+        <div class="method-heading">
+          <a href="#M000450" class="method-signature">
+          <span class="method-name">scalar</span><span class="method-args">(n, value)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates an <tt>n</tt> by <tt>n</tt> <a
+href="Matrix.html#M000449">diagonal</a> matrix where each <a
+href="Matrix.html#M000449">diagonal</a> element is <tt>value</tt>.
+</p>
+<pre>
+  Matrix.scalar(2, 5)
+    =&gt; 5 0
+       0 5
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000450-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000450-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 180</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">scalar</span>(<span class="ruby-identifier">n</span>, <span class="ruby-identifier">value</span>)
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">diagonal</span>(<span class="ruby-operator">*</span><span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">n</span>).<span class="ruby-identifier">fill</span>(<span class="ruby-identifier">value</span>, <span class="ruby-value">0</span>, <span class="ruby-identifier">n</span>))
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000452" class="method-detail">
+        <a name="M000452"></a>
+
+        <div class="method-heading">
+          <a href="#M000452" class="method-signature">
+          <span class="method-name">zero</span><span class="method-args">(n)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates an <tt>n</tt> by <tt>n</tt> <a href="Matrix.html#M000452">zero</a>
+matrix.
+</p>
+<pre>
+  Matrix.zero(2)
+    =&gt; 0 0
+       0 0
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000452-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000452-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 204</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">zero</span>(<span class="ruby-identifier">n</span>)
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">scalar</span>(<span class="ruby-identifier">n</span>, <span class="ruby-value">0</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000472" class="method-detail">
+        <a name="M000472"></a>
+
+        <div class="method-heading">
+          <a href="#M000472" class="method-signature">
+          <span class="method-name">*</span><span class="method-args">(m)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Matrix.html">Matrix</a> multiplication.
+</p>
+<pre>
+  Matrix[[2,4], [6,8]] * Matrix.identity(2)
+    =&gt; 2 4
+       6 8
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000472-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000472-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 451</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">*</span>(<span class="ruby-identifier">m</span>) <span class="ruby-comment cmt"># m is matrix or vector or number</span>
+    <span class="ruby-keyword kw">case</span>(<span class="ruby-identifier">m</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Numeric</span>
+      <span class="ruby-identifier">rows</span> = <span class="ruby-ivar">@rows</span>.<span class="ruby-identifier">collect</span> {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">collect</span> {
+          <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">e</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">m</span>
+        }
+      }
+      <span class="ruby-keyword kw">return</span> <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">rows</span>(<span class="ruby-identifier">rows</span>, <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Vector</span>
+      <span class="ruby-identifier">m</span> = <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">column_vector</span>(<span class="ruby-identifier">m</span>)
+      <span class="ruby-identifier">r</span> = <span class="ruby-keyword kw">self</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">m</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">column</span>(<span class="ruby-value">0</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Matrix</span>
+      <span class="ruby-constant">Matrix</span>.<span class="ruby-constant">Raise</span> <span class="ruby-constant">ErrDimensionMismatch</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">column_size</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">row_size</span>
+    
+      <span class="ruby-identifier">rows</span> = (<span class="ruby-value">0</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">row_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">collect</span> {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+        (<span class="ruby-value">0</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">column_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">collect</span> {
+          <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">vij</span> = <span class="ruby-value">0</span>
+          <span class="ruby-value">0</span>.<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">column_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>) <span class="ruby-keyword kw">do</span>
+            <span class="ruby-operator">|</span><span class="ruby-identifier">k</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">vij</span> <span class="ruby-operator">+=</span> <span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">i</span>, <span class="ruby-identifier">k</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">m</span>[<span class="ruby-identifier">k</span>, <span class="ruby-identifier">j</span>]
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">vij</span>
+        }
+      }
+      <span class="ruby-keyword kw">return</span> <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">rows</span>(<span class="ruby-identifier">rows</span>, <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span> = <span class="ruby-identifier">m</span>.<span class="ruby-identifier">coerce</span>(<span class="ruby-keyword kw">self</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">x</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">y</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000479" class="method-detail">
+        <a name="M000479"></a>
+
+        <div class="method-heading">
+          <a href="#M000479" class="method-signature">
+          <span class="method-name">**</span><span class="method-args">(other)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Matrix.html">Matrix</a> exponentiation. Defined for integer powers
+only. Equivalent to multiplying the matrix by itself N times.
+</p>
+<pre>
+  Matrix[[7,6], [3,9]] ** 2
+    =&gt; 67 96
+       48 99
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000479-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000479-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 638</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">**</span> (<span class="ruby-identifier">other</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+      <span class="ruby-identifier">x</span> = <span class="ruby-keyword kw">self</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">other</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">0</span>
+        <span class="ruby-identifier">x</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">inverse</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">identity</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">column_size</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">other</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+        <span class="ruby-identifier">other</span> = <span class="ruby-operator">-</span><span class="ruby-identifier">other</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">z</span> = <span class="ruby-identifier">x</span>
+      <span class="ruby-identifier">n</span> = <span class="ruby-identifier">other</span>  <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span>
+        <span class="ruby-keyword kw">while</span> (<span class="ruby-identifier">div</span>, <span class="ruby-identifier">mod</span> = <span class="ruby-identifier">n</span>.<span class="ruby-identifier">divmod</span>(<span class="ruby-value">2</span>)
+               <span class="ruby-identifier">mod</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>)
+          <span class="ruby-identifier">x</span> = <span class="ruby-identifier">x</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">x</span>
+          <span class="ruby-identifier">n</span> = <span class="ruby-identifier">div</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">z</span> <span class="ruby-operator">*=</span> <span class="ruby-identifier">x</span>
+        <span class="ruby-identifier">n</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">z</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Float</span>) <span class="ruby-operator">||</span> <span class="ruby-keyword kw">defined?</span>(<span class="ruby-constant">Rational</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Rational</span>)
+      <span class="ruby-constant">Matrix</span>.<span class="ruby-constant">Raise</span> <span class="ruby-constant">ErrOperationNotDefined</span>, <span class="ruby-value str">&quot;**&quot;</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-constant">Matrix</span>.<span class="ruby-constant">Raise</span> <span class="ruby-constant">ErrOperationNotDefined</span>, <span class="ruby-value str">&quot;**&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000473" class="method-detail">
+        <a name="M000473"></a>
+
+        <div class="method-heading">
+          <a href="#M000473" class="method-signature">
+          <span class="method-name">+</span><span class="method-args">(m)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Matrix.html">Matrix</a> addition.
+</p>
+<pre>
+  Matrix.scalar(2,5) + Matrix[[1,0], [-4,7]]
+    =&gt;  6  0
+       -4 12
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000473-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000473-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 494</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">+</span>(<span class="ruby-identifier">m</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">m</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Numeric</span>
+      <span class="ruby-constant">Matrix</span>.<span class="ruby-constant">Raise</span> <span class="ruby-constant">ErrOperationNotDefined</span>, <span class="ruby-value str">&quot;+&quot;</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Vector</span>
+      <span class="ruby-identifier">m</span> = <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">column_vector</span>(<span class="ruby-identifier">m</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Matrix</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span> = <span class="ruby-identifier">m</span>.<span class="ruby-identifier">coerce</span>(<span class="ruby-keyword kw">self</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">x</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">y</span>
+    <span class="ruby-keyword kw">end</span>
+    
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-constant">Raise</span> <span class="ruby-constant">ErrDimensionMismatch</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">row_size</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">row_size</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">column_size</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">column_size</span>
+    
+    <span class="ruby-identifier">rows</span> = (<span class="ruby-value">0</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">row_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">collect</span> {
+      <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+      (<span class="ruby-value">0</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">column_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">collect</span> {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">i</span>, <span class="ruby-identifier">j</span>] <span class="ruby-operator">+</span> <span class="ruby-identifier">m</span>[<span class="ruby-identifier">i</span>, <span class="ruby-identifier">j</span>]
+      }
+    }
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">rows</span>(<span class="ruby-identifier">rows</span>, <span class="ruby-keyword kw">false</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000474" class="method-detail">
+        <a name="M000474"></a>
+
+        <div class="method-heading">
+          <a href="#M000474" class="method-signature">
+          <span class="method-name">-</span><span class="method-args">(m)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Matrix.html">Matrix</a> subtraction.
+</p>
+<pre>
+  Matrix[[1,5], [4,2]] - Matrix[[9,3], [-4,1]]
+    =&gt; -8  2
+        8  1
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000474-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000474-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 524</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">-</span>(<span class="ruby-identifier">m</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">m</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Numeric</span>
+      <span class="ruby-constant">Matrix</span>.<span class="ruby-constant">Raise</span> <span class="ruby-constant">ErrOperationNotDefined</span>, <span class="ruby-value str">&quot;-&quot;</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Vector</span>
+      <span class="ruby-identifier">m</span> = <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">column_vector</span>(<span class="ruby-identifier">m</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Matrix</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span> = <span class="ruby-identifier">m</span>.<span class="ruby-identifier">coerce</span>(<span class="ruby-keyword kw">self</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">x</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">y</span>
+    <span class="ruby-keyword kw">end</span>
+    
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-constant">Raise</span> <span class="ruby-constant">ErrDimensionMismatch</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">row_size</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">row_size</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">column_size</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">column_size</span>
+    
+    <span class="ruby-identifier">rows</span> = (<span class="ruby-value">0</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">row_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">collect</span> {
+      <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+      (<span class="ruby-value">0</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">column_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">collect</span> {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">i</span>, <span class="ruby-identifier">j</span>] <span class="ruby-operator">-</span> <span class="ruby-identifier">m</span>[<span class="ruby-identifier">i</span>, <span class="ruby-identifier">j</span>]
+      }
+    }
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">rows</span>(<span class="ruby-identifier">rows</span>, <span class="ruby-keyword kw">false</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000475" class="method-detail">
+        <a name="M000475"></a>
+
+        <div class="method-heading">
+          <a href="#M000475" class="method-signature">
+          <span class="method-name">/</span><span class="method-args">(other)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Matrix.html">Matrix</a> division (multiplication by the <a
+href="Matrix.html#M000476">inverse</a>).
+</p>
+<pre>
+  Matrix[[7,6], [3,9]] / Matrix[[2,9], [3,1]]
+    =&gt; -7  1
+       -3 -6
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000475-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000475-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 554</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">/</span>(<span class="ruby-identifier">other</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">other</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Numeric</span>
+      <span class="ruby-identifier">rows</span> = <span class="ruby-ivar">@rows</span>.<span class="ruby-identifier">collect</span> {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">collect</span> {
+          <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">e</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">other</span>
+        }
+      }
+      <span class="ruby-keyword kw">return</span> <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">rows</span>(<span class="ruby-identifier">rows</span>, <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Matrix</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">self</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">inverse</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span> = <span class="ruby-identifier">other</span>.<span class="ruby-identifier">coerce</span>(<span class="ruby-keyword kw">self</span>)
+      <span class="ruby-identifier">rerurn</span> <span class="ruby-identifier">x</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">y</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000467" class="method-detail">
+        <a name="M000467"></a>
+
+        <div class="method-heading">
+          <a href="#M000467" class="method-signature">
+          <span class="method-name">==</span><span class="method-args">(other)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if and only if the two matrices contain equal
+elements.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000467-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000467-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 400</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">==</span>(<span class="ruby-identifier">other</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">Matrix</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">other</span>
+    
+    <span class="ruby-identifier">other</span>.<span class="ruby-identifier">compare_by_row_vectors</span>(<span class="ruby-ivar">@rows</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000456" class="method-detail">
+        <a name="M000456"></a>
+
+        <div class="method-heading">
+          <a href="#M000456" class="method-signature">
+          <span class="method-name">[]</span><span class="method-args">(i, j)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns element (<tt>i</tt>,<tt>j</tt>) of the matrix. That is: <a
+href="Matrix.html#M000459">row</a> <tt>i</tt>, <a
+href="Matrix.html#M000460">column</a> <tt>j</tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000456-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000456-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 265</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]</span>(<span class="ruby-identifier">i</span>, <span class="ruby-identifier">j</span>)
+    <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">j</span>]
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000470" class="method-detail">
+        <a name="M000470"></a>
+
+        <div class="method-heading">
+          <a href="#M000470" class="method-signature">
+          <span class="method-name">clone</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="Matrix.html#M000470">clone</a> of the matrix, so that
+the contents of each do not reference identical objects.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000470-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000470-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 424</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">clone</span>
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">rows</span>(<span class="ruby-ivar">@rows</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000487" class="method-detail">
+        <a name="M000487"></a>
+
+        <div class="method-heading">
+          <a href="#M000487" class="method-signature">
+          <span class="method-name">coerce</span><span class="method-args">(other)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+FIXME: describe <a href="Matrix.html#M000487">coerce</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000487-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000487-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 809</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">coerce</span>(<span class="ruby-identifier">other</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">other</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Numeric</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-constant">Scalar</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">other</span>), <span class="ruby-keyword kw">self</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-node">&quot;#{self.class} can't be coerced into #{other.class}&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000461" class="method-detail">
+        <a name="M000461"></a>
+
+        <div class="method-heading">
+          <a href="#M000461" class="method-signature">
+          <span class="method-name">collect</span><span class="method-args">( {|e| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a matrix that is the result of iteration of the given block over
+all elements of the matrix.
+</p>
+<pre>
+  Matrix[ [1,2], [3,4] ].collect { |i| i**2 }
+    =&gt; 1  4
+       9 16
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000461-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000461-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 327</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">collect</span> <span class="ruby-comment cmt"># :yield: e</span>
+    <span class="ruby-identifier">rows</span> = <span class="ruby-ivar">@rows</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span> <span class="ruby-identifier">row</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">e</span>}}
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">rows</span>(<span class="ruby-identifier">rows</span>, <span class="ruby-keyword kw">false</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000460" class="method-detail">
+        <a name="M000460"></a>
+
+        <div class="method-heading">
+          <a href="#M000460" class="method-signature">
+          <span class="method-name">column</span><span class="method-args">(j) {|e| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <a href="Matrix.html#M000460">column</a> vector number <tt>j</tt>
+of the matrix as a <a href="Vector.html">Vector</a> (starting at 0 like an
+array). When a block is given, the elements of that vector are iterated.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000460-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000460-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 305</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">column</span>(<span class="ruby-identifier">j</span>) <span class="ruby-comment cmt"># :yield: e</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+      <span class="ruby-value">0</span>.<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">row_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">yield</span> <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">j</span>]
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">col</span> = (<span class="ruby-value">0</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">row_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">collect</span> {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+        <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">j</span>]
+      }
+      <span class="ruby-constant">Vector</span>.<span class="ruby-identifier">elements</span>(<span class="ruby-identifier">col</span>, <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000458" class="method-detail">
+        <a name="M000458"></a>
+
+        <div class="method-heading">
+          <a href="#M000458" class="method-signature">
+          <span class="method-name">column_size</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the number of <a href="Matrix.html#M000448">columns</a>. Note that
+it is possible to construct a matrix with uneven <a
+href="Matrix.html#M000448">columns</a> (e.g. <a
+href="Matrix.html">Matrix</a>[ [1,2,3], [4,5] ]), but this is
+mathematically unsound. This method uses the first <a
+href="Matrix.html#M000459">row</a> to determine the result.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000458-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000458-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 282</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">column_size</span>
+    <span class="ruby-ivar">@rows</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">size</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000489" class="method-detail">
+        <a name="M000489"></a>
+
+        <div class="method-heading">
+          <a href="#M000489" class="method-signature">
+          <span class="method-name">column_vectors</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array of the <a href="Matrix.html#M000460">column</a> vectors of
+the matrix. See <a href="Vector.html">Vector</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000489-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000489-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 832</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">column_vectors</span>
+    <span class="ruby-identifier">columns</span> = (<span class="ruby-value">0</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">column_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">collect</span> {
+      <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">column</span>(<span class="ruby-identifier">i</span>)
+    }
+    <span class="ruby-identifier">columns</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000469" class="method-detail">
+        <a name="M000469"></a>
+
+        <div class="method-heading">
+          <a href="#M000469" class="method-signature">
+          <span class="method-name">compare_by_row_vectors</span><span class="method-args">(rows)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Not really intended for general consumption.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000469-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000469-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 410</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">compare_by_row_vectors</span>(<span class="ruby-identifier">rows</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@rows</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">rows</span>.<span class="ruby-identifier">size</span>
+    
+    <span class="ruby-value">0</span>.<span class="ruby-identifier">upto</span>(<span class="ruby-ivar">@rows</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>) <span class="ruby-keyword kw">do</span>
+      <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">i</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">rows</span>[<span class="ruby-identifier">i</span>]
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">true</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000481" class="method-detail">
+        <a name="M000481"></a>
+
+        <div class="method-heading">
+          <span class="method-name">det</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Matrix.html#M000480">determinant</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000480" class="method-detail">
+        <a name="M000480"></a>
+
+        <div class="method-heading">
+          <a href="#M000480" class="method-signature">
+          <span class="method-name">determinant</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="Matrix.html#M000480">determinant</a> of the matrix. If
+the matrix is not square, the result is 0.
+</p>
+<pre>
+  Matrix[[7,6], [3,9]].determinant
+    =&gt; 63
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000480-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000480-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 675</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">determinant</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">square?</span>
+    
+    <span class="ruby-identifier">size</span> = <span class="ruby-identifier">row_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+    <span class="ruby-identifier">a</span> = <span class="ruby-identifier">to_a</span>
+    
+    <span class="ruby-identifier">det</span> = <span class="ruby-value">1</span>
+    <span class="ruby-identifier">k</span> = <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">begin</span> 
+      <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">akk</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">k</span>]) <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+        <span class="ruby-identifier">i</span> = <span class="ruby-identifier">k</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">i</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>) <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">size</span>
+        <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">k</span>] <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+        <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>], <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>] = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>], <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>]
+        <span class="ruby-identifier">akk</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">k</span>]
+        <span class="ruby-identifier">det</span> <span class="ruby-operator">*=</span> <span class="ruby-value">-1</span>
+      <span class="ruby-keyword kw">end</span>
+      (<span class="ruby-identifier">k</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">size</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">q</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">k</span>] <span class="ruby-operator">/</span> <span class="ruby-identifier">akk</span>
+        (<span class="ruby-identifier">k</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">size</span>) <span class="ruby-keyword kw">do</span>
+          <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">j</span>] <span class="ruby-operator">-=</span> <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">j</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">q</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">det</span> <span class="ruby-operator">*=</span> <span class="ruby-identifier">akk</span>
+    <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">while</span> (<span class="ruby-identifier">k</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>) <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">size</span>
+    <span class="ruby-identifier">det</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000468" class="method-detail">
+        <a name="M000468"></a>
+
+        <div class="method-heading">
+          <span class="method-name">eql?</span><span class="method-args">(other)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for #==
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000471" class="method-detail">
+        <a name="M000471"></a>
+
+        <div class="method-heading">
+          <a href="#M000471" class="method-signature">
+          <span class="method-name">hash</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="Matrix.html#M000471">hash</a>-code for the matrix.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000471-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000471-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 431</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">hash</span>
+    <span class="ruby-identifier">value</span> = <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">row</span> <span class="ruby-keyword kw">in</span> <span class="ruby-ivar">@rows</span>
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">e</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">row</span>
+        <span class="ruby-identifier">value</span> <span class="ruby-operator">^=</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">hash</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">value</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000492" class="method-detail">
+        <a name="M000492"></a>
+
+        <div class="method-heading">
+          <a href="#M000492" class="method-signature">
+          <span class="method-name">inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Overrides Object#inspect
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000492-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000492-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 864</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">inspect</span>
+    <span class="ruby-value str">&quot;Matrix&quot;</span><span class="ruby-operator">+</span><span class="ruby-ivar">@rows</span>.<span class="ruby-identifier">inspect</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000477" class="method-detail">
+        <a name="M000477"></a>
+
+        <div class="method-heading">
+          <span class="method-name">inv</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Matrix.html#M000476">inverse</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000476" class="method-detail">
+        <a name="M000476"></a>
+
+        <div class="method-heading">
+          <a href="#M000476" class="method-signature">
+          <span class="method-name">inverse</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="Matrix.html#M000476">inverse</a> of the matrix.
+</p>
+<pre>
+  Matrix[[1, 2], [2, 1]].inverse
+    =&gt; -1  1
+        0 -1
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000476-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000476-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 579</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">inverse</span>
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-constant">Raise</span> <span class="ruby-constant">ErrDimensionMismatch</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">square?</span>
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-constant">I</span>(<span class="ruby-identifier">row_size</span>).<span class="ruby-identifier">inverse_from</span>(<span class="ruby-keyword kw">self</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000478" class="method-detail">
+        <a name="M000478"></a>
+
+        <div class="method-heading">
+          <a href="#M000478" class="method-signature">
+          <span class="method-name">inverse_from</span><span class="method-args">(src)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Not for public consumption?
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000478-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000478-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 588</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">inverse_from</span>(<span class="ruby-identifier">src</span>)
+    <span class="ruby-identifier">size</span> = <span class="ruby-identifier">row_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+    <span class="ruby-identifier">a</span> = <span class="ruby-identifier">src</span>.<span class="ruby-identifier">to_a</span>
+    
+    <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">k</span> <span class="ruby-keyword kw">in</span> <span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-identifier">size</span>
+      <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">akk</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">k</span>]) <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+        <span class="ruby-identifier">i</span> = <span class="ruby-identifier">k</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-constant">Matrix</span>.<span class="ruby-constant">Raise</span> <span class="ruby-constant">ErrNotRegular</span> <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">i</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>) <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">size</span>
+        <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">k</span>] <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+        <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>], <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>] = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>], <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>]
+        <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">i</span>], <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">k</span>] = <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">k</span>], <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">i</span>]
+        <span class="ruby-identifier">akk</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">k</span>]
+      <span class="ruby-keyword kw">end</span>
+      
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">i</span> <span class="ruby-keyword kw">in</span> <span class="ruby-value">0</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">size</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">i</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">k</span>
+        <span class="ruby-identifier">q</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">k</span>] <span class="ruby-operator">/</span> <span class="ruby-identifier">akk</span>
+        <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">k</span>] = <span class="ruby-value">0</span>
+        
+        (<span class="ruby-identifier">k</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">size</span>) <span class="ruby-keyword kw">do</span>   
+          <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">j</span>] <span class="ruby-operator">-=</span> <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">j</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">q</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-value">0</span>.<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">size</span>) <span class="ruby-keyword kw">do</span>
+          <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>
+          <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">j</span>] <span class="ruby-operator">-=</span> <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">j</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">q</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      
+      (<span class="ruby-identifier">k</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">size</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">j</span>] <span class="ruby-operator">/=</span> <span class="ruby-identifier">akk</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-value">0</span>.<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">size</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>
+        <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">j</span>] <span class="ruby-operator">/=</span> <span class="ruby-identifier">akk</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000462" class="method-detail">
+        <a name="M000462"></a>
+
+        <div class="method-heading">
+          <span class="method-name">map</span><span class="method-args">(</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Matrix.html#M000461">collect</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000463" class="method-detail">
+        <a name="M000463"></a>
+
+        <div class="method-heading">
+          <a href="#M000463" class="method-signature">
+          <span class="method-name">minor</span><span class="method-args">(*param)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a section of the matrix. The parameters are either:
+</p>
+<ul>
+<li>start_row, nrows, start_col, ncols; OR
+
+</li>
+<li>col_range, row_range
+
+</li>
+</ul>
+<pre>
+  Matrix.diagonal(9, 5, -3).minor(0..1, 0..2)
+    =&gt; 9 0 0
+       0 5 0
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000463-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000463-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 342</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">minor</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">param</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">param</span>.<span class="ruby-identifier">size</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">2</span>
+      <span class="ruby-identifier">from_row</span> = <span class="ruby-identifier">param</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">first</span>
+      <span class="ruby-identifier">size_row</span> = <span class="ruby-identifier">param</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">end</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">from_row</span>
+      <span class="ruby-identifier">size_row</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">param</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">exclude_end?</span>
+      <span class="ruby-identifier">from_col</span> = <span class="ruby-identifier">param</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">first</span>
+      <span class="ruby-identifier">size_col</span> = <span class="ruby-identifier">param</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">end</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">from_col</span>
+      <span class="ruby-identifier">size_col</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">param</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">exclude_end?</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">4</span>
+      <span class="ruby-identifier">from_row</span> = <span class="ruby-identifier">param</span>[<span class="ruby-value">0</span>]
+      <span class="ruby-identifier">size_row</span> = <span class="ruby-identifier">param</span>[<span class="ruby-value">1</span>]
+      <span class="ruby-identifier">from_col</span> = <span class="ruby-identifier">param</span>[<span class="ruby-value">2</span>]
+      <span class="ruby-identifier">size_col</span> = <span class="ruby-identifier">param</span>[<span class="ruby-value">3</span>]
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-constant">Matrix</span>.<span class="ruby-constant">Raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-identifier">param</span>.<span class="ruby-identifier">inspect</span>
+    <span class="ruby-keyword kw">end</span>
+    
+    <span class="ruby-identifier">rows</span> = <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">from_row</span>, <span class="ruby-identifier">size_row</span>].<span class="ruby-identifier">collect</span>{
+      <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">row</span>[<span class="ruby-identifier">from_col</span>, <span class="ruby-identifier">size_col</span>]
+    }
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">rows</span>(<span class="ruby-identifier">rows</span>, <span class="ruby-keyword kw">false</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000482" class="method-detail">
+        <a name="M000482"></a>
+
+        <div class="method-heading">
+          <a href="#M000482" class="method-signature">
+          <span class="method-name">rank</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="Matrix.html#M000482">rank</a> of the matrix. Beware
+that using Float values, with their usual lack of precision, can affect the
+value returned by this method. Use Rational values instead if this is
+important to you.
+</p>
+<pre>
+  Matrix[[7,6], [3,9]].rank
+    =&gt; 2
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000482-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000482-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 714</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">rank</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">column_size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">row_size</span>
+      <span class="ruby-identifier">a</span> = <span class="ruby-identifier">transpose</span>.<span class="ruby-identifier">to_a</span>
+      <span class="ruby-identifier">a_column_size</span> = <span class="ruby-identifier">row_size</span>
+      <span class="ruby-identifier">a_row_size</span> = <span class="ruby-identifier">column_size</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">a</span> = <span class="ruby-identifier">to_a</span>
+      <span class="ruby-identifier">a_column_size</span> = <span class="ruby-identifier">column_size</span>
+      <span class="ruby-identifier">a_row_size</span> = <span class="ruby-identifier">row_size</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">rank</span> = <span class="ruby-value">0</span>
+    <span class="ruby-identifier">k</span> = <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">akk</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">k</span>]) <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+        <span class="ruby-identifier">i</span> = <span class="ruby-identifier">k</span>
+        <span class="ruby-identifier">exists</span> = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">i</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>) <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">a_column_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+            <span class="ruby-identifier">exists</span> = <span class="ruby-keyword kw">false</span>
+            <span class="ruby-keyword kw">break</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">k</span>] <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">exists</span>
+          <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>], <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>] = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>], <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>]
+          <span class="ruby-identifier">akk</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">k</span>]
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">i</span> = <span class="ruby-identifier">k</span>
+          <span class="ruby-identifier">exists</span> = <span class="ruby-keyword kw">true</span>
+          <span class="ruby-keyword kw">begin</span>
+            <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">i</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>) <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">a_row_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+              <span class="ruby-identifier">exists</span> = <span class="ruby-keyword kw">false</span>
+              <span class="ruby-keyword kw">break</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">i</span>] <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">exists</span>
+            <span class="ruby-identifier">k</span>.<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">a_column_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>) <span class="ruby-keyword kw">do</span>
+              <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>
+              <span class="ruby-identifier">a</span>[<span class="ruby-identifier">j</span>][<span class="ruby-identifier">k</span>], <span class="ruby-identifier">a</span>[<span class="ruby-identifier">j</span>][<span class="ruby-identifier">i</span>] = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">j</span>][<span class="ruby-identifier">i</span>], <span class="ruby-identifier">a</span>[<span class="ruby-identifier">j</span>][<span class="ruby-identifier">k</span>]
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-identifier">akk</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">k</span>]
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-keyword kw">next</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      (<span class="ruby-identifier">k</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">a_row_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">q</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">k</span>] <span class="ruby-operator">/</span> <span class="ruby-identifier">akk</span>
+        (<span class="ruby-identifier">k</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">a_column_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>) <span class="ruby-keyword kw">do</span>
+          <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">j</span>] <span class="ruby-operator">-=</span> <span class="ruby-identifier">a</span>[<span class="ruby-identifier">k</span>][<span class="ruby-identifier">j</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">q</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">rank</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+    <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">while</span> (<span class="ruby-identifier">k</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>) <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">a_column_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">rank</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000464" class="method-detail">
+        <a name="M000464"></a>
+
+        <div class="method-heading">
+          <a href="#M000464" class="method-signature">
+          <span class="method-name">regular?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if this is a regular matrix.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000464-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000464-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 374</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">regular?</span>
+    <span class="ruby-identifier">square?</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">rank</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">column_size</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000459" class="method-detail">
+        <a name="M000459"></a>
+
+        <div class="method-heading">
+          <a href="#M000459" class="method-signature">
+          <span class="method-name">row</span><span class="method-args">(i) {|e| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <a href="Matrix.html#M000459">row</a> vector number <tt>i</tt> of
+the matrix as a <a href="Vector.html">Vector</a> (starting at 0 like an
+array). When a block is given, the elements of that vector are iterated.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000459-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000459-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 290</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">row</span>(<span class="ruby-identifier">i</span>) <span class="ruby-comment cmt"># :yield: e</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">e</span> <span class="ruby-keyword kw">in</span> <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">i</span>]
+        <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">e</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-constant">Vector</span>.<span class="ruby-identifier">elements</span>(<span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">i</span>])
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000457" class="method-detail">
+        <a name="M000457"></a>
+
+        <div class="method-heading">
+          <a href="#M000457" class="method-signature">
+          <span class="method-name">row_size</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the number of <a href="Matrix.html#M000447">rows</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000457-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000457-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 272</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">row_size</span>
+    <span class="ruby-ivar">@rows</span>.<span class="ruby-identifier">size</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000488" class="method-detail">
+        <a name="M000488"></a>
+
+        <div class="method-heading">
+          <a href="#M000488" class="method-signature">
+          <span class="method-name">row_vectors</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array of the <a href="Matrix.html#M000459">row</a> vectors of
+the matrix. See <a href="Vector.html">Vector</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000488-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000488-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 821</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">row_vectors</span>
+    <span class="ruby-identifier">rows</span> = (<span class="ruby-value">0</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">row_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">collect</span> {
+      <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">row</span>(<span class="ruby-identifier">i</span>)
+    }
+    <span class="ruby-identifier">rows</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000465" class="method-detail">
+        <a name="M000465"></a>
+
+        <div class="method-heading">
+          <a href="#M000465" class="method-signature">
+          <span class="method-name">singular?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> is this is a singular (i.e. non-regular) matrix.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000465-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000465-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 381</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">singular?</span>
+    <span class="ruby-keyword kw">not</span> <span class="ruby-identifier">regular?</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000466" class="method-detail">
+        <a name="M000466"></a>
+
+        <div class="method-heading">
+          <a href="#M000466" class="method-signature">
+          <span class="method-name">square?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> is this is a square matrix. See note in <a
+href="Matrix.html#M000458">column_size</a> about this being unreliable,
+though.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000466-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000466-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 389</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">square?</span>
+    <span class="ruby-identifier">column_size</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">row_size</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000486" class="method-detail">
+        <a name="M000486"></a>
+
+        <div class="method-heading">
+          <span class="method-name">t</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Matrix.html#M000485">transpose</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000490" class="method-detail">
+        <a name="M000490"></a>
+
+        <div class="method-heading">
+          <a href="#M000490" class="method-signature">
+          <span class="method-name">to_a</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array of arrays that describe the <a
+href="Matrix.html#M000447">rows</a> of the matrix.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000490-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000490-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 843</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_a</span>
+    <span class="ruby-ivar">@rows</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span> <span class="ruby-identifier">row</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span> <span class="ruby-identifier">e</span>}}
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000491" class="method-detail">
+        <a name="M000491"></a>
+
+        <div class="method-heading">
+          <a href="#M000491" class="method-signature">
+          <span class="method-name">to_s</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Overrides Object#to_s
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000491-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000491-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 854</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s</span>
+    <span class="ruby-value str">&quot;Matrix[&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@rows</span>.<span class="ruby-identifier">collect</span>{
+      <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+      <span class="ruby-value str">&quot;[&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">row</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">to_s</span>}.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;, &quot;</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;]&quot;</span>
+    }.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;, &quot;</span>)<span class="ruby-operator">+</span><span class="ruby-value str">&quot;]&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000484" class="method-detail">
+        <a name="M000484"></a>
+
+        <div class="method-heading">
+          <span class="method-name">tr</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Matrix.html#M000483">trace</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000483" class="method-detail">
+        <a name="M000483"></a>
+
+        <div class="method-heading">
+          <a href="#M000483" class="method-signature">
+          <span class="method-name">trace</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="Matrix.html#M000483">trace</a> (sum of <a
+href="Matrix.html#M000449">diagonal</a> elements) of the matrix.
+</p>
+<pre>
+  Matrix[[7,6], [3,9]].trace
+    =&gt; 16
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000483-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000483-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 777</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">trace</span>
+    <span class="ruby-identifier">tr</span> = <span class="ruby-value">0</span>
+    <span class="ruby-value">0</span>.<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">column_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>) <span class="ruby-keyword kw">do</span>
+      <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">tr</span> <span class="ruby-operator">+=</span> <span class="ruby-ivar">@rows</span>[<span class="ruby-identifier">i</span>][<span class="ruby-identifier">i</span>]
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">tr</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000485" class="method-detail">
+        <a name="M000485"></a>
+
+        <div class="method-heading">
+          <a href="#M000485" class="method-signature">
+          <span class="method-name">transpose</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="Matrix.html#M000485">transpose</a> of the matrix.
+</p>
+<pre>
+  Matrix[[1,2], [3,4], [5,6]]
+    =&gt; 1 2
+       3 4
+       5 6
+  Matrix[[1,2], [3,4], [5,6]].transpose
+    =&gt; 1 3 5
+       2 4 6
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000485-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000485-source">
+<pre>
+<span class="ruby-comment cmt"># File matrix.rb, line 797</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">transpose</span>
+    <span class="ruby-constant">Matrix</span>.<span class="ruby-identifier">columns</span>(<span class="ruby-ivar">@rows</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

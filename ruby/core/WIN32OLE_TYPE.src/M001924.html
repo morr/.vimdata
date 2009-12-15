@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>ole_methods (WIN32OLE_TYPE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE_TYPE#ole_methods # the array of WIN32OLE_METHOD objects.
+ * 
+ *  Returns array of WIN32OLE_METHOD objects which represent OLE method defined in 
+ *  OLE type library.
+ *    tobj = WIN32OLE_TYPE.new('Microsoft Excel 9.0 Object Library', 'Worksheet')
+ *    methods = tobj.ole_methods.collect{|m|
+ *      m.name
+ *    }                                       
+ *    # =&gt; ['Activate', 'Copy', 'Delete',....]
+ */
+static VALUE
+foletype_methods(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    struct oletypedata *ptype;
+    Data_Get_Struct(self, struct oletypedata, ptype);
+    return ole_methods_from_typeinfo(ptype-&gt;pTypeInfo, INVOKE_FUNC | INVOKE_PROPERTYGET | INVOKE_PROPERTYPUT | INVOKE_PROPERTYPUTREF);
+}</pre>
+</body>
+</html>

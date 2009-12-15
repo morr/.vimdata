@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>casecmp (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.casecmp(other_str)   =&gt; -1, 0, +1
+ *  
+ *  Case-insensitive version of &lt;code&gt;String#&lt;=&gt;&lt;/code&gt;.
+ *     
+ *     &quot;abcdef&quot;.casecmp(&quot;abcde&quot;)     #=&gt; 1
+ *     &quot;aBcDeF&quot;.casecmp(&quot;abcdef&quot;)    #=&gt; 0
+ *     &quot;abcdef&quot;.casecmp(&quot;abcdefg&quot;)   #=&gt; -1
+ *     &quot;abcdef&quot;.casecmp(&quot;ABCDEF&quot;)    #=&gt; 0
+ */
+
+static VALUE
+rb_str_casecmp(str1, str2)
+    VALUE str1, str2;
+{
+    long len;
+    int retval;
+
+    StringValue(str2);
+    len = lesser(RSTRING(str1)-&gt;len, RSTRING(str2)-&gt;len);
+    retval = rb_memcicmp(RSTRING(str1)-&gt;ptr, RSTRING(str2)-&gt;ptr, len);
+    if (retval == 0) {
+        if (RSTRING(str1)-&gt;len == RSTRING(str2)-&gt;len) return INT2FIX(0);
+        if (RSTRING(str1)-&gt;len &gt; RSTRING(str2)-&gt;len) return INT2FIX(1);
+        return INT2FIX(-1);
+    }
+    if (retval == 0) return INT2FIX(0);
+    if (retval &gt; 0) return INT2FIX(1);
+    return INT2FIX(-1);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>value_hash (Generators::HtmlFile)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/generators/html_generator.rb, line 809</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">value_hash</span>
+      <span class="ruby-identifier">file_attribute_values</span>
+      <span class="ruby-identifier">add_table_of_sections</span>
+
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;charset&quot;</span>]   = <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">charset</span>
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;href&quot;</span>]      = <span class="ruby-identifier">path</span>
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;style_url&quot;</span>] = <span class="ruby-identifier">style_url</span>(<span class="ruby-identifier">path</span>, <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">css</span>)
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">comment</span>
+        <span class="ruby-identifier">d</span> = <span class="ruby-identifier">markup</span>(<span class="ruby-ivar">@context</span>.<span class="ruby-identifier">comment</span>)
+        <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;description&quot;</span>] = <span class="ruby-identifier">d</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">d</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">ml</span> = <span class="ruby-identifier">build_method_summary_list</span>
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;methods&quot;</span>] = <span class="ruby-identifier">ml</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">ml</span>.<span class="ruby-identifier">empty?</span>
+
+      <span class="ruby-identifier">il</span> = <span class="ruby-identifier">build_include_list</span>(<span class="ruby-ivar">@context</span>)
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;includes&quot;</span>] = <span class="ruby-identifier">il</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">il</span>.<span class="ruby-identifier">empty?</span>
+
+      <span class="ruby-identifier">rl</span> = <span class="ruby-identifier">build_requires_list</span>(<span class="ruby-ivar">@context</span>)
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;requires&quot;</span>] = <span class="ruby-identifier">rl</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">rl</span>.<span class="ruby-identifier">empty?</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">promiscuous</span>
+        <span class="ruby-identifier">file_context</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">file_context</span> = <span class="ruby-ivar">@context</span>
+      <span class="ruby-keyword kw">end</span>
+
+
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;sections&quot;</span>] = <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">sections</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">section</span><span class="ruby-operator">|</span>
+
+        <span class="ruby-identifier">secdata</span> = {
+          <span class="ruby-value str">&quot;sectitle&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">section</span>.<span class="ruby-identifier">title</span>,
+          <span class="ruby-value str">&quot;secsequence&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">section</span>.<span class="ruby-identifier">sequence</span>,
+          <span class="ruby-value str">&quot;seccomment&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">markup</span>(<span class="ruby-identifier">section</span>.<span class="ruby-identifier">comment</span>)
+        }
+
+        <span class="ruby-identifier">cl</span> = <span class="ruby-identifier">build_class_list</span>(<span class="ruby-value">0</span>, <span class="ruby-ivar">@context</span>, <span class="ruby-identifier">section</span>, <span class="ruby-identifier">file_context</span>)
+        <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;classlist&quot;</span>] = <span class="ruby-identifier">cl</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">cl</span>.<span class="ruby-identifier">empty?</span>
+
+        <span class="ruby-identifier">mdl</span> = <span class="ruby-identifier">build_method_detail_list</span>(<span class="ruby-identifier">section</span>)
+        <span class="ruby-identifier">secdata</span>[<span class="ruby-value str">&quot;method_list&quot;</span>] = <span class="ruby-identifier">mdl</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mdl</span>.<span class="ruby-identifier">empty?</span>
+
+        <span class="ruby-identifier">al</span> = <span class="ruby-identifier">build_alias_summary_list</span>(<span class="ruby-identifier">section</span>)
+        <span class="ruby-identifier">secdata</span>[<span class="ruby-value str">&quot;aliases&quot;</span>] = <span class="ruby-identifier">al</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">al</span>.<span class="ruby-identifier">empty?</span>
+        
+        <span class="ruby-identifier">co</span> = <span class="ruby-identifier">build_constants_summary_list</span>(<span class="ruby-identifier">section</span>)
+        <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;constants&quot;</span>] = <span class="ruby-identifier">co</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">co</span>.<span class="ruby-identifier">empty?</span>
+
+        <span class="ruby-identifier">secdata</span>
+      <span class="ruby-keyword kw">end</span>
+      
+      <span class="ruby-ivar">@values</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>module_function (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     module_function(symbol, ...)    =&gt; self
+ *  
+ *  Creates module functions for the named methods. These functions may
+ *  be called with the module as a receiver, and also become available
+ *  as instance methods to classes that mix in the module. Module
+ *  functions are copies of the original, and so may be changed
+ *  independently. The instance-method versions are made private. If
+ *  used with no arguments, subsequently defined methods become module
+ *  functions.
+ *     
+ *     module Mod
+ *       def one
+ *         &quot;This is one&quot;
+ *       end
+ *       module_function :one
+ *     end
+ *     class Cls
+ *       include Mod
+ *       def callOne
+ *         one
+ *       end
+ *     end
+ *     Mod.one     #=&gt; &quot;This is one&quot;
+ *     c = Cls.new
+ *     c.callOne   #=&gt; &quot;This is one&quot;
+ *     module Mod
+ *       def one
+ *         &quot;This is the new one&quot;
+ *       end
+ *     end
+ *     Mod.one     #=&gt; &quot;This is one&quot;
+ *     c.callOne   #=&gt; &quot;This is the new one&quot;
+ */
+
+static VALUE
+rb_mod_modfunc(argc, argv, module)
+    int argc;
+    VALUE *argv;
+    VALUE module;
+{
+    int i;
+    ID id;
+    NODE *body;
+
+    if (TYPE(module) != T_MODULE) {
+        rb_raise(rb_eTypeError, &quot;module_function must be called for modules&quot;);
+    }
+
+    secure_visibility(module);
+    if (argc == 0) {
+        SCOPE_SET(SCOPE_MODFUNC);
+        return module;
+    }
+
+    set_method_visibility(module, argc, argv, NOEX_PRIVATE);
+    for (i=0; i&lt;argc; i++) {
+        VALUE m = module;
+
+        id = rb_to_id(argv[i]);
+        for (;;) {
+            body = search_method(m, id, &amp;m);
+            if (body == 0) {
+                body = search_method(rb_cObject, id, &amp;m);
+            }
+            if (body == 0 || body-&gt;nd_body == 0) {
+                print_undef(module, id);
+            }
+            if (nd_type(body-&gt;nd_body) != NODE_ZSUPER) {
+                break;                /* normal case: need not to follow 'super' link */
+            }
+            m = RCLASS(m)-&gt;super;
+            if (!m) break;
+        }
+        rb_add_method(rb_singleton_class(module), id, body-&gt;nd_body, NOEX_PUBLIC);
+    }
+    return module;
+}</pre>
+</body>
+</html>

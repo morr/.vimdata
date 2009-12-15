@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>join (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     thr.join          =&gt; thr
+ *     thr.join(limit)   =&gt; thr
+ *  
+ *  The calling thread will suspend execution and run &lt;i&gt;thr&lt;/i&gt;. Does not
+ *  return until &lt;i&gt;thr&lt;/i&gt; exits or until &lt;i&gt;limit&lt;/i&gt; seconds have passed. If
+ *  the time limit expires, &lt;code&gt;nil&lt;/code&gt; will be returned, otherwise
+ *  &lt;i&gt;thr&lt;/i&gt; is returned.
+ *     
+ *  Any threads not joined will be killed when the main program exits.  If
+ *  &lt;i&gt;thr&lt;/i&gt; had previously raised an exception and the
+ *  &lt;code&gt;abort_on_exception&lt;/code&gt; and &lt;code&gt;$DEBUG&lt;/code&gt; flags are not set
+ *  (so the exception has not yet been processed) it will be processed at this
+ *  time.
+ *     
+ *     a = Thread.new { print &quot;a&quot;; sleep(10); print &quot;b&quot;; print &quot;c&quot; }
+ *     x = Thread.new { print &quot;x&quot;; Thread.pass; print &quot;y&quot;; print &quot;z&quot; }
+ *     x.join # Let x thread finish, a will be killed on exit.
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     axyz
+ *     
+ *  The following example illustrates the &lt;i&gt;limit&lt;/i&gt; parameter.
+ *     
+ *     y = Thread.new { 4.times { sleep 0.1; puts 'tick... ' }}
+ *     puts &quot;Waiting&quot; until y.join(0.15)
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     tick...
+ *     Waiting
+ *     tick...
+ *     Waitingtick...
+ *     
+ *     
+ *     tick...
+ */
+
+static VALUE
+rb_thread_join_m(argc, argv, thread)
+    int argc;
+    VALUE *argv;
+    VALUE thread;
+{
+    VALUE limit;
+    double delay = DELAY_INFTY;
+
+    rb_scan_args(argc, argv, &quot;01&quot;, &amp;limit);
+    if (!NIL_P(limit)) delay = rb_num2dbl(limit);
+    if (!rb_thread_join0(rb_thread_check(thread), delay))
+        return Qnil;
+    return thread;
+}</pre>
+</body>
+</html>

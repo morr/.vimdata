@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each_resource (Resolv::DNS)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/resolv.rb, line 461</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_resource</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">typeclass</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">proc</span>)
+      <span class="ruby-identifier">lazy_initialize</span>
+      <span class="ruby-identifier">requester</span> = <span class="ruby-identifier">make_requester</span>
+      <span class="ruby-identifier">senders</span> = {}
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-ivar">@config</span>.<span class="ruby-identifier">resolv</span>(<span class="ruby-identifier">name</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">candidate</span>, <span class="ruby-identifier">tout</span>, <span class="ruby-identifier">nameserver</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">msg</span> = <span class="ruby-constant">Message</span>.<span class="ruby-identifier">new</span>
+          <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">rd</span> = <span class="ruby-value">1</span>
+          <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">add_question</span>(<span class="ruby-identifier">candidate</span>, <span class="ruby-identifier">typeclass</span>)
+          <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">sender</span> = <span class="ruby-identifier">senders</span>[[<span class="ruby-identifier">candidate</span>, <span class="ruby-identifier">nameserver</span>]]
+            <span class="ruby-identifier">sender</span> = <span class="ruby-identifier">senders</span>[[<span class="ruby-identifier">candidate</span>, <span class="ruby-identifier">nameserver</span>]] =
+              <span class="ruby-identifier">requester</span>.<span class="ruby-identifier">sender</span>(<span class="ruby-identifier">msg</span>, <span class="ruby-identifier">candidate</span>, <span class="ruby-identifier">nameserver</span>)
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">reply</span>, <span class="ruby-identifier">reply_name</span> = <span class="ruby-identifier">requester</span>.<span class="ruby-identifier">request</span>(<span class="ruby-identifier">sender</span>, <span class="ruby-identifier">tout</span>)
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">reply</span>.<span class="ruby-identifier">rcode</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">RCode</span><span class="ruby-operator">::</span><span class="ruby-constant">NoError</span>
+            <span class="ruby-identifier">extract_resources</span>(<span class="ruby-identifier">reply</span>, <span class="ruby-identifier">reply_name</span>, <span class="ruby-identifier">typeclass</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">proc</span>)
+            <span class="ruby-keyword kw">return</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">RCode</span><span class="ruby-operator">::</span><span class="ruby-constant">NXDomain</span>
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">Config</span><span class="ruby-operator">::</span><span class="ruby-constant">NXDomain</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">reply_name</span>.<span class="ruby-identifier">to_s</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">Config</span><span class="ruby-operator">::</span><span class="ruby-constant">OtherResolvError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">reply_name</span>.<span class="ruby-identifier">to_s</span>)
+          <span class="ruby-keyword kw">end</span>
+        }
+      <span class="ruby-keyword kw">ensure</span>
+        <span class="ruby-identifier">requester</span>.<span class="ruby-identifier">close</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>pull (REXML::Parsers::BaseParser)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/parsers/baseparser.rb, line 189</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">pull</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@closed</span>
+          <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@closed</span> = <span class="ruby-ivar">@closed</span>, <span class="ruby-keyword kw">nil</span>
+          <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:end_element</span>, <span class="ruby-identifier">x</span> ]
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:end_document</span> ] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">empty?</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@stack</span>.<span class="ruby-identifier">shift</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@stack</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-comment cmt">#STDERR.puts @source.encoding</span>
+        <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">read</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">buffer</span>.<span class="ruby-identifier">size</span><span class="ruby-operator">&lt;</span><span class="ruby-value">2</span>
+        <span class="ruby-comment cmt">#STDERR.puts &quot;BUFFER = #{@source.buffer.inspect}&quot;</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@document_status</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+          <span class="ruby-comment cmt">#@source.consume( /^\s*/um )</span>
+          <span class="ruby-identifier">word</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-regexp re">/^((?:\s+)|(?:&lt;[^&gt;]*&gt;))/</span><span class="ruby-identifier">um</span> )
+          <span class="ruby-identifier">word</span> = <span class="ruby-identifier">word</span>[<span class="ruby-value">1</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">word</span>.<span class="ruby-identifier">nil?</span>
+          <span class="ruby-comment cmt">#STDERR.puts &quot;WORD = #{word.inspect}&quot;</span>
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">word</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">COMMENT_START</span>
+            <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:comment</span>, <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">COMMENT_PATTERN</span>, <span class="ruby-keyword kw">true</span> )[<span class="ruby-value">1</span>] ]
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">XMLDECL_START</span>
+            <span class="ruby-comment cmt">#STDERR.puts &quot;XMLDECL&quot;</span>
+            <span class="ruby-identifier">results</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">XMLDECL_PATTERN</span>, <span class="ruby-keyword kw">true</span> )[<span class="ruby-value">1</span>]
+            <span class="ruby-identifier">version</span> = <span class="ruby-constant">VERSION</span>.<span class="ruby-identifier">match</span>( <span class="ruby-identifier">results</span> )
+            <span class="ruby-identifier">version</span> = <span class="ruby-identifier">version</span>[<span class="ruby-value">1</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">version</span>.<span class="ruby-identifier">nil?</span>
+            <span class="ruby-identifier">encoding</span> = <span class="ruby-constant">ENCODING</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">results</span>)
+            <span class="ruby-identifier">encoding</span> = <span class="ruby-identifier">encoding</span>[<span class="ruby-value">1</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">encoding</span>.<span class="ruby-identifier">nil?</span>
+            <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">encoding</span> = <span class="ruby-identifier">encoding</span>
+            <span class="ruby-identifier">standalone</span> = <span class="ruby-constant">STANDALONE</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">results</span>)
+            <span class="ruby-identifier">standalone</span> = <span class="ruby-identifier">standalone</span>[<span class="ruby-value">1</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">standalone</span>.<span class="ruby-identifier">nil?</span>
+            <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:xmldecl</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">encoding</span>, <span class="ruby-identifier">standalone</span> ]
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">INSTRUCTION_START</span>
+            <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:processing_instruction</span>, <span class="ruby-operator">*</span><span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>(<span class="ruby-constant">INSTRUCTION_PATTERN</span>, <span class="ruby-keyword kw">true</span>)[<span class="ruby-value">1</span>,<span class="ruby-value">2</span>] ]
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">DOCTYPE_START</span>
+            <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">DOCTYPE_PATTERN</span>, <span class="ruby-keyword kw">true</span> )
+            <span class="ruby-ivar">@nsstack</span>.<span class="ruby-identifier">unshift</span>(<span class="ruby-identifier">curr_ns</span>=<span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>)
+            <span class="ruby-identifier">identity</span> = <span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-identifier">close</span> = <span class="ruby-identifier">md</span>[<span class="ruby-value">2</span>]
+            <span class="ruby-identifier">identity</span> <span class="ruby-operator">=~</span> <span class="ruby-constant">IDENTITY</span>
+            <span class="ruby-identifier">name</span> = <span class="ruby-identifier">$1</span>
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;DOCTYPE is missing a name&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">nil?</span>
+            <span class="ruby-identifier">pub_sys</span> = <span class="ruby-identifier">$2</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">$2</span>.<span class="ruby-identifier">strip</span>
+            <span class="ruby-identifier">long_name</span> = <span class="ruby-identifier">$4</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">$4</span>.<span class="ruby-identifier">strip</span>
+            <span class="ruby-identifier">uri</span> = <span class="ruby-identifier">$6</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">$6</span>.<span class="ruby-identifier">strip</span>
+            <span class="ruby-identifier">args</span> = [ <span class="ruby-identifier">:start_doctype</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">pub_sys</span>, <span class="ruby-identifier">long_name</span>, <span class="ruby-identifier">uri</span> ]
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">close</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;&gt;&quot;</span>
+              <span class="ruby-ivar">@document_status</span> = <span class="ruby-identifier">:after_doctype</span>
+              <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">read</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">buffer</span>.<span class="ruby-identifier">size</span><span class="ruby-operator">&lt;</span><span class="ruby-value">2</span>
+              <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>(<span class="ruby-regexp re">/^\s*/</span><span class="ruby-identifier">um</span>, <span class="ruby-keyword kw">true</span>)
+              <span class="ruby-ivar">@stack</span> <span class="ruby-operator">&lt;&lt;</span> [ <span class="ruby-identifier">:end_doctype</span> ]
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-ivar">@document_status</span> = <span class="ruby-identifier">:in_doctype</span>
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">args</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\s+/</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-ivar">@document_status</span> = <span class="ruby-identifier">:after_doctype</span>
+            <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">read</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">buffer</span>.<span class="ruby-identifier">size</span><span class="ruby-operator">&lt;</span><span class="ruby-value">2</span>
+            <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>(<span class="ruby-regexp re">/\s*/</span><span class="ruby-identifier">um</span>, <span class="ruby-keyword kw">true</span>)
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@document_status</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:in_doctype</span>
+          <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>(<span class="ruby-regexp re">/\s*(.*?&gt;)/</span><span class="ruby-identifier">um</span>)
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>]
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">SYSTEMENTITY</span> 
+            <span class="ruby-identifier">match</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">SYSTEMENTITY</span>, <span class="ruby-keyword kw">true</span> )[<span class="ruby-value">1</span>]
+            <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:externalentity</span>, <span class="ruby-identifier">match</span> ]
+
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">ELEMENTDECL_START</span>
+            <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:elementdecl</span>, <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">ELEMENTDECL_PATTERN</span>, <span class="ruby-keyword kw">true</span> )[<span class="ruby-value">1</span>] ]
+
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">ENTITY_START</span>
+            <span class="ruby-identifier">match</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">ENTITYDECL</span>, <span class="ruby-keyword kw">true</span> ).<span class="ruby-identifier">to_a</span>.<span class="ruby-identifier">compact</span>
+            <span class="ruby-identifier">match</span>[<span class="ruby-value">0</span>] = <span class="ruby-identifier">:entitydecl</span>
+            <span class="ruby-identifier">ref</span> = <span class="ruby-keyword kw">false</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-value str">'%'</span>
+              <span class="ruby-identifier">ref</span> = <span class="ruby-keyword kw">true</span>
+              <span class="ruby-identifier">match</span>.<span class="ruby-identifier">delete_at</span> <span class="ruby-value">1</span>
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-comment cmt"># Now we have to sort out what kind of entity reference this is</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match</span>[<span class="ruby-value">2</span>] <span class="ruby-operator">==</span> <span class="ruby-value str">'SYSTEM'</span>
+              <span class="ruby-comment cmt"># External reference</span>
+              <span class="ruby-identifier">match</span>[<span class="ruby-value">3</span>] = <span class="ruby-identifier">match</span>[<span class="ruby-value">3</span>][<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-2</span>] <span class="ruby-comment cmt"># PUBID</span>
+              <span class="ruby-identifier">match</span>.<span class="ruby-identifier">delete_at</span>(<span class="ruby-value">4</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">4</span> <span class="ruby-comment cmt"># Chop out NDATA decl</span>
+              <span class="ruby-comment cmt"># match is [ :entity, name, SYSTEM, pubid(, ndata)? ]</span>
+            <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">match</span>[<span class="ruby-value">2</span>] <span class="ruby-operator">==</span> <span class="ruby-value str">'PUBLIC'</span>
+              <span class="ruby-comment cmt"># External reference</span>
+              <span class="ruby-identifier">match</span>[<span class="ruby-value">3</span>] = <span class="ruby-identifier">match</span>[<span class="ruby-value">3</span>][<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-2</span>] <span class="ruby-comment cmt"># PUBID</span>
+              <span class="ruby-identifier">match</span>[<span class="ruby-value">4</span>] = <span class="ruby-identifier">match</span>[<span class="ruby-value">4</span>][<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-2</span>] <span class="ruby-comment cmt"># HREF</span>
+              <span class="ruby-comment cmt"># match is [ :entity, name, PUBLIC, pubid, href ]</span>
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">match</span>[<span class="ruby-value">2</span>] = <span class="ruby-identifier">match</span>[<span class="ruby-value">2</span>][<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-2</span>]
+              <span class="ruby-identifier">match</span>.<span class="ruby-identifier">pop</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">4</span>
+              <span class="ruby-comment cmt"># match is [ :entity, name, value ]</span>
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-identifier">match</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">'%'</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ref</span>
+            <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">match</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">ATTLISTDECL_START</span>
+            <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">ATTLISTDECL_PATTERN</span>, <span class="ruby-keyword kw">true</span> )
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value str">&quot;Bad ATTLIST declaration!&quot;</span>, <span class="ruby-ivar">@source</span> ) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">md</span>.<span class="ruby-identifier">nil?</span>
+            <span class="ruby-identifier">element</span> = <span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-identifier">contents</span> = <span class="ruby-identifier">md</span>[<span class="ruby-value">0</span>]
+
+            <span class="ruby-identifier">pairs</span> = {}
+            <span class="ruby-identifier">values</span> = <span class="ruby-identifier">md</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">scan</span>( <span class="ruby-constant">ATTDEF_RE</span> )
+            <span class="ruby-identifier">values</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">attdef</span><span class="ruby-operator">|</span>
+              <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">attdef</span>[<span class="ruby-value">3</span>] <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;#IMPLIED&quot;</span>
+                <span class="ruby-identifier">attdef</span>.<span class="ruby-identifier">compact!</span>
+                <span class="ruby-identifier">val</span> = <span class="ruby-identifier">attdef</span>[<span class="ruby-value">3</span>]
+                <span class="ruby-identifier">val</span> = <span class="ruby-identifier">attdef</span>[<span class="ruby-value">4</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">val</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;#FIXED &quot;</span>
+                <span class="ruby-identifier">pairs</span>[<span class="ruby-identifier">attdef</span>[<span class="ruby-value">0</span>]] = <span class="ruby-identifier">val</span>
+                <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">attdef</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^xmlns:(.*)/</span>
+                  <span class="ruby-ivar">@nsstack</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">$1</span>
+                <span class="ruby-keyword kw">end</span>
+              <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:attlistdecl</span>, <span class="ruby-identifier">element</span>, <span class="ruby-identifier">pairs</span>, <span class="ruby-identifier">contents</span> ]
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">NOTATIONDECL_START</span>
+            <span class="ruby-identifier">md</span> = <span class="ruby-keyword kw">nil</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">PUBLIC</span> )
+              <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">PUBLIC</span>, <span class="ruby-keyword kw">true</span> )
+              <span class="ruby-identifier">vals</span> = [<span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>],<span class="ruby-identifier">md</span>[<span class="ruby-value">2</span>],<span class="ruby-identifier">md</span>[<span class="ruby-value">4</span>],<span class="ruby-identifier">md</span>[<span class="ruby-value">6</span>]]
+            <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">SYSTEM</span> )
+              <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">SYSTEM</span>, <span class="ruby-keyword kw">true</span> )
+              <span class="ruby-identifier">vals</span> = [<span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>],<span class="ruby-identifier">md</span>[<span class="ruby-value">2</span>],<span class="ruby-keyword kw">nil</span>,<span class="ruby-identifier">md</span>[<span class="ruby-value">4</span>]]
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">raise</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value str">&quot;error parsing notation: no matching pattern&quot;</span>, <span class="ruby-ivar">@source</span> )
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:notationdecl</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">vals</span> ]
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">CDATA_END</span>
+            <span class="ruby-ivar">@document_status</span> = <span class="ruby-identifier">:after_doctype</span>
+            <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">CDATA_END</span>, <span class="ruby-keyword kw">true</span> )
+            <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:end_doctype</span> ]
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">buffer</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?&lt;</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">buffer</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?/</span>
+              <span class="ruby-ivar">@nsstack</span>.<span class="ruby-identifier">shift</span>
+              <span class="ruby-identifier">last_tag</span> = <span class="ruby-ivar">@tags</span>.<span class="ruby-identifier">pop</span>
+              <span class="ruby-comment cmt">#md = @source.match_to_consume( '&gt;', CLOSE_MATCH)</span>
+              <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">CLOSE_MATCH</span>, <span class="ruby-keyword kw">true</span> )
+              <span class="ruby-identifier">raise</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value str">&quot;Missing end tag for &quot;</span><span class="ruby-operator">+</span>
+                <span class="ruby-node">&quot;'#{last_tag}' (got \&quot;#{md[1]}\&quot;)&quot;</span>, 
+                <span class="ruby-ivar">@source</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">last_tag</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>]
+              <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:end_element</span>, <span class="ruby-identifier">last_tag</span> ]
+            <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">buffer</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?!</span>
+              <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>(<span class="ruby-regexp re">/\A(\s*[^&gt;]*&gt;)/</span><span class="ruby-identifier">um</span>)
+              <span class="ruby-comment cmt">#STDERR.puts &quot;SOURCE BUFFER = #{source.buffer}, #{source.buffer.size}&quot;</span>
+              <span class="ruby-identifier">raise</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;Malformed node&quot;</span>, <span class="ruby-ivar">@source</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">md</span>
+              <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">md</span>[<span class="ruby-value">0</span>][<span class="ruby-value">2</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?-</span>
+                <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">COMMENT_PATTERN</span>, <span class="ruby-keyword kw">true</span> )
+                <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:comment</span>, <span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>] ] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">md</span>
+              <span class="ruby-keyword kw">else</span>
+                <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">CDATA_PATTERN</span>, <span class="ruby-keyword kw">true</span> )
+                <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:cdata</span>, <span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>] ] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">md</span>
+              <span class="ruby-keyword kw">end</span>
+              <span class="ruby-identifier">raise</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value str">&quot;Declarations can only occur &quot;</span><span class="ruby-operator">+</span>
+                <span class="ruby-value str">&quot;in the doctype declaration.&quot;</span>, <span class="ruby-ivar">@source</span>)
+            <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">buffer</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-value">??</span>
+              <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">INSTRUCTION_PATTERN</span>, <span class="ruby-keyword kw">true</span> )
+              <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:processing_instruction</span>, <span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>], <span class="ruby-identifier">md</span>[<span class="ruby-value">2</span>] ] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">md</span>
+              <span class="ruby-identifier">raise</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value str">&quot;Bad instruction declaration&quot;</span>,
+                <span class="ruby-ivar">@source</span>)
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-comment cmt"># Get the next tag</span>
+              <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>(<span class="ruby-constant">TAG_MATCH</span>, <span class="ruby-keyword kw">true</span>)
+              <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">md</span>
+                <span class="ruby-comment cmt"># Check for missing attribute quotes</span>
+                <span class="ruby-identifier">raise</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;missing attribute quote&quot;</span>, <span class="ruby-ivar">@source</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>(<span class="ruby-constant">MISSING_ATTRIBUTE_QUOTES</span> )
+                <span class="ruby-identifier">raise</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;malformed XML: missing tag start&quot;</span>, <span class="ruby-ivar">@source</span>) 
+              <span class="ruby-keyword kw">end</span>
+              <span class="ruby-identifier">attributes</span> = {}
+              <span class="ruby-identifier">prefixes</span> = <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>
+              <span class="ruby-identifier">prefixes</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">md</span>[<span class="ruby-value">2</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">md</span>[<span class="ruby-value">2</span>]
+              <span class="ruby-ivar">@nsstack</span>.<span class="ruby-identifier">unshift</span>(<span class="ruby-identifier">curr_ns</span>=<span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>)
+              <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">md</span>[<span class="ruby-value">4</span>].<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+                <span class="ruby-identifier">attrs</span> = <span class="ruby-identifier">md</span>[<span class="ruby-value">4</span>].<span class="ruby-identifier">scan</span>( <span class="ruby-constant">ATTRIBUTE_PATTERN</span> )
+                <span class="ruby-identifier">raise</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>( <span class="ruby-node">&quot;error parsing attributes: [#{attrs.join ', '}], excess = \&quot;#$'\&quot;&quot;</span>, <span class="ruby-ivar">@source</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$'</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">$'</span>.<span class="ruby-identifier">strip</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+                <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span>,<span class="ruby-identifier">c</span>,<span class="ruby-identifier">d</span>,<span class="ruby-identifier">e</span><span class="ruby-operator">|</span> 
+                  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">b</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;xmlns&quot;</span>
+                    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;xml&quot;</span>
+                      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">d</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;http://www.w3.org/XML/1998/namespace&quot;</span>
+                        <span class="ruby-identifier">msg</span> = <span class="ruby-value str">&quot;The 'xml' prefix must not be bound to any other namespace &quot;</span><span class="ruby-operator">+</span>
+                        <span class="ruby-value str">&quot;(http://www.w3.org/TR/REC-xml-names/#ns-decl)&quot;</span>
+                        <span class="ruby-identifier">raise</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">msg</span>, <span class="ruby-ivar">@source</span>, <span class="ruby-keyword kw">self</span> )
+                      <span class="ruby-keyword kw">end</span>
+                    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;xmlns&quot;</span>
+                      <span class="ruby-identifier">msg</span> = <span class="ruby-value str">&quot;The 'xmlns' prefix must not be declared &quot;</span><span class="ruby-operator">+</span>
+                      <span class="ruby-value str">&quot;(http://www.w3.org/TR/REC-xml-names/#ns-decl)&quot;</span>
+                      <span class="ruby-identifier">raise</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">msg</span>, <span class="ruby-ivar">@source</span>, <span class="ruby-keyword kw">self</span>)
+                    <span class="ruby-keyword kw">end</span>
+                    <span class="ruby-identifier">curr_ns</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">c</span>
+                  <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">b</span>
+                    <span class="ruby-identifier">prefixes</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">b</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">b</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;xml&quot;</span>
+                  <span class="ruby-keyword kw">end</span>
+                  <span class="ruby-identifier">attributes</span>[<span class="ruby-identifier">a</span>] = <span class="ruby-identifier">e</span> 
+                }
+              <span class="ruby-keyword kw">end</span>
+        
+              <span class="ruby-comment cmt"># Verify that all of the prefixes have been defined</span>
+              <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">prefix</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">prefixes</span>
+                <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@nsstack</span>.<span class="ruby-identifier">find</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">k</span><span class="ruby-operator">|</span> <span class="ruby-identifier">k</span>.<span class="ruby-identifier">member?</span>(<span class="ruby-identifier">prefix</span>)}
+                  <span class="ruby-identifier">raise</span> <span class="ruby-constant">UndefinedNamespaceException</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">prefix</span>,<span class="ruby-ivar">@source</span>,<span class="ruby-keyword kw">self</span>)
+                <span class="ruby-keyword kw">end</span>
+              <span class="ruby-keyword kw">end</span>
+
+              <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">md</span>[<span class="ruby-value">6</span>]
+                <span class="ruby-ivar">@closed</span> = <span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>]
+                <span class="ruby-ivar">@nsstack</span>.<span class="ruby-identifier">shift</span>
+              <span class="ruby-keyword kw">else</span>
+                <span class="ruby-ivar">@tags</span>.<span class="ruby-identifier">push</span>( <span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>] )
+              <span class="ruby-keyword kw">end</span>
+              <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:start_element</span>, <span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>], <span class="ruby-identifier">attributes</span> ]
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">md</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">TEXT_PATTERN</span>, <span class="ruby-keyword kw">true</span> )
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">md</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+              <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">match</span>( <span class="ruby-regexp re">/(\s+)/</span>, <span class="ruby-keyword kw">true</span> )
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-comment cmt">#STDERR.puts &quot;GOT #{md[1].inspect}&quot; unless md[0].length == 0</span>
+            <span class="ruby-comment cmt">#return [ :text, &quot;&quot; ] if md[0].length == 0</span>
+            <span class="ruby-comment cmt"># unnormalized = Text::unnormalize( md[1], self )</span>
+            <span class="ruby-comment cmt"># return PullEvent.new( :text, md[1], unnormalized )</span>
+            <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:text</span>, <span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>] ]
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">UndefinedNamespaceException</span>
+          <span class="ruby-identifier">raise</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>
+          <span class="ruby-identifier">raise</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span>, <span class="ruby-constant">NameError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">error</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value str">&quot;Exception parsing&quot;</span>,
+            <span class="ruby-ivar">@source</span>, <span class="ruby-keyword kw">self</span>, (<span class="ruby-identifier">error</span> <span class="ruby-value">? </span><span class="ruby-identifier">error</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">$!</span>) )
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">return</span> [ <span class="ruby-identifier">:dummy</span> ]
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

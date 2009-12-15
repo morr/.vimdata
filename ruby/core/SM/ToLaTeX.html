@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: SM::ToLaTeX</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">SM::ToLaTeX</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/rdoc/markup/simple_markup/to_latex_rb.html">
+                lib/rdoc/markup/simple_markup/to_latex.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Convert <a href="SimpleMarkup.html">SimpleMarkup</a> to basic LaTeX report
+format
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004972">accept_blank_line</a>&nbsp;&nbsp;
+      <a href="#M004973">accept_heading</a>&nbsp;&nbsp;
+      <a href="#M004970">accept_list_end</a>&nbsp;&nbsp;
+      <a href="#M004971">accept_list_item</a>&nbsp;&nbsp;
+      <a href="#M004969">accept_list_start</a>&nbsp;&nbsp;
+      <a href="#M004966">accept_paragraph</a>&nbsp;&nbsp;
+      <a href="#M004968">accept_rule</a>&nbsp;&nbsp;
+      <a href="#M004967">accept_verbatim</a>&nbsp;&nbsp;
+      <a href="#M004963">add_tag</a>&nbsp;&nbsp;
+      <a href="#M004965">end_accepting</a>&nbsp;&nbsp;
+      <a href="#M004962">escape</a>&nbsp;&nbsp;
+      <a href="#M004961">init_tags</a>&nbsp;&nbsp;
+      <a href="#M004958">l</a>&nbsp;&nbsp;
+      <a href="#M004959">l</a>&nbsp;&nbsp;
+      <a href="#M004960">new</a>&nbsp;&nbsp;
+      <a href="#M004964">start_accepting</a>&nbsp;&nbsp;
+      <a href="#M004974">wrap</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BS</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\020&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CB</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\022&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DL</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\023&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BACKSLASH</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;#{BS}symbol#{OB}92#{CB}&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">HAT</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;#{BS}symbol#{OB}94#{CB}&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BACKQUOTE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;#{BS}symbol#{OB}0#{CB}&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">TILDE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;#{DL}#{BS}sim#{DL}&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">LESSTHAN</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;#{DL}&lt;#{DL}&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">GREATERTHAN</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;#{DL}&gt;#{DL}&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">LIST_TYPE_TO_LATEX</td>
+          <td>=</td>
+          <td class="context-item-value">{       ListBase::BULLET =&gt;  [ l(&quot;\\begin{itemize}&quot;), l(&quot;\\end{itemize}&quot;) ],       ListBase::NUMBER =&gt;  [ l(&quot;\\begin{enumerate}&quot;), l(&quot;\\end{enumerate}&quot;), &quot;\\arabic&quot; ],       ListBase::UPPERALPHA =&gt;  [ l(&quot;\\begin{enumerate}&quot;), l(&quot;\\end{enumerate}&quot;), &quot;\\Alph&quot; ],       ListBase::LOWERALPHA =&gt;  [ l(&quot;\\begin{enumerate}&quot;), l(&quot;\\end{enumerate}&quot;), &quot;\\alph&quot; ],       ListBase::LABELED =&gt; [ l(&quot;\\begin{description}&quot;), l(&quot;\\end{description}&quot;) ],       ListBase::NOTE    =&gt; [         l(&quot;\\begin{tabularx}{\\linewidth}{@{} l X @{}}&quot;),          l(&quot;\\end{tabularx}&quot;) ],     }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">InlineTag</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:bit, :on, :off)</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M004958" class="method-detail">
+        <a name="M004958"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004958.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004958.html');return false;">
+          <span class="method-name">l</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004960" class="method-detail">
+        <a name="M004960"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004960.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004960.html');return false;">
+          <span class="method-name">new</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004972" class="method-detail">
+        <a name="M004972"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004972.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004972.html');return false;">
+          <span class="method-name">accept_blank_line</span><span class="method-args">(am, fragment)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004973" class="method-detail">
+        <a name="M004973"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004973.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004973.html');return false;">
+          <span class="method-name">accept_heading</span><span class="method-args">(am, fragment)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004970" class="method-detail">
+        <a name="M004970"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004970.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004970.html');return false;">
+          <span class="method-name">accept_list_end</span><span class="method-args">(am, fragment)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004971" class="method-detail">
+        <a name="M004971"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004971.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004971.html');return false;">
+          <span class="method-name">accept_list_item</span><span class="method-args">(am, fragment)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004969" class="method-detail">
+        <a name="M004969"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004969.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004969.html');return false;">
+          <span class="method-name">accept_list_start</span><span class="method-args">(am, fragment)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004966" class="method-detail">
+        <a name="M004966"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004966.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004966.html');return false;">
+          <span class="method-name">accept_paragraph</span><span class="method-args">(am, fragment)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004968" class="method-detail">
+        <a name="M004968"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004968.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004968.html');return false;">
+          <span class="method-name">accept_rule</span><span class="method-args">(am, fragment)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004967" class="method-detail">
+        <a name="M004967"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004967.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004967.html');return false;">
+          <span class="method-name">accept_verbatim</span><span class="method-args">(am, fragment)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004963" class="method-detail">
+        <a name="M004963"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004963.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004963.html');return false;">
+          <span class="method-name">add_tag</span><span class="method-args">(name, start, stop)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add a <a href="ToLaTeX.html#M004960">new</a> set of LaTeX tags for an
+attribute. We allow separate start and end tags for flexibility
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004965" class="method-detail">
+        <a name="M004965"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004965.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004965.html');return false;">
+          <span class="method-name">end_accepting</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004962" class="method-detail">
+        <a name="M004962"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004962.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004962.html');return false;">
+          <span class="method-name">escape</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Escape a LaTeX string
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004961" class="method-detail">
+        <a name="M004961"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004961.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004961.html');return false;">
+          <span class="method-name">init_tags</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="../Set.html">Set</a> up the standard mapping of attributes to
+LaTeX
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004959" class="method-detail">
+        <a name="M004959"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004959.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004959.html');return false;">
+          <span class="method-name">l</span><span class="method-args">(arg)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004964" class="method-detail">
+        <a name="M004964"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004964.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004964.html');return false;">
+          <span class="method-name">start_accepting</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Here&#8216;s the client side of the visitor pattern
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004974" class="method-detail">
+        <a name="M004974"></a>
+
+        <div class="method-heading">
+          <a href="ToLaTeX.src/M004974.html" target="Code" class="method-signature"
+            onclick="popupCode('ToLaTeX.src/M004974.html');return false;">
+          <span class="method-name">wrap</span><span class="method-args">(txt, line_len = 76)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This is a higher speed (if messier) version of <a
+href="ToLaTeX.html#M004974">wrap</a>
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

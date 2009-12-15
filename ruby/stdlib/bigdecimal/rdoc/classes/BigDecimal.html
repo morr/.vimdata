@@ -1,0 +1,3537 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: BigDecimal</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">BigDecimal</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/bigdecimal/bigdecimal_c.html">
+                bigdecimal/bigdecimal.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Numeric
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="BigDecimal.html">BigDecimal</a> provides arbitrary-precision
+floating point decimal arithmetic.
+</p>
+<p>
+Copyright (C) 2002 by Shigeo Kobayashi &lt;shigeo@tinyforest.gr.jp&gt;. You
+may distribute under the terms of either the GNU General Public License or
+the Artistic License, as specified in the README file of the <a
+href="BigDecimal.html">BigDecimal</a> distribution.
+</p>
+<p>
+Documented by mathew &lt;meta@pobox.com&gt;.
+</p>
+<h1>Introduction</h1>
+<p>
+Ruby provides built-in support for arbitrary precision integer arithmetic.
+For example:
+</p>
+<p>
+42**13 -&gt; 1265437718438866624512
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a> provides similar support for very
+large or very accurate floating point numbers.
+</p>
+<p>
+Decimal arithmetic is also useful for general calculation, because it
+provides the correct answers people expect&#8212;whereas normal binary
+floating point arithmetic often introduces subtle errors because of the
+conversion between base 10 and base 2. For example, try:
+</p>
+<pre>
+  sum = 0
+  for i in (1..10000)
+    sum = sum + 0.0001
+  end
+  print sum
+</pre>
+<p>
+and contrast with the output from:
+</p>
+<pre>
+  require 'bigdecimal'
+
+  sum = BigDecimal.new(&quot;0&quot;)
+  for i in (1..10000)
+    sum = sum + BigDecimal.new(&quot;0.0001&quot;)
+  end
+  print sum
+</pre>
+<p>
+Similarly:
+</p>
+<p>
+(<a href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;1.2&quot;) - <a
+href="BigDecimal.html">BigDecimal</a>(&quot;1.0&quot;)) == <a
+href="BigDecimal.html">BigDecimal</a>(&quot;0.2&quot;) -&gt; true
+</p>
+<p>
+(1.2 - 1.0) == 0.2 -&gt; false
+</p>
+<h1>Special features of accurate decimal arithmetic</h1>
+<p>
+Because <a href="BigDecimal.html">BigDecimal</a> is more accurate than
+normal binary floating point arithmetic, it requires some special values.
+</p>
+<h2>Infinity</h2>
+<p>
+<a href="BigDecimal.html">BigDecimal</a> sometimes needs to return
+infinity, for example if you divide a value by zero.
+</p>
+<p>
+<a href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;1.0&quot;) / <a
+href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;0.0&quot;) -&gt;
+infinity
+</p>
+<p>
+<a href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;-1.0&quot;) / <a
+href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;0.0&quot;) -&gt;
+-infinity
+</p>
+<p>
+You can represent infinite numbers to <a
+href="BigDecimal.html">BigDecimal</a> using the strings
+&#8216;Infinity&#8217;, &#8217;+Infinity&#8217; and &#8217;-Infinity&#8217;
+(case-sensitive)
+</p>
+<h2>Not a Number</h2>
+<p>
+When a computation results in an undefined value, the special value NaN
+(for &#8216;not a number&#8217;) is returned.
+</p>
+<p>
+Example:
+</p>
+<p>
+<a href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;0.0&quot;) / <a
+href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;0.0&quot;) -&gt;
+NaN
+</p>
+<p>
+You can also create undefined values. NaN is never considered to be the
+same as any other value, even NaN itself:
+</p>
+<p>
+n = <a href="BigDecimal.html#M000017">BigDecimal.new</a>(&#8216;NaN&#8217;)
+</p>
+<p>
+n == 0.0 -&gt; nil
+</p>
+<p>
+n == n -&gt; nil
+</p>
+<h2>Positive and negative zero</h2>
+<p>
+If a computation results in a value which is too small to be represented as
+a <a href="BigDecimal.html">BigDecimal</a> within the currently specified
+limits of precision, zero must be returned.
+</p>
+<p>
+If the value which is too small to be represented is negative, a <a
+href="BigDecimal.html">BigDecimal</a> value of negative zero is returned.
+If the value is positive, a value of positive zero is returned.
+</p>
+<p>
+<a href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;1.0&quot;) / <a
+href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;-Infinity&quot;)
+-&gt; -0.0
+</p>
+<p>
+<a href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;1.0&quot;) / <a
+href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;Infinity&quot;)
+-&gt; 0.0
+</p>
+<p>
+(See <a href="BigDecimal.html#M000018">BigDecimal.mode</a> for how to
+specify limits of precision.)
+</p>
+<p>
+Note that -0.0 and 0.0 are considered to be the same for the purposes of
+comparison.
+</p>
+<p>
+Note also that in mathematics, there is no particular concept of negative
+or positive zero; true mathematical zero has no <a
+href="BigDecimal.html#M000060">sign</a>.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000033">%</a>&nbsp;&nbsp;
+      <a href="#M000030">*</a>&nbsp;&nbsp;
+      <a href="#M000046">**</a>&nbsp;&nbsp;
+      <a href="#M000028">+</a>&nbsp;&nbsp;
+      <a href="#M000029">-</a>&nbsp;&nbsp;
+      <a href="#M000031">/</a>&nbsp;&nbsp;
+      <a href="#M000051">&lt;</a>&nbsp;&nbsp;
+      <a href="#M000052">&lt;=</a>&nbsp;&nbsp;
+      <a href="#M000047">&lt;=&gt;</a>&nbsp;&nbsp;
+      <a href="#M000048">==</a>&nbsp;&nbsp;
+      <a href="#M000049">===</a>&nbsp;&nbsp;
+      <a href="#M000053">&gt;</a>&nbsp;&nbsp;
+      <a href="#M000054">&gt;=</a>&nbsp;&nbsp;
+      <a href="#M000021">_load</a>&nbsp;&nbsp;
+      <a href="#M000038">abs</a>&nbsp;&nbsp;
+      <a href="#M000044">ceil</a>&nbsp;&nbsp;
+      <a href="#M000057">coerce</a>&nbsp;&nbsp;
+      <a href="#M000036">divmod</a>&nbsp;&nbsp;
+      <a href="#M000020">double_fig</a>&nbsp;&nbsp;
+      <a href="#M000050">eql?</a>&nbsp;&nbsp;
+      <a href="#M000059">exponent</a>&nbsp;&nbsp;
+      <a href="#M000063">finite?</a>&nbsp;&nbsp;
+      <a href="#M000040">fix</a>&nbsp;&nbsp;
+      <a href="#M000043">floor</a>&nbsp;&nbsp;
+      <a href="#M000042">frac</a>&nbsp;&nbsp;
+      <a href="#M000062">infinite?</a>&nbsp;&nbsp;
+      <a href="#M000058">inspect</a>&nbsp;&nbsp;
+      <a href="#M000019">limit</a>&nbsp;&nbsp;
+      <a href="#M000018">mode</a>&nbsp;&nbsp;
+      <a href="#M000034">modulo</a>&nbsp;&nbsp;
+      <a href="#M000061">nan?</a>&nbsp;&nbsp;
+      <a href="#M000017">new</a>&nbsp;&nbsp;
+      <a href="#M000056">nonzero?</a>&nbsp;&nbsp;
+      <a href="#M000045">power</a>&nbsp;&nbsp;
+      <a href="#M000023">precs</a>&nbsp;&nbsp;
+      <a href="#M000032">quo</a>&nbsp;&nbsp;
+      <a href="#M000035">remainder</a>&nbsp;&nbsp;
+      <a href="#M000041">round</a>&nbsp;&nbsp;
+      <a href="#M000060">sign</a>&nbsp;&nbsp;
+      <a href="#M000027">split</a>&nbsp;&nbsp;
+      <a href="#M000039">sqrt</a>&nbsp;&nbsp;
+      <a href="#M000037">to_f</a>&nbsp;&nbsp;
+      <a href="#M000025">to_i</a>&nbsp;&nbsp;
+      <a href="#M000026">to_int</a>&nbsp;&nbsp;
+      <a href="#M000024">to_s</a>&nbsp;&nbsp;
+      <a href="#M000064">truncate</a>&nbsp;&nbsp;
+      <a href="#M000022">ver</a>&nbsp;&nbsp;
+      <a href="#M000055">zero?</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BASE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX((S_INT)VpBaseVal())</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Base value used in internal calculations. On a 32 bit system, BASE is
+10000, indicating that calculation is done in groups of 4 digits. (If it
+were larger, BASE**2 wouldn&#8216;t fit in 32 bits, so you couldn&#8216;t
+guarantee that two groups could always be multiplied together without
+overflow.)
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EXCEPTION_ALL</td>
+          <td>=</td>
+          <td class="context-item-value">0xff</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Determines whether overflow, underflow or zero divide result in an
+exception being thrown. See <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EXCEPTION_NaN</td>
+          <td>=</td>
+          <td class="context-item-value">0x02</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Determines what happens when the result of a computation is not a number
+(NaN). See <a href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EXCEPTION_INFINITY</td>
+          <td>=</td>
+          <td class="context-item-value">0x01</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Determines what happens when the result of a computation is infinity. See
+<a href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EXCEPTION_UNDERFLOW</td>
+          <td>=</td>
+          <td class="context-item-value">0x04</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Determines what happens when the result of a computation is an underflow (a
+result too small to be represented). See <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EXCEPTION_OVERFLOW</td>
+          <td>=</td>
+          <td class="context-item-value">0x01</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Determines what happens when the result of a computation is an underflow (a
+result too large to be represented). See <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EXCEPTION_ZERODIVIDE</td>
+          <td>=</td>
+          <td class="context-item-value">0x01</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Determines what happens when a division by zero is performed. See <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ROUND_MODE</td>
+          <td>=</td>
+          <td class="context-item-value">0x100</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Determines what happens when a result must be rounded in order to fit in
+the appropriate number of significant digits. See <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ROUND_UP</td>
+          <td>=</td>
+          <td class="context-item-value">1</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Indicates that values should be rounded away from zero. See <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ROUND_DOWN</td>
+          <td>=</td>
+          <td class="context-item-value">2</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Indicates that values should be rounded towards zero. See <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ROUND_HALF_UP</td>
+          <td>=</td>
+          <td class="context-item-value">3</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Indicates that digits &gt;= 5 should be rounded up, others rounded down.
+See <a href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ROUND_HALF_DOWN</td>
+          <td>=</td>
+          <td class="context-item-value">4</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Indicates that digits &gt;= 6 should be rounded up, others rounded down.
+See <a href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ROUND_CEILING</td>
+          <td>=</td>
+          <td class="context-item-value">5</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Round towards +infinity. See <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ROUND_FLOOR</td>
+          <td>=</td>
+          <td class="context-item-value">6</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Round towards -infinity. See <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ROUND_HALF_EVEN</td>
+          <td>=</td>
+          <td class="context-item-value">7</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Round towards the even neighbor. See <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SIGN_NaN</td>
+          <td>=</td>
+          <td class="context-item-value">0</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Indicates that a value is not a number. See <a
+href="BigDecimal.html#M000060">BigDecimal.sign</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SIGN_POSITIVE_ZERO</td>
+          <td>=</td>
+          <td class="context-item-value">1</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Indicates that a value is +0. See <a
+href="BigDecimal.html#M000060">BigDecimal.sign</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SIGN_NEGATIVE_ZERO</td>
+          <td>=</td>
+          <td class="context-item-value">-1</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Indicates that a value is -0. See <a
+href="BigDecimal.html#M000060">BigDecimal.sign</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SIGN_POSITIVE_FINITE</td>
+          <td>=</td>
+          <td class="context-item-value">2</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Indicates that a value is positive and finite. See <a
+href="BigDecimal.html#M000060">BigDecimal.sign</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SIGN_NEGATIVE_FINITE</td>
+          <td>=</td>
+          <td class="context-item-value">-2</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Indicates that a value is negative and finite. See <a
+href="BigDecimal.html#M000060">BigDecimal.sign</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SIGN_POSITIVE_INFINITE</td>
+          <td>=</td>
+          <td class="context-item-value">3</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Indicates that a value is positive and infinite. See <a
+href="BigDecimal.html#M000060">BigDecimal.sign</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SIGN_NEGATIVE_INFINITE</td>
+          <td>=</td>
+          <td class="context-item-value">-3</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Indicates that a value is negative and infinite. See <a
+href="BigDecimal.html#M000060">BigDecimal.sign</a>.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000021" class="method-detail">
+        <a name="M000021"></a>
+
+        <div class="method-heading">
+          <a href="#M000021" class="method-signature">
+          <span class="method-name">_load</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Internal method used to provide marshalling support. See the Marshal
+module.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000021-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000021-source">
+<pre>
+/*
+ * Internal method used to provide marshalling support. See the Marshal module.
+ */
+static VALUE
+BigDecimal_load(VALUE self, VALUE str)
+{
+    ENTER(2);
+    Real *pv;
+    unsigned char *pch;
+    unsigned char ch;
+    unsigned long m=0;
+
+    SafeStringValue(str);
+    pch = (unsigned char *)RSTRING_PTR(str);
+    /* First get max prec */
+    while((*pch)!=(unsigned char)'\0' &amp;&amp; (ch=*pch++)!=(unsigned char)':') {
+        if(!ISDIGIT(ch)) {
+            rb_raise(rb_eTypeError, &quot;load failed: invalid character in the marshaled string&quot;);
+        }
+        m = m*10 + (unsigned long)(ch-'0');
+    }
+    if(m&gt;VpBaseFig()) m -= VpBaseFig();
+    GUARD_OBJ(pv,VpNewRbClass(m,(char *)pch,self));
+    m /= VpBaseFig();
+    if(m &amp;&amp; pv-&gt;MaxPrec&gt;m) pv-&gt;MaxPrec = m+1;
+    return ToValue(pv);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000020" class="method-detail">
+        <a name="M000020"></a>
+
+        <div class="method-heading">
+          <a href="#M000020" class="method-signature">
+          <span class="method-name">BigDecimal.double_fig<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The <a href="BigDecimal.html#M000020">BigDecimal.double_fig</a> class
+method returns the number of digits a Float number is allowed to have. The
+result depends upon the CPU and OS in use.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000020-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000020-source">
+<pre>
+/* call-seq:
+ * BigDecimal.double_fig
+ *
+ * The BigDecimal.double_fig class method returns the number of digits a
+ * Float number is allowed to have. The result depends upon the CPU and OS
+ * in use.
+ */
+static VALUE
+BigDecimal_double_fig(VALUE self)
+{
+    return INT2FIX(VpDblFig());
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000019" class="method-detail">
+        <a name="M000019"></a>
+
+        <div class="method-heading">
+          <a href="#M000019" class="method-signature">
+          <span class="method-name">BigDecimal.limit(digits)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Limit the number of significant digits in newly created <a
+href="BigDecimal.html">BigDecimal</a> numbers to the specified value.
+Rounding is performed as necessary, as specified by <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+</p>
+<p>
+A <a href="BigDecimal.html#M000019">limit</a> of 0, the default, means no
+upper <a href="BigDecimal.html#M000019">limit</a>.
+</p>
+<p>
+The <a href="BigDecimal.html#M000019">limit</a> specified by this method
+takes priority over any <a href="BigDecimal.html#M000019">limit</a>
+specified to instance methods such as <a
+href="BigDecimal.html#M000044">ceil</a>, <a
+href="BigDecimal.html#M000043">floor</a>, <a
+href="BigDecimal.html#M000064">truncate</a>, or <a
+href="BigDecimal.html#M000041">round</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000019-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000019-source">
+<pre>
+/* call-seq:
+  * BigDecimal.limit(digits)
+  *
+  * Limit the number of significant digits in newly created BigDecimal 
+  * numbers to the specified value. Rounding is performed as necessary, 
+  * as specified by BigDecimal.mode.
+  *
+  * A limit of 0, the default, means no upper limit.
+  *
+  * The limit specified by this method takes priority over any limit 
+  * specified to instance methods such as ceil, floor, truncate, or round.
+  */
+static VALUE
+BigDecimal_limit(int argc, VALUE *argv, VALUE self)
+{
+    VALUE  nFig;
+    VALUE  nCur = INT2NUM(VpGetPrecLimit());
+
+    if(rb_scan_args(argc,argv,&quot;01&quot;,&amp;nFig)==1) {
+        int nf;
+        if(nFig==Qnil) return nCur;
+        Check_Type(nFig, T_FIXNUM);
+        nf = FIX2INT(nFig);
+        if(nf&lt;0) {
+            rb_raise(rb_eArgError, &quot;argument must be positive&quot;);
+        }
+        VpSetPrecLimit(nf);
+    }
+    return nCur;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000018" class="method-detail">
+        <a name="M000018"></a>
+
+        <div class="method-heading">
+          <a href="#M000018" class="method-signature">
+          <span class="method-name">BigDecimal.mode(mode, value)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Controls handling of arithmetic exceptions and rounding. If no value is
+supplied, the current value is returned.
+</p>
+<p>
+Six values of the <a href="BigDecimal.html#M000018">mode</a> parameter
+control the handling of arithmetic exceptions:
+</p>
+<p>
+BigDecimal::EXCEPTION_NaN BigDecimal::EXCEPTION_INFINITY
+BigDecimal::EXCEPTION_UNDERFLOW BigDecimal::EXCEPTION_OVERFLOW
+BigDecimal::EXCEPTION_ZERODIVIDE BigDecimal::EXCEPTION_ALL
+</p>
+<p>
+For each <a href="BigDecimal.html#M000018">mode</a> parameter above, if the
+value set is false, computation continues after an arithmetic exception of
+the appropriate type. When computation continues, results are as follows:
+</p>
+<table>
+<tr><td valign="top">EXCEPTION_NaN:</td><td>NaN
+
+</td></tr>
+<tr><td valign="top">EXCEPTION_INFINITY:</td><td>+infinity or -infinity
+
+</td></tr>
+<tr><td valign="top">EXCEPTION_UNDERFLOW:</td><td>0
+
+</td></tr>
+<tr><td valign="top">EXCEPTION_OVERFLOW:</td><td>+infinity or -infinity
+
+</td></tr>
+<tr><td valign="top">EXCEPTION_ZERODIVIDE:</td><td>+infinity or -infinity
+
+</td></tr>
+</table>
+<p>
+One value of the <a href="BigDecimal.html#M000018">mode</a> parameter
+controls the rounding of numeric values: BigDecimal::ROUND_MODE. The values
+it can take are:
+</p>
+<table>
+<tr><td valign="top">ROUND_UP:</td><td><a href="BigDecimal.html#M000041">round</a> away from zero
+
+</td></tr>
+<tr><td valign="top">ROUND_DOWN:</td><td><a href="BigDecimal.html#M000041">round</a> towards zero (<a
+href="BigDecimal.html#M000064">truncate</a>)
+
+</td></tr>
+<tr><td valign="top">ROUND_HALF_UP:</td><td><a href="BigDecimal.html#M000041">round</a> up if the appropriate digit
+&gt;= 5, otherwise <a href="BigDecimal.html#M000064">truncate</a> (default)
+
+</td></tr>
+<tr><td valign="top">ROUND_HALF_DOWN:</td><td><a href="BigDecimal.html#M000041">round</a> up if the appropriate digit
+&gt;= 6, otherwise <a href="BigDecimal.html#M000064">truncate</a>
+
+</td></tr>
+<tr><td valign="top">ROUND_HALF_EVEN:</td><td><a href="BigDecimal.html#M000041">round</a> towards the even neighbor
+(Banker&#8216;s rounding)
+
+</td></tr>
+<tr><td valign="top">ROUND_CEILING:</td><td><a href="BigDecimal.html#M000041">round</a> towards positive infinity (<a
+href="BigDecimal.html#M000044">ceil</a>)
+
+</td></tr>
+<tr><td valign="top">ROUND_FLOOR:</td><td><a href="BigDecimal.html#M000041">round</a> towards negative infinity (<a
+href="BigDecimal.html#M000043">floor</a>)
+
+</td></tr>
+</table>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000018-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000018-source">
+<pre>
+/* call-seq:
+  * BigDecimal.mode(mode, value)
+  *
+  * Controls handling of arithmetic exceptions and rounding. If no value
+  * is supplied, the current value is returned.
+  *
+  * Six values of the mode parameter control the handling of arithmetic
+  * exceptions:
+  *
+  * BigDecimal::EXCEPTION_NaN
+  * BigDecimal::EXCEPTION_INFINITY
+  * BigDecimal::EXCEPTION_UNDERFLOW
+  * BigDecimal::EXCEPTION_OVERFLOW
+  * BigDecimal::EXCEPTION_ZERODIVIDE
+  * BigDecimal::EXCEPTION_ALL
+  *
+  * For each mode parameter above, if the value set is false, computation 
+  * continues after an arithmetic exception of the appropriate type. 
+  * When computation continues, results are as follows:
+  *
+  * EXCEPTION_NaN:: NaN
+  * EXCEPTION_INFINITY:: +infinity or -infinity
+  * EXCEPTION_UNDERFLOW:: 0
+  * EXCEPTION_OVERFLOW:: +infinity or -infinity
+  * EXCEPTION_ZERODIVIDE:: +infinity or -infinity
+  *
+  * One value of the mode parameter controls the rounding of numeric values:
+  * BigDecimal::ROUND_MODE. The values it can take are:
+  *
+  * ROUND_UP:: round away from zero
+  * ROUND_DOWN:: round towards zero (truncate)
+  * ROUND_HALF_UP:: round up if the appropriate digit &gt;= 5, otherwise truncate (default)
+  * ROUND_HALF_DOWN:: round up if the appropriate digit &gt;= 6, otherwise truncate
+  * ROUND_HALF_EVEN:: round towards the even neighbor (Banker's rounding)
+  * ROUND_CEILING:: round towards positive infinity (ceil)
+  * ROUND_FLOOR:: round towards negative infinity (floor)
+  *
+  */
+static VALUE
+BigDecimal_mode(int argc, VALUE *argv, VALUE self)
+{
+    VALUE which;
+    VALUE val;
+    unsigned long f,fo;
+ 
+    if(rb_scan_args(argc,argv,&quot;11&quot;,&amp;which,&amp;val)==1) val = Qnil;
+
+    Check_Type(which, T_FIXNUM);
+    f = (unsigned long)FIX2INT(which);
+
+    if(f&amp;VP_EXCEPTION_ALL) {
+        /* Exception mode setting */
+        fo = VpGetException();
+        if(val==Qnil) return INT2FIX(fo);
+        if(val!=Qfalse &amp;&amp; val!=Qtrue) {
+            rb_raise(rb_eTypeError, &quot;second argument must be true or false&quot;);
+            return Qnil; /* Not reached */
+        }
+        if(f&amp;VP_EXCEPTION_INFINITY) {
+            VpSetException((unsigned short)((val==Qtrue)?(fo|VP_EXCEPTION_INFINITY):
+                           (fo&amp;(~VP_EXCEPTION_INFINITY))));
+        }
+        if(f&amp;VP_EXCEPTION_NaN) {
+            VpSetException((unsigned short)((val==Qtrue)?(fo|VP_EXCEPTION_NaN):
+                           (fo&amp;(~VP_EXCEPTION_NaN))));
+        }
+        fo = VpGetException();
+        return INT2FIX(fo);
+    }
+    if(VP_ROUND_MODE==f) {
+        /* Rounding mode setting */
+        fo = VpGetRoundMode();
+        if(val==Qnil) return INT2FIX(fo);
+        Check_Type(val, T_FIXNUM);
+        if(!VpIsRoundMode(FIX2INT(val))) {
+            rb_raise(rb_eTypeError, &quot;invalid rounding mode&quot;);
+            return Qnil;
+        }
+        fo = VpSetRoundMode((unsigned long)FIX2INT(val));
+        return INT2FIX(fo);
+    }
+    rb_raise(rb_eTypeError, &quot;first argument for BigDecimal#mode invalid&quot;);
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000017" class="method-detail">
+        <a name="M000017"></a>
+
+        <div class="method-heading">
+          <a href="#M000017" class="method-signature">
+          <span class="method-name">new(initial, digits)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="BigDecimal.html#M000017">new</a> <a
+href="BigDecimal.html">BigDecimal</a> object.
+</p>
+<table>
+<tr><td valign="top">initial:</td><td>The initial value, as a String. Spaces are ignored, unrecognized characters
+terminate the value.
+
+</td></tr>
+<tr><td valign="top">digits:</td><td>The number of significant digits, as a Fixnum. If omitted or 0, the number
+of significant digits is determined from the initial value.
+
+</td></tr>
+</table>
+<p>
+The actual number of significant digits used in computation is usually
+larger than the specified number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000017-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000017-source">
+<pre>
+/* call-seq:
+  * new(initial, digits)
+  *
+  * Create a new BigDecimal object.
+  *
+  * initial:: The initial value, as a String. Spaces are ignored, unrecognized characters terminate the value.
+  *
+  * digits:: The number of significant digits, as a Fixnum. If omitted or 0, the number of significant digits is determined from the initial value.
+  *
+  * The actual number of significant digits used in computation is usually
+  * larger than the specified number.
+  */
+static VALUE
+BigDecimal_new(int argc, VALUE *argv, VALUE self)
+{
+    ENTER(5);
+    Real *pv;
+    S_LONG mf;
+    VALUE  nFig;
+    VALUE  iniValue;
+
+    if(rb_scan_args(argc,argv,&quot;11&quot;,&amp;iniValue,&amp;nFig)==1) {
+        mf = 0;
+    } else {
+        mf = GetPositiveInt(nFig);
+    }
+    SafeStringValue(iniValue);
+    GUARD_OBJ(pv,VpNewRbClass(mf, RSTRING_PTR(iniValue),self));
+    return ToValue(pv);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000022" class="method-detail">
+        <a name="M000022"></a>
+
+        <div class="method-heading">
+          <a href="#M000022" class="method-signature">
+          <span class="method-name">ver</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="BigDecimal.html">BigDecimal</a> version number.
+</p>
+<p>
+Ruby 1.8.0 returns 1.0.0. Ruby 1.8.1 thru 1.8.3 return 1.0.1.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000022-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000022-source">
+<pre>
+/*
+ * Returns the BigDecimal version number.
+ *
+ * Ruby 1.8.0 returns 1.0.0.
+ * Ruby 1.8.1 thru 1.8.3 return 1.0.1.
+ */
+static VALUE
+BigDecimal_version(VALUE self)
+{
+    /*
+     * 1.0.0: Ruby 1.8.0
+     * 1.0.1: Ruby 1.8.1
+    */
+    return rb_str_new2(&quot;1.0.1&quot;);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000033" class="method-detail">
+        <a name="M000033"></a>
+
+        <div class="method-heading">
+          <a href="#M000033" class="method-signature">
+          <span class="method-name">a % b<br />
+a.modulo(b)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the modulus from dividing by b. See <a
+href="BigDecimal.html#M000036">divmod</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000033-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000033-source">
+<pre>
+/* call-seq:
+ * a % b
+ * a.modulo(b)
+ *
+ * Returns the modulus from dividing by b. See divmod.
+ */
+static VALUE
+BigDecimal_mod(VALUE self, VALUE r) /* %: a%b = a - (a.to_f/b).floor * b */
+{
+    ENTER(3);
+    VALUE obj;
+    Real *div=NULL, *mod=NULL;
+
+    obj = BigDecimal_DoDivmod(self,r,&amp;div,&amp;mod);
+    if(obj!=(VALUE)0) return obj;
+    SAVE(div);SAVE(mod);
+    return ToValue(mod);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000030" class="method-detail">
+        <a name="M000030"></a>
+
+        <div class="method-heading">
+          <a href="#M000030" class="method-signature">
+          <span class="method-name">mult(value, digits)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Multiply by the specified value.
+</p>
+<p>
+e.g.
+</p>
+<pre>
+  c = a.mult(b,n)
+  c = a * b
+</pre>
+<table>
+<tr><td valign="top">digits:</td><td>If specified and less than the number of significant digits of the result,
+the result is rounded to that number of digits, according to <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td></tr>
+</table>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000030-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000030-source">
+<pre>
+/* call-seq:
+  * mult(value, digits)
+  *
+  * Multiply by the specified value. 
+  *
+  * e.g.
+  *   c = a.mult(b,n)
+  *   c = a * b
+  *
+  * digits:: If specified and less than the number of significant digits of the result, the result is rounded to that number of digits, according to BigDecimal.mode.
+  */
+static VALUE
+BigDecimal_mult(VALUE self, VALUE r)
+{
+    ENTER(5);
+    Real *c, *a, *b;
+    U_LONG mx;
+
+    GUARD_OBJ(a,GetVpValue(self,1));
+    b = GetVpValue(r,0);
+    if(!b) return DoSomeOne(self,r);
+    SAVE(b);
+
+    mx = a-&gt;Prec + b-&gt;Prec;
+    GUARD_OBJ(c,VpCreateRbObject(mx *(VpBaseFig() + 1), &quot;0&quot;));
+    VpMult(c, a, b);
+    return ToValue(c);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000046" class="method-detail">
+        <a name="M000046"></a>
+
+        <div class="method-heading">
+          <a href="#M000046" class="method-signature">
+          <span class="method-name">power(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the value raised to the <a href="BigDecimal.html#M000045">power</a>
+of n. Note that n must be an Integer.
+</p>
+<p>
+Also available as the operator **
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000046-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000046-source">
+<pre>
+/* call-seq:
+ * power(n)
+ *
+ * Returns the value raised to the power of n. Note that n must be an Integer.
+ *
+ * Also available as the operator **
+ */
+static VALUE
+BigDecimal_power(VALUE self, VALUE p)
+{
+    ENTER(5);
+    Real *x, *y;
+    S_LONG mp, ma, n;
+
+    Check_Type(p, T_FIXNUM);
+    n = FIX2INT(p);
+    ma = n;
+    if(ma &lt; 0)  ma = -ma;
+    if(ma == 0) ma = 1;
+
+    GUARD_OBJ(x,GetVpValue(self,1));
+    if(VpIsDef(x)) {
+        mp = x-&gt;Prec *(VpBaseFig() + 1);
+        GUARD_OBJ(y,VpCreateRbObject(mp *(ma + 1), &quot;0&quot;));
+    } else {
+        GUARD_OBJ(y,VpCreateRbObject(1, &quot;0&quot;));
+    }
+    VpPower(y, x, n);
+    return ToValue(y);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000028" class="method-detail">
+        <a name="M000028"></a>
+
+        <div class="method-heading">
+          <a href="#M000028" class="method-signature">
+          <span class="method-name">add(value, digits)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add the specified value.
+</p>
+<p>
+e.g.
+</p>
+<pre>
+  c = a.add(b,n)
+  c = a + b
+</pre>
+<table>
+<tr><td valign="top">digits:</td><td>If specified and less than the number of significant digits of the result,
+the result is rounded to that number of digits, according to <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td></tr>
+</table>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000028-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000028-source">
+<pre>
+/* call-seq:
+  * add(value, digits)
+  *
+  * Add the specified value. 
+  *
+  * e.g.
+  *   c = a.add(b,n)
+  *   c = a + b
+  *
+  * digits:: If specified and less than the number of significant digits of the result, the result is rounded to that number of digits, according to BigDecimal.mode.
+  */
+static VALUE
+BigDecimal_add(VALUE self, VALUE r)
+{
+    ENTER(5);
+    Real *c, *a, *b;
+    U_LONG mx;
+    GUARD_OBJ(a,GetVpValue(self,1));
+    b = GetVpValue(r,0);
+    if(!b) return DoSomeOne(self,r);
+    SAVE(b);
+    if(VpIsNaN(b)) return b-&gt;obj;
+    if(VpIsNaN(a)) return a-&gt;obj;
+    mx = GetAddSubPrec(a,b);
+    if(mx==(-1L)) {
+        GUARD_OBJ(c,VpCreateRbObject(VpBaseFig() + 1, &quot;0&quot;));
+        VpAddSub(c, a, b, 1);
+    } else {
+        GUARD_OBJ(c,VpCreateRbObject(mx *(VpBaseFig() + 1), &quot;0&quot;));
+        if(!mx) {
+            VpSetInf(c,VpGetSign(a));
+        } else {
+            VpAddSub(c, a, b, 1);
+        }
+    }
+    return ToValue(c);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000029" class="method-detail">
+        <a name="M000029"></a>
+
+        <div class="method-heading">
+          <a href="#M000029" class="method-signature">
+          <span class="method-name">sub(value, digits)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Subtract the specified value.
+</p>
+<p>
+e.g.
+</p>
+<pre>
+  c = a.sub(b,n)
+  c = a - b
+</pre>
+<table>
+<tr><td valign="top">digits:</td><td>If specified and less than the number of significant digits of the result,
+the result is rounded to that number of digits, according to <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td></tr>
+</table>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000029-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000029-source">
+<pre>
+/* call-seq:
+  * sub(value, digits)
+  *
+  * Subtract the specified value. 
+  *
+  * e.g.
+  *   c = a.sub(b,n)
+  *   c = a - b
+  *
+  * digits:: If specified and less than the number of significant digits of the result, the result is rounded to that number of digits, according to BigDecimal.mode.
+  */
+static VALUE
+BigDecimal_sub(VALUE self, VALUE r)
+{
+    ENTER(5);
+    Real *c, *a, *b;
+    U_LONG mx;
+
+    GUARD_OBJ(a,GetVpValue(self,1));
+    b = GetVpValue(r,0);
+    if(!b) return DoSomeOne(self,r);
+    SAVE(b);
+
+    if(VpIsNaN(b)) return b-&gt;obj;
+    if(VpIsNaN(a)) return a-&gt;obj;
+
+    mx = GetAddSubPrec(a,b);
+    if(mx==(-1L)) {
+        GUARD_OBJ(c,VpCreateRbObject(VpBaseFig() + 1, &quot;0&quot;));
+        VpAddSub(c, a, b, -1);
+    } else {
+        GUARD_OBJ(c,VpCreateRbObject(mx *(VpBaseFig() + 1), &quot;0&quot;));
+        if(!mx) {
+            VpSetInf(c,VpGetSign(a));
+        } else {
+            VpAddSub(c, a, b, -1);
+        }
+    }
+    return ToValue(c);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000031" class="method-detail">
+        <a name="M000031"></a>
+
+        <div class="method-heading">
+          <a href="#M000031" class="method-signature">
+          <span class="method-name">div(value, digits)<br />
+quo(value)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Divide by the specified value.
+</p>
+<p>
+e.g.
+</p>
+<pre>
+  c = a.div(b,n)
+</pre>
+<table>
+<tr><td valign="top">digits:</td><td>If specified and less than the number of significant digits of the result,
+the result is rounded to that number of digits, according to <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td></tr>
+</table>
+<p>
+If digits is 0, the result is the same as the / operator. If not, the
+result is an integer <a href="BigDecimal.html">BigDecimal</a>, by analogy
+with Float#div.
+</p>
+<p>
+The alias <a href="BigDecimal.html#M000032">quo</a> is provided since
+div(value, 0) is the same as computing the quotient; see <a
+href="BigDecimal.html#M000036">divmod</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000031-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000031-source">
+<pre>
+/* call-seq:
+  * div(value, digits)
+  * quo(value)
+  *
+  * Divide by the specified value. 
+  *
+  * e.g.
+  *   c = a.div(b,n)
+  *
+  * digits:: If specified and less than the number of significant digits of the result, the result is rounded to that number of digits, according to BigDecimal.mode.
+  * 
+  * If digits is 0, the result is the same as the / operator. If not, the
+  * result is an integer BigDecimal, by analogy with Float#div.
+  *
+  * The alias quo is provided since div(value, 0) is the same as computing
+  * the quotient; see divmod.
+  */
+static VALUE
+BigDecimal_div(VALUE self, VALUE r)
+/* For c = self/r: with round operation */
+{
+    ENTER(5);
+    Real *c=NULL, *res=NULL, *div = NULL;
+    r = BigDecimal_divide(&amp;c, &amp;res, &amp;div, self, r);
+    if(r!=(VALUE)0) return r; /* coerced by other */
+    SAVE(c);SAVE(res);SAVE(div);
+    /* a/b = c + r/b */
+    /* c xxxxx
+       r 00000yyyyy  ==&gt; (y/b)*BASE &gt;= HALF_BASE
+     */
+    /* Round */
+    if(VpHasVal(div)) { /* frac[0] must be zero for NaN,INF,Zero */
+       VpInternalRound(c,0,c-&gt;frac[c-&gt;Prec-1],(VpBaseVal()*res-&gt;frac[0])/div-&gt;frac[0]);
+    }
+    return ToValue(c);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000051" class="method-detail">
+        <a name="M000051"></a>
+
+        <div class="method-heading">
+          <a href="#M000051" class="method-signature">
+          <span class="method-name">a < b<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if a is less than b. Values may be coerced to perform the
+comparison (see ==, <a href="BigDecimal.html#M000057">coerce</a>).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000051-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000051-source">
+<pre>
+/* call-seq:
+ * a &lt; b
+ *
+ * Returns true if a is less than b. Values may be coerced to perform the
+ * comparison (see ==, coerce).
+ */
+static VALUE
+BigDecimal_lt(VALUE self, VALUE r)
+{
+    return BigDecimalCmp(self, r, '&lt;');
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000052" class="method-detail">
+        <a name="M000052"></a>
+
+        <div class="method-heading">
+          <a href="#M000052" class="method-signature">
+          <span class="method-name">a <= b<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if a is less than or equal to b. Values may be coerced to
+perform the comparison (see ==, <a
+href="BigDecimal.html#M000057">coerce</a>).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000052-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000052-source">
+<pre>
+/* call-seq:
+ * a &lt;= b
+ *
+ * Returns true if a is less than or equal to b. Values may be coerced to 
+ * perform the comparison (see ==, coerce).
+ */
+static VALUE
+BigDecimal_le(VALUE self, VALUE r)
+{
+    return BigDecimalCmp(self, r, 'L');
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000047" class="method-detail">
+        <a name="M000047"></a>
+
+        <div class="method-heading">
+          <a href="#M000047" class="method-signature">
+          <span class="method-name">&lt;=&gt;</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The comparison operator. a &lt;=&gt; b is 0 if a == b, 1 if a &gt; b, -1 if
+a &lt; b.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000047-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000047-source">
+<pre>
+/* The comparison operator.
+ * a &lt;=&gt; b is 0 if a == b, 1 if a &gt; b, -1 if a &lt; b.
+ */
+static VALUE
+BigDecimal_comp(VALUE self, VALUE r)
+{
+    return BigDecimalCmp(self, r, '*');
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000048" class="method-detail">
+        <a name="M000048"></a>
+
+        <div class="method-heading">
+          <a href="#M000048" class="method-signature">
+          <span class="method-name">==</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Tests for value equality; returns true if the values are equal.
+</p>
+<p>
+The == and === operators and the <a href="BigDecimal.html#M000050">eql?</a>
+method have the same implementation for <a
+href="BigDecimal.html">BigDecimal</a>.
+</p>
+<p>
+Values may be coerced to perform the comparison:
+</p>
+<p>
+<a href="BigDecimal.html#M000017">BigDecimal.new</a>(&#8216;1.0&#8217;) ==
+1.0 -&gt; true
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000048-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000048-source">
+<pre>
+/*
+ * Tests for value equality; returns true if the values are equal.
+ *
+ * The == and === operators and the eql? method have the same implementation 
+ * for BigDecimal.
+ *
+ * Values may be coerced to perform the comparison:
+ *
+ * BigDecimal.new('1.0') == 1.0  -&gt; true
+ */
+static VALUE
+BigDecimal_eq(VALUE self, VALUE r)
+{
+    return BigDecimalCmp(self, r, '=');
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000049" class="method-detail">
+        <a name="M000049"></a>
+
+        <div class="method-heading">
+          <a href="#M000049" class="method-signature">
+          <span class="method-name">===</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Tests for value equality; returns true if the values are equal.
+</p>
+<p>
+The == and === operators and the <a href="BigDecimal.html#M000050">eql?</a>
+method have the same implementation for <a
+href="BigDecimal.html">BigDecimal</a>.
+</p>
+<p>
+Values may be coerced to perform the comparison:
+</p>
+<p>
+<a href="BigDecimal.html#M000017">BigDecimal.new</a>(&#8216;1.0&#8217;) ==
+1.0 -&gt; true
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000049-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000049-source">
+<pre>
+/*
+ * Tests for value equality; returns true if the values are equal.
+ *
+ * The == and === operators and the eql? method have the same implementation 
+ * for BigDecimal.
+ *
+ * Values may be coerced to perform the comparison:
+ *
+ * BigDecimal.new('1.0') == 1.0  -&gt; true
+ */
+static VALUE
+BigDecimal_eq(VALUE self, VALUE r)
+{
+    return BigDecimalCmp(self, r, '=');
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000053" class="method-detail">
+        <a name="M000053"></a>
+
+        <div class="method-heading">
+          <a href="#M000053" class="method-signature">
+          <span class="method-name">a > b<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if a is greater than b. Values may be coerced to perform the
+comparison (see ==, <a href="BigDecimal.html#M000057">coerce</a>).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000053-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000053-source">
+<pre>
+/* call-seq:
+ * a &gt; b
+ *
+ * Returns true if a is greater than b.  Values may be coerced to 
+ * perform the comparison (see ==, coerce).
+ */
+static VALUE
+BigDecimal_gt(VALUE self, VALUE r)
+{
+    return BigDecimalCmp(self, r, '&gt;');
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000054" class="method-detail">
+        <a name="M000054"></a>
+
+        <div class="method-heading">
+          <a href="#M000054" class="method-signature">
+          <span class="method-name">a >= b<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if a is greater than or equal to b. Values may be coerced to
+perform the comparison (see ==, <a
+href="BigDecimal.html#M000057">coerce</a>)
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000054-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000054-source">
+<pre>
+/* call-seq:
+ * a &gt;= b
+ *
+ * Returns true if a is greater than or equal to b. Values may be coerced to 
+ * perform the comparison (see ==, coerce)
+ */
+static VALUE
+BigDecimal_ge(VALUE self, VALUE r)
+{
+    return BigDecimalCmp(self, r, 'G');
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000038" class="method-detail">
+        <a name="M000038"></a>
+
+        <div class="method-heading">
+          <a href="#M000038" class="method-signature">
+          <span class="method-name">abs</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the absolute value.
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;5&#8217;).<a
+href="BigDecimal.html#M000038">abs</a> -&gt; 5
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8217;-3&#8217;).<a
+href="BigDecimal.html#M000038">abs</a> -&gt; 3
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000038-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000038-source">
+<pre>
+/* Returns the absolute value.
+ *
+ * BigDecimal('5').abs -&gt; 5
+ *
+ * BigDecimal('-3').abs -&gt; 3
+ */
+static VALUE
+BigDecimal_abs(VALUE self)
+{
+    ENTER(5);
+    Real *c, *a;
+    U_LONG mx;
+
+    GUARD_OBJ(a,GetVpValue(self,1));
+    mx = a-&gt;Prec *(VpBaseFig() + 1);
+    GUARD_OBJ(c,VpCreateRbObject(mx, &quot;0&quot;));
+    VpAsgn(c, a, 1);
+    VpChangeSign(c,(S_INT)1);
+    return ToValue(c);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000044" class="method-detail">
+        <a name="M000044"></a>
+
+        <div class="method-heading">
+          <a href="#M000044" class="method-signature">
+          <span class="method-name">ceil(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the smallest integer greater than or equal to the value, as a <a
+href="BigDecimal.html">BigDecimal</a>.
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;3.14159&#8217;).<a
+href="BigDecimal.html#M000044">ceil</a> -&gt; 4
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8217;-9.1&#8217;).<a
+href="BigDecimal.html#M000044">ceil</a> -&gt; -9
+</p>
+<p>
+If n is specified and positive, the fractional part of the result has no
+more than that many digits.
+</p>
+<p>
+If n is specified and negative, at least that many digits to the left of
+the decimal point will be 0 in the result.
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;3.14159&#8217;).<a
+href="BigDecimal.html#M000044">ceil</a>(3) -&gt; 3.142
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;13345.234&#8217;).<a
+href="BigDecimal.html#M000044">ceil</a>(-2) -&gt; 13400.0
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000044-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000044-source">
+<pre>
+/* call-seq:
+ * ceil(n)
+ *
+ * Return the smallest integer greater than or equal to the value, as a BigDecimal.
+ *
+ * BigDecimal('3.14159').ceil -&gt; 4
+ *
+ * BigDecimal('-9.1').ceil -&gt; -9
+ *
+ * If n is specified and positive, the fractional part of the result has no
+ * more than that many digits.  
+ *
+ * If n is specified and negative, at least that
+ * many digits to the left of the decimal point will be 0 in the result.
+ *
+ * BigDecimal('3.14159').ceil(3) -&gt; 3.142
+ *
+ * BigDecimal('13345.234').ceil(-2) -&gt; 13400.0
+ */
+static VALUE
+BigDecimal_ceil(int argc, VALUE *argv, VALUE self)
+{
+    ENTER(5);
+    Real *c, *a;
+    U_LONG mx;
+    int iLoc;
+    VALUE vLoc;
+    U_LONG pl = VpSetPrecLimit(0);
+
+    if(rb_scan_args(argc,argv,&quot;01&quot;,&amp;vLoc)==0) {
+        iLoc = 0;
+    } else {
+        Check_Type(vLoc, T_FIXNUM);
+        iLoc = FIX2INT(vLoc);
+    }
+
+    GUARD_OBJ(a,GetVpValue(self,1));
+    mx = a-&gt;Prec *(VpBaseFig() + 1);
+    GUARD_OBJ(c,VpCreateRbObject(mx, &quot;0&quot;));
+    VpSetPrecLimit(pl);
+    VpActiveRound(c,a,VP_ROUND_CEIL,iLoc);
+    return ToValue(c);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000057" class="method-detail">
+        <a name="M000057"></a>
+
+        <div class="method-heading">
+          <a href="#M000057" class="method-signature">
+          <span class="method-name">coerce</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The <a href="BigDecimal.html#M000057">coerce</a> method provides support
+for Ruby type coercion. It is not enabled by default.
+</p>
+<p>
+This means that binary operations like + * / or - can often be performed on
+a <a href="BigDecimal.html">BigDecimal</a> and an object of another type,
+if the other object can be coerced into a <a
+href="BigDecimal.html">BigDecimal</a> value.
+</p>
+<p>
+e.g. a = <a
+href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;1.0&quot;) b = a /
+2.0 -&gt; 0.5
+</p>
+<p>
+Note that coercing a String to a <a href="BigDecimal.html">BigDecimal</a>
+is not supported by default; it requires a special compile-time option when
+building Ruby.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000057-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000057-source">
+<pre>
+/* The coerce method provides support for Ruby type coercion. It is not
+ * enabled by default.
+ * 
+ * This means that binary operations like + * / or - can often be performed 
+ * on a BigDecimal and an object of another type, if the other object can
+ * be coerced into a BigDecimal value.
+ *
+ * e.g.
+ * a = BigDecimal.new(&quot;1.0&quot;)
+ * b = a / 2.0  -&gt; 0.5
+ *
+ * Note that coercing a String to a BigDecimal is not supported by default;
+ * it requires a special compile-time option when building Ruby.
+ */
+static VALUE
+BigDecimal_coerce(VALUE self, VALUE other)
+{
+    ENTER(2);
+    VALUE obj;
+    Real *b;
+    if(TYPE(other) == T_FLOAT) {
+       obj = rb_assoc_new(other, BigDecimal_to_f(self));
+    } else {
+       GUARD_OBJ(b,GetVpValue(other,1));
+       obj = rb_assoc_new(b-&gt;obj, self);
+    }
+    return obj;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000036" class="method-detail">
+        <a name="M000036"></a>
+
+        <div class="method-heading">
+          <a href="#M000036" class="method-signature">
+          <span class="method-name">divmod</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Divides by the specified value, and returns the quotient and modulus as <a
+href="BigDecimal.html">BigDecimal</a> numbers. The quotient is rounded
+towards negative infinity.
+</p>
+<p>
+For example:
+</p>
+<p>
+require &#8216;bigdecimal&#8216;
+</p>
+<p>
+a = <a href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;42&quot;) b
+= <a href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;9&quot;)
+</p>
+<p>
+q,m = a.divmod(b)
+</p>
+<p>
+c = q * b + m
+</p>
+<p>
+a == c -&gt; true
+</p>
+<p>
+The quotient q is (a/b).<a href="BigDecimal.html#M000043">floor</a>, and
+the modulus is the amount that must be added to q * b to get a.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000036-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000036-source">
+<pre>
+/* Divides by the specified value, and returns the quotient and modulus
+ * as BigDecimal numbers. The quotient is rounded towards negative infinity.
+ *
+ * For example:
+ *
+ * require 'bigdecimal'
+ *
+ * a = BigDecimal.new(&quot;42&quot;)
+ * b = BigDecimal.new(&quot;9&quot;)
+ *
+ * q,m = a.divmod(b)
+ *
+ * c = q * b + m
+ *
+ * a == c  -&gt; true
+ *
+ * The quotient q is (a/b).floor, and the modulus is the amount that must be 
+ * added to q * b to get a.
+ */
+static VALUE
+BigDecimal_divmod(VALUE self, VALUE r)
+{
+    ENTER(5);
+    VALUE obj;
+    Real *div=NULL, *mod=NULL;
+
+    obj = BigDecimal_DoDivmod(self,r,&amp;div,&amp;mod);
+    if(obj!=(VALUE)0) return obj;
+    SAVE(div);SAVE(mod);
+    obj = rb_assoc_new(ToValue(div), ToValue(mod));
+    return obj;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000050" class="method-detail">
+        <a name="M000050"></a>
+
+        <div class="method-heading">
+          <a href="#M000050" class="method-signature">
+          <span class="method-name">eql?</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Tests for value equality; returns true if the values are equal.
+</p>
+<p>
+The == and === operators and the <a href="BigDecimal.html#M000050">eql?</a>
+method have the same implementation for <a
+href="BigDecimal.html">BigDecimal</a>.
+</p>
+<p>
+Values may be coerced to perform the comparison:
+</p>
+<p>
+<a href="BigDecimal.html#M000017">BigDecimal.new</a>(&#8216;1.0&#8217;) ==
+1.0 -&gt; true
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000050-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000050-source">
+<pre>
+/*
+ * Tests for value equality; returns true if the values are equal.
+ *
+ * The == and === operators and the eql? method have the same implementation 
+ * for BigDecimal.
+ *
+ * Values may be coerced to perform the comparison:
+ *
+ * BigDecimal.new('1.0') == 1.0  -&gt; true
+ */
+static VALUE
+BigDecimal_eq(VALUE self, VALUE r)
+{
+    return BigDecimalCmp(self, r, '=');
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000059" class="method-detail">
+        <a name="M000059"></a>
+
+        <div class="method-heading">
+          <a href="#M000059" class="method-signature">
+          <span class="method-name">exponent</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="BigDecimal.html#M000059">exponent</a> of the <a
+href="BigDecimal.html">BigDecimal</a> number, as an Integer.
+</p>
+<p>
+If the number can be represented as 0.xxxxxx*10**n where xxxxxx is a string
+of digits with no leading zeros, then n is the <a
+href="BigDecimal.html#M000059">exponent</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000059-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000059-source">
+<pre>
+/* Returns the exponent of the BigDecimal number, as an Integer.
+ *
+ * If the number can be represented as 0.xxxxxx*10**n where xxxxxx is a string
+ * of digits with no leading zeros, then n is the exponent.
+ */
+static VALUE
+BigDecimal_exponent(VALUE self)
+{
+    S_LONG e = VpExponent10(GetVpValue(self,1));
+    return INT2NUM(e);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000063" class="method-detail">
+        <a name="M000063"></a>
+
+        <div class="method-heading">
+          <a href="#M000063" class="method-signature">
+          <span class="method-name">finite?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns True if the value is finite (not NaN or infinite)
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000063-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000063-source">
+<pre>
+/* Returns True if the value is finite (not NaN or infinite) */
+static VALUE
+BigDecimal_IsFinite(VALUE self)
+{
+    Real *p = GetVpValue(self,1);
+    if(VpIsNaN(p)) return Qfalse;
+    if(VpIsInf(p)) return Qfalse;
+    return Qtrue;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000040" class="method-detail">
+        <a name="M000040"></a>
+
+        <div class="method-heading">
+          <a href="#M000040" class="method-signature">
+          <span class="method-name">fix</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the integer part of the number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000040-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000040-source">
+<pre>
+/* Return the integer part of the number.
+ */
+static VALUE
+BigDecimal_fix(VALUE self)
+{
+    ENTER(5);
+    Real *c, *a;
+    U_LONG mx;
+
+    GUARD_OBJ(a,GetVpValue(self,1));
+    mx = a-&gt;Prec *(VpBaseFig() + 1);
+    GUARD_OBJ(c,VpCreateRbObject(mx, &quot;0&quot;));
+    VpActiveRound(c,a,VP_ROUND_DOWN,0); /* 0: round off */
+    return ToValue(c);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000043" class="method-detail">
+        <a name="M000043"></a>
+
+        <div class="method-heading">
+          <a href="#M000043" class="method-signature">
+          <span class="method-name">floor(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the largest integer less than or equal to the value, as a <a
+href="BigDecimal.html">BigDecimal</a>.
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;3.14159&#8217;).<a
+href="BigDecimal.html#M000043">floor</a> -&gt; 3
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8217;-9.1&#8217;).<a
+href="BigDecimal.html#M000043">floor</a> -&gt; -10
+</p>
+<p>
+If n is specified and positive, the fractional part of the result has no
+more than that many digits.
+</p>
+<p>
+If n is specified and negative, at least that many digits to the left of
+the decimal point will be 0 in the result.
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;3.14159&#8217;).<a
+href="BigDecimal.html#M000043">floor</a>(3) -&gt; 3.141
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;13345.234&#8217;).<a
+href="BigDecimal.html#M000043">floor</a>(-2) -&gt; 13300.0
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000043-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000043-source">
+<pre>
+/* call-seq:
+ * floor(n)
+ *
+ * Return the largest integer less than or equal to the value, as a BigDecimal.
+ *
+ * BigDecimal('3.14159').floor -&gt; 3
+ *
+ * BigDecimal('-9.1').floor -&gt; -10
+ *
+ * If n is specified and positive, the fractional part of the result has no
+ * more than that many digits.  
+ *
+ * If n is specified and negative, at least that
+ * many digits to the left of the decimal point will be 0 in the result.
+ *
+ * BigDecimal('3.14159').floor(3) -&gt; 3.141
+ *
+ * BigDecimal('13345.234').floor(-2) -&gt; 13300.0
+ */
+static VALUE
+BigDecimal_floor(int argc, VALUE *argv, VALUE self)
+{
+    ENTER(5);
+    Real *c, *a;
+    U_LONG mx;
+    int iLoc;
+    VALUE vLoc;
+    U_LONG pl = VpSetPrecLimit(0);
+
+    if(rb_scan_args(argc,argv,&quot;01&quot;,&amp;vLoc)==0) {
+        iLoc = 0;
+    } else {
+        Check_Type(vLoc, T_FIXNUM);
+        iLoc = FIX2INT(vLoc);
+    }
+
+    GUARD_OBJ(a,GetVpValue(self,1));
+    mx = a-&gt;Prec *(VpBaseFig() + 1);
+    GUARD_OBJ(c,VpCreateRbObject(mx, &quot;0&quot;));
+    VpSetPrecLimit(pl);
+    VpActiveRound(c,a,VP_ROUND_FLOOR,iLoc);
+    return ToValue(c);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000042" class="method-detail">
+        <a name="M000042"></a>
+
+        <div class="method-heading">
+          <a href="#M000042" class="method-signature">
+          <span class="method-name">frac</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the fractional part of the number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000042-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000042-source">
+<pre>
+/* Return the fractional part of the number.
+ */
+static VALUE
+BigDecimal_frac(VALUE self)
+{
+    ENTER(5);
+    Real *c, *a;
+    U_LONG mx;
+
+    GUARD_OBJ(a,GetVpValue(self,1));
+    mx = a-&gt;Prec *(VpBaseFig() + 1);
+    GUARD_OBJ(c,VpCreateRbObject(mx, &quot;0&quot;));
+    VpFrac(c, a);
+    return ToValue(c);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000062" class="method-detail">
+        <a name="M000062"></a>
+
+        <div class="method-heading">
+          <a href="#M000062" class="method-signature">
+          <span class="method-name">infinite?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns True if the value is infinite
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000062-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000062-source">
+<pre>
+/* Returns True if the value is infinite */
+static VALUE
+BigDecimal_IsInfinite(VALUE self)
+{
+    Real *p = GetVpValue(self,1);
+    if(VpIsPosInf(p)) return INT2FIX(1);
+    if(VpIsNegInf(p)) return INT2FIX(-1);
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000058" class="method-detail">
+        <a name="M000058"></a>
+
+        <div class="method-heading">
+          <a href="#M000058" class="method-signature">
+          <span class="method-name">inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns debugging information about the value as a string of
+comma-separated values in angle brackets with a leading #:
+</p>
+<p>
+<a
+href="BigDecimal.html#M000017">BigDecimal.new</a>(&quot;1234.5678&quot;).<a
+href="BigDecimal.html#M000058">inspect</a> -&gt; &quot;#&lt;<a
+href="BigDecimal.html">BigDecimal</a>:b7ea1130,&#8217;0.12345678E4&#8217;,8(12)&gt;&quot;
+</p>
+<p>
+The first part is the address, the second is the value as a string, and the
+final part ss(mm) is the current number of significant digits and the
+maximum number of significant digits, respectively.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000058-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000058-source">
+<pre>
+/* Returns debugging information about the value as a string of comma-separated
+ * values in angle brackets with a leading #:
+ *
+ * BigDecimal.new(&quot;1234.5678&quot;).inspect -&gt;
+ * &quot;#&lt;BigDecimal:b7ea1130,'0.12345678E4',8(12)&gt;&quot;
+ *
+ * The first part is the address, the second is the value as a string, and
+ * the final part ss(mm) is the current number of significant digits and the
+ * maximum number of significant digits, respectively.
+ */
+static VALUE
+BigDecimal_inspect(VALUE self)
+{
+    ENTER(5);
+    Real *vp;
+    VALUE obj;
+    unsigned int nc;
+    char *psz1;
+    char *pszAll;
+
+    GUARD_OBJ(vp,GetVpValue(self,1));
+    nc = VpNumOfChars(vp,&quot;E&quot;);
+    nc +=(nc + 9) / 10;
+
+    psz1   = ALLOCA_N(char,nc);
+    pszAll = ALLOCA_N(char,nc+256);
+    VpToString(vp, psz1, 10, 0);
+    sprintf(pszAll,&quot;#&lt;BigDecimal:%lx,'%s',%lu(%lu)&gt;&quot;,self,psz1,VpPrec(vp)*VpBaseFig(),VpMaxPrec(vp)*VpBaseFig());
+    obj = rb_str_new2(pszAll);
+    return obj;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000034" class="method-detail">
+        <a name="M000034"></a>
+
+        <div class="method-heading">
+          <a href="#M000034" class="method-signature">
+          <span class="method-name">a % b<br />
+a.modulo(b)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the modulus from dividing by b. See <a
+href="BigDecimal.html#M000036">divmod</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000034-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000034-source">
+<pre>
+/* call-seq:
+ * a % b
+ * a.modulo(b)
+ *
+ * Returns the modulus from dividing by b. See divmod.
+ */
+static VALUE
+BigDecimal_mod(VALUE self, VALUE r) /* %: a%b = a - (a.to_f/b).floor * b */
+{
+    ENTER(3);
+    VALUE obj;
+    Real *div=NULL, *mod=NULL;
+
+    obj = BigDecimal_DoDivmod(self,r,&amp;div,&amp;mod);
+    if(obj!=(VALUE)0) return obj;
+    SAVE(div);SAVE(mod);
+    return ToValue(mod);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000061" class="method-detail">
+        <a name="M000061"></a>
+
+        <div class="method-heading">
+          <a href="#M000061" class="method-signature">
+          <span class="method-name">nan?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns True if the value is Not a Number
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000061-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000061-source">
+<pre>
+/* Returns True if the value is Not a Number */
+static VALUE
+BigDecimal_IsNaN(VALUE self)
+{
+    Real *p = GetVpValue(self,1);
+    if(VpIsNaN(p))  return Qtrue;
+    return Qfalse;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000056" class="method-detail">
+        <a name="M000056"></a>
+
+        <div class="method-heading">
+          <a href="#M000056" class="method-signature">
+          <span class="method-name">nonzero?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns True if the value is non-zero.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000056-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000056-source">
+<pre>
+/* Returns True if the value is non-zero. */
+static VALUE
+BigDecimal_nonzero(VALUE self)
+{
+    Real *a = GetVpValue(self,1);
+    return VpIsZero(a) ? Qnil : self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000045" class="method-detail">
+        <a name="M000045"></a>
+
+        <div class="method-heading">
+          <a href="#M000045" class="method-signature">
+          <span class="method-name">power(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the value raised to the <a href="BigDecimal.html#M000045">power</a>
+of n. Note that n must be an Integer.
+</p>
+<p>
+Also available as the operator **
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000045-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000045-source">
+<pre>
+/* call-seq:
+ * power(n)
+ *
+ * Returns the value raised to the power of n. Note that n must be an Integer.
+ *
+ * Also available as the operator **
+ */
+static VALUE
+BigDecimal_power(VALUE self, VALUE p)
+{
+    ENTER(5);
+    Real *x, *y;
+    S_LONG mp, ma, n;
+
+    Check_Type(p, T_FIXNUM);
+    n = FIX2INT(p);
+    ma = n;
+    if(ma &lt; 0)  ma = -ma;
+    if(ma == 0) ma = 1;
+
+    GUARD_OBJ(x,GetVpValue(self,1));
+    if(VpIsDef(x)) {
+        mp = x-&gt;Prec *(VpBaseFig() + 1);
+        GUARD_OBJ(y,VpCreateRbObject(mp *(ma + 1), &quot;0&quot;));
+    } else {
+        GUARD_OBJ(y,VpCreateRbObject(1, &quot;0&quot;));
+    }
+    VpPower(y, x, n);
+    return ToValue(y);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000023" class="method-detail">
+        <a name="M000023"></a>
+
+        <div class="method-heading">
+          <a href="#M000023" class="method-signature">
+          <span class="method-name">precs<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an Array of two Integer values.
+</p>
+<p>
+The first value is the current number of significant digits in the <a
+href="BigDecimal.html">BigDecimal</a>. The second value is the maximum
+number of significant digits for the <a
+href="BigDecimal.html">BigDecimal</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000023-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000023-source">
+<pre>
+/* call-seq:
+ * precs
+ *
+ * Returns an Array of two Integer values.
+ *
+ * The first value is the current number of significant digits in the 
+ * BigDecimal. The second value is the maximum number of significant digits
+ * for the BigDecimal.
+ */
+static VALUE
+BigDecimal_prec(VALUE self)
+{
+    ENTER(1);
+    Real *p;
+    VALUE obj;
+
+    GUARD_OBJ(p,GetVpValue(self,1));
+    obj = rb_assoc_new(INT2NUM(p-&gt;Prec*VpBaseFig()),
+                       INT2NUM(p-&gt;MaxPrec*VpBaseFig()));
+    return obj;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000032" class="method-detail">
+        <a name="M000032"></a>
+
+        <div class="method-heading">
+          <a href="#M000032" class="method-signature">
+          <span class="method-name">div(value, digits)<br />
+quo(value)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Divide by the specified value.
+</p>
+<p>
+e.g.
+</p>
+<pre>
+  c = a.div(b,n)
+</pre>
+<table>
+<tr><td valign="top">digits:</td><td>If specified and less than the number of significant digits of the result,
+the result is rounded to that number of digits, according to <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+
+</td></tr>
+</table>
+<p>
+If digits is 0, the result is the same as the / operator. If not, the
+result is an integer <a href="BigDecimal.html">BigDecimal</a>, by analogy
+with Float#div.
+</p>
+<p>
+The alias <a href="BigDecimal.html#M000032">quo</a> is provided since
+div(value, 0) is the same as computing the quotient; see <a
+href="BigDecimal.html#M000036">divmod</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000032-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000032-source">
+<pre>
+/* call-seq:
+  * div(value, digits)
+  * quo(value)
+  *
+  * Divide by the specified value. 
+  *
+  * e.g.
+  *   c = a.div(b,n)
+  *
+  * digits:: If specified and less than the number of significant digits of the result, the result is rounded to that number of digits, according to BigDecimal.mode.
+  * 
+  * If digits is 0, the result is the same as the / operator. If not, the
+  * result is an integer BigDecimal, by analogy with Float#div.
+  *
+  * The alias quo is provided since div(value, 0) is the same as computing
+  * the quotient; see divmod.
+  */
+static VALUE
+BigDecimal_div(VALUE self, VALUE r)
+/* For c = self/r: with round operation */
+{
+    ENTER(5);
+    Real *c=NULL, *res=NULL, *div = NULL;
+    r = BigDecimal_divide(&amp;c, &amp;res, &amp;div, self, r);
+    if(r!=(VALUE)0) return r; /* coerced by other */
+    SAVE(c);SAVE(res);SAVE(div);
+    /* a/b = c + r/b */
+    /* c xxxxx
+       r 00000yyyyy  ==&gt; (y/b)*BASE &gt;= HALF_BASE
+     */
+    /* Round */
+    if(VpHasVal(div)) { /* frac[0] must be zero for NaN,INF,Zero */
+       VpInternalRound(c,0,c-&gt;frac[c-&gt;Prec-1],(VpBaseVal()*res-&gt;frac[0])/div-&gt;frac[0]);
+    }
+    return ToValue(c);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000035" class="method-detail">
+        <a name="M000035"></a>
+
+        <div class="method-heading">
+          <a href="#M000035" class="method-signature">
+          <span class="method-name">remainder</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="BigDecimal.html#M000035">remainder</a> from dividing
+by the value.
+</p>
+<p>
+If the values divided are of the same <a
+href="BigDecimal.html#M000060">sign</a>, the <a
+href="BigDecimal.html#M000035">remainder</a> is the same as the modulus
+(see <a href="BigDecimal.html#M000036">divmod</a>).
+</p>
+<p>
+Otherwise, the <a href="BigDecimal.html#M000035">remainder</a> is the
+modulus minus the value divided by.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000035-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000035-source">
+<pre>
+/* Returns the remainder from dividing by the value.
+ *
+ * If the values divided are of the same sign, the remainder is the same as
+ * the modulus (see divmod).
+ *
+ * Otherwise, the remainder is the modulus minus the value divided by.
+ */
+static VALUE
+BigDecimal_remainder(VALUE self, VALUE r) /* remainder */
+{
+    VALUE  f;
+    Real  *d,*rv=0;
+    f = BigDecimal_divremain(self,r,&amp;d,&amp;rv);
+    if(f!=(VALUE)0) return f;
+    return ToValue(rv);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000041" class="method-detail">
+        <a name="M000041"></a>
+
+        <div class="method-heading">
+          <a href="#M000041" class="method-signature">
+          <span class="method-name">round(n,mode)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Round to the nearest 1 (by default), returning the result as a <a
+href="BigDecimal.html">BigDecimal</a>.
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;3.14159&#8217;).<a
+href="BigDecimal.html#M000041">round</a> -&gt; 3
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;8.7&#8217;).<a
+href="BigDecimal.html#M000041">round</a> -&gt; 9
+</p>
+<p>
+If n is specified and positive, the fractional part of the result has no
+more than that many digits.
+</p>
+<p>
+If n is specified and negative, at least that many digits to the left of
+the decimal point will be 0 in the result.
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;3.14159&#8217;).<a
+href="BigDecimal.html#M000041">round</a>(3) -&gt; 3.142
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;13345.234&#8217;).<a
+href="BigDecimal.html#M000041">round</a>(-2) -&gt; 13300.0
+</p>
+<p>
+The value of the optional <a href="BigDecimal.html#M000018">mode</a>
+argument can be used to determine how rounding is performed; see <a
+href="BigDecimal.html#M000018">BigDecimal.mode</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000041-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000041-source">
+<pre>
+/* call-seq:
+ * round(n,mode)
+ *
+ * Round to the nearest 1 (by default), returning the result as a BigDecimal.
+ *
+ * BigDecimal('3.14159').round -&gt; 3
+ *
+ * BigDecimal('8.7').round -&gt; 9
+ *
+ * If n is specified and positive, the fractional part of the result has no
+ * more than that many digits. 
+ *
+ * If n is specified and negative, at least that many digits to the left of the
+ * decimal point will be 0 in the result.
+ *
+ * BigDecimal('3.14159').round(3) -&gt; 3.142
+ *
+ * BigDecimal('13345.234').round(-2) -&gt; 13300.0
+ *
+ * The value of the optional mode argument can be used to determine how 
+ * rounding is performed; see BigDecimal.mode.
+ */
+static VALUE
+BigDecimal_round(int argc, VALUE *argv, VALUE self)
+{
+    ENTER(5);
+    Real   *c, *a;
+    int    iLoc = 0;
+    U_LONG mx;
+    VALUE  vLoc;
+    VALUE  vRound;
+    U_LONG pl;
+
+    int    sw = VpGetRoundMode();
+
+    int na = rb_scan_args(argc,argv,&quot;02&quot;,&amp;vLoc,&amp;vRound);
+    switch(na) {
+    case 0:
+        iLoc = 0;
+        break;
+    case 1:
+        Check_Type(vLoc, T_FIXNUM);
+        iLoc = FIX2INT(vLoc);
+        break;
+    case 2:
+        Check_Type(vLoc, T_FIXNUM);
+        iLoc = FIX2INT(vLoc);
+        Check_Type(vRound, T_FIXNUM);
+        sw   = FIX2INT(vRound);
+        if(!VpIsRoundMode(sw)) {
+            rb_raise(rb_eTypeError, &quot;invalid rounding mode&quot;);
+            return Qnil;
+        }
+        break;
+    }
+
+    pl = VpSetPrecLimit(0);
+    GUARD_OBJ(a,GetVpValue(self,1));
+    mx = a-&gt;Prec *(VpBaseFig() + 1);
+    GUARD_OBJ(c,VpCreateRbObject(mx, &quot;0&quot;));
+    VpSetPrecLimit(pl);
+    VpActiveRound(c,a,sw,iLoc);
+    return ToValue(c);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000060" class="method-detail">
+        <a name="M000060"></a>
+
+        <div class="method-heading">
+          <a href="#M000060" class="method-signature">
+          <span class="method-name">sign</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="BigDecimal.html#M000060">sign</a> of the value.
+</p>
+<p>
+Returns a positive value if &gt; 0, a negative value if &lt; 0, and a zero
+if == 0.
+</p>
+<p>
+The specific value returned indicates the type and <a
+href="BigDecimal.html#M000060">sign</a> of the <a
+href="BigDecimal.html">BigDecimal</a>, as follows:
+</p>
+<table>
+<tr><td valign="top">BigDecimal::SIGN_NaN:</td><td>value is Not a Number
+
+</td></tr>
+<tr><td valign="top">BigDecimal::SIGN_POSITIVE_ZERO:</td><td>value is +0
+
+</td></tr>
+<tr><td valign="top">BigDecimal::SIGN_NEGATIVE_ZERO:</td><td>value is -0
+
+</td></tr>
+<tr><td valign="top">BigDecimal::SIGN_POSITIVE_INFINITE:</td><td>value is +infinity
+
+</td></tr>
+<tr><td valign="top">BigDecimal::SIGN_NEGATIVE_INFINITE:</td><td>value is -infinity
+
+</td></tr>
+<tr><td valign="top">BigDecimal::SIGN_POSITIVE_FINITE:</td><td>value is positive
+
+</td></tr>
+<tr><td valign="top">BigDecimal::SIGN_NEGATIVE_FINITE:</td><td>value is negative
+
+</td></tr>
+</table>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000060-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000060-source">
+<pre>
+/* Returns the sign of the value.
+ *
+ * Returns a positive value if &gt; 0, a negative value if &lt; 0, and a 
+ * zero if == 0.
+ *
+ * The specific value returned indicates the type and sign of the BigDecimal, 
+ * as follows:
+ *
+ * BigDecimal::SIGN_NaN:: value is Not a Number
+ * BigDecimal::SIGN_POSITIVE_ZERO:: value is +0
+ * BigDecimal::SIGN_NEGATIVE_ZERO:: value is -0
+ * BigDecimal::SIGN_POSITIVE_INFINITE:: value is +infinity
+ * BigDecimal::SIGN_NEGATIVE_INFINITE:: value is -infinity
+ * BigDecimal::SIGN_POSITIVE_FINITE:: value is positive
+ * BigDecimal::SIGN_NEGATIVE_FINITE:: value is negative
+ */
+static VALUE
+BigDecimal_sign(VALUE self)
+{ /* sign */
+    int s = GetVpValue(self,1)-&gt;sign;
+    return INT2FIX(s);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000027" class="method-detail">
+        <a name="M000027"></a>
+
+        <div class="method-heading">
+          <a href="#M000027" class="method-signature">
+          <span class="method-name">split</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Splits a <a href="BigDecimal.html">BigDecimal</a> number into four parts,
+returned as an array of values.
+</p>
+<p>
+The first value represents the <a href="BigDecimal.html#M000060">sign</a>
+of the <a href="BigDecimal.html">BigDecimal</a>, and is -1 or 1, or 0 if
+the <a href="BigDecimal.html">BigDecimal</a> is Not a Number.
+</p>
+<p>
+The second value is a string representing the significant digits of the <a
+href="BigDecimal.html">BigDecimal</a>, with no leading zeros.
+</p>
+<p>
+The third value is the base used for arithmetic (currently always 10) as an
+Integer.
+</p>
+<p>
+The fourth value is an Integer <a
+href="BigDecimal.html#M000059">exponent</a>.
+</p>
+<p>
+If the <a href="BigDecimal.html">BigDecimal</a> can be represented as
+0.xxxxxx*10**n, then xxxxxx is the string of significant digits with no
+leading zeros, and n is the <a href="BigDecimal.html#M000059">exponent</a>.
+</p>
+<p>
+From these values, you can translate a <a
+href="BigDecimal.html">BigDecimal</a> to a float as follows:
+</p>
+<pre>
+  sign, significant_digits, base, exponent = a.split
+  f = sign * &quot;0.#{significant_digits}&quot;.to_f * (base ** exponent)
+</pre>
+<p>
+(Note that the <a href="BigDecimal.html#M000037">to_f</a> method is
+provided as a more convenient way to translate a <a
+href="BigDecimal.html">BigDecimal</a> to a Float.)
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000027-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000027-source">
+<pre>
+/* Splits a BigDecimal number into four parts, returned as an array of values.
+ *
+ * The first value represents the sign of the BigDecimal, and is -1 or 1, or 0
+ * if the BigDecimal is Not a Number.
+ *
+ * The second value is a string representing the significant digits of the
+ * BigDecimal, with no leading zeros.
+ *
+ * The third value is the base used for arithmetic (currently always 10) as an
+ * Integer.
+ *
+ * The fourth value is an Integer exponent.
+ *
+ * If the BigDecimal can be represented as 0.xxxxxx*10**n, then xxxxxx is the 
+ * string of significant digits with no leading zeros, and n is the exponent.
+ *
+ * From these values, you can translate a BigDecimal to a float as follows:
+ *
+ *   sign, significant_digits, base, exponent = a.split
+ *   f = sign * &quot;0.#{significant_digits}&quot;.to_f * (base ** exponent)
+ *
+ * (Note that the to_f method is provided as a more convenient way to translate 
+ * a BigDecimal to a Float.)
+ */
+static VALUE
+BigDecimal_split(VALUE self)
+{
+    ENTER(5);
+    Real *vp;
+    VALUE obj,obj1;
+    S_LONG e;
+    S_LONG s;
+    char *psz1;
+
+    GUARD_OBJ(vp,GetVpValue(self,1));
+    psz1 = ALLOCA_N(char,(unsigned int)VpNumOfChars(vp,&quot;E&quot;));
+    VpSzMantissa(vp,psz1);
+    s = 1;
+    if(psz1[0]=='-') {
+        s = -1; ++psz1;
+    }
+    if(psz1[0]=='N') s=0; /* NaN */
+    e = VpExponent10(vp);
+    obj1 = rb_str_new2(psz1);
+    obj  = rb_ary_new2(4);
+    rb_ary_push(obj, INT2FIX(s));
+    rb_ary_push(obj, obj1);
+    rb_ary_push(obj, INT2FIX(10));
+    rb_ary_push(obj, INT2NUM(e));
+    return obj;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000039" class="method-detail">
+        <a name="M000039"></a>
+
+        <div class="method-heading">
+          <a href="#M000039" class="method-signature">
+          <span class="method-name">sqrt(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the square root of the value.
+</p>
+<p>
+If n is specified, returns at least that many significant digits.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000039-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000039-source">
+<pre>
+/* call-seq:
+ * sqrt(n)
+ *
+ * Returns the square root of the value.
+ *
+ * If n is specified, returns at least that many significant digits.
+ */
+static VALUE
+BigDecimal_sqrt(VALUE self, VALUE nFig)
+{
+    ENTER(5);
+    Real *c, *a;
+    S_INT mx, n;
+
+    GUARD_OBJ(a,GetVpValue(self,1));
+    mx = a-&gt;Prec *(VpBaseFig() + 1);
+
+    n = GetPositiveInt(nFig) + VpDblFig() + 1;
+    if(mx &lt;= n) mx = n;
+    GUARD_OBJ(c,VpCreateRbObject(mx, &quot;0&quot;));
+    VpSqrt(c, a);
+    return ToValue(c);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000037" class="method-detail">
+        <a name="M000037"></a>
+
+        <div class="method-heading">
+          <a href="#M000037" class="method-signature">
+          <span class="method-name">to_f</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="BigDecimal.html#M000017">new</a> Float object having
+approximately the same value as the <a
+href="BigDecimal.html">BigDecimal</a> number. Normal accuracy limits and
+built-in errors of binary Float arithmetic apply.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000037-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000037-source">
+<pre>
+/* Returns a new Float object having approximately the same value as the
+ * BigDecimal number. Normal accuracy limits and built-in errors of binary
+ * Float arithmetic apply.
+ */
+static VALUE
+BigDecimal_to_f(VALUE self)
+{
+    ENTER(1);
+    Real *p;
+    double d;
+    S_LONG e;
+    char *buf;
+
+    GUARD_OBJ(p,GetVpValue(self,1));
+    if(VpVtoD(&amp;d, &amp;e, p)!=1) return rb_float_new(d);
+    buf = ALLOCA_N(char,(unsigned int)VpNumOfChars(p,&quot;E&quot;));
+    VpToString(p, buf, 0, 0);
+    errno = 0;
+    d = strtod(buf, 0);
+    if(errno == ERANGE) {
+       VpException(VP_EXCEPTION_OVERFLOW,&quot;BigDecimal to Float conversion&quot;,0);
+       if(d&gt;0.0) return rb_float_new(DBL_MAX);
+       else      return rb_float_new(-DBL_MAX);
+    }
+    return rb_float_new(d);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000025" class="method-detail">
+        <a name="M000025"></a>
+
+        <div class="method-heading">
+          <a href="#M000025" class="method-signature">
+          <span class="method-name">to_i</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the value as an integer (Fixnum or Bignum).
+</p>
+<p>
+If the BigNumber is infinity or NaN, returns nil.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000025-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000025-source">
+<pre>
+/* Returns the value as an integer (Fixnum or Bignum).
+ *
+ * If the BigNumber is infinity or NaN, returns nil.
+ */
+static VALUE
+BigDecimal_to_i(VALUE self)
+{
+    ENTER(5);
+    int e,n,i,nf;
+    U_LONG v,b,j;
+    char *psz,*pch;
+    Real *p;
+
+    GUARD_OBJ(p,GetVpValue(self,1));
+
+    /* Infinity or NaN not converted. */
+    if(VpIsNaN(p)) {
+       VpException(VP_EXCEPTION_NaN,&quot;Computation results to 'NaN'(Not a Number)&quot;,0);
+       return Qnil;
+    } else if(VpIsPosInf(p)) {
+       VpException(VP_EXCEPTION_INFINITY,&quot;Computation results to 'Infinity'&quot;,0);
+       return Qnil;
+    } else if(VpIsNegInf(p)) {
+       VpException(VP_EXCEPTION_INFINITY,&quot;Computation results to '-Infinity'&quot;,0);
+       return Qnil;
+    }
+
+    e = VpExponent10(p);
+    if(e&lt;=0) return INT2FIX(0);
+    nf = VpBaseFig();
+    if(e&lt;=nf) {
+        e = VpGetSign(p)*p-&gt;frac[0];
+        return INT2FIX(e);
+    }
+    psz = ALLOCA_N(char,(unsigned int)(e+nf+2));
+
+    n = (e+nf-1)/nf;
+    pch = psz;
+    if(VpGetSign(p)&lt;0) *pch++ = '-';
+    for(i=0;i&lt;n;++i) {
+        b = VpBaseVal()/10;
+        if(i&gt;=(int)p-&gt;Prec) {
+            while(b) {
+                *pch++ = '0';
+                b /= 10;
+            }
+            continue;
+        }
+        v = p-&gt;frac[i];
+        while(b) {
+            j = v/b;
+            *pch++ = (char)(j + '0');
+            v -= j*b;
+            b /= 10;
+        }
+    }
+    *pch++ = 0;
+    return rb_cstr2inum(psz,10);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000026" class="method-detail">
+        <a name="M000026"></a>
+
+        <div class="method-heading">
+          <a href="#M000026" class="method-signature">
+          <span class="method-name">to_int</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the value as an integer (Fixnum or Bignum).
+</p>
+<p>
+If the BigNumber is infinity or NaN, returns nil.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000026-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000026-source">
+<pre>
+/* Returns the value as an integer (Fixnum or Bignum).
+ *
+ * If the BigNumber is infinity or NaN, returns nil.
+ */
+static VALUE
+BigDecimal_to_i(VALUE self)
+{
+    ENTER(5);
+    int e,n,i,nf;
+    U_LONG v,b,j;
+    char *psz,*pch;
+    Real *p;
+
+    GUARD_OBJ(p,GetVpValue(self,1));
+
+    /* Infinity or NaN not converted. */
+    if(VpIsNaN(p)) {
+       VpException(VP_EXCEPTION_NaN,&quot;Computation results to 'NaN'(Not a Number)&quot;,0);
+       return Qnil;
+    } else if(VpIsPosInf(p)) {
+       VpException(VP_EXCEPTION_INFINITY,&quot;Computation results to 'Infinity'&quot;,0);
+       return Qnil;
+    } else if(VpIsNegInf(p)) {
+       VpException(VP_EXCEPTION_INFINITY,&quot;Computation results to '-Infinity'&quot;,0);
+       return Qnil;
+    }
+
+    e = VpExponent10(p);
+    if(e&lt;=0) return INT2FIX(0);
+    nf = VpBaseFig();
+    if(e&lt;=nf) {
+        e = VpGetSign(p)*p-&gt;frac[0];
+        return INT2FIX(e);
+    }
+    psz = ALLOCA_N(char,(unsigned int)(e+nf+2));
+
+    n = (e+nf-1)/nf;
+    pch = psz;
+    if(VpGetSign(p)&lt;0) *pch++ = '-';
+    for(i=0;i&lt;n;++i) {
+        b = VpBaseVal()/10;
+        if(i&gt;=(int)p-&gt;Prec) {
+            while(b) {
+                *pch++ = '0';
+                b /= 10;
+            }
+            continue;
+        }
+        v = p-&gt;frac[i];
+        while(b) {
+            j = v/b;
+            *pch++ = (char)(j + '0');
+            v -= j*b;
+            b /= 10;
+        }
+    }
+    *pch++ = 0;
+    return rb_cstr2inum(psz,10);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000024" class="method-detail">
+        <a name="M000024"></a>
+
+        <div class="method-heading">
+          <a href="#M000024" class="method-signature">
+          <span class="method-name">to_s(s)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts the value to a string.
+</p>
+<p>
+The default format looks like 0.xxxxEnn.
+</p>
+<p>
+The optional parameter s consists of either an integer; or an optional
+&#8217;+&#8217; or &#8217; &#8217;, followed by an optional number,
+followed by an optional &#8216;E&#8217; or &#8216;F&#8217;.
+</p>
+<p>
+If there is a &#8217;+&#8217; at the start of s, positive values are
+returned with a leading &#8217;+&#8217;.
+</p>
+<p>
+A space at the start of s returns positive values with a leading space.
+</p>
+<p>
+If s contains a number, a space is inserted after each group of that many
+fractional digits.
+</p>
+<p>
+If s ends with an &#8216;E&#8217;, engineering notation (0.xxxxEnn) is
+used.
+</p>
+<p>
+If s ends with an &#8216;F&#8217;, conventional floating point notation is
+used.
+</p>
+<p>
+Examples:
+</p>
+<p>
+<a
+href="BigDecimal.html#M000017">BigDecimal.new</a>(&#8217;-123.45678901234567890&#8217;).<a
+href="BigDecimal.html#M000024">to_s</a>(&#8216;5F&#8217;) -&gt;
+&#8217;-123.45678 90123 45678 9&#8216;
+</p>
+<p>
+<a
+href="BigDecimal.html#M000017">BigDecimal.new</a>(&#8216;123.45678901234567890&#8217;).<a
+href="BigDecimal.html#M000024">to_s</a>(&#8217;+8F&#8217;) -&gt;
+&#8217;+123.45678901 23456789&#8216;
+</p>
+<p>
+<a
+href="BigDecimal.html#M000017">BigDecimal.new</a>(&#8216;123.45678901234567890&#8217;).<a
+href="BigDecimal.html#M000024">to_s</a>(&#8217; F&#8217;) -&gt; &#8217;
+123.4567890123456789&#8216;
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000024-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000024-source">
+<pre>
+/* call-seq:
+ * to_s(s)
+ *
+ * Converts the value to a string.
+ *
+ * The default format looks like  0.xxxxEnn.
+ *
+ * The optional parameter s consists of either an integer; or an optional '+'
+ * or ' ', followed by an optional number, followed by an optional 'E' or 'F'.
+ *
+ * If there is a '+' at the start of s, positive values are returned with
+ * a leading '+'.
+ *
+ * A space at the start of s returns positive values with a leading space.
+ *
+ * If s contains a number, a space is inserted after each group of that many 
+ * fractional digits.
+ *
+ * If s ends with an 'E', engineering notation (0.xxxxEnn) is used.
+ *
+ * If s ends with an 'F', conventional floating point notation is used.
+ *
+ * Examples:
+ *
+ * BigDecimal.new('-123.45678901234567890').to_s('5F') -&gt; '-123.45678 90123 45678 9'
+ *
+ * BigDecimal.new('123.45678901234567890').to_s('+8F') -&gt; '+123.45678901 23456789'
+ *
+ * BigDecimal.new('123.45678901234567890').to_s(' F') -&gt; ' 123.4567890123456789'
+ */
+static VALUE
+BigDecimal_to_s(int argc, VALUE *argv, VALUE self)
+{
+    ENTER(5);
+    int   fmt=0;   /* 0:E format */
+    int   fPlus=0; /* =0:default,=1: set ' ' before digits ,set '+' before digits. */
+    Real  *vp;
+    char  *psz;
+    char   ch;
+    U_LONG nc;
+    S_INT  mc = 0;
+    VALUE  f;
+
+    GUARD_OBJ(vp,GetVpValue(self,1));
+    
+    if(rb_scan_args(argc,argv,&quot;01&quot;,&amp;f)==1) {
+        if(TYPE(f)==T_STRING) {
+            SafeStringValue(f);
+            psz = RSTRING_PTR(f);
+            if(*psz==' ') {
+                fPlus = 1; psz++;
+            } else if(*psz=='+') {
+                fPlus = 2; psz++;
+            }
+            while((ch=*psz++)!=0) {
+                if(ISSPACE(ch)) continue;
+                if(!ISDIGIT(ch)) {
+                    if(ch=='F' || ch=='f') fmt = 1; /* F format */
+                    break;
+                }
+                mc = mc * 10 + ch - '0';
+            }
+        } else {
+            mc  = GetPositiveInt(f);
+        }
+    }
+    if(fmt) {
+        nc = VpNumOfChars(vp,&quot;F&quot;);
+    } else {
+        nc = VpNumOfChars(vp,&quot;E&quot;);
+    }
+    if(mc&gt;0) nc += (nc + mc - 1) / mc + 1;
+
+    psz = ALLOCA_N(char,(unsigned int)nc);
+
+    if(fmt) {
+        VpToFString(vp, psz, mc, fPlus);
+    } else {
+        VpToString (vp, psz, mc, fPlus);
+    }
+    return rb_str_new2(psz);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000064" class="method-detail">
+        <a name="M000064"></a>
+
+        <div class="method-heading">
+          <a href="#M000064" class="method-signature">
+          <span class="method-name">truncate(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Truncate to the nearest 1, returning the result as a <a
+href="BigDecimal.html">BigDecimal</a>.
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;3.14159&#8217;).<a
+href="BigDecimal.html#M000064">truncate</a> -&gt; 3
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;8.7&#8217;).<a
+href="BigDecimal.html#M000064">truncate</a> -&gt; 8
+</p>
+<p>
+If n is specified and positive, the fractional part of the result has no
+more than that many digits.
+</p>
+<p>
+If n is specified and negative, at least that many digits to the left of
+the decimal point will be 0 in the result.
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;3.14159&#8217;).<a
+href="BigDecimal.html#M000064">truncate</a>(3) -&gt; 3.141
+</p>
+<p>
+<a href="BigDecimal.html">BigDecimal</a>(&#8216;13345.234&#8217;).<a
+href="BigDecimal.html#M000064">truncate</a>(-2) -&gt; 13300.0
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000064-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000064-source">
+<pre>
+/* call-seq:
+ * truncate(n)
+ *
+ * Truncate to the nearest 1, returning the result as a BigDecimal.
+ *
+ * BigDecimal('3.14159').truncate -&gt; 3
+ *
+ * BigDecimal('8.7').truncate -&gt; 8
+ *
+ * If n is specified and positive, the fractional part of the result has no
+ * more than that many digits. 
+ *
+ * If n is specified and negative, at least that many digits to the left of the
+ * decimal point will be 0 in the result.
+ *
+ * BigDecimal('3.14159').truncate(3) -&gt; 3.141
+ *
+ * BigDecimal('13345.234').truncate(-2) -&gt; 13300.0
+ */
+static VALUE
+BigDecimal_truncate(int argc, VALUE *argv, VALUE self)
+{
+    ENTER(5);
+    Real *c, *a;
+    int iLoc;
+    U_LONG mx;
+    VALUE vLoc;
+    U_LONG pl = VpSetPrecLimit(0);
+
+    if(rb_scan_args(argc,argv,&quot;01&quot;,&amp;vLoc)==0) {
+        iLoc = 0;
+    } else {
+        Check_Type(vLoc, T_FIXNUM);
+        iLoc = FIX2INT(vLoc);
+    }
+
+    GUARD_OBJ(a,GetVpValue(self,1));
+    mx = a-&gt;Prec *(VpBaseFig() + 1);
+    GUARD_OBJ(c,VpCreateRbObject(mx, &quot;0&quot;));
+    VpSetPrecLimit(pl);
+    VpActiveRound(c,a,VP_ROUND_DOWN,iLoc); /* 0: truncate */
+    return ToValue(c);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000055" class="method-detail">
+        <a name="M000055"></a>
+
+        <div class="method-heading">
+          <a href="#M000055" class="method-signature">
+          <span class="method-name">zero?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns True if the value is zero.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000055-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000055-source">
+<pre>
+/* Returns True if the value is zero. */
+static VALUE
+BigDecimal_zero(VALUE self)
+{
+    Real *a = GetVpValue(self,1);
+    return VpIsZero(a) ? Qtrue : Qfalse;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

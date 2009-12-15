@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Observable</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Observable</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/observer_rb.html">
+                observer.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Implements the <a href="Observable.html">Observable</a> design pattern as a
+mixin so that other objects can be notified of changes in state. See
+observer.rb for details and an example.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001398">add_observer</a>&nbsp;&nbsp;
+      <a href="#M001402">changed</a>&nbsp;&nbsp;
+      <a href="#M001403">changed?</a>&nbsp;&nbsp;
+      <a href="#M001401">count_observers</a>&nbsp;&nbsp;
+      <a href="#M001399">delete_observer</a>&nbsp;&nbsp;
+      <a href="#M001400">delete_observers</a>&nbsp;&nbsp;
+      <a href="#M001404">notify_observers</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001398" class="m-detail">
+        <a name="M001398"></a>
+
+        <div class="method-heading">
+          <a href="#M001398" class="method-signature">
+          <span class="method-name">add_observer</span><span class="method-args">(observer)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Add <tt>observer</tt> as an observer on this object. <tt>observer</tt> will
+now receive notifications.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001398-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001398-source">
+<pre>
+<span class="ruby-comment cmt"># File observer.rb, line 123</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_observer</span>(<span class="ruby-identifier">observer</span>)
+    <span class="ruby-ivar">@observer_peers</span> = [] <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@observer_peers</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">observer</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:update</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">NoMethodError</span>, <span class="ruby-value str">&quot;observer needs to respond to `update'&quot;</span> 
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@observer_peers</span>.<span class="ruby-identifier">push</span> <span class="ruby-identifier">observer</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001402" class="m-detail">
+        <a name="M001402"></a>
+
+        <div class="method-heading">
+          <a href="#M001402" class="method-signature">
+          <span class="method-name">changed</span><span class="method-args">(state=true)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Set the <a href="Observable.html#M001402">changed</a> state of this object.
+Notifications will be sent only if the <a
+href="Observable.html#M001402">changed</a> <tt>state</tt> is <tt>true</tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001402-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001402-source">
+<pre>
+<span class="ruby-comment cmt"># File observer.rb, line 161</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">changed</span>(<span class="ruby-identifier">state</span>=<span class="ruby-keyword kw">true</span>)
+    <span class="ruby-ivar">@observer_state</span> = <span class="ruby-identifier">state</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001403" class="m-detail">
+        <a name="M001403"></a>
+
+        <div class="method-heading">
+          <a href="#M001403" class="method-signature">
+          <span class="method-name">changed?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Query the <a href="Observable.html#M001402">changed</a> state of this
+object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001403-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001403-source">
+<pre>
+<span class="ruby-comment cmt"># File observer.rb, line 168</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">changed?</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@observer_state</span> <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@observer_state</span>
+      <span class="ruby-keyword kw">true</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001401" class="m-detail">
+        <a name="M001401"></a>
+
+        <div class="method-heading">
+          <a href="#M001401" class="method-signature">
+          <span class="method-name">count_observers</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Return the number of observers associated with this object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001401-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001401-source">
+<pre>
+<span class="ruby-comment cmt"># File observer.rb, line 149</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">count_observers</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@observer_peers</span>
+      <span class="ruby-ivar">@observer_peers</span>.<span class="ruby-identifier">size</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001399" class="m-detail">
+        <a name="M001399"></a>
+
+        <div class="method-heading">
+          <a href="#M001399" class="method-signature">
+          <span class="method-name">delete_observer</span><span class="method-args">(observer)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Delete <tt>observer</tt> as an observer on this object. It will no longer
+receive notifications.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001399-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001399-source">
+<pre>
+<span class="ruby-comment cmt"># File observer.rb, line 135</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">delete_observer</span>(<span class="ruby-identifier">observer</span>)
+    <span class="ruby-ivar">@observer_peers</span>.<span class="ruby-identifier">delete</span> <span class="ruby-identifier">observer</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@observer_peers</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001400" class="m-detail">
+        <a name="M001400"></a>
+
+        <div class="method-heading">
+          <a href="#M001400" class="method-signature">
+          <span class="method-name">delete_observers</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Delete all observers associated with this object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001400-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001400-source">
+<pre>
+<span class="ruby-comment cmt"># File observer.rb, line 142</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">delete_observers</span>
+    <span class="ruby-ivar">@observer_peers</span>.<span class="ruby-identifier">clear</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@observer_peers</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001404" class="m-detail">
+        <a name="M001404"></a>
+
+        <div class="method-heading">
+          <a href="#M001404" class="method-signature">
+          <span class="method-name">notify_observers</span><span class="method-args">(*arg)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+If this object&#8216;s <a href="Observable.html#M001402">changed</a> state
+is <tt>true</tt>, invoke the update method in each currently associated
+observer in turn, passing it the given arguments. The <a
+href="Observable.html#M001402">changed</a> state is then set to
+<tt>false</tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001404-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001404-source">
+<pre>
+<span class="ruby-comment cmt"># File observer.rb, line 181</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">notify_observers</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">arg</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@observer_state</span> <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@observer_state</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@observer_peers</span>
+        <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">i</span> <span class="ruby-keyword kw">in</span> <span class="ruby-ivar">@observer_peers</span>.<span class="ruby-identifier">dup</span>
+          <span class="ruby-identifier">i</span>.<span class="ruby-identifier">update</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">arg</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@observer_state</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 3 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

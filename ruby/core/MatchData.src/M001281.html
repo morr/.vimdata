@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>pre_match (MatchData)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mtch.pre_match   =&gt; str
+ *  
+ *  Returns the portion of the original string before the current match.
+ *  Equivalent to the special variable &lt;code&gt;$`&lt;/code&gt;.
+ *     
+ *     m = /(.)(.)(\d+)(\d)/.match(&quot;THX1138.&quot;)
+ *     m.pre_match   #=&gt; &quot;T&quot;
+ */
+
+VALUE
+rb_reg_match_pre(match)
+    VALUE match;
+{
+    VALUE str;
+
+    if (NIL_P(match)) return Qnil;
+    match_check(match);
+    if (RMATCH(match)-&gt;BEG(0) == -1) return Qnil;
+    str = rb_str_substr(RMATCH(match)-&gt;str, 0, RMATCH(match)-&gt;BEG(0));
+    if (OBJ_TAINTED(match)) OBJ_TAINT(str);
+    return str;
+}</pre>
+</body>
+</html>

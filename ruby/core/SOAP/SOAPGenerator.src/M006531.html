@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>encode_tag (SOAP::SOAPGenerator)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/generator.rb, line 158</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode_tag</span>(<span class="ruby-identifier">elename</span>, <span class="ruby-identifier">attrs</span> = <span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">attrs</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;\n#{ @indent }&lt;#{ elename }&gt;&quot;</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+      <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> = <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">%Q[\n#{ @indent }&lt;#{ elename } #{ key }=&quot;#{ value }&quot;&gt;]</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;\n#{ @indent }&lt;#{ elename } &quot;</span> <span class="ruby-operator">&lt;&lt;</span>
+        <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+          <span class="ruby-node">%Q[#{ key }=&quot;#{ value }&quot;]</span>
+        }.<span class="ruby-identifier">join</span>(<span class="ruby-node">&quot;\n#{ @indent }#{ @indentstr * 2 }&quot;</span>) <span class="ruby-operator">&lt;&lt;</span>
+        <span class="ruby-value str">'&gt;'</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

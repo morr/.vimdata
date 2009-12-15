@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>nitems (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.nitems -&gt; int
+ *  
+ *  Returns the number of non-&lt;code&gt;nil&lt;/code&gt; elements in _self_.
+ *  May be zero.
+ *     
+ *     [ 1, nil, 3, nil, 5 ].nitems   #=&gt; 3
+ */
+
+static VALUE
+rb_ary_nitems(ary)
+    VALUE ary;
+{
+    long n = 0;
+    VALUE *p, *pend;
+
+    p = RARRAY(ary)-&gt;ptr;
+    pend = p + RARRAY(ary)-&gt;len;
+
+    while (p &lt; pend) {
+        if (!NIL_P(*p)) n++;
+        p++;
+    }
+    return LONG2NUM(n);
+}</pre>
+</body>
+</html>

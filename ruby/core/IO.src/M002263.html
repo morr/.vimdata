@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sync= (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.sync = boolean   =&gt; boolean
+ *  
+ *  Sets the ``sync mode'' to &lt;code&gt;true&lt;/code&gt; or &lt;code&gt;false&lt;/code&gt;.
+ *  When sync mode is true, all output is immediately flushed to the
+ *  underlying operating system and is not buffered internally. Returns
+ *  the new state. See also &lt;code&gt;IO#fsync&lt;/code&gt;.
+ *     
+ *     f = File.new(&quot;testfile&quot;)
+ *     f.sync = true
+ *     
+ *  &lt;em&gt;(produces no output)&lt;/em&gt;
+ */
+
+static VALUE
+rb_io_set_sync(io, mode)
+    VALUE io, mode;
+{
+    OpenFile *fptr;
+
+    GetOpenFile(io, fptr);
+    if (RTEST(mode)) {
+        fptr-&gt;mode |= FMODE_SYNC;
+    }
+    else {
+        fptr-&gt;mode &amp;= ~FMODE_SYNC;
+    }
+    return mode;
+}</pre>
+</body>
+</html>

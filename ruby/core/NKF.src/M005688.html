@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>nkf (NKF)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     NKF.nkf(opt, str)   -&gt; string
+ *
+ *  Convert _str_ and return converted result.
+ *  Conversion details are specified by _opt_ as String.
+ *
+ *     require 'nkf'
+ *     output = NKF.nkf(&quot;-s&quot;, input)
+ *
+ *  *Note*
+ *  By default, nkf decodes MIME encoded string.
+ *  If you want not to decode input, use NKF.nkf with &lt;b&gt;-m0&lt;/b&gt; flag.
+ */
+
+static VALUE
+rb_nkf_kconv(obj, opt, src)
+  VALUE obj, opt, src;
+{
+  char *opt_ptr, *opt_end;
+  volatile VALUE v;
+
+  reinit();
+  StringValue(opt);
+  opt_ptr = RSTRING(opt)-&gt;ptr;
+  opt_end = opt_ptr + RSTRING(opt)-&gt;len;
+  nkf_split_options(opt_ptr);
+
+  incsize = INCSIZE;
+
+  input_ctr = 0;
+  StringValue(src);
+  input = (unsigned char *)RSTRING(src)-&gt;ptr;
+  i_len = RSTRING(src)-&gt;len;
+  result = rb_str_new(0, i_len*3 + 10);
+  v = result;
+
+  output_ctr = 0;
+  output     = (unsigned char *)RSTRING(result)-&gt;ptr;
+  o_len      = RSTRING(result)-&gt;len;
+  *output    = '\0';
+
+  if(x0201_f == WISH_TRUE)
+    x0201_f = ((!iso2022jp_f)? TRUE : NO_X0201);
+
+  kanji_convert(NULL);
+  RSTRING(result)-&gt;ptr[output_ctr] = '\0';
+  RSTRING(result)-&gt;len = output_ctr;
+  OBJ_INFECT(result, src);
+
+  return result;
+}</pre>
+</body>
+</html>

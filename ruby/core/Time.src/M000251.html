@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>at (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Time.at( aTime ) =&gt; time
+ *     Time.at( seconds [, microseconds] ) =&gt; time
+ *  
+ *  Creates a new time object with the value given by &lt;i&gt;aTime&lt;/i&gt;, or
+ *  the given number of &lt;i&gt;seconds&lt;/i&gt; (and optional
+ *  &lt;i&gt;microseconds&lt;/i&gt;) from epoch. A non-portable feature allows the
+ *  offset to be negative on some systems.
+ *     
+ *     Time.at(0)            #=&gt; Wed Dec 31 18:00:00 CST 1969
+ *     Time.at(946702800)    #=&gt; Fri Dec 31 23:00:00 CST 1999
+ *     Time.at(-284061600)   #=&gt; Sat Dec 31 00:00:00 CST 1960
+ */
+
+static VALUE
+time_s_at(argc, argv, klass)
+    int argc;
+    VALUE *argv;
+    VALUE klass;
+{
+    struct timeval tv;
+    VALUE time, t;
+
+    if (rb_scan_args(argc, argv, &quot;11&quot;, &amp;time, &amp;t) == 2) {
+        tv.tv_sec = NUM2LONG(time);
+        tv.tv_usec = NUM2LONG(t);
+    }
+    else {
+        tv = rb_time_timeval(time);
+    }
+    t = time_new_internal(klass, tv.tv_sec, tv.tv_usec);
+    if (TYPE(time) == T_DATA &amp;&amp; RDATA(time)-&gt;dfree == time_free) {
+        struct time_object *tobj, *tobj2;
+
+        GetTimeval(time, tobj);
+        GetTimeval(t, tobj2);
+        tobj2-&gt;gmt = tobj-&gt;gmt;
+    }
+    return t;
+}</pre>
+</body>
+</html>

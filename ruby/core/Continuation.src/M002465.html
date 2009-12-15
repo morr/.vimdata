@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>call (Continuation)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     cont.call(args, ...) 
+ *     cont[args, ...]
+ *  
+ *  Invokes the continuation. The program continues from the end of the
+ *  &lt;code&gt;callcc&lt;/code&gt; block. If no arguments are given, the original
+ *  &lt;code&gt;callcc&lt;/code&gt; returns &lt;code&gt;nil&lt;/code&gt;. If one argument is
+ *  given, &lt;code&gt;callcc&lt;/code&gt; returns it. Otherwise, an array
+ *  containing &lt;i&gt;args&lt;/i&gt; is returned.
+ *     
+ *     callcc {|cont|  cont.call }           #=&gt; nil
+ *     callcc {|cont|  cont.call 1 }         #=&gt; 1
+ *     callcc {|cont|  cont.call 1, 2, 3 }   #=&gt; [1, 2, 3]
+ */
+
+static VALUE
+rb_cont_call(argc, argv, cont)
+    int argc;
+    VALUE *argv;
+    VALUE cont;
+{
+    rb_thread_t th = rb_cont_check(cont);
+
+    if (th-&gt;thread != curr_thread-&gt;thread) {
+        rb_raise(rb_eRuntimeError, &quot;continuation called across threads&quot;);
+    }
+    if (th-&gt;thgroup != cont_protect) {
+        rb_raise(rb_eRuntimeError, &quot;continuation called across trap&quot;);
+    }
+    switch (argc) {
+      case 0:
+        th-&gt;result = Qnil;
+        break;
+      case 1:
+        th-&gt;result = argv[0];
+        break;
+      default:
+        th-&gt;result = rb_ary_new4(argc, argv);
+        break;
+    }
+
+    rb_thread_restore_context(th, RESTORE_NORMAL);
+    return Qnil;
+}</pre>
+</body>
+</html>

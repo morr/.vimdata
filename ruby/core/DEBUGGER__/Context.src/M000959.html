@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>debug_variable_info (DEBUGGER__::Context)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/debug.rb, line 190</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">debug_variable_info</span>(<span class="ruby-identifier">input</span>, <span class="ruby-identifier">binding</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">input</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\s*g(?:lobal)?\s*$/</span>
+      <span class="ruby-identifier">var_list</span>(<span class="ruby-identifier">global_variables</span>, <span class="ruby-identifier">binding</span>)
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\s*l(?:ocal)?\s*$/</span>
+      <span class="ruby-identifier">var_list</span>(<span class="ruby-identifier">eval</span>(<span class="ruby-value str">&quot;local_variables&quot;</span>, <span class="ruby-identifier">binding</span>), <span class="ruby-identifier">binding</span>)
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\s*i(?:nstance)?\s+/</span>
+      <span class="ruby-identifier">obj</span> = <span class="ruby-identifier">debug_eval</span>(<span class="ruby-identifier">$'</span>, <span class="ruby-identifier">binding</span>)
+      <span class="ruby-identifier">var_list</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">instance_variables</span>, <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">instance_eval</span>{<span class="ruby-identifier">binding</span>()})
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\s*c(?:onst(?:ant)?)?\s+/</span>
+      <span class="ruby-identifier">obj</span> = <span class="ruby-identifier">debug_eval</span>(<span class="ruby-identifier">$'</span>, <span class="ruby-identifier">binding</span>)
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Module</span>
+        <span class="ruby-identifier">stdout</span>.<span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;Should be Class/Module: &quot;</span>, <span class="ruby-identifier">$'</span>, <span class="ruby-value str">&quot;\n&quot;</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">var_list</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">constants</span>, <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">module_eval</span>{<span class="ruby-identifier">binding</span>()})
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

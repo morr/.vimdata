@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>read (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     IO.read(name, [length [, offset]] )   =&gt; string
+ *  
+ *  Opens the file, optionally seeks to the given offset, then returns
+ *  &lt;i&gt;length&lt;/i&gt; bytes (defaulting to the rest of the file).
+ *  &lt;code&gt;read&lt;/code&gt; ensures the file is closed before returning.
+ *     
+ *     IO.read(&quot;testfile&quot;)           #=&gt; &quot;This is line one\nThis is line two\nThis is line three\nAnd so on...\n&quot;
+ *     IO.read(&quot;testfile&quot;, 20)       #=&gt; &quot;This is line one\nThi&quot;
+ *     IO.read(&quot;testfile&quot;, 20, 10)   #=&gt; &quot;ne one\nThis is line &quot;
+ */
+
+static VALUE
+rb_io_s_read(argc, argv, io)
+    int argc;
+    VALUE *argv;
+    VALUE io;
+{
+    VALUE fname, offset;
+    struct foreach_arg arg;
+
+    rb_scan_args(argc, argv, &quot;12&quot;, &amp;fname, &amp;arg.sep, &amp;offset);
+    SafeStringValue(fname);
+
+    arg.argc = argc ? 1 : 0;
+    arg.io = rb_io_open(StringValueCStr(fname), &quot;r&quot;);
+    if (NIL_P(arg.io)) return Qnil;
+    if (!NIL_P(offset)) {
+        rb_io_seek(arg.io, offset, SEEK_SET);
+    }
+    return rb_ensure(io_s_read, (VALUE)&amp;arg, rb_io_close, arg.io);
+}</pre>
+</body>
+</html>

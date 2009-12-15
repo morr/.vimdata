@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>printf (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     printf(io, string [, obj ... ] )    =&gt; nil
+ *     printf(string [, obj ... ] )        =&gt; nil
+ *  
+ *  Equivalent to:
+ *     io.write(sprintf(string, obj, ...)
+ *  or
+ *     $stdout.write(sprintf(string, obj, ...)
+ */
+
+static VALUE
+rb_f_printf(argc, argv)
+    int argc;
+    VALUE argv[];
+{
+    VALUE out;
+
+    if (argc == 0) return Qnil;
+    if (TYPE(argv[0]) == T_STRING) {
+        out = rb_stdout;
+    }
+    else {
+        out = argv[0];
+        argv++;
+        argc--;
+    }
+    rb_io_write(out, rb_f_sprintf(argc, argv));
+
+    return Qnil;
+}</pre>
+</body>
+</html>

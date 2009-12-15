@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  Document-method: now
+ *
+ *  Synonym for &lt;code&gt;Time.new&lt;/code&gt;. Returns a +Time+ object
+ *  initialized tot he current system time.
+ *
+ *  call-seq:
+ *     Time.new -&gt; time
+ *  
+ *  Returns a &lt;code&gt;Time&lt;/code&gt; object initialized to the current system
+ *  time. &lt;b&gt;Note:&lt;/b&gt; The object created will be created using the
+ *  resolution available on your system clock, and so may include
+ *  fractional seconds.
+ *     
+ *     a = Time.new      #=&gt; Wed Apr 09 08:56:03 CDT 2003
+ *     b = Time.new      #=&gt; Wed Apr 09 08:56:03 CDT 2003
+ *     a == b            #=&gt; false
+ *     &quot;%.6f&quot; % a.to_f   #=&gt; &quot;1049896563.230740&quot;
+ *     &quot;%.6f&quot; % b.to_f   #=&gt; &quot;1049896563.231466&quot;
+ *     
+ */
+
+static VALUE
+time_init(time)
+    VALUE time;
+{
+    struct time_object *tobj;
+
+    time_modify(time);
+    GetTimeval(time, tobj);
+    tobj-&gt;tm_got=0;
+    tobj-&gt;tv.tv_sec = 0;
+    tobj-&gt;tv.tv_usec = 0;
+    if (gettimeofday(&amp;tobj-&gt;tv, 0) &lt; 0) {
+        rb_sys_fail(&quot;gettimeofday&quot;);
+    }
+
+    return time;
+}</pre>
+</body>
+</html>

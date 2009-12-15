@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Dir)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Dir.new( string ) -&gt; aDir
+ *
+ *  Returns a new directory object for the named directory.
+ */
+static VALUE
+dir_initialize(dir, dirname)
+    VALUE dir, dirname;
+{
+    struct dir_data *dp;
+
+    SafeStringValue(dirname);
+    Data_Get_Struct(dir, struct dir_data, dp);
+    if (dp-&gt;dir) closedir(dp-&gt;dir);
+    if (dp-&gt;path) free(dp-&gt;path);
+    dp-&gt;dir = NULL;
+    dp-&gt;path = NULL;
+    dp-&gt;dir = opendir(RSTRING(dirname)-&gt;ptr);
+    if (dp-&gt;dir == NULL) {
+        if (errno == EMFILE || errno == ENFILE) {
+            rb_gc();
+            dp-&gt;dir = opendir(RSTRING(dirname)-&gt;ptr);
+        }
+        if (dp-&gt;dir == NULL) {
+            rb_sys_fail(RSTRING(dirname)-&gt;ptr);
+        }
+    }
+    dp-&gt;path = strdup(RSTRING(dirname)-&gt;ptr);
+
+    return dir;
+}</pre>
+</body>
+</html>

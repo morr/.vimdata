@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>run (WEBrick::HTTPServer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/httpserver.rb, line 43</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run</span>(<span class="ruby-identifier">sock</span>)
+      <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span> 
+        <span class="ruby-identifier">res</span> = <span class="ruby-constant">HTTPResponse</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@config</span>)
+        <span class="ruby-identifier">req</span> = <span class="ruby-constant">HTTPRequest</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@config</span>)
+        <span class="ruby-identifier">server</span> = <span class="ruby-keyword kw">self</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">timeout</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:RequestTimeout</span>]
+          <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">timeout</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+            <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">IO</span>.<span class="ruby-identifier">select</span>([<span class="ruby-identifier">sock</span>], <span class="ruby-keyword kw">nil</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-value">0</span><span class="ruby-value">.5</span>)
+            <span class="ruby-identifier">timeout</span> = <span class="ruby-value">0</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@status</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">:Running</span>
+            <span class="ruby-identifier">timeout</span> <span class="ruby-operator">-=</span> <span class="ruby-value">0</span><span class="ruby-value">.5</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">EOFError</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">timeout</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">0</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">sock</span>.<span class="ruby-identifier">eof?</span>
+          <span class="ruby-identifier">req</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">sock</span>)
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">request_method</span> = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">request_method</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">request_uri</span> = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">request_uri</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">request_http_version</span> = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">http_version</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">keep_alive</span> = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">keep_alive?</span>
+          <span class="ruby-identifier">server</span> = <span class="ruby-identifier">lookup_server</span>(<span class="ruby-identifier">req</span>) <span class="ruby-operator">||</span> <span class="ruby-keyword kw">self</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">callback</span> = <span class="ruby-identifier">server</span>[<span class="ruby-identifier">:RequestCallback</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">server</span>[<span class="ruby-identifier">:RequestHandler</span>]
+            <span class="ruby-identifier">callback</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">server</span>.<span class="ruby-identifier">service</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">EOFError</span>, <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">RequestTimeout</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">set_error</span>(<span class="ruby-identifier">ex</span>)
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+          <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">error</span>(<span class="ruby-identifier">ex</span>.<span class="ruby-identifier">message</span>)
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">set_error</span>(<span class="ruby-identifier">ex</span>)
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">Status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">status</span> = <span class="ruby-identifier">ex</span>.<span class="ruby-identifier">code</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">StandardError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+          <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">error</span>(<span class="ruby-identifier">ex</span>)
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">set_error</span>(<span class="ruby-identifier">ex</span>, <span class="ruby-keyword kw">true</span>)
+        <span class="ruby-keyword kw">ensure</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">request_line</span>
+            <span class="ruby-identifier">req</span>.<span class="ruby-identifier">fixup</span>()
+            <span class="ruby-identifier">res</span>.<span class="ruby-identifier">send_response</span>(<span class="ruby-identifier">sock</span>)
+            <span class="ruby-identifier">server</span>.<span class="ruby-identifier">access_log</span>(<span class="ruby-ivar">@config</span>, <span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@http_version</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value str">&quot;1.1&quot;</span>
+        <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">keep_alive?</span>
+        <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">res</span>.<span class="ruby-identifier">keep_alive?</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

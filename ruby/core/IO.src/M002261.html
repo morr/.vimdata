@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>fsync (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.fsync   =&gt; 0 or nil
+ *  
+ *  Immediately writes all buffered data in &lt;em&gt;ios&lt;/em&gt; to disk.
+ *  Returns &lt;code&gt;nil&lt;/code&gt; if the underlying operating system does not
+ *  support &lt;em&gt;fsync(2)&lt;/em&gt;. Note that &lt;code&gt;fsync&lt;/code&gt; differs from
+ *  using &lt;code&gt;IO#sync=&lt;/code&gt;. The latter ensures that data is flushed
+ *  from Ruby's buffers, but doesn't not guarantee that the underlying
+ *  operating system actually writes it to disk.
+ */
+
+static VALUE
+rb_io_fsync(io)
+    VALUE io;
+{
+#ifdef HAVE_FSYNC
+    OpenFile *fptr;
+    FILE *f;
+
+    GetOpenFile(io, fptr);
+    f = GetWriteFile(fptr);
+
+    io_fflush(f, fptr);
+    if (fsync(fileno(f)) &lt; 0)
+        rb_sys_fail(fptr-&gt;path);
+    return INT2FIX(0);
+#else
+    rb_notimplement();
+    return Qnil;                /* not reached */
+#endif
+}</pre>
+</body>
+</html>

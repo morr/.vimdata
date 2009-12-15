@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>ordering= (GetoptLong)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/getoptlong.rb, line 244</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ordering=</span>(<span class="ruby-identifier">ordering</span>)
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-comment cmt"># The method is failed if option processing has already started.</span>
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@status</span> <span class="ruby-operator">!=</span> <span class="ruby-constant">STATUS_YET</span>
+      <span class="ruby-identifier">set_error</span>(<span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;argument error&quot;</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">RuntimeError</span>,
+        <span class="ruby-value str">&quot;invoke ordering=, but option processing has already started&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-comment cmt"># Check ordering.</span>
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-constant">ORDERINGS</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">ordering</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;invalid ordering `#{ordering}'&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ordering</span> <span class="ruby-operator">==</span> <span class="ruby-constant">PERMUTE</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">ENV</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-value str">'POSIXLY_CORRECT'</span>)
+      <span class="ruby-ivar">@ordering</span> = <span class="ruby-constant">REQUIRE_ORDER</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-ivar">@ordering</span> = <span class="ruby-identifier">ordering</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

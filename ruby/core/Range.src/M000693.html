@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>hash (Range)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   rng.hash    =&gt; fixnum
+ *
+ * Generate a hash value such that two ranges with the same start and
+ * end points, and the same value for the &quot;exclude end&quot; flag, generate
+ * the same hash value.
+ */
+
+static VALUE
+range_hash(range)
+    VALUE range;
+{
+    long hash = EXCL(range);
+    VALUE v;
+
+    v = rb_hash(rb_ivar_get(range, id_beg));
+    hash ^= v &lt;&lt; 1;
+    v = rb_hash(rb_ivar_get(range, id_end));
+    hash ^= v &lt;&lt; 9;
+    hash ^= EXCL(range) &lt;&lt; 24;
+
+    return LONG2FIX(hash);
+}</pre>
+</body>
+</html>

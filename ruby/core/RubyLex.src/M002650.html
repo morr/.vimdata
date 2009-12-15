@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each_top_level_statement (RubyLex)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb/ruby-lex.rb, line 227</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_top_level_statement</span>
+    <span class="ruby-identifier">initialize_input</span>
+    <span class="ruby-identifier">catch</span>(<span class="ruby-identifier">:TERM_INPUT</span>) <span class="ruby-keyword kw">do</span>
+      <span class="ruby-identifier">loop</span> <span class="ruby-keyword kw">do</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-ivar">@continue</span> = <span class="ruby-keyword kw">false</span>
+          <span class="ruby-identifier">prompt</span>
+          <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">l</span> = <span class="ruby-identifier">lex</span>
+            <span class="ruby-identifier">throw</span> <span class="ruby-identifier">:TERM_INPUT</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@line</span> <span class="ruby-operator">==</span> <span class="ruby-value str">''</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-comment cmt">#p l</span>
+            <span class="ruby-ivar">@line</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">l</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@ltype</span> <span class="ruby-keyword kw">or</span> <span class="ruby-ivar">@continue</span> <span class="ruby-keyword kw">or</span> <span class="ruby-ivar">@indent</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+              <span class="ruby-keyword kw">next</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@line</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;\n&quot;</span>
+            <span class="ruby-keyword kw">yield</span> <span class="ruby-ivar">@line</span>, <span class="ruby-ivar">@exp_line_no</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">l</span>
+          <span class="ruby-ivar">@line</span> = <span class="ruby-value str">''</span>
+          <span class="ruby-ivar">@exp_line_no</span> = <span class="ruby-ivar">@line_no</span>
+
+          <span class="ruby-ivar">@indent</span> = <span class="ruby-value">0</span>
+          <span class="ruby-ivar">@indent_stack</span> = []
+          <span class="ruby-identifier">prompt</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">TerminateLineInput</span>
+          <span class="ruby-identifier">initialize_input</span>
+          <span class="ruby-identifier">prompt</span>
+          <span class="ruby-identifier">get_readed</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

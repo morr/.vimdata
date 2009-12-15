@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (REXML::IOSource)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/source.rb, line 134</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">arg</span>, <span class="ruby-identifier">block_size</span>=<span class="ruby-value">500</span>, <span class="ruby-identifier">encoding</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-ivar">@er_source</span> = <span class="ruby-ivar">@source</span> = <span class="ruby-identifier">arg</span>
+      <span class="ruby-ivar">@to_utf</span> = <span class="ruby-keyword kw">false</span>
+
+      <span class="ruby-comment cmt"># Determining the encoding is a deceptively difficult issue to resolve.</span>
+      <span class="ruby-comment cmt"># First, we check the first two bytes for UTF-16.  Then we</span>
+      <span class="ruby-comment cmt"># assume that the encoding is at least ASCII enough for the '&gt;', and</span>
+      <span class="ruby-comment cmt"># we read until we get one of those.  This gives us the XML declaration,</span>
+      <span class="ruby-comment cmt"># if there is one.  If there isn't one, the file MUST be UTF-8, as per</span>
+      <span class="ruby-comment cmt"># the XML spec.  If there is one, we can determine the encoding from</span>
+      <span class="ruby-comment cmt"># it.</span>
+      <span class="ruby-ivar">@buffer</span> = <span class="ruby-value str">&quot;&quot;</span>
+      <span class="ruby-identifier">str</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">read</span>( <span class="ruby-value">2</span> )
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">encoding</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">encoding</span> = <span class="ruby-identifier">encoding</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-value">0xfe</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-value">0xff</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">1</span>]
+        <span class="ruby-ivar">@line_break</span> = <span class="ruby-value str">&quot;\000&gt;&quot;</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-value">0xff</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-value">0xfe</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">1</span>]
+        <span class="ruby-ivar">@line_break</span> = <span class="ruby-value str">&quot;&gt;\000&quot;</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-value">0xef</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-value">0xbb</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">1</span>]
+        <span class="ruby-identifier">str</span> <span class="ruby-operator">+=</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">read</span>(<span class="ruby-value">1</span>)
+        <span class="ruby-identifier">str</span> = <span class="ruby-value str">''</span> <span class="ruby-keyword kw">if</span> (<span class="ruby-value">0xbf</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">2</span>])
+        <span class="ruby-ivar">@line_break</span> = <span class="ruby-value str">&quot;&gt;&quot;</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@line_break</span> = <span class="ruby-value str">&quot;&gt;&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">super</span> <span class="ruby-identifier">str</span><span class="ruby-operator">+</span><span class="ruby-ivar">@source</span>.<span class="ruby-identifier">readline</span>( <span class="ruby-ivar">@line_break</span> )
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>atime (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     file.atime    =&gt; time
+ *  
+ *  Returns the last access time (a &lt;code&gt;Time&lt;/code&gt; object)
+ *   for &lt;i&gt;file&lt;/i&gt;, or epoch if &lt;i&gt;file&lt;/i&gt; has not been accessed.
+ *     
+ *     File.new(&quot;testfile&quot;).atime   #=&gt; Wed Dec 31 18:00:00 CST 1969
+ *     
+ */
+
+static VALUE
+rb_file_atime(obj)
+    VALUE obj;
+{
+    OpenFile *fptr;
+    struct stat st;
+
+    GetOpenFile(obj, fptr);
+    if (fstat(fileno(fptr-&gt;f), &amp;st) == -1) {
+        rb_sys_fail(fptr-&gt;path);
+    }
+    return rb_time_new(st.st_atime, 0);
+}</pre>
+</body>
+</html>

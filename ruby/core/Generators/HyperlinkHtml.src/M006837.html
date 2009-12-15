@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>gen_url (Generators::HyperlinkHtml)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/generators/html_generator.rb, line 140</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">gen_url</span>(<span class="ruby-identifier">url</span>, <span class="ruby-identifier">text</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">url</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/([A-Za-z]+):(.*)/</span>
+        <span class="ruby-identifier">type</span> = <span class="ruby-identifier">$1</span>
+        <span class="ruby-identifier">path</span> = <span class="ruby-identifier">$2</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">type</span> = <span class="ruby-value str">&quot;http&quot;</span>
+        <span class="ruby-identifier">path</span> = <span class="ruby-identifier">url</span>
+        <span class="ruby-identifier">url</span>  = <span class="ruby-node">&quot;http://#{url}&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;link&quot;</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">path</span>[<span class="ruby-value">0</span>,<span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-value str">'#'</span>     <span class="ruby-comment cmt"># is this meaningful?</span>
+          <span class="ruby-identifier">url</span> = <span class="ruby-identifier">path</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">url</span> = <span class="ruby-constant">HTMLGenerator</span>.<span class="ruby-identifier">gen_url</span>(<span class="ruby-ivar">@from_path</span>, <span class="ruby-identifier">path</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;http&quot;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;link&quot;</span>) <span class="ruby-operator">&amp;&amp;</span> 
+          <span class="ruby-identifier">url</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/\.(gif|png|jpg|jpeg|bmp)$/</span>
+
+        <span class="ruby-node">&quot;&lt;img src=\&quot;#{url}\&quot; /&gt;&quot;</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-node">&quot;&lt;a href=\&quot;#{url}\&quot;&gt;#{text.sub(%r{^#{type}:/*}, '')}&lt;/a&gt;&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

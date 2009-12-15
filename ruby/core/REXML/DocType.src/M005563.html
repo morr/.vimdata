@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (REXML::DocType)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/doctype.rb, line 41</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">first</span>, <span class="ruby-identifier">parent</span>=<span class="ruby-keyword kw">nil</span> )
+      <span class="ruby-ivar">@entities</span> = <span class="ruby-constant">DEFAULT_ENTITIES</span>
+      <span class="ruby-ivar">@long_name</span> = <span class="ruby-ivar">@uri</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">first</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">String</span>
+        <span class="ruby-keyword kw">super</span>()
+        <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">first</span>
+        <span class="ruby-ivar">@external_id</span> = <span class="ruby-identifier">parent</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">first</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">DocType</span>
+        <span class="ruby-keyword kw">super</span>( <span class="ruby-identifier">parent</span> )
+        <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">first</span>.<span class="ruby-identifier">name</span>
+        <span class="ruby-ivar">@external_id</span> = <span class="ruby-identifier">first</span>.<span class="ruby-identifier">external_id</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">first</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Array</span>
+        <span class="ruby-keyword kw">super</span>( <span class="ruby-identifier">parent</span> )
+        <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">first</span>[<span class="ruby-value">0</span>]
+        <span class="ruby-ivar">@external_id</span> = <span class="ruby-identifier">first</span>[<span class="ruby-value">1</span>]
+        <span class="ruby-ivar">@long_name</span> = <span class="ruby-identifier">first</span>[<span class="ruby-value">2</span>]
+        <span class="ruby-ivar">@uri</span> = <span class="ruby-identifier">first</span>[<span class="ruby-value">3</span>]
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">first</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Source</span>
+        <span class="ruby-keyword kw">super</span>( <span class="ruby-identifier">parent</span> )
+        <span class="ruby-identifier">parser</span> = <span class="ruby-constant">Parsers</span><span class="ruby-operator">::</span><span class="ruby-constant">BaseParser</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">first</span> )
+        <span class="ruby-identifier">event</span> = <span class="ruby-identifier">parser</span>.<span class="ruby-identifier">pull</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">:start_doctype</span>
+          <span class="ruby-ivar">@name</span>, <span class="ruby-ivar">@external_id</span>, <span class="ruby-ivar">@long_name</span>, <span class="ruby-ivar">@uri</span>, = <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>]
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">super</span>()
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

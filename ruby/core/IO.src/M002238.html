@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     IO.new(fd, mode_string)   =&gt; io
+ *  
+ *  Returns a new &lt;code&gt;IO&lt;/code&gt; object (a stream) for the given
+ *  integer file descriptor and mode string. See also
+ *  &lt;code&gt;IO#fileno&lt;/code&gt; and &lt;code&gt;IO::for_fd&lt;/code&gt;.
+ *     
+ *     a = IO.new(2,&quot;w&quot;)      # '2' is standard error
+ *     $stderr.puts &quot;Hello&quot;
+ *     a.puts &quot;World&quot;
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     Hello
+ *     World
+ */
+
+static VALUE
+rb_io_s_new(argc, argv, klass)
+    int argc;
+    VALUE *argv;
+    VALUE klass;
+{
+    if (rb_block_given_p()) {
+        char *cname = rb_class2name(klass);
+
+        rb_warn(&quot;%s::new() does not take block; use %s::open() instead&quot;,
+                cname, cname);
+    }
+    return rb_class_new_instance(argc, argv, klass);
+}</pre>
+</body>
+</html>

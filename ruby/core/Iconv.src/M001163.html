@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>conv (Iconv)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Document-method: Iconv::conv
+ * call-seq: Iconv.conv(to, from, str)
+ *
+ * Shorthand for
+ *   Iconv.iconv(to, from, str).join
+ * See Iconv.iconv.
+ */
+static VALUE
+iconv_s_conv
+    (self, to, from, str)
+    VALUE self, to, from, str;
+{
+    struct iconv_env_t arg;
+
+    arg.argc = 1;
+    arg.argv = &amp;str;
+    arg.append = rb_str_append;
+    arg.ret = rb_str_new(0, 0);
+    arg.cd = iconv_create(to, from);
+    return rb_ensure(iconv_s_convert, (VALUE)&amp;arg, iconv_free, ICONV2VALUE(arg.cd));
+}</pre>
+</body>
+</html>

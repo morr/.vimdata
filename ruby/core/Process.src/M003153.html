@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>wait (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.wait()                     =&gt; fixnum
+ *     Process.wait(pid=-1, flags=0)      =&gt; fixnum
+ *     Process.waitpid(pid=-1, flags=0)   =&gt; fixnum
+ *
+ *  Waits for a child process to exit, returns its process id, and
+ *  sets &lt;code&gt;$?&lt;/code&gt; to a &lt;code&gt;Process::Status&lt;/code&gt; object
+ *  containing information on that process. Which child it waits on
+ *  depends on the value of _pid_:
+ *
+ *  &gt; 0::   Waits for the child whose process ID equals _pid_.
+ *
+ *  0::     Waits for any child whose process group ID equals that of the
+ *          calling process.
+ *
+ *  -1::    Waits for any child process (the default if no _pid_ is
+ *          given).
+ *
+ *  &lt; -1::  Waits for any child whose process group ID equals the absolute
+ *          value of _pid_.
+ *
+ *  The _flags_ argument may be a logical or of the flag values
+ *  &lt;code&gt;Process::WNOHANG&lt;/code&gt; (do not block if no child available)
+ *  or &lt;code&gt;Process::WUNTRACED&lt;/code&gt; (return stopped children that
+ *  haven't been reported). Not all flags are available on all
+ *  platforms, but a flag value of zero will work on all platforms.
+ *
+ *  Calling this method raises a &lt;code&gt;SystemError&lt;/code&gt; if there are
+ *  no child processes. Not available on all platforms.
+ *
+ *     include Process
+ *     fork { exit 99 }                 #=&gt; 27429
+ *     wait                             #=&gt; 27429
+ *     $?.exitstatus                    #=&gt; 99
+ *
+ *     pid = fork { sleep 3 }           #=&gt; 27440
+ *     Time.now                         #=&gt; Wed Apr 09 08:57:09 CDT 2003
+ *     waitpid(pid, Process::WNOHANG)   #=&gt; nil
+ *     Time.now                         #=&gt; Wed Apr 09 08:57:09 CDT 2003
+ *     waitpid(pid, 0)                  #=&gt; 27440
+ *     Time.now                         #=&gt; Wed Apr 09 08:57:12 CDT 2003
+ */
+
+static VALUE
+proc_wait(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE vpid, vflags;
+    int pid, flags, status;
+
+    rb_secure(2);
+    flags = 0;
+    rb_scan_args(argc, argv, &quot;02&quot;, &amp;vpid, &amp;vflags);
+    if (argc == 0) {
+        pid = -1;
+    }
+    else {
+        pid = NUM2INT(vpid);
+        if (argc == 2 &amp;&amp; !NIL_P(vflags)) {
+            flags = NUM2UINT(vflags);
+        }
+    }
+    if ((pid = rb_waitpid(pid, &amp;status, flags)) &lt; 0)
+        rb_sys_fail(0);
+    if (pid == 0) {
+        return rb_last_status = Qnil;
+    }
+    return INT2FIX(pid);
+}</pre>
+</body>
+</html>

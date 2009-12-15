@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>next (REXML::Validation::Choice)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/validation/relaxng.rb, line 378</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">next</span>( <span class="ruby-identifier">event</span> )
+        <span class="ruby-comment cmt"># Make the choice if we haven't</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@events</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+          <span class="ruby-identifier">c</span> = <span class="ruby-value">0</span> ; <span class="ruby-identifier">max</span> = <span class="ruby-ivar">@choices</span>.<span class="ruby-identifier">size</span>
+          <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">max</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@choices</span>[<span class="ruby-identifier">c</span>][<span class="ruby-value">0</span>].<span class="ruby-identifier">class</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Ref</span>
+              <span class="ruby-identifier">expand_ref_in</span>( <span class="ruby-ivar">@choices</span>[<span class="ruby-identifier">c</span>], <span class="ruby-value">0</span> )
+              <span class="ruby-ivar">@choices</span> <span class="ruby-operator">+=</span> <span class="ruby-ivar">@choices</span>[<span class="ruby-identifier">c</span>]
+              <span class="ruby-ivar">@choices</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-ivar">@choices</span>[<span class="ruby-identifier">c</span>] )
+              <span class="ruby-identifier">max</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span>
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">c</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-ivar">@events</span> = <span class="ruby-ivar">@choices</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">evt</span><span class="ruby-operator">|</span> <span class="ruby-identifier">evt</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">matches?</span> <span class="ruby-identifier">event</span> }
+          <span class="ruby-comment cmt"># Remove the references</span>
+          <span class="ruby-comment cmt"># Find the events</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-comment cmt">#puts &quot;In next with #{event.inspect}.&quot;</span>
+        <span class="ruby-comment cmt">#puts &quot;events is #{@events.inspect}&quot;</span>
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@events</span>
+          <span class="ruby-ivar">@events</span> = []
+          <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-comment cmt">#puts &quot;current = #@current&quot;</span>
+        <span class="ruby-keyword kw">super</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

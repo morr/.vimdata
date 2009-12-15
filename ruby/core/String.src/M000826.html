@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>chomp! (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.chomp!(separator=$/)   =&gt; str or nil
+ *  
+ *  Modifies &lt;i&gt;str&lt;/i&gt; in place as described for &lt;code&gt;String#chomp&lt;/code&gt;,
+ *  returning &lt;i&gt;str&lt;/i&gt;, or &lt;code&gt;nil&lt;/code&gt; if no modifications were made.
+ */
+
+static VALUE
+rb_str_chomp_bang(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    VALUE rs;
+    int newline;
+    char *p;
+    long len, rslen;
+
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;rs) == 0) {
+        len = RSTRING(str)-&gt;len;
+        if (len == 0) return Qnil;
+        p = RSTRING(str)-&gt;ptr;
+        rs = rb_rs;
+        if (rs == rb_default_rs) {
+          smart_chomp:
+            rb_str_modify(str);
+            if (RSTRING(str)-&gt;ptr[len-1] == '\n') {
+                RSTRING(str)-&gt;len--;
+                if (RSTRING(str)-&gt;len &gt; 0 &amp;&amp;
+                    RSTRING(str)-&gt;ptr[RSTRING(str)-&gt;len-1] == '\r') {
+                    RSTRING(str)-&gt;len--;
+                }
+            }
+            else if (RSTRING(str)-&gt;ptr[len-1] == '\r') {
+                RSTRING(str)-&gt;len--;
+            }
+            else {
+                return Qnil;
+            }
+            RSTRING(str)-&gt;ptr[RSTRING(str)-&gt;len] = '\0';
+            return str;
+        }
+    }
+    if (NIL_P(rs)) return Qnil;
+    StringValue(rs);
+    len = RSTRING(str)-&gt;len;
+    if (len == 0) return Qnil;
+    p = RSTRING(str)-&gt;ptr;
+    rslen = RSTRING(rs)-&gt;len;
+    if (rslen == 0) {
+        while (len&gt;0 &amp;&amp; p[len-1] == '\n') {
+            len--;
+            if (len&gt;0 &amp;&amp; p[len-1] == '\r')
+                len--;
+        }
+        if (len &lt; RSTRING(str)-&gt;len) {
+            rb_str_modify(str);
+            RSTRING(str)-&gt;len = len;
+            RSTRING(str)-&gt;ptr[len] = '\0';
+            return str;
+        }
+        return Qnil;
+    }
+    if (rslen &gt; len) return Qnil;
+    newline = RSTRING(rs)-&gt;ptr[rslen-1];
+    if (rslen == 1 &amp;&amp; newline == '\n')
+        goto smart_chomp;
+
+    if (p[len-1] == newline &amp;&amp;
+        (rslen &lt;= 1 ||
+         rb_memcmp(RSTRING(rs)-&gt;ptr, p+len-rslen, rslen) == 0)) {
+        rb_str_modify(str);
+        RSTRING(str)-&gt;len -= rslen;
+        RSTRING(str)-&gt;ptr[RSTRING(str)-&gt;len] = '\0';
+        return str;
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

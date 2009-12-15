@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>write (StringIO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   strio.write(string)    -&gt; integer
+ *   strio.syswrite(string) -&gt; integer
+ *
+ * Appends the given string to the underlying buffer string of *strio*.
+ * The stream must be opened for writing.  If the argument is not a
+ * string, it will be converted to a string using &lt;code&gt;to_s&lt;/code&gt;.
+ * Returns the number of bytes written.  See IO#write.
+ */
+static VALUE
+strio_write(self, str)
+    VALUE self, str;
+{
+    struct StringIO *ptr = writable(StringIO(self));
+    long len, olen;
+
+    if (TYPE(str) != T_STRING)
+        str = rb_obj_as_string(str);
+    len = RSTRING(str)-&gt;len;
+    if (!len) return INT2FIX(0);
+    check_modifiable(ptr);
+    olen = RSTRING(ptr-&gt;string)-&gt;len;
+    if (ptr-&gt;flags &amp; FMODE_APPEND) {
+        ptr-&gt;pos = olen;
+    }
+    if (ptr-&gt;pos == olen) {
+        rb_str_cat(ptr-&gt;string, RSTRING(str)-&gt;ptr, len);
+    }
+    else {
+        strio_extend(ptr, ptr-&gt;pos, len);
+        rb_str_update(ptr-&gt;string, ptr-&gt;pos, len, str);
+    }
+    OBJ_INFECT(ptr-&gt;string, self);
+    ptr-&gt;pos += len;
+    return LONG2NUM(len);
+}</pre>
+</body>
+</html>

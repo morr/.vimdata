@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>load (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     load(filename, wrap=false)   =&gt; true
+ *  
+ *  Loads and executes the Ruby
+ *  program in the file _filename_. If the filename does not
+ *  resolve to an absolute path, the file is searched for in the library
+ *  directories listed in &lt;code&gt;$:&lt;/code&gt;. If the optional _wrap_
+ *  parameter is +true+, the loaded script will be executed
+ *  under an anonymous module, protecting the calling program's global
+ *  namespace. In no circumstance will any local variables in the loaded
+ *  file be propagated to the loading environment.
+ */
+
+
+static VALUE
+rb_f_load(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE fname, wrap;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;fname, &amp;wrap);
+    rb_load(fname, RTEST(wrap));
+    return Qtrue;
+}</pre>
+</body>
+</html>

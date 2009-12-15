@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (SOAP::RPC::HTTPServer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/rpc/httpserver.rb, line 23</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">config</span>)
+    <span class="ruby-keyword kw">super</span>(<span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SOAPHTTPServerApplicationName</span>] <span class="ruby-operator">||</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>)
+    <span class="ruby-ivar">@default_namespace</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SOAPDefaultNamespace</span>]
+    <span class="ruby-ivar">@webrick_config</span> = <span class="ruby-identifier">config</span>.<span class="ruby-identifier">dup</span>
+    <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">level</span> = <span class="ruby-constant">Logger</span><span class="ruby-operator">::</span><span class="ruby-constant">Severity</span><span class="ruby-operator">::</span><span class="ruby-constant">ERROR</span> <span class="ruby-comment cmt"># keep silent by default</span>
+    <span class="ruby-ivar">@webrick_config</span>[<span class="ruby-identifier">:Logger</span>] <span class="ruby-operator">||=</span> <span class="ruby-ivar">@log</span>
+    <span class="ruby-ivar">@log</span> = <span class="ruby-ivar">@webrick_config</span>[<span class="ruby-identifier">:Logger</span>]     <span class="ruby-comment cmt"># sync logger of App and HTTPServer</span>
+    <span class="ruby-ivar">@router</span> = <span class="ruby-operator">::</span><span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">RPC</span><span class="ruby-operator">::</span><span class="ruby-constant">Router</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>)
+    <span class="ruby-ivar">@soaplet</span> = <span class="ruby-operator">::</span><span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">RPC</span><span class="ruby-operator">::</span><span class="ruby-constant">SOAPlet</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@router</span>)
+    <span class="ruby-identifier">on_init</span>
+    <span class="ruby-ivar">@server</span> = <span class="ruby-constant">WEBrick</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTPServer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@webrick_config</span>)
+    <span class="ruby-ivar">@server</span>.<span class="ruby-identifier">mount</span>(<span class="ruby-value str">'/'</span>, <span class="ruby-ivar">@soaplet</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

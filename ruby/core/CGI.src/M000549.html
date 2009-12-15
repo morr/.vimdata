@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>read_from_cmdline (CGI)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/cgi-lib.rb, line 149</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">read_from_cmdline</span>
+    <span class="ruby-identifier">require</span> <span class="ruby-value str">&quot;shellwords.rb&quot;</span>
+    <span class="ruby-identifier">words</span> = <span class="ruby-constant">Shellwords</span>.<span class="ruby-identifier">shellwords</span>(
+              <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">not</span> <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">empty?</span>
+                <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">' '</span>)
+              <span class="ruby-keyword kw">else</span>
+                <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;(offline mode: enter name=value pairs on standard input)\n&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">STDIN</span>.<span class="ruby-identifier">tty?</span>
+                <span class="ruby-identifier">readlines</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">' '</span>).<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\n/</span>, <span class="ruby-value str">''</span>)
+              <span class="ruby-keyword kw">end</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\\=/</span>, <span class="ruby-value str">'%3D'</span>).<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\\&amp;/</span>, <span class="ruby-value str">'%26'</span>))
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">words</span>.<span class="ruby-identifier">find</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/=/</span>} <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">words</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">'&amp;'</span>) <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">words</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">'+'</span>) <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

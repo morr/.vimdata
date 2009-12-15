@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>caller (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     caller(start=1)    =&gt; array
+ *  
+ *  Returns the current execution stack---an array containing strings in
+ *  the form ``&lt;em&gt;file:line&lt;/em&gt;'' or ``&lt;em&gt;file:line: in
+ *  `method'&lt;/em&gt;''. The optional _start_ parameter
+ *  determines the number of initial stack entries to omit from the
+ *  result.
+ *     
+ *     def a(skip)
+ *       caller(skip)
+ *     end
+ *     def b(skip)
+ *       a(skip)
+ *     end
+ *     def c(skip)
+ *       b(skip)
+ *     end
+ *     c(0)   #=&gt; [&quot;prog:2:in `a'&quot;, &quot;prog:5:in `b'&quot;, &quot;prog:8:in `c'&quot;, &quot;prog:10&quot;]
+ *     c(1)   #=&gt; [&quot;prog:5:in `b'&quot;, &quot;prog:8:in `c'&quot;, &quot;prog:11&quot;]
+ *     c(2)   #=&gt; [&quot;prog:8:in `c'&quot;, &quot;prog:12&quot;]
+ *     c(3)   #=&gt; [&quot;prog:13&quot;]
+ */
+
+static VALUE
+rb_f_caller(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE level;
+    int lev;
+
+    rb_scan_args(argc, argv, &quot;01&quot;, &amp;level);
+
+    if (NIL_P(level)) lev = 1;
+    else lev = NUM2INT(level);
+    if (lev &lt; 0) rb_raise(rb_eArgError, &quot;negative level (%d)&quot;, lev);
+
+    return backtrace(lev);
+}</pre>
+</body>
+</html>

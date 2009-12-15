@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>eval (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     eval(string [, binding [, filename [,lineno]]])  =&gt; obj
+ *  
+ *  Evaluates the Ruby expression(s) in &lt;em&gt;string&lt;/em&gt;. If
+ *  &lt;em&gt;binding&lt;/em&gt; is given, the evaluation is performed in its
+ *  context. The binding may be a &lt;code&gt;Binding&lt;/code&gt; object or a
+ *  &lt;code&gt;Proc&lt;/code&gt; object. If the optional &lt;em&gt;filename&lt;/em&gt; and
+ *  &lt;em&gt;lineno&lt;/em&gt; parameters are present, they will be used when
+ *  reporting syntax errors.
+ *     
+ *     def getBinding(str)
+ *       return binding
+ *     end
+ *     str = &quot;hello&quot;
+ *     eval &quot;str + ' Fred'&quot;                      #=&gt; &quot;hello Fred&quot;
+ *     eval &quot;str + ' Fred'&quot;, getBinding(&quot;bye&quot;)   #=&gt; &quot;bye Fred&quot;
+ */
+
+static VALUE
+rb_f_eval(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE src, scope, vfile, vline;
+    char *file = &quot;(eval)&quot;;
+    int line = 1;
+
+    rb_scan_args(argc, argv, &quot;13&quot;, &amp;src, &amp;scope, &amp;vfile, &amp;vline);
+    if (ruby_safe_level &gt;= 4) {
+        StringValue(src);
+        if (!NIL_P(scope) &amp;&amp; !OBJ_TAINTED(scope)) {
+            rb_raise(rb_eSecurityError, &quot;Insecure: can't modify trusted binding&quot;);
+        }
+    }
+    else {
+        SafeStringValue(src);
+    }
+    if (argc &gt;= 3) {
+        StringValue(vfile);
+    }
+    if (argc &gt;= 4) {
+        line = NUM2INT(vline);
+    }
+
+    if (!NIL_P(vfile)) file = RSTRING(vfile)-&gt;ptr;
+    if (NIL_P(scope) &amp;&amp; ruby_frame-&gt;prev) {
+        struct FRAME *prev;
+        VALUE val;
+
+        prev = ruby_frame;
+        PUSH_FRAME();
+        *ruby_frame = *prev-&gt;prev;
+        ruby_frame-&gt;prev = prev;
+        val = eval(self, src, scope, file, line);
+        POP_FRAME();
+
+        return val;
+    }
+    return eval(self, src, scope, file, line);
+}</pre>
+</body>
+</html>

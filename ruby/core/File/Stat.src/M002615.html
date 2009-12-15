@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>writable_real? (File::Stat)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     stat.writable_real? -&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; if &lt;i&gt;stat&lt;/i&gt; is writable by the real
+ *  user id of this process.
+ *     
+ *     File.stat(&quot;testfile&quot;).writable_real?   #=&gt; true
+ *     
+ */
+
+static VALUE
+rb_stat_W(obj)
+    VALUE obj;
+{
+    struct stat *st = get_stat(obj);
+
+#ifdef USE_GETEUID
+    if (getuid() == 0) return Qtrue;
+#endif
+#ifdef S_IWUSR
+    if (rb_stat_rowned(obj))
+        return st-&gt;st_mode &amp; S_IWUSR ? Qtrue : Qfalse;
+#endif
+#ifdef S_IWGRP
+    if (group_member(get_stat(obj)-&gt;st_gid))
+        return st-&gt;st_mode &amp; S_IWGRP ? Qtrue : Qfalse;
+#endif
+#ifdef S_IWOTH
+    if (!(st-&gt;st_mode &amp; S_IWOTH)) return Qfalse;
+#endif
+    return Qtrue;
+}</pre>
+</body>
+</html>

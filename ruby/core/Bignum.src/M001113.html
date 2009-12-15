@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>&lt;&lt; (Bignum)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *     big &lt;&lt; numeric   =&gt;  integer
+ *
+ * Shifts big left _numeric_ positions (right if _numeric_ is negative).
+ */
+
+VALUE
+rb_big_lshift(x, y)
+    VALUE x, y;
+{
+    long shift;
+    int neg = 0;
+
+    for (;;) {
+        if (FIXNUM_P(y)) {
+            shift = FIX2LONG(y);
+            if (shift &lt; 0) {
+                neg = 1;
+                shift = -shift;
+            }
+            break;
+        }
+        else if (TYPE(y) == T_BIGNUM) {
+            if (!RBIGNUM(y)-&gt;sign) {
+                VALUE t = check_shiftdown(y, x);
+                if (!NIL_P(t)) return t;
+                neg = 1;
+            }
+            shift = big2ulong(y, &quot;long&quot;, Qtrue);
+            break;
+        }
+        y = rb_to_int(y);
+    }
+
+    if (neg) return big_rshift(x, shift);
+    return big_lshift(x, shift);
+}</pre>
+</body>
+</html>

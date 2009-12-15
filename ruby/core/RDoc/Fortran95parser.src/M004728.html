@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>scan (RDoc::Fortran95parser)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/parsers/parse_f95.rb, line 205</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">scan</span>
+
+      <span class="ruby-comment cmt"># remove private comment</span>
+      <span class="ruby-identifier">remaining_code</span> = <span class="ruby-identifier">remove_private_comments</span>(<span class="ruby-ivar">@body</span>)
+
+      <span class="ruby-comment cmt"># continuation lines are united to one line</span>
+      <span class="ruby-identifier">remaining_code</span> = <span class="ruby-identifier">united_to_one_line</span>(<span class="ruby-identifier">remaining_code</span>)
+
+      <span class="ruby-comment cmt"># semicolons are replaced to line feed</span>
+      <span class="ruby-identifier">remaining_code</span> = <span class="ruby-identifier">semicolon_to_linefeed</span>(<span class="ruby-identifier">remaining_code</span>)
+
+      <span class="ruby-comment cmt"># collect comment for file entity</span>
+      <span class="ruby-identifier">whole_comment</span>, <span class="ruby-identifier">remaining_code</span> = <span class="ruby-identifier">collect_first_comment</span>(<span class="ruby-identifier">remaining_code</span>)
+      <span class="ruby-ivar">@top_level</span>.<span class="ruby-identifier">comment</span> = <span class="ruby-identifier">whole_comment</span>
+
+      <span class="ruby-comment cmt"># String &quot;remaining_code&quot; is converted to Array &quot;remaining_lines&quot;</span>
+      <span class="ruby-identifier">remaining_lines</span> = <span class="ruby-identifier">remaining_code</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">&quot;\n&quot;</span>)
+
+      <span class="ruby-comment cmt"># &quot;module&quot; or &quot;program&quot; parts are parsed (new)</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-identifier">level_depth</span> = <span class="ruby-value">0</span>
+      <span class="ruby-identifier">block_searching_flag</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">block_searching_lines</span> = []
+      <span class="ruby-identifier">pre_comment</span> = []
+      <span class="ruby-identifier">module_program_trailing</span> = <span class="ruby-value str">&quot;&quot;</span>
+      <span class="ruby-identifier">module_program_name</span> = <span class="ruby-value str">&quot;&quot;</span>
+      <span class="ruby-identifier">other_block_level_depth</span> = <span class="ruby-value">0</span>
+      <span class="ruby-identifier">other_block_searching_flag</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">remaining_lines</span>.<span class="ruby-identifier">collect!</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">block_searching_flag</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">other_block_searching_flag</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">line</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^\s*?module\s+(\w+)\s*?(!.*?)?$/i</span>
+            <span class="ruby-identifier">block_searching_flag</span> = <span class="ruby-identifier">:module</span>
+            <span class="ruby-identifier">block_searching_lines</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">line</span>
+            <span class="ruby-identifier">module_program_name</span> = <span class="ruby-identifier">$1</span>
+            <span class="ruby-identifier">module_program_trailing</span> = <span class="ruby-identifier">find_comments</span>(<span class="ruby-identifier">$2</span>)
+            <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">false</span>
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">line</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^\s*?program\s+(\w+)\s*?(!.*?)?$/i</span> <span class="ruby-operator">||</span>
+                 <span class="ruby-identifier">line</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^\s*?\w/</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">block_start?</span>(<span class="ruby-identifier">line</span>)
+            <span class="ruby-identifier">block_searching_flag</span> = <span class="ruby-identifier">:program</span>
+            <span class="ruby-identifier">block_searching_lines</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">line</span>
+            <span class="ruby-identifier">module_program_name</span> = <span class="ruby-identifier">$1</span> <span class="ruby-operator">||</span> <span class="ruby-value str">&quot;&quot;</span>
+            <span class="ruby-identifier">module_program_trailing</span> = <span class="ruby-identifier">find_comments</span>(<span class="ruby-identifier">$2</span>)
+            <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">false</span>
+
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">block_start?</span>(<span class="ruby-identifier">line</span>)
+            <span class="ruby-identifier">other_block_searching_flag</span> = <span class="ruby-keyword kw">true</span>
+            <span class="ruby-keyword kw">next</span> <span class="ruby-identifier">line</span>
+
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">line</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^\s*?!\s?(.*)/</span>
+            <span class="ruby-identifier">pre_comment</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">line</span>
+            <span class="ruby-keyword kw">next</span> <span class="ruby-identifier">line</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">pre_comment</span> = []
+            <span class="ruby-keyword kw">next</span> <span class="ruby-identifier">line</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">other_block_searching_flag</span>
+          <span class="ruby-identifier">other_block_level_depth</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_start?</span>(<span class="ruby-identifier">line</span>)
+          <span class="ruby-identifier">other_block_level_depth</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_end?</span>(<span class="ruby-identifier">line</span>)
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">other_block_level_depth</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+            <span class="ruby-identifier">other_block_level_depth</span> = <span class="ruby-value">0</span>
+            <span class="ruby-identifier">other_block_searching_flag</span> = <span class="ruby-keyword kw">nil</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">next</span> <span class="ruby-identifier">line</span>
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-identifier">block_searching_lines</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">line</span>
+        <span class="ruby-identifier">level_depth</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_start?</span>(<span class="ruby-identifier">line</span>)
+        <span class="ruby-identifier">level_depth</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_end?</span>(<span class="ruby-identifier">line</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">level_depth</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">0</span>
+          <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">false</span>
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-comment cmt"># &quot;module_program_code&quot; is formatted.</span>
+        <span class="ruby-comment cmt"># &quot;:nodoc:&quot; flag is checked.</span>
+        <span class="ruby-comment cmt">#</span>
+        <span class="ruby-identifier">module_program_code</span> = <span class="ruby-identifier">block_searching_lines</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>)
+        <span class="ruby-identifier">module_program_code</span> = <span class="ruby-identifier">remove_empty_head_lines</span>(<span class="ruby-identifier">module_program_code</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">module_program_trailing</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^:nodoc:/</span>
+          <span class="ruby-comment cmt"># next loop to search next block</span>
+          <span class="ruby-identifier">level_depth</span> = <span class="ruby-value">0</span>
+          <span class="ruby-identifier">block_searching_flag</span> = <span class="ruby-keyword kw">false</span>
+          <span class="ruby-identifier">block_searching_lines</span> = []
+          <span class="ruby-identifier">pre_comment</span> = []
+          <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">false</span>
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-comment cmt"># NormalClass is created, and added to @top_level</span>
+        <span class="ruby-comment cmt">#</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_searching_flag</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:module</span>
+          <span class="ruby-identifier">module_name</span> = <span class="ruby-identifier">module_program_name</span>
+          <span class="ruby-identifier">module_code</span> = <span class="ruby-identifier">module_program_code</span>
+          <span class="ruby-identifier">module_trailing</span> = <span class="ruby-identifier">module_program_trailing</span>
+          <span class="ruby-identifier">progress</span> <span class="ruby-value str">&quot;m&quot;</span>
+          <span class="ruby-ivar">@stats</span>.<span class="ruby-identifier">num_modules</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+          <span class="ruby-identifier">f9x_module</span> = <span class="ruby-ivar">@top_level</span>.<span class="ruby-identifier">add_module</span> <span class="ruby-constant">NormalClass</span>, <span class="ruby-identifier">module_name</span>
+          <span class="ruby-identifier">f9x_module</span>.<span class="ruby-identifier">record_location</span> <span class="ruby-ivar">@top_level</span>
+
+          <span class="ruby-identifier">f9x_comment</span> = <span class="ruby-constant">COMMENTS_ARE_UPPER</span> <span class="ruby-value">? </span>
+            <span class="ruby-identifier">find_comments</span>(<span class="ruby-identifier">pre_comment</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>))  <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">module_trailing</span> <span class="ruby-operator">:</span>
+              <span class="ruby-identifier">module_trailing</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">find_comments</span>(<span class="ruby-identifier">module_code</span>.<span class="ruby-identifier">sub</span>(<span class="ruby-regexp re">/^.*$\n/i</span>, <span class="ruby-value str">''</span>))
+          <span class="ruby-identifier">f9x_module</span>.<span class="ruby-identifier">comment</span> = <span class="ruby-identifier">f9x_comment</span>
+          <span class="ruby-identifier">parse_program_or_module</span>(<span class="ruby-identifier">f9x_module</span>, <span class="ruby-identifier">module_code</span>)
+
+          <span class="ruby-constant">TopLevel</span>.<span class="ruby-identifier">all_files</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">toplevel</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">toplevel</span>.<span class="ruby-identifier">include_includes?</span>(<span class="ruby-identifier">module_name</span>, <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">ignore_case</span>)
+              <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">toplevel</span>.<span class="ruby-identifier">include_requires?</span>(<span class="ruby-ivar">@file_name</span>, <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">ignore_case</span>)
+                <span class="ruby-identifier">toplevel</span>.<span class="ruby-identifier">add_require</span>(<span class="ruby-constant">Require</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@file_name</span>, <span class="ruby-value str">&quot;&quot;</span>))
+              <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-identifier">toplevel</span>.<span class="ruby-identifier">each_classmodule</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span>
+              <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">include_includes?</span>(<span class="ruby-identifier">module_name</span>, <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">ignore_case</span>)
+                <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">m</span>.<span class="ruby-identifier">include_requires?</span>(<span class="ruby-ivar">@file_name</span>, <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">ignore_case</span>)
+                  <span class="ruby-identifier">m</span>.<span class="ruby-identifier">add_require</span>(<span class="ruby-constant">Require</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@file_name</span>, <span class="ruby-value str">&quot;&quot;</span>))
+                <span class="ruby-keyword kw">end</span>
+              <span class="ruby-keyword kw">end</span>
+            }
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">block_searching_flag</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:program</span>
+          <span class="ruby-identifier">program_name</span> = <span class="ruby-identifier">module_program_name</span>
+          <span class="ruby-identifier">program_code</span> = <span class="ruby-identifier">module_program_code</span>
+          <span class="ruby-identifier">program_trailing</span> = <span class="ruby-identifier">module_program_trailing</span>
+          <span class="ruby-identifier">progress</span> <span class="ruby-value str">&quot;p&quot;</span>
+          <span class="ruby-identifier">program_comment</span> = <span class="ruby-constant">COMMENTS_ARE_UPPER</span> <span class="ruby-value">? </span>
+            <span class="ruby-identifier">find_comments</span>(<span class="ruby-identifier">pre_comment</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>)) <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">program_trailing</span> <span class="ruby-operator">:</span> 
+              <span class="ruby-identifier">program_trailing</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">find_comments</span>(<span class="ruby-identifier">program_code</span>.<span class="ruby-identifier">sub</span>(<span class="ruby-regexp re">/^.*$\n/i</span>, <span class="ruby-value str">''</span>))
+          <span class="ruby-identifier">program_comment</span> = <span class="ruby-node">&quot;\n\n= &lt;i&gt;Program&lt;/i&gt; &lt;tt&gt;#{program_name}&lt;/tt&gt;\n\n&quot;</span> \
+                            <span class="ruby-operator">+</span> <span class="ruby-identifier">program_comment</span>
+          <span class="ruby-ivar">@top_level</span>.<span class="ruby-identifier">comment</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">program_comment</span>
+          <span class="ruby-identifier">parse_program_or_module</span>(<span class="ruby-ivar">@top_level</span>, <span class="ruby-identifier">program_code</span>, <span class="ruby-identifier">:private</span>)
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-comment cmt"># next loop to search next block</span>
+        <span class="ruby-identifier">level_depth</span> = <span class="ruby-value">0</span>
+        <span class="ruby-identifier">block_searching_flag</span> = <span class="ruby-keyword kw">false</span>
+        <span class="ruby-identifier">block_searching_lines</span> = []
+        <span class="ruby-identifier">pre_comment</span> = []
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">false</span>
+      }
+
+      <span class="ruby-identifier">remaining_lines</span>.<span class="ruby-identifier">delete_if</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">line</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">false</span>
+      }
+
+      <span class="ruby-comment cmt"># External subprograms and functions are parsed</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-identifier">parse_program_or_module</span>(<span class="ruby-ivar">@top_level</span>, <span class="ruby-identifier">remaining_lines</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>),
+                              <span class="ruby-identifier">:public</span>, <span class="ruby-keyword kw">true</span>)
+
+      <span class="ruby-ivar">@top_level</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>route_from (URI::Generic)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/uri/generic.rb, line 914</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">route_from</span>(<span class="ruby-identifier">oth</span>)
+      <span class="ruby-comment cmt"># you can modify `rel', but can not `oth'.</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">oth</span>, <span class="ruby-identifier">rel</span> = <span class="ruby-identifier">route_from0</span>(<span class="ruby-identifier">oth</span>)
+      <span class="ruby-keyword kw">rescue</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-identifier">$!</span>.<span class="ruby-identifier">class</span>, <span class="ruby-identifier">$!</span>.<span class="ruby-identifier">message</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">oth</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">rel</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">rel</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">rel</span>.<span class="ruby-identifier">set_path</span>(<span class="ruby-identifier">route_from_path</span>(<span class="ruby-identifier">oth</span>.<span class="ruby-identifier">path</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">path</span>))
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rel</span>.<span class="ruby-identifier">path</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'./'</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">query</span>
+        <span class="ruby-comment cmt"># &quot;./?foo&quot; -&gt; &quot;?foo&quot;</span>
+        <span class="ruby-identifier">rel</span>.<span class="ruby-identifier">set_path</span>(<span class="ruby-value str">''</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">rel</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>_dump (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   time._dump   =&gt; string
+ *
+ * Dump _time_ for marshaling.
+ */
+
+static VALUE
+time_dump(argc, argv, time)
+    int argc;
+    VALUE *argv;
+    VALUE time;
+{
+    VALUE str;
+
+    rb_scan_args(argc, argv, &quot;01&quot;, 0);
+    str = time_mdump(time); 
+    if (FL_TEST(time, FL_EXIVAR)) {
+        rb_copy_generic_ivar(str, time);
+        FL_SET(str, FL_EXIVAR);
+    }
+
+    return str;
+}</pre>
+</body>
+</html>

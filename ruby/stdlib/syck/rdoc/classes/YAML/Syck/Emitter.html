@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: YAML::Syck::Emitter</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">YAML::Syck::Emitter</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/syck/rubyext_c.html">
+                syck/rubyext.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Define <a href="Emitter.html">YAML::Syck::Emitter</a> class
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001338">emit</a>&nbsp;&nbsp;
+      <a href="#M001336">new</a>&nbsp;&nbsp;
+      <a href="#M001340">node_export</a>&nbsp;&nbsp;
+      <a href="#M001337">reset</a>&nbsp;&nbsp;
+      <a href="#M001339">set_resolver</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">level</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001336" class="method-detail">
+        <a name="M001336"></a>
+
+        <div class="method-heading">
+          <a href="#M001336" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Emitter.html#M001337">YAML::Syck::Emitter.reset</a>( options )
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001336-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001336-source">
+<pre>
+/*
+ * YAML::Syck::Emitter.reset( options )
+ */
+VALUE
+syck_emitter_reset( argc, argv, self )
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE options, tmp;
+    SyckEmitter *emitter;
+    struct emitter_xtra *bonus;
+
+    Data_Get_Struct(self, SyckEmitter, emitter);
+    bonus = (struct emitter_xtra *)emitter-&gt;bonus;
+
+    bonus-&gt;oid = Qnil;
+    bonus-&gt;port = rb_str_new2( &quot;&quot; );
+    bonus-&gt;data = rb_hash_new();
+
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;options) == 0)
+    {
+        options = rb_hash_new();
+        rb_ivar_set(self, s_options, options);
+    }
+    else if ( !NIL_P(tmp = rb_check_string_type(options)) )
+    {
+        bonus-&gt;port = tmp;
+    }
+    else if ( rb_respond_to( options, s_write ) )
+    {
+        bonus-&gt;port = options;
+    }
+    else
+    {
+        Check_Type(options, T_HASH);
+        rb_ivar_set(self, s_options, options);
+    }
+    
+    emitter-&gt;headless = 0;
+    rb_ivar_set(self, s_level, INT2FIX(0));
+    rb_ivar_set(self, s_resolver, Qnil);
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001338" class="method-detail">
+        <a name="M001338"></a>
+
+        <div class="method-heading">
+          <a href="#M001338" class="method-signature">
+          <span class="method-name">emit</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Emitter.html#M001338">YAML::Syck::Emitter.emit</a>( object_id ) {
+|out| &#8230; }
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001338-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001338-source">
+<pre>
+/*
+ * YAML::Syck::Emitter.emit( object_id ) { |out| ... }
+ */
+VALUE
+syck_emitter_emit( argc, argv, self )
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE oid, proc;
+    char *anchor_name;
+    SyckEmitter *emitter;
+    struct emitter_xtra *bonus;
+    SYMID symple;
+    int level = FIX2INT(rb_ivar_get(self, s_level)) + 1;
+    rb_ivar_set(self, s_level, INT2FIX(level));
+
+    rb_scan_args(argc, argv, &quot;1&amp;&quot;, &amp;oid, &amp;proc);
+    Data_Get_Struct(self, SyckEmitter, emitter);
+    bonus = (struct emitter_xtra *)emitter-&gt;bonus;
+
+    /* Calculate anchors, normalize nodes, build a simpler symbol table */
+    bonus-&gt;oid = oid;
+    if ( !NIL_P( oid ) &amp;&amp; RTEST( rb_funcall( bonus-&gt;data, s_haskey, 1, oid ) ) ) {
+        symple = rb_hash_aref( bonus-&gt;data, oid );
+    } else {
+        symple = rb_funcall( proc, s_call, 1, rb_ivar_get( self, s_out ) );
+    }
+    syck_emitter_mark_node( emitter, (st_data_t)symple );
+
+    /* Second pass, build emitted string */
+    level -= 1;
+    rb_ivar_set(self, s_level, INT2FIX(level));
+    if ( level == 0 ) 
+    {
+        syck_emit(emitter, (st_data_t)symple);
+        syck_emitter_flush(emitter, 0);
+
+        return bonus-&gt;port;
+    }
+    
+    return symple;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001340" class="method-detail">
+        <a name="M001340"></a>
+
+        <div class="method-heading">
+          <a href="#M001340" class="method-signature">
+          <span class="method-name">node_export</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Emitter.html#M001340">YAML::Syck::Emitter#node_export</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001340-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001340-source">
+<pre>
+/*
+ * YAML::Syck::Emitter#node_export
+ */
+VALUE
+syck_emitter_node_export( self, node )
+    VALUE self, node;
+{
+    return rb_funcall( node, s_to_yaml, 1, self );
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001337" class="method-detail">
+        <a name="M001337"></a>
+
+        <div class="method-heading">
+          <a href="#M001337" class="method-signature">
+          <span class="method-name">reset</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Emitter.html#M001337">YAML::Syck::Emitter.reset</a>( options )
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001337-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001337-source">
+<pre>
+/*
+ * YAML::Syck::Emitter.reset( options )
+ */
+VALUE
+syck_emitter_reset( argc, argv, self )
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE options, tmp;
+    SyckEmitter *emitter;
+    struct emitter_xtra *bonus;
+
+    Data_Get_Struct(self, SyckEmitter, emitter);
+    bonus = (struct emitter_xtra *)emitter-&gt;bonus;
+
+    bonus-&gt;oid = Qnil;
+    bonus-&gt;port = rb_str_new2( &quot;&quot; );
+    bonus-&gt;data = rb_hash_new();
+
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;options) == 0)
+    {
+        options = rb_hash_new();
+        rb_ivar_set(self, s_options, options);
+    }
+    else if ( !NIL_P(tmp = rb_check_string_type(options)) )
+    {
+        bonus-&gt;port = tmp;
+    }
+    else if ( rb_respond_to( options, s_write ) )
+    {
+        bonus-&gt;port = options;
+    }
+    else
+    {
+        Check_Type(options, T_HASH);
+        rb_ivar_set(self, s_options, options);
+    }
+    
+    emitter-&gt;headless = 0;
+    rb_ivar_set(self, s_level, INT2FIX(0));
+    rb_ivar_set(self, s_resolver, Qnil);
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001339" class="method-detail">
+        <a name="M001339"></a>
+
+        <div class="method-heading">
+          <a href="#M001339" class="method-signature">
+          <span class="method-name">set_resolver</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Emitter.html#M001339">YAML::Syck::Emitter#set_resolver</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001339-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001339-source">
+<pre>
+/*
+ * YAML::Syck::Emitter#set_resolver
+ */
+VALUE
+syck_emitter_set_resolver( self, resolver )
+    VALUE self, resolver;
+{
+    rb_ivar_set( self, s_resolver, resolver );
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>iconv (Iconv)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Document-method: iconv
+ * call-seq: Iconv.iconv(to, from, *strs)
+ *
+ * Shorthand for
+ *   Iconv.open(to, from) { |cd|
+ *     (strs + [nil]).collect { |s| cd.iconv(s) }
+ *   }
+ *
+ * === Parameters
+ *
+ * &lt;tt&gt;to, from&lt;/tt&gt;:: see Iconv.new
+ * &lt;tt&gt;strs&lt;/tt&gt;:: strings to be converted
+ *
+ * === Exceptions
+ *
+ * Exceptions thrown by Iconv.new, Iconv.open and Iconv#iconv.
+ */
+static VALUE
+iconv_s_iconv
+    (argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    struct iconv_env_t arg;
+
+    if (argc &lt; 2)               /* needs `to' and `from' arguments at least */
+        rb_raise(rb_eArgError, &quot;wrong number of arguments (%d for %d)&quot;, argc, 2);
+
+    arg.argc = argc -= 2;
+    arg.argv = argv + 2;
+    arg.append = rb_ary_push;
+    arg.ret = rb_ary_new2(argc);
+    arg.cd = iconv_create(argv[0], argv[1]);
+    return rb_ensure(iconv_s_convert, (VALUE)&amp;arg, iconv_free, ICONV2VALUE(arg.cd));
+}</pre>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>ftype (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.ftype(file_name)   =&gt; string
+ *  
+ *  Identifies the type of the named file; the return string is one of
+ *  ``&lt;code&gt;file&lt;/code&gt;'', ``&lt;code&gt;directory&lt;/code&gt;'',
+ *  ``&lt;code&gt;characterSpecial&lt;/code&gt;'', ``&lt;code&gt;blockSpecial&lt;/code&gt;'',
+ *  ``&lt;code&gt;fifo&lt;/code&gt;'', ``&lt;code&gt;link&lt;/code&gt;'',
+ *  ``&lt;code&gt;socket&lt;/code&gt;'', or ``&lt;code&gt;unknown&lt;/code&gt;''.
+ *     
+ *     File.ftype(&quot;testfile&quot;)            #=&gt; &quot;file&quot;
+ *     File.ftype(&quot;/dev/tty&quot;)            #=&gt; &quot;characterSpecial&quot;
+ *     File.ftype(&quot;/tmp/.X11-unix/X0&quot;)   #=&gt; &quot;socket&quot;
+ */
+
+static VALUE
+rb_file_s_ftype(klass, fname)
+    VALUE klass, fname;
+{
+    struct stat st;
+
+    SafeStringValue(fname);
+    if (lstat(StringValueCStr(fname), &amp;st) == -1) {
+        rb_sys_fail(RSTRING(fname)-&gt;ptr);
+    }
+
+    return rb_file_ftype(&amp;st);
+}</pre>
+</body>
+</html>

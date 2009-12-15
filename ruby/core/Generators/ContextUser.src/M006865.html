@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>build_class_list (Generators::ContextUser)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/generators/html_generator.rb, line 497</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">build_class_list</span>(<span class="ruby-identifier">level</span>, <span class="ruby-identifier">from</span>, <span class="ruby-identifier">section</span>, <span class="ruby-identifier">infile</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">res</span> = <span class="ruby-value str">&quot;&quot;</span>
+      <span class="ruby-identifier">prefix</span> = <span class="ruby-value str">&quot;&amp;nbsp;&amp;nbsp;::&quot;</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">level</span>;
+
+      <span class="ruby-identifier">from</span>.<span class="ruby-identifier">modules</span>.<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">mod</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">section</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">section</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">infile</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">mod</span>.<span class="ruby-identifier">defined_in?</span>(<span class="ruby-identifier">infile</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">document_self</span>
+          <span class="ruby-identifier">res</span> <span class="ruby-operator">&lt;&lt;</span> 
+            <span class="ruby-identifier">prefix</span> <span class="ruby-operator">&lt;&lt;</span>
+            <span class="ruby-value str">&quot;Module &quot;</span> <span class="ruby-operator">&lt;&lt;</span>
+            <span class="ruby-identifier">href</span>(<span class="ruby-identifier">url</span>(<span class="ruby-identifier">mod</span>.<span class="ruby-identifier">viewer</span>.<span class="ruby-identifier">path</span>), <span class="ruby-value str">&quot;link&quot;</span>, <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">full_name</span>) <span class="ruby-operator">&lt;&lt;</span>
+            <span class="ruby-value str">&quot;&lt;br /&gt;\n&quot;</span> <span class="ruby-operator">&lt;&lt;</span>
+            <span class="ruby-identifier">build_class_list</span>(<span class="ruby-identifier">level</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>, <span class="ruby-identifier">mod</span>, <span class="ruby-identifier">section</span>, <span class="ruby-identifier">infile</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">from</span>.<span class="ruby-identifier">classes</span>.<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">cls</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">cls</span>.<span class="ruby-identifier">section</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">section</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">infile</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">cls</span>.<span class="ruby-identifier">defined_in?</span>(<span class="ruby-identifier">infile</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cls</span>.<span class="ruby-identifier">document_self</span>
+          <span class="ruby-identifier">res</span>      <span class="ruby-operator">&lt;&lt;</span>
+            <span class="ruby-identifier">prefix</span> <span class="ruby-operator">&lt;&lt;</span> 
+            <span class="ruby-value str">&quot;Class &quot;</span> <span class="ruby-operator">&lt;&lt;</span>
+            <span class="ruby-identifier">href</span>(<span class="ruby-identifier">url</span>(<span class="ruby-identifier">cls</span>.<span class="ruby-identifier">viewer</span>.<span class="ruby-identifier">path</span>), <span class="ruby-value str">&quot;link&quot;</span>, <span class="ruby-identifier">cls</span>.<span class="ruby-identifier">full_name</span>) <span class="ruby-operator">&lt;&lt;</span>
+            <span class="ruby-value str">&quot;&lt;br /&gt;\n&quot;</span> <span class="ruby-operator">&lt;&lt;</span>
+            <span class="ruby-identifier">build_class_list</span>(<span class="ruby-identifier">level</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>, <span class="ruby-identifier">cls</span>, <span class="ruby-identifier">section</span>, <span class="ruby-identifier">infile</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">res</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

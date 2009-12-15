@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>pipe (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     IO.pipe -&gt; array
+ *  
+ *  Creates a pair of pipe endpoints (connected to each other) and
+ *  returns them as a two-element array of &lt;code&gt;IO&lt;/code&gt; objects:
+ *  &lt;code&gt;[&lt;/code&gt; &lt;i&gt;read_file&lt;/i&gt;, &lt;i&gt;write_file&lt;/i&gt; &lt;code&gt;]&lt;/code&gt;. Not
+ *  available on all platforms.
+ *     
+ *  In the example below, the two processes close the ends of the pipe
+ *  that they are not using. This is not just a cosmetic nicety. The
+ *  read end of a pipe will not generate an end of file condition if
+ *  there are any writers with the pipe still open. In the case of the
+ *  parent process, the &lt;code&gt;rd.read&lt;/code&gt; will never return if it
+ *  does not first issue a &lt;code&gt;wr.close&lt;/code&gt;.
+ *     
+ *     rd, wr = IO.pipe
+ *     
+ *     if fork
+ *       wr.close
+ *       puts &quot;Parent got: &lt;#{rd.read}&gt;&quot;
+ *       rd.close
+ *       Process.wait
+ *     else
+ *       rd.close
+ *       puts &quot;Sending message to parent&quot;
+ *       wr.write &quot;Hi Dad&quot;
+ *       wr.close
+ *     end
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     Sending message to parent
+ *     Parent got: &lt;Hi Dad&gt;
+ */
+
+static VALUE
+rb_io_s_pipe(klass)
+    VALUE klass;
+{
+#ifndef __human68k__
+    int pipes[2], state;
+    VALUE r, w, args[3];
+
+#ifdef _WIN32
+    if (_pipe(pipes, 1024, O_BINARY) == -1)
+#else
+    if (pipe(pipes) == -1)
+#endif
+        rb_sys_fail(0);
+
+    args[0] = klass;
+    args[1] = INT2NUM(pipes[0]);
+    args[2] = INT2FIX(O_RDONLY);
+    r = rb_protect(io_new_instance, (VALUE)args, &amp;state);
+    if (state) {
+        close(pipes[0]);
+        close(pipes[1]);
+        rb_jump_tag(state);
+    }
+    args[1] = INT2NUM(pipes[1]);
+    args[2] = INT2FIX(O_WRONLY);
+    w = rb_protect(io_new_instance, (VALUE)args, &amp;state);
+    if (state) {
+        close(pipes[1]);
+        if (!NIL_P(r)) rb_io_close(r);
+        rb_jump_tag(state);
+    }
+    rb_io_synchronized(RFILE(w)-&gt;fptr);
+
+    return rb_assoc_new(r, w);
+#else
+    rb_notimplement();
+    return Qnil;                /* not reached */
+#endif
+}</pre>
+</body>
+</html>

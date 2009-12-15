@@ -1,0 +1,995 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Enumerable</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Enumerable</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/enum_c.html">
+                enum.c
+                </a>
+        <br />
+                <a href="../files/lib/set_rb.html">
+                lib/set.rb
+                </a>
+        <br />
+                <a href="../files/lib/soap/property_rb.html">
+                lib/soap/property.rb
+                </a>
+        <br />
+                <a href="../files/ext/enumerator/enumerator_c.html">
+                ext/enumerator/enumerator.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The <tt><a href="Enumerable.html">Enumerable</a></tt> mixin provides
+collection classes with several traversal and searching methods, and with
+the ability to <a href="Enumerable.html#M003119">sort</a>. The class must
+provide a method <tt>each</tt>, which yields successive members of the
+collection. If <tt><a
+href="Enumerable.html#M003134">Enumerable#max</a></tt>, <tt><a
+href="Enumerable.html#M003133">min</a></tt>, or <tt><a
+href="Enumerable.html#M003119">sort</a></tt> is used, the objects in the
+collection must also implement a meaningful <tt>&lt;=&gt;</tt> operator, as
+these methods rely on an ordering between members of the collection.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M003131">all?</a>&nbsp;&nbsp;
+      <a href="#M003132">any?</a>&nbsp;&nbsp;
+      <a href="#M003127">collect</a>&nbsp;&nbsp;
+      <a href="#M003123">detect</a>&nbsp;&nbsp;
+      <a href="#M003144">each_cons</a>&nbsp;&nbsp;
+      <a href="#M003142">each_slice</a>&nbsp;&nbsp;
+      <a href="#M003137">each_with_index</a>&nbsp;&nbsp;
+      <a href="#M003118">entries</a>&nbsp;&nbsp;
+      <a href="#M003145">enum_cons</a>&nbsp;&nbsp;
+      <a href="#M003143">enum_slice</a>&nbsp;&nbsp;
+      <a href="#M003141">enum_with_index</a>&nbsp;&nbsp;
+      <a href="#M003122">find</a>&nbsp;&nbsp;
+      <a href="#M003124">find_all</a>&nbsp;&nbsp;
+      <a href="#M003121">grep</a>&nbsp;&nbsp;
+      <a href="#M003136">include?</a>&nbsp;&nbsp;
+      <a href="#M003140">inject</a>&nbsp;&nbsp;
+      <a href="#M003129">inject</a>&nbsp;&nbsp;
+      <a href="#M003128">map</a>&nbsp;&nbsp;
+      <a href="#M003134">max</a>&nbsp;&nbsp;
+      <a href="#M003135">member?</a>&nbsp;&nbsp;
+      <a href="#M003133">min</a>&nbsp;&nbsp;
+      <a href="#M003130">partition</a>&nbsp;&nbsp;
+      <a href="#M003126">reject</a>&nbsp;&nbsp;
+      <a href="#M003125">select</a>&nbsp;&nbsp;
+      <a href="#M003119">sort</a>&nbsp;&nbsp;
+      <a href="#M003120">sort_by</a>&nbsp;&nbsp;
+      <a href="#M003117">to_a</a>&nbsp;&nbsp;
+      <a href="#M003139">to_set</a>&nbsp;&nbsp;
+      <a href="#M003138">zip</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="Enumerable/Enumerator.html" class="link">Enumerable::Enumerator</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M003131" class="method-detail">
+        <a name="M003131"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003131.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003131.html');return false;">
+          <span class="method-name">enum.all? [{|obj| block } ]   => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes each element of the collection to the given block. The method
+returns <tt>true</tt> if the block never returns <tt>false</tt> or
+<tt>nil</tt>. If the block is not given, Ruby adds an implicit block of
+<tt>{|obj| obj}</tt> (that is <tt><a
+href="Enumerable.html#M003131">all?</a></tt> will return <tt>true</tt> only
+if none of the collection members are <tt>false</tt> or <tt>nil</tt>.)
+</p>
+<pre>
+   %w{ ant bear cat}.all? {|word| word.length &gt;= 3}   #=&gt; true
+   %w{ ant bear cat}.all? {|word| word.length &gt;= 4}   #=&gt; false
+   [ nil, true, 99 ].all?                             #=&gt; false
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003132" class="method-detail">
+        <a name="M003132"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003132.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003132.html');return false;">
+          <span class="method-name">enum.any? [{|obj| block } ]   => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes each element of the collection to the given block. The method
+returns <tt>true</tt> if the block ever returns a value other than
+<tt>false</tt> or <tt>nil</tt>. If the block is not given, Ruby adds an
+implicit block of <tt>{|obj| obj}</tt> (that is <tt><a
+href="Enumerable.html#M003132">any?</a></tt> will return <tt>true</tt> if
+at least one of the collection members is not <tt>false</tt> or
+<tt>nil</tt>.
+</p>
+<pre>
+   %w{ ant bear cat}.any? {|word| word.length &gt;= 3}   #=&gt; true
+   %w{ ant bear cat}.any? {|word| word.length &gt;= 4}   #=&gt; true
+   [ nil, true, 99 ].any?                             #=&gt; true
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003127" class="method-detail">
+        <a name="M003127"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003127.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003127.html');return false;">
+          <span class="method-name">enum.collect {| obj | block }  => array<br />
+enum.map     {| obj | block }  => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a new array with the results of running <em>block</em> once for
+every element in <em>enum</em>.
+</p>
+<pre>
+   (1..4).collect {|i| i*i }   #=&gt; [1, 4, 9, 16]
+   (1..4).collect { &quot;cat&quot;  }   #=&gt; [&quot;cat&quot;, &quot;cat&quot;, &quot;cat&quot;, &quot;cat&quot;]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003123" class="method-detail">
+        <a name="M003123"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003123.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003123.html');return false;">
+          <span class="method-name">enum.detect(ifnone = nil) {| obj | block }  => obj or nil<br />
+enum.find(ifnone = nil)   {| obj | block }  => obj or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes each entry in <em>enum</em> to <em>block</em>. Returns the first for
+which <em>block</em> is not <tt>false</tt>. If no object matches, calls
+<em>ifnone</em> and returns its result when it is specified, or returns
+<tt>nil</tt>
+</p>
+<pre>
+   (1..10).detect  {|i| i % 5 == 0 and i % 7 == 0 }   #=&gt; nil
+   (1..100).detect {|i| i % 5 == 0 and i % 7 == 0 }   #=&gt; 35
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003144" class="method-detail">
+        <a name="M003144"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003144.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003144.html');return false;">
+          <span class="method-name">each_cons(n) {...}<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Iterates the given block for each array of consecutive &lt;n&gt; elements.
+</p>
+<p>
+e.g.:
+</p>
+<pre>
+    (1..10).each_cons(3) {|a| p a}
+    # outputs below
+    [1, 2, 3]
+    [2, 3, 4]
+    [3, 4, 5]
+    [4, 5, 6]
+    [5, 6, 7]
+    [6, 7, 8]
+    [7, 8, 9]
+    [8, 9, 10]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003142" class="method-detail">
+        <a name="M003142"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003142.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003142.html');return false;">
+          <span class="method-name">e.each_slice(n) {...}<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Iterates the given block for each slice of &lt;n&gt; elements.
+</p>
+<p>
+e.g.:
+</p>
+<pre>
+    (1..10).each_slice(3) {|a| p a}
+    # outputs below
+    [1, 2, 3]
+    [4, 5, 6]
+    [7, 8, 9]
+    [10]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003137" class="method-detail">
+        <a name="M003137"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003137.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003137.html');return false;">
+          <span class="method-name">enum.each_with_index {|obj, i| block }  &rarr; enum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Calls <em>block</em> with two arguments, the item and its index, for each
+item in <em>enum</em>.
+</p>
+<pre>
+   hash = Hash.new
+   %w(cat dog wombat).each_with_index {|item, index|
+     hash[item] = index
+   }
+   hash   #=&gt; {&quot;cat&quot;=&gt;0, &quot;wombat&quot;=&gt;2, &quot;dog&quot;=&gt;1}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003118" class="method-detail">
+        <a name="M003118"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003118.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003118.html');return false;">
+          <span class="method-name">enum.to_a      =>    array<br />
+enum.entries   =>    array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array containing the items in <em>enum</em>.
+</p>
+<pre>
+   (1..7).to_a                       #=&gt; [1, 2, 3, 4, 5, 6, 7]
+   { 'a'=&gt;1, 'b'=&gt;2, 'c'=&gt;3 }.to_a   #=&gt; [[&quot;a&quot;, 1], [&quot;b&quot;, 2], [&quot;c&quot;, 3]]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003145" class="method-detail">
+        <a name="M003145"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003145.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003145.html');return false;">
+          <span class="method-name">e.enum_cons(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <a
+href="Enumerable/Enumerator.html#M003146">Enumerable::Enumerator.new</a>(self,
+:<a href="Enumerable.html#M003144">each_cons</a>, n).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003143" class="method-detail">
+        <a name="M003143"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003143.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003143.html');return false;">
+          <span class="method-name">e.enum_slice(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <a
+href="Enumerable/Enumerator.html#M003146">Enumerable::Enumerator.new</a>(self,
+:<a href="Enumerable.html#M003142">each_slice</a>, n).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003141" class="method-detail">
+        <a name="M003141"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003141.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003141.html');return false;">
+          <span class="method-name">enum_with_index<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <a
+href="Enumerable/Enumerator.html#M003146">Enumerable::Enumerator.new</a>(self,
+:<a href="Enumerable.html#M003137">each_with_index</a>).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003122" class="method-detail">
+        <a name="M003122"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003122.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003122.html');return false;">
+          <span class="method-name">enum.detect(ifnone = nil) {| obj | block }  => obj or nil<br />
+enum.find(ifnone = nil)   {| obj | block }  => obj or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes each entry in <em>enum</em> to <em>block</em>. Returns the first for
+which <em>block</em> is not <tt>false</tt>. If no object matches, calls
+<em>ifnone</em> and returns its result when it is specified, or returns
+<tt>nil</tt>
+</p>
+<pre>
+   (1..10).detect  {|i| i % 5 == 0 and i % 7 == 0 }   #=&gt; nil
+   (1..100).detect {|i| i % 5 == 0 and i % 7 == 0 }   #=&gt; 35
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003124" class="method-detail">
+        <a name="M003124"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003124.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003124.html');return false;">
+          <span class="method-name">enum.find_all {| obj | block }  => array<br />
+enum.select   {| obj | block }  => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array containing all elements of <em>enum</em> for which
+<em>block</em> is not <tt>false</tt> (see also <tt><a
+href="Enumerable.html#M003126">Enumerable#reject</a></tt>).
+</p>
+<pre>
+   (1..10).find_all {|i|  i % 3 == 0 }   #=&gt; [3, 6, 9]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003121" class="method-detail">
+        <a name="M003121"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003121.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003121.html');return false;">
+          <span class="method-name">enum.grep(pattern)                   => array<br />
+enum.grep(pattern) {| obj | block }  => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array of every element in <em>enum</em> for which <tt>Pattern
+=== element</tt>. If the optional <em>block</em> is supplied, each matching
+element is passed to it, and the block&#8216;s result is stored in the
+output array.
+</p>
+<pre>
+   (1..100).grep 38..44   #=&gt; [38, 39, 40, 41, 42, 43, 44]
+   c = IO.constants
+   c.grep(/SEEK/)         #=&gt; [&quot;SEEK_END&quot;, &quot;SEEK_SET&quot;, &quot;SEEK_CUR&quot;]
+   res = c.grep(/SEEK/) {|v| IO.const_get(v) }
+   res                    #=&gt; [2, 0, 1]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003136" class="method-detail">
+        <a name="M003136"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003136.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003136.html');return false;">
+          <span class="method-name">enum.include?(obj)     => true or false<br />
+enum.member?(obj)      => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if any member of <em>enum</em> equals <em>obj</em>.
+Equality is tested using <tt>==</tt>.
+</p>
+<pre>
+   IO.constants.include? &quot;SEEK_SET&quot;          #=&gt; true
+   IO.constants.include? &quot;SEEK_NO_FURTHER&quot;   #=&gt; false
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003140" class="method-detail">
+        <a name="M003140"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003140.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003140.html');return false;">
+          <span class="method-name">inject</span><span class="method-args">(init) {|result, item| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M003129" class="method-detail">
+        <a name="M003129"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003129.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003129.html');return false;">
+          <span class="method-name">enum.inject(initial) {| memo, obj | block }  => obj<br />
+enum.inject          {| memo, obj | block }  => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Combines the elements of <em>enum</em> by applying the block to an
+accumulator value (<em>memo</em>) and each element in turn. At each step,
+<em>memo</em> is set to the value returned by the block. The first form
+lets you supply an initial value for <em>memo</em>. The second form uses
+the first element of the collection as a the initial value (and skips that
+element while iterating).
+</p>
+<pre>
+   # Sum some numbers
+   (5..10).inject {|sum, n| sum + n }              #=&gt; 45
+   # Multiply some numbers
+   (5..10).inject(1) {|product, n| product * n }   #=&gt; 151200
+
+   # find the longest word
+   longest = %w{ cat sheep bear }.inject do |memo,word|
+      memo.length &gt; word.length ? memo : word
+   end
+   longest                                         #=&gt; &quot;sheep&quot;
+
+   # find the length of the longest word
+   longest = %w{ cat sheep bear }.inject(0) do |memo,word|
+      memo &gt;= word.length ? memo : word.length
+   end
+   longest                                         #=&gt; 5
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003128" class="method-detail">
+        <a name="M003128"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003128.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003128.html');return false;">
+          <span class="method-name">enum.collect {| obj | block }  => array<br />
+enum.map     {| obj | block }  => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a new array with the results of running <em>block</em> once for
+every element in <em>enum</em>.
+</p>
+<pre>
+   (1..4).collect {|i| i*i }   #=&gt; [1, 4, 9, 16]
+   (1..4).collect { &quot;cat&quot;  }   #=&gt; [&quot;cat&quot;, &quot;cat&quot;, &quot;cat&quot;, &quot;cat&quot;]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003134" class="method-detail">
+        <a name="M003134"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003134.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003134.html');return false;">
+          <span class="method-name">enum.max                   => obj<br />
+enum.max {|a,b| block }    => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the object in <em>enum</em> with the maximum value. The first form
+assumes all objects implement <tt><a
+href="Comparable.html">Comparable</a></tt>; the second uses the block to
+return <em>a &lt;=&gt; b</em>.
+</p>
+<pre>
+   a = %w(albatross dog horse)
+   a.max                                  #=&gt; &quot;horse&quot;
+   a.max {|a,b| a.length &lt;=&gt; b.length }   #=&gt; &quot;albatross&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003135" class="method-detail">
+        <a name="M003135"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003135.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003135.html');return false;">
+          <span class="method-name">enum.include?(obj)     => true or false<br />
+enum.member?(obj)      => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if any member of <em>enum</em> equals <em>obj</em>.
+Equality is tested using <tt>==</tt>.
+</p>
+<pre>
+   IO.constants.include? &quot;SEEK_SET&quot;          #=&gt; true
+   IO.constants.include? &quot;SEEK_NO_FURTHER&quot;   #=&gt; false
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003133" class="method-detail">
+        <a name="M003133"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003133.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003133.html');return false;">
+          <span class="method-name">enum.min                    => obj<br />
+enum.min {| a,b | block }   => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the object in <em>enum</em> with the minimum value. The first form
+assumes all objects implement <tt><a
+href="Comparable.html">Comparable</a></tt>; the second uses the block to
+return <em>a &lt;=&gt; b</em>.
+</p>
+<pre>
+   a = %w(albatross dog horse)
+   a.min                                  #=&gt; &quot;albatross&quot;
+   a.min {|a,b| a.length &lt;=&gt; b.length }   #=&gt; &quot;dog&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003130" class="method-detail">
+        <a name="M003130"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003130.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003130.html');return false;">
+          <span class="method-name">enum.partition {| obj | block }  => [ true_array, false_array ]<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns two arrays, the first containing the elements of <em>enum</em> for
+which the block evaluates to true, the second containing the rest.
+</p>
+<pre>
+   (1..6).partition {|i| (i&amp;1).zero?}   #=&gt; [[2, 4, 6], [1, 3, 5]]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003126" class="method-detail">
+        <a name="M003126"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003126.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003126.html');return false;">
+          <span class="method-name">enum.reject {| obj | block }  => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array for all elements of <em>enum</em> for which <em>block</em>
+is false (see also <tt><a
+href="Enumerable.html#M003124">Enumerable#find_all</a></tt>).
+</p>
+<pre>
+   (1..10).reject {|i|  i % 3 == 0 }   #=&gt; [1, 2, 4, 5, 7, 8, 10]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003125" class="method-detail">
+        <a name="M003125"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003125.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003125.html');return false;">
+          <span class="method-name">enum.find_all {| obj | block }  => array<br />
+enum.select   {| obj | block }  => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array containing all elements of <em>enum</em> for which
+<em>block</em> is not <tt>false</tt> (see also <tt><a
+href="Enumerable.html#M003126">Enumerable#reject</a></tt>).
+</p>
+<pre>
+   (1..10).find_all {|i|  i % 3 == 0 }   #=&gt; [3, 6, 9]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003119" class="method-detail">
+        <a name="M003119"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003119.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003119.html');return false;">
+          <span class="method-name">enum.sort                     => array<br />
+enum.sort {| a, b | block }   => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array containing the items in <em>enum</em> sorted, either
+according to their own <tt>&lt;=&gt;</tt> method, or by using the results
+of the supplied block. The block should return -1, 0, or +1 depending on
+the comparison between <em>a</em> and <em>b</em>. As of Ruby 1.8, the
+method <tt><a href="Enumerable.html#M003120">Enumerable#sort_by</a></tt>
+implements a built-in Schwartzian Transform, useful when key computation or
+comparison is expensive..
+</p>
+<pre>
+   %w(rhea kea flea).sort         #=&gt; [&quot;flea&quot;, &quot;kea&quot;, &quot;rhea&quot;]
+   (1..10).sort {|a,b| b &lt;=&gt; a}   #=&gt; [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003120" class="method-detail">
+        <a name="M003120"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003120.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003120.html');return false;">
+          <span class="method-name">enum.sort_by {| obj | block }    => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sorts <em>enum</em> using a set of keys generated by mapping the values in
+<em>enum</em> through the given block.
+</p>
+<pre>
+   %w{ apple pear fig }.sort_by {|word| word.length}
+                #=&gt; [&quot;fig&quot;, &quot;pear&quot;, &quot;apple&quot;]
+</pre>
+<p>
+The current implementation of <tt><a
+href="Enumerable.html#M003120">sort_by</a></tt> generates an array of
+tuples containing the original collection element and the mapped value.
+This makes <tt><a href="Enumerable.html#M003120">sort_by</a></tt> fairly
+expensive when the keysets are simple
+</p>
+<pre>
+   require 'benchmark'
+   include Benchmark
+
+   a = (1..100000).map {rand(100000)}
+
+   bm(10) do |b|
+     b.report(&quot;Sort&quot;)    { a.sort }
+     b.report(&quot;Sort by&quot;) { a.sort_by {|a| a} }
+   end
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   user     system      total        real
+   Sort        0.180000   0.000000   0.180000 (  0.175469)
+   Sort by     1.980000   0.040000   2.020000 (  2.013586)
+</pre>
+<p>
+However, consider the case where comparing the keys is a non-trivial
+operation. The following code sorts some files on modification time using
+the basic <tt><a href="Enumerable.html#M003119">sort</a></tt> method.
+</p>
+<pre>
+   files = Dir[&quot;*&quot;]
+   sorted = files.sort {|a,b| File.new(a).mtime &lt;=&gt; File.new(b).mtime}
+   sorted   #=&gt; [&quot;mon&quot;, &quot;tues&quot;, &quot;wed&quot;, &quot;thurs&quot;]
+</pre>
+<p>
+This <a href="Enumerable.html#M003119">sort</a> is inefficient: it
+generates two new <tt><a href="File.html">File</a></tt> objects during
+every comparison. A slightly better technique is to use the <tt><a
+href="Kernel.html#M005948">Kernel#test</a></tt> method to generate the
+modification times directly.
+</p>
+<pre>
+   files = Dir[&quot;*&quot;]
+   sorted = files.sort { |a,b|
+     test(?M, a) &lt;=&gt; test(?M, b)
+   }
+   sorted   #=&gt; [&quot;mon&quot;, &quot;tues&quot;, &quot;wed&quot;, &quot;thurs&quot;]
+</pre>
+<p>
+This still generates many unnecessary <tt><a href="Time.html">Time</a></tt>
+objects. A more efficient technique is to cache the <a
+href="Enumerable.html#M003119">sort</a> keys (modification times in this
+case) before the <a href="Enumerable.html#M003119">sort</a>. Perl users
+often call this approach a Schwartzian Transform, after Randal Schwartz. We
+construct a temporary array, where each element is an array containing our
+<a href="Enumerable.html#M003119">sort</a> key along with the filename. We
+<a href="Enumerable.html#M003119">sort</a> this array, and then extract the
+filename from the result.
+</p>
+<pre>
+   sorted = Dir[&quot;*&quot;].collect { |f|
+      [test(?M, f), f]
+   }.sort.collect { |f| f[1] }
+   sorted   #=&gt; [&quot;mon&quot;, &quot;tues&quot;, &quot;wed&quot;, &quot;thurs&quot;]
+</pre>
+<p>
+This is exactly what <tt><a href="Enumerable.html#M003120">sort_by</a></tt>
+does internally.
+</p>
+<pre>
+   sorted = Dir[&quot;*&quot;].sort_by {|f| test(?M, f)}
+   sorted   #=&gt; [&quot;mon&quot;, &quot;tues&quot;, &quot;wed&quot;, &quot;thurs&quot;]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003117" class="method-detail">
+        <a name="M003117"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003117.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003117.html');return false;">
+          <span class="method-name">enum.to_a      =>    array<br />
+enum.entries   =>    array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array containing the items in <em>enum</em>.
+</p>
+<pre>
+   (1..7).to_a                       #=&gt; [1, 2, 3, 4, 5, 6, 7]
+   { 'a'=&gt;1, 'b'=&gt;2, 'c'=&gt;3 }.to_a   #=&gt; [[&quot;a&quot;, 1], [&quot;b&quot;, 2], [&quot;c&quot;, 3]]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003139" class="method-detail">
+        <a name="M003139"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003139.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003139.html');return false;">
+          <span class="method-name">to_set</span><span class="method-args">(klass = Set, *args, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Makes a set from the enumerable object with given arguments. Needs to
++require &quot;set&quot;+ to use this method.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003138" class="method-detail">
+        <a name="M003138"></a>
+
+        <div class="method-heading">
+          <a href="Enumerable.src/M003138.html" target="Code" class="method-signature"
+            onclick="popupCode('Enumerable.src/M003138.html');return false;">
+          <span class="method-name">enum.zip(arg, ...)                   => array<br />
+enum.zip(arg, ...) {|arr| block }    => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts any arguments to arrays, then merges elements of <em>enum</em>
+with corresponding elements from each argument. This generates a sequence
+of <tt>enum#size</tt> <em>n</em>-element arrays, where <em>n</em> is one
+more that the count of arguments. If the size of any argument is less than
+<tt>enum#size</tt>, <tt>nil</tt> values are supplied. If a block given, it
+is invoked for each output array, otherwise an array of arrays is returned.
+</p>
+<pre>
+   a = [ 4, 5, 6 ]
+   b = [ 7, 8, 9 ]
+
+   (1..3).zip(a, b)      #=&gt; [[1, 4, 7], [2, 5, 8], [3, 6, 9]]
+   &quot;cat\ndog&quot;.zip([1])   #=&gt; [[&quot;cat\n&quot;, 1], [&quot;dog&quot;, nil]]
+   (1..3).zip            #=&gt; [[1], [2], [3]]
+</pre>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

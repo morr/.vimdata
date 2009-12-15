@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>generate_method_args_help (WIN32COMGen)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File ext/win32ole/sample/olegen.rb, line 124</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generate_method_args_help</span>(<span class="ruby-identifier">method</span>)
+    <span class="ruby-identifier">args</span> = []
+    <span class="ruby-identifier">method</span>.<span class="ruby-identifier">params</span>.<span class="ruby-identifier">each_with_index</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">param</span>, <span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">h</span> = <span class="ruby-node">&quot;  #   #{param.ole_type} arg#{i} --- #{param.name}&quot;</span> 
+      <span class="ruby-identifier">inout</span> = []
+      <span class="ruby-identifier">inout</span>.<span class="ruby-identifier">push</span> <span class="ruby-value str">&quot;IN&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">param</span>.<span class="ruby-identifier">input?</span>
+      <span class="ruby-identifier">inout</span>.<span class="ruby-identifier">push</span> <span class="ruby-value str">&quot;OUT&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">param</span>.<span class="ruby-identifier">output?</span>
+      <span class="ruby-identifier">h</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot; [#{inout.join('/')}]&quot;</span>
+      <span class="ruby-identifier">h</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot; ( = #{param.default})&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">param</span>.<span class="ruby-identifier">default</span>
+      <span class="ruby-identifier">args</span>.<span class="ruby-identifier">push</span> <span class="ruby-identifier">h</span>
+    }
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">args</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

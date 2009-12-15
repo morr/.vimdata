@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>form (CGI::HtmlExtension)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/cgi.rb, line 1546</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">form</span>(<span class="ruby-identifier">method</span> = <span class="ruby-value str">&quot;post&quot;</span>, <span class="ruby-identifier">action</span> = <span class="ruby-identifier">script_name</span>, <span class="ruby-identifier">enctype</span> = <span class="ruby-value str">&quot;application/x-www-form-urlencoded&quot;</span>)
+      <span class="ruby-identifier">attributes</span> = <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">method</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">String</span>)
+                     { <span class="ruby-value str">&quot;METHOD&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">method</span>, <span class="ruby-value str">&quot;ACTION&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">action</span>,
+                       <span class="ruby-value str">&quot;ENCTYPE&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">enctype</span> } 
+                   <span class="ruby-keyword kw">else</span>
+                     <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">method</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;METHOD&quot;</span>)
+                       <span class="ruby-identifier">method</span>[<span class="ruby-value str">&quot;METHOD&quot;</span>] = <span class="ruby-value str">&quot;post&quot;</span>
+                     <span class="ruby-keyword kw">end</span>
+                     <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">method</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;ENCTYPE&quot;</span>)
+                       <span class="ruby-identifier">method</span>[<span class="ruby-value str">&quot;ENCTYPE&quot;</span>] = <span class="ruby-identifier">enctype</span>
+                     <span class="ruby-keyword kw">end</span>
+                     <span class="ruby-identifier">method</span>
+                   <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+        <span class="ruby-identifier">body</span> = <span class="ruby-keyword kw">yield</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">body</span> = <span class="ruby-value str">&quot;&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@output_hidden</span>
+        <span class="ruby-identifier">body</span> <span class="ruby-operator">+=</span> <span class="ruby-ivar">@output_hidden</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+          <span class="ruby-node">&quot;&lt;INPUT TYPE=\&quot;HIDDEN\&quot; NAME=\&quot;#{k}\&quot; VALUE=\&quot;#{v}\&quot;&gt;&quot;</span>
+        }.<span class="ruby-identifier">to_s</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">super</span>(<span class="ruby-identifier">attributes</span>){<span class="ruby-identifier">body</span>}
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

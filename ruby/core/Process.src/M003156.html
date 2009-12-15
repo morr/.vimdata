@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>waitpid2 (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.wait2(pid=-1, flags=0)      =&gt; [pid, status]
+ *     Process.waitpid2(pid=-1, flags=0)   =&gt; [pid, status]
+ *
+ *  Waits for a child process to exit (see Process::waitpid for exact
+ *  semantics) and returns an array containing the process id and the
+ *  exit status (a &lt;code&gt;Process::Status&lt;/code&gt; object) of that
+ *  child. Raises a &lt;code&gt;SystemError&lt;/code&gt; if there are no child
+ *  processes.
+ *
+ *     Process.fork { exit 99 }   #=&gt; 27437
+ *     pid, status = Process.wait2
+ *     pid                        #=&gt; 27437
+ *     status.exitstatus          #=&gt; 99
+ */
+
+static VALUE
+proc_wait2(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE pid = proc_wait(argc, argv);
+    if (NIL_P(pid)) return Qnil;
+    return rb_assoc_new(pid, rb_last_status);
+}</pre>
+</body>
+</html>

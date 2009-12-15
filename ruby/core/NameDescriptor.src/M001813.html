@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (NameDescriptor)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/ri/ri_util.rb, line 28</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">arg</span>)
+    <span class="ruby-ivar">@class_names</span> = []
+    <span class="ruby-identifier">separator</span> = <span class="ruby-keyword kw">nil</span>
+
+    <span class="ruby-identifier">tokens</span> = <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/(\.|::|#)/</span>)
+
+    <span class="ruby-comment cmt"># Skip leading '::', '#' or '.', but remember it might</span>
+    <span class="ruby-comment cmt"># be a method name qualifier</span>
+    <span class="ruby-identifier">separator</span> = <span class="ruby-identifier">tokens</span>.<span class="ruby-identifier">shift</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tokens</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^(\.|::|#)/</span>
+
+    <span class="ruby-comment cmt"># Skip leading '::', but remember we potentially have an inst</span>
+
+    <span class="ruby-comment cmt"># leading stuff must be class names</span>
+    
+    <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">tokens</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^[A-Z]/</span>
+      <span class="ruby-ivar">@class_names</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">tokens</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">tokens</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">separator</span> = <span class="ruby-identifier">tokens</span>.<span class="ruby-identifier">shift</span>
+        <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">separator</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;::&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    
+    <span class="ruby-comment cmt"># Now must have a single token, the method name, or an empty</span>
+    <span class="ruby-comment cmt"># array</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">tokens</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-ivar">@method_name</span> = <span class="ruby-identifier">tokens</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-comment cmt"># We may now have a trailing !, ?, or = to roll into</span>
+      <span class="ruby-comment cmt"># the method name</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">tokens</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tokens</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^[!?=]$/</span>
+        <span class="ruby-ivar">@method_name</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">tokens</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@method_name</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/::|\.|#/</span> <span class="ruby-keyword kw">or</span> <span class="ruby-operator">!</span><span class="ruby-identifier">tokens</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">RiError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;Bad argument: #{arg}&quot;</span>) 
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">separator</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">separator</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">'.'</span>
+        <span class="ruby-ivar">@is_class_method</span> = <span class="ruby-identifier">separator</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;::&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

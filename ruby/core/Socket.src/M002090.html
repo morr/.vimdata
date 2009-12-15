@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>connect (Socket)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *      socket.connect(server_sockaddr) =&gt; 0
+ * 
+ * Requests a connection to be made on the given +server_sockaddr+. Returns 0 if
+ * successful, otherwise an exception is raised.
+ *  
+ * === Parameter
+ * * +server_sockaddr+ - the +struct+ sockaddr contained in a string
+ * 
+ * === Example:
+ *      # Pull down Google's web page
+ *      require 'socket'
+ *      include Socket::Constants
+ *      socket = Socket.new( AF_INET, SOCK_STREAM, 0 )
+ *      sockaddr = Socket.pack_sockaddr_in( 80, 'www.google.com' )
+ *      socket.connect( sockaddr )
+ *      socket.write( &quot;GET / HTTP/1.0\r\n\r\n&quot; )
+ *      results = socket.read 
+ * 
+ * === Unix-based Exceptions
+ * On unix-based systems the following system exceptions may be raised if 
+ * the call to _connect_ fails:
+ * * Errno::EACCES - search permission is denied for a component of the prefix
+ *   path or write access to the +socket+ is denided
+ * * Errno::EADDRINUSE - the _sockaddr_ is already in use
+ * * Errno::EADDRNOTAVAIL - the specified _sockaddr_ is not available from the
+ *   local machine
+ * * Errno::EAFNOSUPPORT - the specified _sockaddr_ is not a valid address for 
+ *   the address family of the specified +socket+
+ * * Errno::EALREADY - a connection is already in progress for the specified
+ *   socket
+ * * Errno::EBADF - the +socket+ is not a valid file descriptor
+ * * Errno::ECONNREFUSED - the target _sockaddr_ was not listening for connections
+ *   refused the connection request
+ * * Errno::ECONNRESET - the remote host reset the connection request
+ * * Errno::EFAULT - the _sockaddr_ cannot be accessed
+ * * Errno::EHOSTUNREACH - the destination host cannot be reached (probably 
+ *   because the host is down or a remote router cannot reach it)
+ * * Errno::EINPROGRESS - the O_NONBLOCK is set for the +socket+ and the
+ *   connection cnanot be immediately established; the connection will be
+ *   established asynchronously
+ * * Errno::EINTR - the attempt to establish the connection was interrupted by
+ *   delivery of a signal that was caught; the connection will be established
+ *   asynchronously
+ * * Errno::EISCONN - the specified +socket+ is already connected
+ * * Errno::EINVAL - the address length used for the _sockaddr_ is not a valid
+ *   length for the address family or there is an invalid family in _sockaddr_ 
+ * * Errno::ENAMETOOLONG - the pathname resolved had a length which exceeded
+ *   PATH_MAX
+ * * Errno::ENETDOWN - the local interface used to reach the destination is down
+ * * Errno::ENETUNREACH - no route to the network is present
+ * * Errno::ENOBUFS - no buffer space is available
+ * * Errno::ENOSR - there were insufficient STREAMS resources available to 
+ *   complete the operation
+ * * Errno::ENOTSOCK - the +socket+ argument does not refer to a socket
+ * * Errno::EOPNOTSUPP - the calling +socket+ is listening and cannot be connected
+ * * Errno::EPROTOTYPE - the _sockaddr_ has a different type than the socket 
+ *   bound to the specified peer address
+ * * Errno::ETIMEDOUT - the attempt to connect time out before a connection
+ *   was made.
+ * 
+ * On unix-based systems if the address family of the calling +socket+ is
+ * AF_UNIX the follow exceptions may be raised if the call to _connect_
+ * fails:
+ * * Errno::EIO - an i/o error occured while reading from or writing to the 
+ *   file system
+ * * Errno::ELOOP - too many symbolic links were encountered in translating
+ *   the pathname in _sockaddr_
+ * * Errno::ENAMETOOLLONG - a component of a pathname exceeded NAME_MAX 
+ *   characters, or an entired pathname exceeded PATH_MAX characters
+ * * Errno::ENOENT - a component of the pathname does not name an existing file
+ *   or the pathname is an empty string
+ * * Errno::ENOTDIR - a component of the path prefix of the pathname in _sockaddr_
+ *   is not a directory 
+ * 
+ * === Windows Exceptions
+ * On Windows systems the following system exceptions may be raised if 
+ * the call to _connect_ fails:
+ * * Errno::ENETDOWN - the network is down
+ * * Errno::EADDRINUSE - the socket's local address is already in use
+ * * Errno::EINTR - the socket was cancelled
+ * * Errno::EINPROGRESS - a blocking socket is in progress or the service provider
+ *   is still processing a callback function. Or a nonblocking connect call is 
+ *   in progress on the +socket+.
+ * * Errno::EALREADY - see Errno::EINVAL
+ * * Errno::EADDRNOTAVAIL - the remote address is not a valid address, such as 
+ *   ADDR_ANY TODO check ADDRANY TO INADDR_ANY
+ * * Errno::EAFNOSUPPORT - addresses in the specified family cannot be used with
+ *   with this +socket+
+ * * Errno::ECONNREFUSED - the target _sockaddr_ was not listening for connections
+ *   refused the connection request
+ * * Errno::EFAULT - the socket's internal address or address length parameter
+ *   is too small or is not a valid part of the user space address
+ * * Errno::EINVAL - the +socket+ is a listening socket
+ * * Errno::EISCONN - the +socket+ is already connected
+ * * Errno::ENETUNREACH - the network cannot be reached from this host at this time
+ * * Errno::EHOSTUNREACH - no route to the network is present
+ * * Errno::ENOBUFS - no buffer space is available
+ * * Errno::ENOTSOCK - the +socket+ argument does not refer to a socket
+ * * Errno::ETIMEDOUT - the attempt to connect time out before a connection
+ *   was made.
+ * * Errno::EWOULDBLOCK - the socket is marked as nonblocking and the 
+ *   connection cannot be completed immediately
+ * * Errno::EACCES - the attempt to connect the datagram socket to the 
+ *   broadcast address failed
+ * 
+ * === See
+ * * connect manual pages on unix-based systems
+ * * connect function in Microsoft's Winsock functions reference
+ */
+static VALUE
+sock_connect(sock, addr)
+    VALUE sock, addr;
+{
+    OpenFile *fptr;
+    int fd;
+
+    StringValue(addr);
+    addr = rb_str_new4(addr);
+    GetOpenFile(sock, fptr);
+    fd = fileno(fptr-&gt;f);
+    if (ruby_connect(fd, (struct sockaddr*)RSTRING(addr)-&gt;ptr, RSTRING(addr)-&gt;len, 0) &lt; 0) {
+        rb_sys_fail(&quot;connect(2)&quot;);
+    }
+
+    return INT2FIX(0);
+}</pre>
+</body>
+</html>

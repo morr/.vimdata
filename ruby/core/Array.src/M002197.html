@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>reject! (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.reject! {|item| block }  -&gt; array or nil
+ *  
+ *  Equivalent to &lt;code&gt;Array#delete_if&lt;/code&gt;, deleting elements from
+ *  _self_ for which the block evaluates to true, but returns
+ *  &lt;code&gt;nil&lt;/code&gt; if no changes were made. Also see
+ *  &lt;code&gt;Enumerable#reject&lt;/code&gt;.
+ */
+
+static VALUE
+rb_ary_reject_bang(ary)
+    VALUE ary;
+{
+    long i1, i2;
+
+    rb_ary_modify(ary);
+    for (i1 = i2 = 0; i1 &lt; RARRAY(ary)-&gt;len; i1++) {
+        VALUE v = RARRAY(ary)-&gt;ptr[i1];
+        if (RTEST(rb_yield(v))) continue;
+        if (i1 != i2) {
+            rb_ary_store(ary, i2, v);
+        }
+        i2++;
+    }
+    if (RARRAY(ary)-&gt;len == i2) return Qnil;
+    if (i2 &lt; RARRAY(ary)-&gt;len)
+        RARRAY(ary)-&gt;len = i2;
+
+    return ary;
+}</pre>
+</body>
+</html>

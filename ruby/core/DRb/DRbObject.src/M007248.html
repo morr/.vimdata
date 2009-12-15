@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>with_friend (DRb::DRbObject)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/drb/drb.rb, line 1101</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">with_friend</span>(<span class="ruby-identifier">uri</span>)
+      <span class="ruby-identifier">friend</span> = <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">fetch_server</span>(<span class="ruby-identifier">uri</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">yield</span>() <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">friend</span>
+      
+      <span class="ruby-identifier">save</span> = <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>[<span class="ruby-value str">'DRb'</span>]
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>[<span class="ruby-value str">'DRb'</span>] = { <span class="ruby-value str">'server'</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">friend</span> }
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">yield</span>
+    <span class="ruby-keyword kw">ensure</span>
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>[<span class="ruby-value str">'DRb'</span>] = <span class="ruby-identifier">save</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">friend</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

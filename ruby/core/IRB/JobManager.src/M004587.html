@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>delete (IRB::JobManager)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb/ext/multi-irb.rb, line 87</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">delete</span>(<span class="ruby-identifier">key</span>)
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">key</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Integer</span>
+        <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">fail</span> <span class="ruby-constant">NoSuchJob</span>, <span class="ruby-identifier">key</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@jobs</span>[<span class="ruby-identifier">key</span>]
+        <span class="ruby-ivar">@jobs</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">catch</span>(<span class="ruby-identifier">:EXISTS</span>) <span class="ruby-keyword kw">do</span>
+          <span class="ruby-ivar">@jobs</span>.<span class="ruby-identifier">each_index</span> <span class="ruby-keyword kw">do</span>
+            <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@jobs</span>[<span class="ruby-identifier">i</span>] <span class="ruby-keyword kw">and</span> (<span class="ruby-ivar">@jobs</span>[<span class="ruby-identifier">i</span>][<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">key</span> <span class="ruby-operator">||</span>
+                             <span class="ruby-ivar">@jobs</span>[<span class="ruby-identifier">i</span>][<span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">key</span> <span class="ruby-operator">||</span>
+                             <span class="ruby-ivar">@jobs</span>[<span class="ruby-identifier">i</span>][<span class="ruby-value">1</span>].<span class="ruby-identifier">context</span>.<span class="ruby-identifier">main</span>.<span class="ruby-identifier">equal?</span>(<span class="ruby-identifier">key</span>))
+              <span class="ruby-ivar">@jobs</span>[<span class="ruby-identifier">i</span>] = <span class="ruby-keyword kw">nil</span>
+              <span class="ruby-identifier">throw</span> <span class="ruby-identifier">:EXISTS</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">fail</span> <span class="ruby-constant">NoSuchJob</span>, <span class="ruby-identifier">key</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">until</span> <span class="ruby-identifier">assoc</span> = <span class="ruby-ivar">@jobs</span>.<span class="ruby-identifier">pop</span>; <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@jobs</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-ivar">@jobs</span>.<span class="ruby-identifier">push</span> <span class="ruby-identifier">assoc</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

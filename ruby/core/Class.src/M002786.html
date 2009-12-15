@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>allocate (Class)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     class.allocate()   =&gt;   obj
+ *  
+ *  Allocates space for a new object of &lt;i&gt;class&lt;/i&gt;'s class. The
+ *  returned object must be an instance of &lt;i&gt;class&lt;/i&gt;.
+ *     
+ */
+
+VALUE
+rb_obj_alloc(klass)
+    VALUE klass;
+{
+    VALUE obj;
+
+    if (RCLASS(klass)-&gt;super == 0) {
+        rb_raise(rb_eTypeError, &quot;can't instantiate uninitialized class&quot;);
+    }
+    if (FL_TEST(klass, FL_SINGLETON)) {
+        rb_raise(rb_eTypeError, &quot;can't create instance of virtual class&quot;);
+    }
+    obj = rb_funcall(klass, ID_ALLOCATOR, 0, 0);
+    if (rb_obj_class(obj) != rb_class_real(klass)) {
+        rb_raise(rb_eTypeError, &quot;wrong instance allocation&quot;);
+    }
+    return obj;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>matched_size (StringScanner)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Returns the size of the most recent match (see #matched), or +nil+ if there
+ * was no recent match.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.check /\w+/           # -&gt; &quot;test&quot;
+ *   s.matched_size          # -&gt; 4
+ *   s.check /\d+/           # -&gt; nil
+ *   s.matched_size          # -&gt; nil
+ */
+static VALUE
+strscan_matched_size(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    if (! MATCHED_P(p)) return Qnil;
+
+    return INT2NUM(p-&gt;regs.end[0] - p-&gt;regs.beg[0]);
+}</pre>
+</body>
+</html>

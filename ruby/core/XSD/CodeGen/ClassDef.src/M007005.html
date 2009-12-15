@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>dump (XSD::CodeGen::ClassDef)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/xsd/codegen/classdef.rb, line 43</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">dump</span>
+    <span class="ruby-identifier">buf</span> = <span class="ruby-value str">&quot;&quot;</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@requirepath</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_requirepath</span> 
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_emptyline</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">buf</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">package</span> = <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/::/</span>)[<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">-2</span>]
+    <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_package_def</span>(<span class="ruby-identifier">package</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">package</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_comment</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@comment</span>
+    <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_class_def</span>
+    <span class="ruby-identifier">spacer</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@classvar</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">spacer</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_classvar</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@const</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_emptyline</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spacer</span>
+      <span class="ruby-identifier">spacer</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_const</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@code</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_emptyline</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spacer</span>
+      <span class="ruby-identifier">spacer</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_code</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@attrdef</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_emptyline</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spacer</span>
+      <span class="ruby-identifier">spacer</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_attributes</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@methoddef</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_emptyline</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spacer</span>
+      <span class="ruby-identifier">spacer</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_methods</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_class_def_end</span>
+    <span class="ruby-identifier">buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dump_package_def_end</span>(<span class="ruby-identifier">package</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">package</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">buf</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/^\s+$/</span>, <span class="ruby-value str">''</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

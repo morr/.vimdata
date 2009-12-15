@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>generate_argtype (WIN32COMGen)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File ext/win32ole/sample/olegen.rb, line 49</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generate_argtype</span>(<span class="ruby-identifier">typedetails</span>)
+    <span class="ruby-identifier">ts</span> = <span class="ruby-value str">''</span>
+    <span class="ruby-identifier">typedetails</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">t</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'CARRAY'</span>, <span class="ruby-value str">'VOID'</span>, <span class="ruby-value str">'UINT'</span>, <span class="ruby-value str">'RESULT'</span>, <span class="ruby-value str">'DECIMAL'</span>, <span class="ruby-value str">'I8'</span>, <span class="ruby-value str">'UI8'</span> 
+<span class="ruby-comment cmt">#         raise &quot;Sorry type\&quot;&quot; + t + &quot;\&quot; not supported&quot;</span>
+      <span class="ruby-identifier">ts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;\&quot;??? NOT SUPPORTED TYPE:`#{t}'\&quot;&quot;</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'USERDEFINED'</span>, <span class="ruby-value str">'Unknown Type 9'</span>
+        <span class="ruby-identifier">ts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">'VT_DISPATCH'</span>
+        <span class="ruby-keyword kw">break</span>;
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'SAFEARRAY'</span>
+        <span class="ruby-identifier">ts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">'VT_ARRAY|'</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'PTR'</span>
+        <span class="ruby-identifier">ts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">'VT_BYREF|'</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'INT'</span>
+        <span class="ruby-identifier">ts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">'VT_I4'</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-constant">String</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">t</span>
+          <span class="ruby-identifier">ts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">'VT_'</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">t</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ts</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">ts</span> = <span class="ruby-value str">'VT_VARIANT'</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">ts</span>[<span class="ruby-value">-1</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?|</span>
+        <span class="ruby-identifier">ts</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">'VT_VARIANT'</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">ts</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

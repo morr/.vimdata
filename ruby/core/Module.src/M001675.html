@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>include? (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mod.include?(module)    =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; if &lt;i&gt;module&lt;/i&gt; is included in
+ *  &lt;i&gt;mod&lt;/i&gt; or one of &lt;i&gt;mod&lt;/i&gt;'s ancestors.
+ *     
+ *     module A
+ *     end
+ *     class B
+ *       include A
+ *     end
+ *     class C &lt; B
+ *     end
+ *     B.include?(A)   #=&gt; true
+ *     C.include?(A)   #=&gt; true
+ *     A.include?(A)   #=&gt; false
+ */
+
+VALUE
+rb_mod_include_p(mod, mod2)
+    VALUE mod;
+    VALUE mod2;
+{
+    VALUE p;
+
+    Check_Type(mod2, T_MODULE);
+    for (p = RCLASS(mod)-&gt;super; p; p = RCLASS(p)-&gt;super) {
+	if (BUILTIN_TYPE(p) == T_ICLASS) {
+	    if (RBASIC(p)-&gt;klass == mod2) return Qtrue;
+	}
+    }
+    return Qfalse;
+}</pre>
+</body>
+</html>

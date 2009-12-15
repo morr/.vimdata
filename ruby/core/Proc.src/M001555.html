@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>[] (Proc)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     prc.call(params,...)   =&gt; obj
+ *     prc[params,...]        =&gt; obj
+ *  
+ *  Invokes the block, setting the block's parameters to the values in
+ *  &lt;i&gt;params&lt;/i&gt; using something close to method calling semantics.
+ *  Generates a warning if multiple values are passed to a proc that
+ *  expects just one (previously this silently converted the parameters
+ *  to an array). 
+ *
+ *  For procs created using &lt;code&gt;Kernel.proc&lt;/code&gt;, generates an 
+ *  error if the wrong number of parameters
+ *  are passed to a proc with multiple parameters. For procs created using
+ *  &lt;code&gt;Proc.new&lt;/code&gt;, extra parameters are silently discarded.
+ *
+ *  Returns the value of the last expression evaluated in the block. See
+ *  also &lt;code&gt;Proc#yield&lt;/code&gt;.
+ *     
+ *     a_proc = Proc.new {|a, *b| b.collect {|i| i*a }}
+ *     a_proc.call(9, 1, 2, 3)   #=&gt; [9, 18, 27]
+ *     a_proc[9, 1, 2, 3]        #=&gt; [9, 18, 27]
+ *     a_proc = Proc.new {|a,b| a}
+ *     a_proc.call(1,2,3)
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     prog.rb:5: wrong number of arguments (3 for 2) (ArgumentError)
+ *      from prog.rb:4:in `call'
+ *      from prog.rb:5
+ */
+
+static VALUE
+proc_call(proc, args)
+    VALUE proc, args;           /* OK */
+{
+    return proc_invoke(proc, args, Qundef, 0);
+}</pre>
+</body>
+</html>

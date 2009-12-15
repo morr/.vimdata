@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>zip (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.zip(arg, ...)                   -&gt; an_array
+ *     array.zip(arg, ...) {| arr | block }  -&gt; nil
+ *  
+ *  Converts any arguments to arrays, then merges elements of
+ *  &lt;i&gt;self&lt;/i&gt; with corresponding elements from each argument. This
+ *  generates a sequence of &lt;code&gt;self.size&lt;/code&gt; &lt;em&gt;n&lt;/em&gt;-element
+ *  arrays, where &lt;em&gt;n&lt;/em&gt; is one more that the count of arguments. If
+ *  the size of any argument is less than &lt;code&gt;enumObj.size&lt;/code&gt;,
+ *  &lt;code&gt;nil&lt;/code&gt; values are supplied. If a block given, it is
+ *  invoked for each output array, otherwise an array of arrays is
+ *  returned.
+ *     
+ *     a = [ 4, 5, 6 ]
+ *     b = [ 7, 8, 9 ]
+ *     
+ *     [1,2,3].zip(a, b)      #=&gt; [[1, 4, 7], [2, 5, 8], [3, 6, 9]]
+ *     [1,2].zip(a,b)         #=&gt; [[1, 4, 7], [2, 5, 8]]
+ *     a.zip([1,2],[8])       #=&gt; [[4,1,8], [5,2,nil], [6,nil,nil]]
+ */
+
+static VALUE
+rb_ary_zip(argc, argv, ary)
+    int argc;
+    VALUE *argv;
+    VALUE ary;
+{
+    int i, j;
+    long len;
+    VALUE result;
+
+    for (i=0; i&lt;argc; i++) {
+        argv[i] = to_ary(argv[i]);
+    }
+    if (rb_block_given_p()) {
+        for (i=0; i&lt;RARRAY(ary)-&gt;len; i++) {
+            VALUE tmp = rb_ary_new2(argc+1);
+
+            rb_ary_push(tmp, rb_ary_elt(ary, i));
+            for (j=0; j&lt;argc; j++) {
+                rb_ary_push(tmp, rb_ary_elt(argv[j], i));
+            }
+            rb_yield(tmp);
+        }
+        return Qnil;
+    }
+    len = RARRAY(ary)-&gt;len;
+    result = rb_ary_new2(len);
+    for (i=0; i&lt;len; i++) {
+        VALUE tmp = rb_ary_new2(argc+1);
+
+        rb_ary_push(tmp, rb_ary_elt(ary, i));
+        for (j=0; j&lt;argc; j++) {
+            rb_ary_push(tmp, rb_ary_elt(argv[j], i));
+        }
+        rb_ary_push(result, tmp);
+    }
+    return result;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>&amp; (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* 
+ *  call-seq:
+ *     array &amp; other_array
+ *
+ *  Set Intersection---Returns a new array
+ *  containing elements common to the two arrays, with no duplicates.
+ *
+ *     [ 1, 1, 3, 5 ] &amp; [ 1, 2, 3 ]   #=&gt; [ 1, 3 ]
+ */
+
+
+static VALUE
+rb_ary_and(ary1, ary2)
+    VALUE ary1, ary2;
+{
+    VALUE hash, ary3, v, vv;
+    long i;
+
+    ary2 = to_ary(ary2);
+    ary3 = rb_ary_new2(RARRAY(ary1)-&gt;len &lt; RARRAY(ary2)-&gt;len ?
+            RARRAY(ary1)-&gt;len : RARRAY(ary2)-&gt;len);
+    hash = ary_make_hash(ary2, 0);
+
+    for (i=0; i&lt;RARRAY(ary1)-&gt;len; i++) {
+        v = vv = rb_ary_elt(ary1, i);
+        if (st_delete(RHASH(hash)-&gt;tbl, (st_data_t*)&amp;vv, 0)) {
+            rb_ary_push(ary3, v);
+        }
+    }
+
+    return ary3;
+}</pre>
+</body>
+</html>

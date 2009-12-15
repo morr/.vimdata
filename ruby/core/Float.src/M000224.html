@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>/ (Float)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   float / other   =&gt; float
+ *
+ * Returns a new float which is the result of dividing
+ * &lt;code&gt;float&lt;/code&gt; by &lt;code&gt;other&lt;/code&gt;.
+ */
+
+static VALUE
+flo_div(x, y)
+    VALUE x, y;
+{
+    long f_y;
+    double d;
+
+    switch (TYPE(y)) {
+      case T_FIXNUM:
+        f_y = FIX2LONG(y);
+        return rb_float_new(RFLOAT(x)-&gt;value / (double)f_y);
+      case T_BIGNUM:
+        d = rb_big2dbl(y);
+        return rb_float_new(RFLOAT(x)-&gt;value / d);
+      case T_FLOAT:
+        return rb_float_new(RFLOAT(x)-&gt;value / RFLOAT(y)-&gt;value);
+      default:
+        return rb_num_coerce_bin(x, y);
+    }
+}</pre>
+</body>
+</html>

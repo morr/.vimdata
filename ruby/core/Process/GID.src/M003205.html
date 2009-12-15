@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>switch (Process::GID)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process::GID.switch              =&gt; fixnum
+ *     Process::GID.switch {|| block}   =&gt; object
+ *
+ *  Switch the effective and real group IDs of the current process. If
+ *  a &lt;em&gt;block&lt;/em&gt; is given, the group IDs will be switched back
+ *  after the block is executed. Returns the new effective group ID if
+ *  called without a block, and the return value of the block if one
+ *  is given.
+ *
+ */
+
+static VALUE
+p_gid_switch(obj)
+    VALUE obj;
+{
+    int gid, egid;
+
+    check_gid_switch();
+
+    gid = getgid();
+    egid = getegid();
+
+    if (gid != egid) {
+        proc_setegid(obj, INT2FIX(gid));
+        if (rb_block_given_p()) {
+            under_gid_switch = 1;
+            return rb_ensure(rb_yield, Qnil, p_gid_sw_ensure, SAVED_GROUP_ID);
+        } else {
+            return INT2FIX(egid);
+        }
+    } else if (egid != SAVED_GROUP_ID) {
+        proc_setegid(obj, INT2FIX(SAVED_GROUP_ID));
+        if (rb_block_given_p()) {
+            under_gid_switch = 1;
+            return rb_ensure(rb_yield, Qnil, p_gid_sw_ensure, egid);
+        } else {
+            return INT2FIX(gid);
+        }
+    } else {
+        errno = EPERM;
+        rb_sys_fail(0);
+    }
+#else
+static VALUE
+p_gid_sw_ensure(obj)
+    VALUE obj;
+{
+    under_gid_switch = 0;
+    return p_gid_exchange(obj);
+}</pre>
+</body>
+</html>

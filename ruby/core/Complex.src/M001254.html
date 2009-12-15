@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>** (Complex)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/complex.rb, line 200</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">**</span> (<span class="ruby-identifier">other</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">other</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-constant">Complex</span>(<span class="ruby-value">1</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Complex</span>)
+      <span class="ruby-identifier">r</span>, <span class="ruby-identifier">theta</span> = <span class="ruby-identifier">polar</span>
+      <span class="ruby-identifier">ore</span> = <span class="ruby-identifier">other</span>.<span class="ruby-identifier">real</span>
+      <span class="ruby-identifier">oim</span> = <span class="ruby-identifier">other</span>.<span class="ruby-identifier">image</span>
+      <span class="ruby-identifier">nr</span> = <span class="ruby-constant">Math</span>.<span class="ruby-identifier">exp!</span>(<span class="ruby-identifier">ore</span><span class="ruby-operator">*</span><span class="ruby-constant">Math</span>.<span class="ruby-identifier">log!</span>(<span class="ruby-identifier">r</span>) <span class="ruby-operator">-</span> <span class="ruby-identifier">oim</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">theta</span>)
+      <span class="ruby-identifier">ntheta</span> = <span class="ruby-identifier">theta</span><span class="ruby-operator">*</span><span class="ruby-identifier">ore</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">oim</span><span class="ruby-operator">*</span><span class="ruby-constant">Math</span>.<span class="ruby-identifier">log!</span>(<span class="ruby-identifier">r</span>)
+      <span class="ruby-constant">Complex</span>.<span class="ruby-identifier">polar</span>(<span class="ruby-identifier">nr</span>, <span class="ruby-identifier">ntheta</span>)
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">other</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-identifier">x</span> = <span class="ruby-keyword kw">self</span>
+        <span class="ruby-identifier">z</span> = <span class="ruby-identifier">x</span>
+        <span class="ruby-identifier">n</span> = <span class="ruby-identifier">other</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+        <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span>
+          <span class="ruby-keyword kw">while</span> (<span class="ruby-identifier">div</span>, <span class="ruby-identifier">mod</span> = <span class="ruby-identifier">n</span>.<span class="ruby-identifier">divmod</span>(<span class="ruby-value">2</span>)
+                 <span class="ruby-identifier">mod</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>)
+            <span class="ruby-identifier">x</span> = <span class="ruby-constant">Complex</span>(<span class="ruby-identifier">x</span>.<span class="ruby-identifier">real</span><span class="ruby-operator">*</span><span class="ruby-identifier">x</span>.<span class="ruby-identifier">real</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">image</span><span class="ruby-operator">*</span><span class="ruby-identifier">x</span>.<span class="ruby-identifier">image</span>, <span class="ruby-value">2</span><span class="ruby-operator">*</span><span class="ruby-identifier">x</span>.<span class="ruby-identifier">real</span><span class="ruby-operator">*</span><span class="ruby-identifier">x</span>.<span class="ruby-identifier">image</span>)
+            <span class="ruby-identifier">n</span> = <span class="ruby-identifier">div</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">z</span> <span class="ruby-operator">*=</span> <span class="ruby-identifier">x</span>
+          <span class="ruby-identifier">n</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">z</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-constant">Rational</span>
+          (<span class="ruby-constant">Rational</span>(<span class="ruby-value">1</span>) <span class="ruby-operator">/</span> <span class="ruby-keyword kw">self</span>) <span class="ruby-operator">**</span> <span class="ruby-operator">-</span><span class="ruby-identifier">other</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-keyword kw">self</span> <span class="ruby-operator">**</span> <span class="ruby-constant">Float</span>(<span class="ruby-identifier">other</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">Complex</span>.<span class="ruby-identifier">generic?</span>(<span class="ruby-identifier">other</span>)
+      <span class="ruby-identifier">r</span>, <span class="ruby-identifier">theta</span> = <span class="ruby-identifier">polar</span>
+      <span class="ruby-constant">Complex</span>.<span class="ruby-identifier">polar</span>(<span class="ruby-identifier">r</span><span class="ruby-operator">**</span><span class="ruby-identifier">other</span>, <span class="ruby-identifier">theta</span><span class="ruby-operator">*</span><span class="ruby-identifier">other</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span> = <span class="ruby-identifier">other</span>.<span class="ruby-identifier">coerce</span>(<span class="ruby-keyword kw">self</span>)
+      <span class="ruby-identifier">x</span><span class="ruby-operator">**</span><span class="ruby-identifier">y</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_proc (Method)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     meth.to_proc    =&gt; prc
+ *  
+ *  Returns a &lt;code&gt;Proc&lt;/code&gt; object corresponding to this method.
+ */
+
+static VALUE
+method_proc(method)
+    VALUE method;
+{
+    VALUE proc;
+    struct METHOD *mdata;
+    struct BLOCK *bdata;
+
+    proc = rb_iterate((VALUE(*)_((VALUE)))mproc, 0, bmcall, method);
+    Data_Get_Struct(method, struct METHOD, mdata);
+    Data_Get_Struct(proc, struct BLOCK, bdata);
+    bdata-&gt;body-&gt;nd_file = mdata-&gt;body-&gt;nd_file;
+    nd_set_line(bdata-&gt;body, nd_line(mdata-&gt;body));
+    bdata-&gt;body-&gt;nd_state = YIELD_FUNC_SVALUE;
+
+    return proc;
+}</pre>
+</body>
+</html>

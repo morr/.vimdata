@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>% (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str % arg   =&gt; new_str
+ *  
+ *  Format---Uses &lt;i&gt;str&lt;/i&gt; as a format specification, and returns the result
+ *  of applying it to &lt;i&gt;arg&lt;/i&gt;. If the format specification contains more than
+ *  one substitution, then &lt;i&gt;arg&lt;/i&gt; must be an &lt;code&gt;Array&lt;/code&gt; containing
+ *  the values to be substituted. See &lt;code&gt;Kernel::sprintf&lt;/code&gt; for details
+ *  of the format string.
+ *     
+ *     &quot;%05d&quot; % 123                       #=&gt; &quot;00123&quot;
+ *     &quot;%-5s: %08x&quot; % [ &quot;ID&quot;, self.id ]   #=&gt; &quot;ID   : 200e14d6&quot;
+ */
+
+static VALUE
+rb_str_format_m(str, arg)
+    VALUE str, arg;
+{
+    volatile VALUE tmp = rb_check_array_type(arg);
+
+    if (!NIL_P(tmp)) {
+        return rb_str_format(RARRAY_LEN(tmp), RARRAY_PTR(tmp), str);
+    }
+    return rb_str_format(1, &amp;arg, str);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>marshal_dump (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * undocumented
+ */
+
+static VALUE
+time_mdump(time)
+    VALUE time;
+{
+    struct time_object *tobj;
+    struct tm *tm;
+    unsigned long p, s;
+    char buf[8];
+    time_t t;
+    int i;
+
+    GetTimeval(time, tobj);
+
+    t = tobj-&gt;tv.tv_sec;
+    tm = gmtime(&amp;t);
+
+    if ((tm-&gt;tm_year &amp; 0xffff) != tm-&gt;tm_year)
+        rb_raise(rb_eArgError, &quot;year too big to marshal&quot;);
+
+    p = 0x1UL        &lt;&lt; 31 | /*  1 */
+        tobj-&gt;gmt    &lt;&lt; 30 | /*  1 */
+        tm-&gt;tm_year  &lt;&lt; 14 | /* 16 */
+        tm-&gt;tm_mon   &lt;&lt; 10 | /*  4 */
+        tm-&gt;tm_mday  &lt;&lt;  5 | /*  5 */
+        tm-&gt;tm_hour;         /*  5 */
+    s = tm-&gt;tm_min   &lt;&lt; 26 | /*  6 */
+        tm-&gt;tm_sec   &lt;&lt; 20 | /*  6 */
+        tobj-&gt;tv.tv_usec;    /* 20 */
+
+    for (i=0; i&lt;4; i++) {
+        buf[i] = p &amp; 0xff;
+        p = RSHIFT(p, 8);
+    }
+    for (i=4; i&lt;8; i++) {
+        buf[i] = s &amp; 0xff;
+        s = RSHIFT(s, 8);
+    }
+
+    return rb_str_new(buf, 8);
+}</pre>
+</body>
+</html>

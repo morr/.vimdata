@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>collect (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.collect {|item| block }  -&gt; an_array
+ *     array.map     {|item| block }  -&gt; an_array
+ *  
+ *  Invokes &lt;i&gt;block&lt;/i&gt; once for each element of &lt;i&gt;self&lt;/i&gt;. Creates a 
+ *  new array containing the values returned by the block.
+ *  See also &lt;code&gt;Enumerable#collect&lt;/code&gt;.
+ *     
+ *     a = [ &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot; ]
+ *     a.collect {|x| x + &quot;!&quot; }   #=&gt; [&quot;a!&quot;, &quot;b!&quot;, &quot;c!&quot;, &quot;d!&quot;]
+ *     a                          #=&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;]
+ */
+
+static VALUE
+rb_ary_collect(ary)
+    VALUE ary;
+{
+    long i;
+    VALUE collect;
+
+    if (!rb_block_given_p()) {
+        return rb_ary_new4(RARRAY(ary)-&gt;len, RARRAY(ary)-&gt;ptr);
+    }
+
+    collect = rb_ary_new2(RARRAY(ary)-&gt;len);
+    for (i = 0; i &lt; RARRAY(ary)-&gt;len; i++) {
+        rb_ary_push(collect, rb_yield(RARRAY(ary)-&gt;ptr[i]));
+    }
+    return collect;
+}</pre>
+</body>
+</html>

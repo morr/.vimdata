@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>rpc_call (SOAP::WSDLDriver::Servant__)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/wsdlDriver.rb, line 330</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">rpc_call</span>(<span class="ruby-identifier">name</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+      <span class="ruby-identifier">set_wiredump_file_base</span>(<span class="ruby-identifier">name</span>)
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">op_info</span> = <span class="ruby-ivar">@operation</span>[<span class="ruby-identifier">name</span>]
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">RuntimeError</span>, <span class="ruby-node">&quot;method: #{name} not defined&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">req_header</span> = <span class="ruby-identifier">create_request_header</span>
+      <span class="ruby-identifier">req_body</span> = <span class="ruby-identifier">create_request_body</span>(<span class="ruby-identifier">op_info</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+      <span class="ruby-identifier">reqopt</span> = <span class="ruby-identifier">create_options</span>({
+        <span class="ruby-identifier">:soapaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">op_info</span>.<span class="ruby-identifier">soapaction</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@soapaction</span>})
+      <span class="ruby-identifier">resopt</span> = <span class="ruby-identifier">create_options</span>({
+        <span class="ruby-identifier">:decode_typemap</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@rpc_decode_typemap</span>})
+      <span class="ruby-identifier">env</span> = <span class="ruby-ivar">@proxy</span>.<span class="ruby-identifier">route</span>(<span class="ruby-identifier">req_header</span>, <span class="ruby-identifier">req_body</span>, <span class="ruby-identifier">reqopt</span>, <span class="ruby-identifier">resopt</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">EmptyResponseError</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">env</span>
+      <span class="ruby-identifier">receive_headers</span>(<span class="ruby-identifier">env</span>.<span class="ruby-identifier">header</span>)
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-ivar">@proxy</span>.<span class="ruby-identifier">check_fault</span>(<span class="ruby-identifier">env</span>.<span class="ruby-identifier">body</span>)
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-operator">::</span><span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">FaultError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+        <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">fault2exception</span>(<span class="ruby-identifier">e</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">ret</span> = <span class="ruby-identifier">env</span>.<span class="ruby-identifier">body</span>.<span class="ruby-identifier">response</span> <span class="ruby-value">?
+</span>        <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">soap2obj</span>(<span class="ruby-identifier">env</span>.<span class="ruby-identifier">body</span>.<span class="ruby-identifier">response</span>, <span class="ruby-ivar">@mapping_registry</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">env</span>.<span class="ruby-identifier">body</span>.<span class="ruby-identifier">outparams</span>
+        <span class="ruby-identifier">outparams</span> = <span class="ruby-identifier">env</span>.<span class="ruby-identifier">body</span>.<span class="ruby-identifier">outparams</span>.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">outparam</span><span class="ruby-operator">|</span>
+          <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">soap2obj</span>(<span class="ruby-identifier">outparam</span>)
+        }
+        <span class="ruby-keyword kw">return</span> [<span class="ruby-identifier">ret</span>].<span class="ruby-identifier">concat</span>(<span class="ruby-identifier">outparams</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">ret</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

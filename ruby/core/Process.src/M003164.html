@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>setsid (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.setsid   =&gt; fixnum
+ *
+ *  Establishes this process as a new session and process group
+ *  leader, with no controlling tty. Returns the session id. Not
+ *  available on all platforms.
+ *
+ *     Process.setsid   #=&gt; 27422
+ */
+
+static VALUE
+proc_setsid()
+{
+#if defined(HAVE_SETSID)
+    int pid;
+
+    rb_secure(2);
+    pid = setsid();
+    if (pid &lt; 0) rb_sys_fail(0);
+    return INT2FIX(pid);
+#elif defined(HAVE_SETPGRP) &amp;&amp; defined(TIOCNOTTY)
+  rb_pid_t pid;
+  int ret;
+
+  rb_secure(2);
+  pid = getpid();
+#if defined(SETPGRP_VOID)
+  ret = setpgrp();
+  /* If `pid_t setpgrp(void)' is equivalent to setsid(),
+     `ret' will be the same value as `pid', and following open() will fail.
+     In Linux, `int setpgrp(void)' is equivalent to setpgid(0, 0). */
+#else
+  ret = setpgrp(0, pid);
+#endif
+  if (ret == -1) rb_sys_fail(0);
+
+  if ((fd = open(&quot;/dev/tty&quot;, O_RDWR)) &gt;= 0) {
+    ioctl(fd, TIOCNOTTY, NULL);
+    close(fd);
+  }
+  return INT2FIX(pid);
+#else
+    rb_notimplement();
+#endif
+}</pre>
+</body>
+</html>

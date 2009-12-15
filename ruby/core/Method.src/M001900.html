@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>call (Method)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     meth.call(args, ...)    =&gt; obj
+ *     meth[args, ...]         =&gt; obj
+ *  
+ *  Invokes the &lt;i&gt;meth&lt;/i&gt; with the specified arguments, returning the
+ *  method's return value.
+ *     
+ *     m = 12.method(&quot;+&quot;)
+ *     m.call(3)    #=&gt; 15
+ *     m.call(20)   #=&gt; 32
+ */
+
+static VALUE
+method_call(argc, argv, method)
+    int argc;
+    VALUE *argv;
+    VALUE method;
+{
+    VALUE result = Qnil;        /* OK */
+    struct METHOD *data;
+    int safe;
+
+    Data_Get_Struct(method, struct METHOD, data);
+    if (data-&gt;recv == Qundef) {
+        rb_raise(rb_eTypeError, &quot;can't call unbound method; bind first&quot;);
+    }
+    if (OBJ_TAINTED(method)) {
+        safe = NOEX_WITH(data-&gt;safe_level, 4)|NOEX_TAINTED;
+    }
+    else {
+        safe = data-&gt;safe_level;
+    }
+    PUSH_ITER(rb_block_given_p()?ITER_PRE:ITER_NOT);
+    result = rb_call0(data-&gt;klass,data-&gt;recv,data-&gt;id,data-&gt;oid,argc,argv,data-&gt;body,safe);
+    POP_ITER();
+    return result;
+}</pre>
+</body>
+</html>

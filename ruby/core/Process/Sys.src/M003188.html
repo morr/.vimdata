@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>setgid (Process::Sys)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process::Sys.setgid(integer)   =&gt; nil
+ *
+ *  Set the group ID of the current process to _integer_. Not
+ *  available on all platforms.
+ *
+ */
+
+static VALUE
+p_sys_setgid(obj, id)
+    VALUE obj, id;
+{
+#if defined HAVE_SETGID
+    check_gid_switch();
+    if (setgid(NUM2INT(id)) != 0) rb_sys_fail(0);
+#else
+    rb_notimplement();
+#endif
+    return Qnil;
+}</pre>
+</body>
+</html>

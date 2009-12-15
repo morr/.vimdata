@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_s (Proc)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   prc.to_s   =&gt; string
+ *
+ * Shows the unique identifier for this proc, along with
+ * an indication of where the proc was defined.
+ */
+
+static VALUE
+proc_to_s(self)
+    VALUE self;
+{
+    struct BLOCK *data;
+    NODE *node;
+    char *cname = rb_obj_classname(self);
+    const int w = (sizeof(VALUE) * CHAR_BIT) / 4;
+    long len = strlen(cname)+6+w; /* 6:tags 16:addr */
+    VALUE str;
+
+    Data_Get_Struct(self, struct BLOCK, data);
+    if ((node = data-&gt;frame.node) || (node = data-&gt;body)) {
+        len += strlen(node-&gt;nd_file) + 2 + (SIZEOF_LONG*CHAR_BIT-NODE_LSHIFT)/3;
+        str = rb_str_new(0, len);
+        snprintf(RSTRING(str)-&gt;ptr, len+1,
+                 &quot;#&lt;%s:0x%.*lx@%s:%d&gt;&quot;, cname, w, (VALUE)data-&gt;body,
+                 node-&gt;nd_file, nd_line(node));
+    }
+    else {
+        str = rb_str_new(0, len);
+        snprintf(RSTRING(str)-&gt;ptr, len+1,
+                 &quot;#&lt;%s:0x%.*lx&gt;&quot;, cname, w, (VALUE)data-&gt;body);
+    }
+    RSTRING(str)-&gt;len = strlen(RSTRING(str)-&gt;ptr);
+    if (OBJ_TAINTED(self)) OBJ_TAINT(str);
+
+    return str;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>pos= (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.pos = integer    =&gt; integer
+ *  
+ *  Seeks to the given position (in bytes) in &lt;em&gt;ios&lt;/em&gt;.
+ *     
+ *     f = File.new(&quot;testfile&quot;)
+ *     f.pos = 17
+ *     f.gets   #=&gt; &quot;This is line two\n&quot;
+ */
+
+static VALUE
+rb_io_set_pos(io, offset)
+     VALUE io, offset;
+{
+    OpenFile *fptr;
+    off_t pos;
+
+    pos = NUM2OFFT(offset);
+    GetOpenFile(io, fptr);
+    pos = io_seek(fptr, pos, SEEK_SET);
+    if (pos != 0) rb_sys_fail(fptr-&gt;path);
+    clearerr(fptr-&gt;f);
+
+    return OFFT2NUM(pos);
+}</pre>
+</body>
+</html>

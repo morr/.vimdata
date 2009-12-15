@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: UnboundMethod</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">UnboundMethod</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/eval_c.html">
+                eval.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Ruby supports two forms of objectified methods. <a
+href="Class.html">Class</a> <tt><a href="Method.html">Method</a></tt> is
+used to represent methods that are associated with a particular object:
+these method objects are bound to that object. Bound method objects for an
+object can be created using <tt><a
+href="Object.html#M000336">Object#method</a></tt>.
+</p>
+<p>
+Ruby also supports unbound methods; methods objects that are not associated
+with a particular object. These can be created either by calling <tt><a
+href="Module.html#M001659">Module#instance_method</a></tt> or by calling
+<tt>unbind</tt> on a bound method object. The result of both of these is an
+<tt><a href="UnboundMethod.html">UnboundMethod</a></tt> object.
+</p>
+<p>
+Unbound methods can only be called after they are bound to an object. That
+object must be be a kind_of? the method&#8216;s original class.
+</p>
+<pre>
+   class Square
+     def area
+       @side * @side
+     end
+     def initialize(side)
+       @side = side
+     end
+   end
+
+   area_un = Square.instance_method(:area)
+
+   s = Square.new(12)
+   area = area_un.bind(s)
+   area.call   #=&gt; 144
+</pre>
+<p>
+Unbound methods are a reference to the method at the time it was
+objectified: subsequent changes to the underlying class will not affect the
+unbound method.
+</p>
+<pre>
+   class Test
+     def test
+       :original
+     end
+   end
+   um = Test.instance_method(:test)
+   class Test
+     def test
+       :modified
+     end
+   end
+   t = Test.new
+   t.test            #=&gt; :modified
+   um.bind(t).call   #=&gt; :original
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001129">==</a>&nbsp;&nbsp;
+      <a href="#M001131">arity</a>&nbsp;&nbsp;
+      <a href="#M001134">bind</a>&nbsp;&nbsp;
+      <a href="#M001130">clone</a>&nbsp;&nbsp;
+      <a href="#M001132">inspect</a>&nbsp;&nbsp;
+      <a href="#M001133">to_s</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001129" class="method-detail">
+        <a name="M001129"></a>
+
+        <div class="method-heading">
+          <a href="UnboundMethod.src/M001129.html" target="Code" class="method-signature"
+            onclick="popupCode('UnboundMethod.src/M001129.html');return false;">
+          <span class="method-name">meth == other_meth  => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Two method objects are equal if that are bound to the same object and
+contain the same body.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001131" class="method-detail">
+        <a name="M001131"></a>
+
+        <div class="method-heading">
+          <a href="UnboundMethod.src/M001131.html" target="Code" class="method-signature"
+            onclick="popupCode('UnboundMethod.src/M001131.html');return false;">
+          <span class="method-name">meth.arity    => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an indication of the number of arguments accepted by a method.
+Returns a nonnegative integer for methods that take a fixed number of
+arguments. For Ruby methods that take a variable number of arguments,
+returns -n-1, where n is the number of required arguments. For methods
+written in C, returns -1 if the call takes a variable number of arguments.
+</p>
+<pre>
+   class C
+     def one;    end
+     def two(a); end
+     def three(*a);  end
+     def four(a, b); end
+     def five(a, b, *c);    end
+     def six(a, b, *c, &amp;d); end
+   end
+   c = C.new
+   c.method(:one).arity     #=&gt; 0
+   c.method(:two).arity     #=&gt; 1
+   c.method(:three).arity   #=&gt; -1
+   c.method(:four).arity    #=&gt; 2
+   c.method(:five).arity    #=&gt; -3
+   c.method(:six).arity     #=&gt; -3
+
+   &quot;cat&quot;.method(:size).arity      #=&gt; 0
+   &quot;cat&quot;.method(:replace).arity   #=&gt; 1
+   &quot;cat&quot;.method(:squeeze).arity   #=&gt; -1
+   &quot;cat&quot;.method(:count).arity     #=&gt; -1
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M001134" class="method-detail">
+        <a name="M001134"></a>
+
+        <div class="method-heading">
+          <a href="UnboundMethod.src/M001134.html" target="Code" class="method-signature"
+            onclick="popupCode('UnboundMethod.src/M001134.html');return false;">
+          <span class="method-name">umeth.bind(obj) &rarr; method<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Bind <em>umeth</em> to <em>obj</em>. If <tt>Klass</tt> was the class from
+which <em>umeth</em> was obtained, <tt>obj.kind_of?(Klass)</tt> must be
+true.
+</p>
+<pre>
+   class A
+     def test
+       puts &quot;In test, class = #{self.class}&quot;
+     end
+   end
+   class B &lt; A
+   end
+   class C &lt; B
+   end
+
+   um = B.instance_method(:test)
+   bm = um.bind(C.new)
+   bm.call
+   bm = um.bind(B.new)
+   bm.call
+   bm = um.bind(A.new)
+   bm.call
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   In test, class = C
+   In test, class = B
+   prog.rb:16:in `bind': bind argument must be an instance of B (TypeError)
+    from prog.rb:16
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M001130" class="method-detail">
+        <a name="M001130"></a>
+
+        <div class="method-heading">
+          <a href="UnboundMethod.src/M001130.html" target="Code" class="method-signature"
+            onclick="popupCode('UnboundMethod.src/M001130.html');return false;">
+          <span class="method-name">clone</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+MISSING: documentation
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001132" class="method-detail">
+        <a name="M001132"></a>
+
+        <div class="method-heading">
+          <a href="UnboundMethod.src/M001132.html" target="Code" class="method-signature"
+            onclick="popupCode('UnboundMethod.src/M001132.html');return false;">
+          <span class="method-name">meth.to_s      =>  string<br />
+meth.inspect   =>  string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Show the name of the underlying method.
+</p>
+<pre>
+  &quot;cat&quot;.method(:count).inspect   #=&gt; &quot;#&lt;Method: String#count&gt;&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M001133" class="method-detail">
+        <a name="M001133"></a>
+
+        <div class="method-heading">
+          <a href="UnboundMethod.src/M001133.html" target="Code" class="method-signature"
+            onclick="popupCode('UnboundMethod.src/M001133.html');return false;">
+          <span class="method-name">meth.to_s      =>  string<br />
+meth.inspect   =>  string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Show the name of the underlying method.
+</p>
+<pre>
+  &quot;cat&quot;.method(:count).inspect   #=&gt; &quot;#&lt;Method: String#count&gt;&quot;
+</pre>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>rewind (Dir)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     dir.rewind =&gt; dir
+ *
+ *  Repositions &lt;em&gt;dir&lt;/em&gt; to the first entry.
+ *
+ *     d = Dir.new(&quot;testdir&quot;)
+ *     d.read     #=&gt; &quot;.&quot;
+ *     d.rewind   #=&gt; #&lt;Dir:0x401b3fb0&gt;
+ *     d.read     #=&gt; &quot;.&quot;
+ */
+static VALUE
+dir_rewind(dir)
+    VALUE dir;
+{
+    struct dir_data *dirp;
+
+    if (rb_safe_level() &gt;= 4 &amp;&amp; !OBJ_TAINTED(dir)) {
+        rb_raise(rb_eSecurityError, &quot;Insecure: can't close&quot;);
+    }
+    GetDIR(dir, dirp);
+    rewinddir(dirp-&gt;dir);
+    return dir;
+}</pre>
+</body>
+</html>

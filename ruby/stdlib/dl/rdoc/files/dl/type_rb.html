@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: type.rb</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>type.rb</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>dl/type.rb
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Tue Mar 13 02:04:09 -0500 2007</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+example:
+</p>
+<pre>
+ DLTYPE[INT][:rb2c][&quot;arg0&quot;] =&gt; &quot;NUM2INT(arg0)&quot;
+ DLTYPE[DOUBLE][:c2rb][&quot;r&quot;] =&gt; &quot;rb_float_new(r)&quot;
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000461">num2types</a>&nbsp;&nbsp;
+      <a href="#M000459">tget</a>&nbsp;&nbsp;
+      <a href="#M000458">tpush</a>&nbsp;&nbsp;
+      <a href="#M000462">types2ctypes</a>&nbsp;&nbsp;
+      <a href="#M000460">types2num</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DLTYPE</td>
+          <td>=</td>
+          <td class="context-item-value">{   VOID  = 0x00 =&gt; {     :name =&gt; 'VOID',     :rb2c =&gt; nil,     :c2rb =&gt; nil,     :ctype =&gt; &quot;void&quot;,     :stmem =&gt; &quot;v&quot;,     :sym =&gt; true,     :cb =&gt; true,   },   CHAR  = 0x01 =&gt; {     :name =&gt; 'CHAR',     :rb2c =&gt; proc{|x| &quot;NUM2CHR(#{x})&quot;},     :c2rb =&gt; proc{|x| &quot;CHR2FIX(#{x})&quot;},     :ctype =&gt; &quot;char&quot;,     :stmem =&gt; &quot;c&quot;,     :sym =&gt; false,     :cb =&gt; false,   },   SHORT = 0x02 =&gt; {     :name =&gt; 'SHORT',     :rb2c =&gt; proc{|x| &quot;FIX2INT(#{x})&quot;},     :c2rb =&gt; proc{|x| &quot;INT2FIX(#{x})&quot;},     :ctype =&gt; &quot;short&quot;,     :stmem =&gt; &quot;h&quot;,     :sym =&gt; false,     :cb =&gt; false,   },   INT   = 0x03 =&gt; {     :name =&gt; 'INT',     :rb2c =&gt; proc{|x| &quot;NUM2INT(#{x})&quot;},     :c2rb =&gt; proc{|x| &quot;INT2NUM(#{x})&quot;},     :ctype =&gt; &quot;int&quot;,     :stmem =&gt; &quot;i&quot;,     :sym =&gt; true,     :cb =&gt; false,   },   LONG  = 0x04 =&gt; {     :name =&gt; 'LONG',     :rb2c =&gt; proc{|x| &quot;NUM2INT(#{x})&quot;},     :c2rb =&gt; proc{|x| &quot;INT2NUM(#{x})&quot;},     :ctype =&gt; &quot;long&quot;,     :stmem =&gt; &quot;l&quot;,     :sym =&gt; true,     :cb =&gt; true,   },   FLOAT = 0x05 =&gt; {     :name =&gt; 'FLOAT',     :rb2c =&gt; proc{|x| &quot;(float)(RFLOAT(#{x})-&gt;value)&quot;},     :c2rb =&gt; proc{|x| &quot;rb_float_new((double)#{x})&quot;},     :ctype =&gt; &quot;float&quot;,     :stmem =&gt; &quot;f&quot;,     :sym =&gt; false,     :cb =&gt; false,   },   DOUBLE = 0x06 =&gt; {     :name =&gt; 'DOUBLE',     :rb2c =&gt; proc{|x| &quot;RFLOAT(#{x})-&gt;value&quot;},     :c2rb =&gt; proc{|x| &quot;rb_float_new(#{x})&quot;},     :ctype =&gt; &quot;double&quot;,     :stmem =&gt; &quot;d&quot;,     :sym =&gt; true,     :cb =&gt; true,   },   VOIDP = 0x07 =&gt; {     :name =&gt; 'VOIDP',     :rb2c =&gt; proc{|x| &quot;rb_dlptr2cptr(#{x})&quot;},     :c2rb =&gt; proc{|x| &quot;rb_dlptr_new(#{x},sizeof(void*),0)&quot;},     :ctype =&gt; &quot;void *&quot;,     :stmem =&gt; &quot;p&quot;,     :sym =&gt; true,     :cb =&gt; true,   }, }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+example:
+
+<pre>
+ DLTYPE[INT][:rb2c][&quot;arg0&quot;] =&gt; &quot;NUM2INT(arg0)&quot;
+ DLTYPE[DOUBLE][:c2rb][&quot;r&quot;] =&gt; &quot;rb_float_new(r)&quot;
+</pre>
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000461" class="m-detail">
+        <a name="M000461"></a>
+
+        <div class="method-heading">
+          <a href="#M000461" class="method-signature">
+          <span class="method-name">num2types</span><span class="method-args">(num)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000461-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000461-source">
+<pre>
+<span class="ruby-comment cmt"># File dl/type.rb, line 97</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">num2types</span>(<span class="ruby-identifier">num</span>)
+  <span class="ruby-identifier">ts</span> = []
+  <span class="ruby-identifier">i</span>  = <span class="ruby-value">0</span>
+  <span class="ruby-identifier">t</span> = <span class="ruby-identifier">tget</span>(<span class="ruby-identifier">num</span>,<span class="ruby-identifier">i</span>)
+  <span class="ruby-keyword kw">while</span>( (<span class="ruby-identifier">t</span> <span class="ruby-operator">!=</span> <span class="ruby-constant">VOID</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">i</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>) <span class="ruby-operator">||</span> (<span class="ruby-identifier">i</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>) )
+    <span class="ruby-identifier">ts</span>.<span class="ruby-identifier">push</span>(<span class="ruby-constant">DLTYPE</span>[<span class="ruby-identifier">t</span>][<span class="ruby-identifier">:ctype</span>])
+    <span class="ruby-identifier">i</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+    <span class="ruby-identifier">t</span> = <span class="ruby-identifier">tget</span>(<span class="ruby-identifier">num</span>,<span class="ruby-identifier">i</span>)
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">ts</span>
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000459" class="m-detail">
+        <a name="M000459"></a>
+
+        <div class="method-heading">
+          <a href="#M000459" class="method-signature">
+          <span class="method-name">tget</span><span class="method-args">(t, i)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000459-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000459-source">
+<pre>
+<span class="ruby-comment cmt"># File dl/type.rb, line 84</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tget</span>(<span class="ruby-identifier">t</span>, <span class="ruby-identifier">i</span>)
+  (<span class="ruby-identifier">t</span> <span class="ruby-operator">&amp;</span> (<span class="ruby-value">0x07</span> <span class="ruby-operator">&lt;&lt;</span> (<span class="ruby-identifier">i</span> <span class="ruby-operator">*</span> <span class="ruby-value">3</span>))) <span class="ruby-operator">&gt;&gt;</span> (<span class="ruby-identifier">i</span> <span class="ruby-operator">*</span> <span class="ruby-value">3</span>)
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000458" class="m-detail">
+        <a name="M000458"></a>
+
+        <div class="method-heading">
+          <a href="#M000458" class="method-signature">
+          <span class="method-name">tpush</span><span class="method-args">(t, x)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000458-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000458-source">
+<pre>
+<span class="ruby-comment cmt"># File dl/type.rb, line 80</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tpush</span>(<span class="ruby-identifier">t</span>, <span class="ruby-identifier">x</span>)
+  (<span class="ruby-identifier">t</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">3</span>)<span class="ruby-operator">|</span><span class="ruby-identifier">x</span>
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000462" class="m-detail">
+        <a name="M000462"></a>
+
+        <div class="method-heading">
+          <a href="#M000462" class="method-signature">
+          <span class="method-name">types2ctypes</span><span class="method-args">(types)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000462-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000462-source">
+<pre>
+<span class="ruby-comment cmt"># File dl/type.rb, line 109</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">types2ctypes</span>(<span class="ruby-identifier">types</span>)
+  <span class="ruby-identifier">res</span> = []
+  <span class="ruby-identifier">types</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">res</span>.<span class="ruby-identifier">push</span>(<span class="ruby-constant">DLTYPE</span>[<span class="ruby-identifier">t</span>][<span class="ruby-identifier">:ctype</span>])
+  }
+  <span class="ruby-identifier">res</span>
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000460" class="m-detail">
+        <a name="M000460"></a>
+
+        <div class="method-heading">
+          <a href="#M000460" class="method-signature">
+          <span class="method-name">types2num</span><span class="method-args">(types)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000460-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000460-source">
+<pre>
+<span class="ruby-comment cmt"># File dl/type.rb, line 88</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">types2num</span>(<span class="ruby-identifier">types</span>)
+  <span class="ruby-identifier">res</span> = <span class="ruby-value">0x00</span>
+  <span class="ruby-identifier">r</span> = <span class="ruby-identifier">types</span>.<span class="ruby-identifier">reverse</span>
+  <span class="ruby-identifier">r</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">res</span> = <span class="ruby-identifier">tpush</span>(<span class="ruby-identifier">res</span>,<span class="ruby-identifier">t</span>)
+  }
+  <span class="ruby-identifier">res</span>
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 3 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

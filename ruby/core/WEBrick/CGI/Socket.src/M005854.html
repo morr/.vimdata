@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (WEBrick::CGI::Socket)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/cgi.rb, line 126</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">config</span>, <span class="ruby-identifier">env</span>, <span class="ruby-identifier">stdin</span>, <span class="ruby-identifier">stdout</span>)
+        <span class="ruby-ivar">@config</span> = <span class="ruby-identifier">config</span>
+        <span class="ruby-ivar">@env</span> = <span class="ruby-identifier">env</span>
+        <span class="ruby-ivar">@header_part</span> = <span class="ruby-constant">StringIO</span>.<span class="ruby-identifier">new</span>
+        <span class="ruby-ivar">@body_part</span> = <span class="ruby-identifier">stdin</span>
+        <span class="ruby-ivar">@out_port</span> = <span class="ruby-identifier">stdout</span>
+        <span class="ruby-ivar">@out_port</span>.<span class="ruby-identifier">binmode</span>
+  
+        <span class="ruby-ivar">@server_addr</span> = <span class="ruby-ivar">@env</span>[<span class="ruby-value str">&quot;SERVER_ADDR&quot;</span>] <span class="ruby-operator">||</span> <span class="ruby-value str">&quot;0.0.0.0&quot;</span>
+        <span class="ruby-ivar">@server_name</span> = <span class="ruby-ivar">@env</span>[<span class="ruby-value str">&quot;SERVER_NAME&quot;</span>]
+        <span class="ruby-ivar">@server_port</span> = <span class="ruby-ivar">@env</span>[<span class="ruby-value str">&quot;SERVER_PORT&quot;</span>]
+        <span class="ruby-ivar">@remote_addr</span> = <span class="ruby-ivar">@env</span>[<span class="ruby-value str">&quot;REMOTE_ADDR&quot;</span>]
+        <span class="ruby-ivar">@remote_host</span> = <span class="ruby-ivar">@env</span>[<span class="ruby-value str">&quot;REMOTE_HOST&quot;</span>] <span class="ruby-operator">||</span> <span class="ruby-ivar">@remote_addr</span>
+        <span class="ruby-ivar">@remote_port</span> = <span class="ruby-ivar">@env</span>[<span class="ruby-value str">&quot;REMOTE_PORT&quot;</span>] <span class="ruby-operator">||</span> <span class="ruby-value">0</span>
+
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-ivar">@header_part</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">request_line</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">CRLF</span>
+          <span class="ruby-identifier">setup_header</span>
+          <span class="ruby-ivar">@header_part</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">CRLF</span>
+          <span class="ruby-ivar">@header_part</span>.<span class="ruby-identifier">rewind</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">CGIError</span>, <span class="ruby-value str">&quot;invalid CGI environment&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

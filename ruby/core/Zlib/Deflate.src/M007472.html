@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>flush (Zlib::Deflate)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: flush(flush)
+ *
+ * This method is equivalent to &lt;tt&gt;deflate('', flush)&lt;/tt&gt;.  If flush is omitted,
+ * &lt;tt&gt;Zlib::SYNC_FLUSH&lt;/tt&gt; is used as flush.  This method is just provided
+ * to improve the readability of your Ruby program.
+ *
+ * TODO: document better!
+ */
+static VALUE
+rb_deflate_flush(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    struct zstream *z = get_zstream(obj);
+    VALUE v_flush, dst;
+    int flush;
+
+    rb_scan_args(argc, argv, &quot;01&quot;, &amp;v_flush);
+    flush = FIXNUMARG(v_flush, Z_SYNC_FLUSH);
+    if (flush != Z_NO_FLUSH) {  /* prevent Z_BUF_ERROR */
+        zstream_run(z, &quot;&quot;, 0, flush);
+    }
+    dst = zstream_detach_buffer(z);
+
+    OBJ_INFECT(dst, obj);
+    return dst;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>install_builtin_commands (Shell::CommandProcessor)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/shell/command-processor.rb, line 544</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">install_builtin_commands</span>
+      <span class="ruby-comment cmt"># method related File.</span>
+      <span class="ruby-comment cmt"># (exclude open/foreach/unlink)</span>
+      <span class="ruby-identifier">normal_delegation_file_methods</span> = [
+        [<span class="ruby-value str">&quot;atime&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;basename&quot;</span>, [<span class="ruby-value str">&quot;fn&quot;</span>, <span class="ruby-value str">&quot;*opts&quot;</span>]],
+        [<span class="ruby-value str">&quot;chmod&quot;</span>, [<span class="ruby-value str">&quot;mode&quot;</span>, <span class="ruby-value str">&quot;*FILENAMES&quot;</span>]], 
+        [<span class="ruby-value str">&quot;chown&quot;</span>, [<span class="ruby-value str">&quot;owner&quot;</span>, <span class="ruby-value str">&quot;group&quot;</span>, <span class="ruby-value str">&quot;*FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;ctime&quot;</span>, [<span class="ruby-value str">&quot;FILENAMES&quot;</span>]],
+        [<span class="ruby-value str">&quot;delete&quot;</span>, [<span class="ruby-value str">&quot;*FILENAMES&quot;</span>]],
+        [<span class="ruby-value str">&quot;dirname&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;ftype&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;join&quot;</span>, [<span class="ruby-value str">&quot;*items&quot;</span>]],
+        [<span class="ruby-value str">&quot;link&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_O&quot;</span>, <span class="ruby-value str">&quot;FILENAME_N&quot;</span>]],
+        [<span class="ruby-value str">&quot;lstat&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;mtime&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;readlink&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;rename&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_FROM&quot;</span>, <span class="ruby-value str">&quot;FILENAME_TO&quot;</span>]],
+        <span class="ruby-comment cmt">#      [&quot;size&quot;, [&quot;FILENAME&quot;]],</span>
+        [<span class="ruby-value str">&quot;split&quot;</span>, [<span class="ruby-value str">&quot;pathname&quot;</span>]],
+        [<span class="ruby-value str">&quot;stat&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;symlink&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_O&quot;</span>, <span class="ruby-value str">&quot;FILENAME_N&quot;</span>]],
+        [<span class="ruby-value str">&quot;truncate&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>, <span class="ruby-value str">&quot;length&quot;</span>]],
+        [<span class="ruby-value str">&quot;utime&quot;</span>, [<span class="ruby-value str">&quot;atime&quot;</span>, <span class="ruby-value str">&quot;mtime&quot;</span>, <span class="ruby-value str">&quot;*FILENAMES&quot;</span>]]]
+
+      <span class="ruby-identifier">def_builtin_commands</span>(<span class="ruby-constant">File</span>, <span class="ruby-identifier">normal_delegation_file_methods</span>)
+      <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:rm</span>, <span class="ruby-identifier">:delete</span>
+
+      <span class="ruby-comment cmt"># method related FileTest</span>
+      <span class="ruby-identifier">def_builtin_commands</span>(<span class="ruby-constant">FileTest</span>, 
+                   <span class="ruby-constant">FileTest</span>.<span class="ruby-identifier">singleton_methods</span>(<span class="ruby-keyword kw">false</span>).<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> [<span class="ruby-identifier">m</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]]})
+
+      <span class="ruby-comment cmt"># method related ftools</span>
+      <span class="ruby-identifier">normal_delegation_ftools_methods</span> = [
+        [<span class="ruby-value str">&quot;syscopy&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_FROM&quot;</span>, <span class="ruby-value str">&quot;FILENAME_TO&quot;</span>]],
+        [<span class="ruby-value str">&quot;copy&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_FROM&quot;</span>, <span class="ruby-value str">&quot;FILENAME_TO&quot;</span>]],
+        [<span class="ruby-value str">&quot;move&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_FROM&quot;</span>, <span class="ruby-value str">&quot;FILENAME_TO&quot;</span>]],
+        [<span class="ruby-value str">&quot;compare&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_FROM&quot;</span>, <span class="ruby-value str">&quot;FILENAME_TO&quot;</span>]],
+        [<span class="ruby-value str">&quot;safe_unlink&quot;</span>, [<span class="ruby-value str">&quot;*FILENAMES&quot;</span>]],
+        [<span class="ruby-value str">&quot;makedirs&quot;</span>, [<span class="ruby-value str">&quot;*FILENAMES&quot;</span>]],
+        <span class="ruby-comment cmt">#    [&quot;chmod&quot;, [&quot;mode&quot;, &quot;*FILENAMES&quot;]],</span>
+        [<span class="ruby-value str">&quot;install&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_FROM&quot;</span>, <span class="ruby-value str">&quot;FILENAME_TO&quot;</span>, <span class="ruby-value str">&quot;mode&quot;</span>]],
+      ]
+      <span class="ruby-identifier">def_builtin_commands</span>(<span class="ruby-constant">File</span>,
+                   <span class="ruby-identifier">normal_delegation_ftools_methods</span>)
+      <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:cmp</span>, <span class="ruby-identifier">:compare</span>
+      <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:mv</span>, <span class="ruby-identifier">:move</span>
+      <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:cp</span>, <span class="ruby-identifier">:copy</span>
+      <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:rm_f</span>, <span class="ruby-identifier">:safe_unlink</span>
+      <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:mkpath</span>, <span class="ruby-identifier">:makedirs</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

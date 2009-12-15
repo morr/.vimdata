@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>reopen (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.reopen(other_IO)         =&gt; ios 
+ *     ios.reopen(path, mode_str)   =&gt; ios
+ *  
+ *  Reassociates &lt;em&gt;ios&lt;/em&gt; with the I/O stream given in
+ *  &lt;i&gt;other_IO&lt;/i&gt; or to a new stream opened on &lt;i&gt;path&lt;/i&gt;. This may
+ *  dynamically change the actual class of this stream.
+ *     
+ *     f1 = File.new(&quot;testfile&quot;)
+ *     f2 = File.new(&quot;testfile&quot;)
+ *     f2.readlines[0]   #=&gt; &quot;This is line one\n&quot;
+ *     f2.reopen(f1)     #=&gt; #&lt;File:testfile&gt;
+ *     f2.readlines[0]   #=&gt; &quot;This is line one\n&quot;
+ */
+
+static VALUE
+rb_io_reopen(argc, argv, file)
+    int argc;
+    VALUE *argv;
+    VALUE file;
+{
+    VALUE fname, nmode;
+    char *mode;
+    OpenFile *fptr;
+
+    rb_secure(4);
+    if (rb_scan_args(argc, argv, &quot;11&quot;, &amp;fname, &amp;nmode) == 1) {
+        VALUE tmp = rb_io_check_io(fname);
+        if (!NIL_P(tmp)) {
+            return io_reopen(file, tmp);
+        }
+    }
+
+    SafeStringValue(fname);
+    rb_io_taint_check(file);
+    fptr = RFILE(file)-&gt;fptr;
+    if (!fptr) {
+        fptr = RFILE(file)-&gt;fptr = ALLOC(OpenFile);
+        MEMZERO(fptr, OpenFile, 1);
+    }
+
+    if (!NIL_P(nmode)) {
+        fptr-&gt;mode = rb_io_mode_flags(StringValueCStr(nmode));
+    }
+
+    if (fptr-&gt;path) {
+        free(fptr-&gt;path);
+        fptr-&gt;path = 0;
+    }
+
+    fptr-&gt;path = strdup(StringValueCStr(fname));
+    mode = rb_io_flags_mode(fptr-&gt;mode);
+    if (!fptr-&gt;f) {
+        fptr-&gt;f = rb_fopen(fptr-&gt;path, mode);
+        if (fptr-&gt;f2) {
+            fclose(fptr-&gt;f2);
+            fptr-&gt;f2 = 0;
+        }
+        return file;
+    }
+
+    if (freopen(fptr-&gt;path, mode, fptr-&gt;f) == 0) {
+        rb_sys_fail(fptr-&gt;path);
+    }
+#ifdef USE_SETVBUF
+    if (setvbuf(fptr-&gt;f, NULL, _IOFBF, 0) != 0)
+        rb_warn(&quot;setvbuf() can't be honoured for %s&quot;, fptr-&gt;path);
+#endif
+
+    if (fptr-&gt;f2) {
+        if (freopen(fptr-&gt;path, &quot;w&quot;, fptr-&gt;f2) == 0) {
+            rb_sys_fail(fptr-&gt;path);
+        }
+    }
+
+    return file;
+}</pre>
+</body>
+</html>

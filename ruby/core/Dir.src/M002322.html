@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>glob (Dir)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Dir.glob( pattern, [flags] ) =&gt; array
+ *     Dir.glob( pattern, [flags] ) {| filename | block }  =&gt; nil
+ *
+ *  Returns the filenames found by expanding &lt;i&gt;pattern&lt;/i&gt; which is
+ *  an +Array+ of the patterns or the pattern +String+, either as an
+ *  &lt;i&gt;array&lt;/i&gt; or as parameters to the block. Note that this pattern
+ *  is not a regexp (it's closer to a shell glob). See
+ *  &lt;code&gt;File::fnmatch&lt;/code&gt; for the meaning of the &lt;i&gt;flags&lt;/i&gt;
+ *  parameter. Note that case sensitivity depends on your system (so
+ *  &lt;code&gt;File::FNM_CASEFOLD&lt;/code&gt; is ignored)
+ *
+ *  &lt;code&gt;*&lt;/code&gt;::        Matches any file. Can be restricted by
+ *                          other values in the glob. &lt;code&gt;*&lt;/code&gt;
+ *                          will match all files; &lt;code&gt;c*&lt;/code&gt; will
+ *                          match all files beginning with
+ *                          &lt;code&gt;c&lt;/code&gt;; &lt;code&gt;*c&lt;/code&gt; will match
+ *                          all files ending with &lt;code&gt;c&lt;/code&gt;; and
+ *                          &lt;code&gt;*c*&lt;/code&gt; will match all files that
+ *                          have &lt;code&gt;c&lt;/code&gt; in them (including at
+ *                          the beginning or end). Equivalent to
+ *                          &lt;code&gt;/ .* /x&lt;/code&gt; in regexp.
+ *  &lt;code&gt;**&lt;/code&gt;::       Matches directories recursively.
+ *  &lt;code&gt;?&lt;/code&gt;::        Matches any one character. Equivalent to
+ *                          &lt;code&gt;/.{1}/&lt;/code&gt; in regexp.
+ *  &lt;code&gt;[set]&lt;/code&gt;::    Matches any one character in +set+.
+ *                          Behaves exactly like character sets in
+ *                          Regexp, including set negation
+ *                          (&lt;code&gt;[^a-z]&lt;/code&gt;).
+ *  &lt;code&gt;{p,q}&lt;/code&gt;::    Matches either literal &lt;code&gt;p&lt;/code&gt; or
+ *                          literal &lt;code&gt;q&lt;/code&gt;. Matching literals
+ *                          may be more than one character in length.
+ *                          More than two literals may be specified.
+ *                          Equivalent to pattern alternation in
+ *                          regexp.
+ *  &lt;code&gt;\&lt;/code&gt;::        Escapes the next metacharacter.
+ *
+ *     Dir[&quot;config.?&quot;]                     #=&gt; [&quot;config.h&quot;]
+ *     Dir.glob(&quot;config.?&quot;)                #=&gt; [&quot;config.h&quot;]
+ *     Dir.glob(&quot;*.[a-z][a-z]&quot;)            #=&gt; [&quot;main.rb&quot;]
+ *     Dir.glob(&quot;*.[^r]*&quot;)                 #=&gt; [&quot;config.h&quot;]
+ *     Dir.glob(&quot;*.{rb,h}&quot;)                #=&gt; [&quot;main.rb&quot;, &quot;config.h&quot;]
+ *     Dir.glob(&quot;*&quot;)                       #=&gt; [&quot;config.h&quot;, &quot;main.rb&quot;]
+ *     Dir.glob(&quot;*&quot;, File::FNM_DOTMATCH)   #=&gt; [&quot;.&quot;, &quot;..&quot;, &quot;config.h&quot;, &quot;main.rb&quot;]
+ *
+ *     rbfiles = File.join(&quot;**&quot;, &quot;*.rb&quot;)
+ *     Dir.glob(rbfiles)                   #=&gt; [&quot;main.rb&quot;,
+ *                                              &quot;lib/song.rb&quot;,
+ *                                              &quot;lib/song/karaoke.rb&quot;]
+ *     libdirs = File.join(&quot;**&quot;, &quot;lib&quot;)
+ *     Dir.glob(libdirs)                   #=&gt; [&quot;lib&quot;]
+ *
+ *     librbfiles = File.join(&quot;**&quot;, &quot;lib&quot;, &quot;**&quot;, &quot;*.rb&quot;)
+ *     Dir.glob(librbfiles)                #=&gt; [&quot;lib/song.rb&quot;,
+ *                                              &quot;lib/song/karaoke.rb&quot;]
+ *
+ *     librbfiles = File.join(&quot;**&quot;, &quot;lib&quot;, &quot;*.rb&quot;)
+ *     Dir.glob(librbfiles)                #=&gt; [&quot;lib/song.rb&quot;]
+ */
+static VALUE
+dir_s_glob(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    VALUE str, rflags, ary;
+    int flags;
+
+    if (rb_scan_args(argc, argv, &quot;11&quot;, &amp;str, &amp;rflags) == 2)
+        flags = NUM2INT(rflags);
+    else
+        flags = 0;
+
+    ary = rb_check_array_type(str);
+    if (NIL_P(ary)) {
+        ary = rb_push_glob(str, flags);
+    }
+    else {
+        volatile VALUE v = ary;
+        ary = dir_globs(RARRAY_LEN(v), RARRAY_PTR(v), flags);
+    }
+
+    if (rb_block_given_p()) {
+        rb_ary_each(ary);
+        return Qnil;
+    }
+    return ary;
+}</pre>
+</body>
+</html>

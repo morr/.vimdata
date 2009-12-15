@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>setpriority (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.setpriority(kind, integer, priority)   =&gt; 0
+ *
+ *  See &lt;code&gt;Process#getpriority&lt;/code&gt;.
+ *
+ *     Process.setpriority(Process::PRIO_USER, 0, 19)      #=&gt; 0
+ *     Process.setpriority(Process::PRIO_PROCESS, 0, 19)   #=&gt; 0
+ *     Process.getpriority(Process::PRIO_USER, 0)          #=&gt; 19
+ *     Process.getpriority(Process::PRIO_PROCESS, 0)       #=&gt; 19
+ */
+
+static VALUE
+proc_setpriority(obj, which, who, prio)
+    VALUE obj, which, who, prio;
+{
+#ifdef HAVE_GETPRIORITY
+    int iwhich, iwho, iprio;
+
+    rb_secure(2);
+    iwhich = NUM2INT(which);
+    iwho   = NUM2INT(who);
+    iprio  = NUM2INT(prio);
+
+    if (setpriority(iwhich, iwho, iprio) &lt; 0)
+        rb_sys_fail(0);
+    return INT2FIX(0);
+#else
+    rb_notimplement();
+#endif
+}</pre>
+</body>
+</html>

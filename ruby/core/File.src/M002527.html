@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>utime (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *  File.utime(atime, mtime, file_name,...)   =&gt;  integer
+ *
+ * Sets the access and modification times of each
+ * named file to the first two arguments. Returns
+ * the number of file names in the argument list.
+ */
+
+static VALUE
+rb_file_s_utime(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE atime, mtime, rest;
+    struct timeval tvs[2], *tvp = NULL;
+    long n;
+
+    rb_scan_args(argc, argv, &quot;2*&quot;, &amp;atime, &amp;mtime, &amp;rest);
+
+    if (!NIL_P(atime) || !NIL_P(mtime)) {
+        tvp = tvs;
+        tvp[0] = rb_time_timeval(atime);
+        tvp[1] = rb_time_timeval(mtime);
+    }
+
+    n = apply2files(utime_internal, rest, tvp);
+    return LONG2FIX(n);
+}</pre>
+</body>
+</html>

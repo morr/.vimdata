@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>fault2exception (SOAP::Mapping)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/mapping/mapping.rb, line 92</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">fault2exception</span>(<span class="ruby-identifier">fault</span>, <span class="ruby-identifier">registry</span> = <span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-identifier">registry</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Mapping</span><span class="ruby-operator">::</span><span class="ruby-constant">DefaultRegistry</span>
+    <span class="ruby-identifier">detail</span> = <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">fault</span>.<span class="ruby-identifier">detail</span>
+        <span class="ruby-identifier">soap2obj</span>(<span class="ruby-identifier">fault</span>.<span class="ruby-identifier">detail</span>, <span class="ruby-identifier">registry</span>) <span class="ruby-operator">||</span> <span class="ruby-value str">&quot;&quot;</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-value str">&quot;&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">detail</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Mapping</span><span class="ruby-operator">::</span><span class="ruby-constant">SOAPException</span>)
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">e</span> = <span class="ruby-identifier">detail</span>.<span class="ruby-identifier">to_e</span>
+        <span class="ruby-identifier">remote_backtrace</span> = <span class="ruby-identifier">e</span>.<span class="ruby-identifier">backtrace</span>
+        <span class="ruby-identifier">e</span>.<span class="ruby-identifier">set_backtrace</span>(<span class="ruby-keyword kw">nil</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-identifier">e</span> <span class="ruby-comment cmt"># ruby sets current caller as local backtrace of e =&gt; e2.</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+        <span class="ruby-identifier">e</span>.<span class="ruby-identifier">set_backtrace</span>(<span class="ruby-identifier">remote_backtrace</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">backtrace</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>])
+        <span class="ruby-identifier">raise</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">fault</span>.<span class="ruby-identifier">detail</span> = <span class="ruby-identifier">detail</span>
+      <span class="ruby-identifier">fault</span>.<span class="ruby-identifier">set_backtrace</span>(
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">detail</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+          <span class="ruby-identifier">detail</span>
+        <span class="ruby-keyword kw">else</span>
+          [<span class="ruby-identifier">detail</span>.<span class="ruby-identifier">to_s</span>]
+        <span class="ruby-keyword kw">end</span>
+      )
+      <span class="ruby-identifier">raise</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

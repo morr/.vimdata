@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Zlib::Deflate</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Zlib::Deflate</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/zlib/zlib_c.html">
+                zlib/zlib.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="ZStream.html">
+                Zlib::ZStream
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="Deflate.html">Zlib::Deflate</a> is the class for compressing data.
+See Zlib::Stream for more information.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001933">&lt;&lt;</a>&nbsp;&nbsp;
+      <a href="#M001929">deflate</a>&nbsp;&nbsp;
+      <a href="#M001932">deflate</a>&nbsp;&nbsp;
+      <a href="#M001934">flush</a>&nbsp;&nbsp;
+      <a href="#M001931">initialize_copy</a>&nbsp;&nbsp;
+      <a href="#M001930">new</a>&nbsp;&nbsp;
+      <a href="#M001935">params</a>&nbsp;&nbsp;
+      <a href="#M001936">set_dictionary</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001929" class="method-detail">
+        <a name="M001929"></a>
+
+        <div class="method-heading">
+          <a href="#M001929" class="method-signature">
+          <span class="method-name"> Zlib::Deflate.deflate(string[, level])<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Compresses the given <tt>string</tt>. Valid values of level are
+<tt>Zlib::NO_COMPRESSION</tt>, <tt>Zlib::BEST_SPEED</tt>,
+<tt>Zlib::BEST_COMPRESSION</tt>, <tt>Zlib::DEFAULT_COMPRESSION</tt>, and an
+integer from 0 to 9.
+</p>
+<p>
+This method is almost equivalent to the following code:
+</p>
+<pre>
+  def deflate(string, level)
+    z = Zlib::Deflate.new(level)
+    dst = z.deflate(string, Zlib::FINISH)
+    z.close
+    dst
+  end
+</pre>
+<p>
+TODO: what&#8216;s default value of <tt>level</tt>?
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001929-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001929-source">
+<pre>
+/*
+ * call-seq: Zlib::Deflate.deflate(string[, level])
+ *
+ * Compresses the given +string+. Valid values of level are
+ * &lt;tt&gt;Zlib::NO_COMPRESSION&lt;/tt&gt;, &lt;tt&gt;Zlib::BEST_SPEED&lt;/tt&gt;,
+ * &lt;tt&gt;Zlib::BEST_COMPRESSION&lt;/tt&gt;, &lt;tt&gt;Zlib::DEFAULT_COMPRESSION&lt;/tt&gt;, and an
+ * integer from 0 to 9.
+ *
+ * This method is almost equivalent to the following code:
+ *
+ *   def deflate(string, level)
+ *     z = Zlib::Deflate.new(level)
+ *     dst = z.deflate(string, Zlib::FINISH)
+ *     z.close
+ *     dst
+ *   end
+ *
+ * TODO: what's default value of +level+?
+ *
+ */
+static VALUE
+rb_deflate_s_deflate(argc, argv, klass)
+    int argc;
+    VALUE *argv;
+    VALUE klass;
+{
+    struct zstream z;
+    VALUE src, level, dst, args[2];
+    int err, lev;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;src, &amp;level);
+
+    lev = ARG_LEVEL(level);
+    StringValue(src);
+    zstream_init_deflate(&amp;z);
+    err = deflateInit(&amp;z.stream, lev);
+    if (err != Z_OK) {
+        raise_zlib_error(err, z.stream.msg);
+    }
+    ZSTREAM_READY(&amp;z);
+
+    args[0] = (VALUE)&amp;z;
+    args[1] = src;
+    dst = rb_ensure(deflate_run, (VALUE)args, zstream_end, (VALUE)&amp;z);
+
+    OBJ_INFECT(dst, src);
+    return dst;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001930" class="method-detail">
+        <a name="M001930"></a>
+
+        <div class="method-heading">
+          <a href="#M001930" class="method-signature">
+          <span class="method-name"> Zlib::Deflate.new(level=nil, windowBits=nil, memlevel=nil, strategy=nil)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="Deflate.html#M001930">new</a> <a
+href="Deflate.html#M001929">deflate</a> stream for compression. See zlib.h
+for details of each argument. If an argument is nil, the default value of
+that argument is used.
+</p>
+<p>
+TODO: document better!
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001930-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001930-source">
+<pre>
+/*
+ * call-seq: Zlib::Deflate.new(level=nil, windowBits=nil, memlevel=nil, strategy=nil)
+ *
+ * Creates a new deflate stream for compression. See zlib.h for details of
+ * each argument. If an argument is nil, the default value of that argument is
+ * used.
+ *
+ * TODO: document better!
+ */
+static VALUE
+rb_deflate_initialize(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    struct zstream *z;
+    VALUE level, wbits, memlevel, strategy;
+    int err;
+
+    rb_scan_args(argc, argv, &quot;04&quot;, &amp;level, &amp;wbits, &amp;memlevel, &amp;strategy);
+    Data_Get_Struct(obj, struct zstream, z);
+
+    err = deflateInit2(&amp;z-&gt;stream, ARG_LEVEL(level), Z_DEFLATED,
+                       ARG_WBITS(wbits), ARG_MEMLEVEL(memlevel),
+                       ARG_STRATEGY(strategy));
+    if (err != Z_OK) {
+        raise_zlib_error(err, z-&gt;stream.msg);
+    }
+    ZSTREAM_READY(z);
+
+    return obj;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001933" class="method-detail">
+        <a name="M001933"></a>
+
+        <div class="method-heading">
+          <a href="#M001933" class="method-signature">
+          <span class="method-name">&lt;&lt;</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Same as IO.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001933-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001933-source">
+<pre>
+/*
+ * call-seq: &lt;&lt; string
+ *
+ * Inputs +string+ into the deflate stream just like Zlib::Deflate#deflate, but
+ * returns the Zlib::Deflate object itself.  The output from the stream is
+ * preserved in output buffer.
+ */
+static VALUE
+rb_deflate_addstr(obj, src)
+    VALUE obj, src;
+{
+    OBJ_INFECT(obj, src);
+    do_deflate(get_zstream(obj), src, Z_NO_FLUSH);
+    return obj;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001932" class="method-detail">
+        <a name="M001932"></a>
+
+        <div class="method-heading">
+          <a href="#M001932" class="method-signature">
+          <span class="method-name"> deflate(string[, flush])<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Inputs <tt>string</tt> into the <a href="Deflate.html#M001929">deflate</a>
+stream and returns the output from the stream. On calling this method, both
+the input and the output buffers of the stream are flushed. If
+<tt>string</tt> is nil, this method finishes the stream, just like <a
+href="ZStream.html#M001951">Zlib::ZStream#finish</a>.
+</p>
+<p>
+The value of <tt><a href="Deflate.html#M001934">flush</a></tt> should be
+either <tt>Zlib::NO_FLUSH</tt>, <tt>Zlib::SYNC_FLUSH</tt>,
+<tt>Zlib::FULL_FLUSH</tt>, or <tt>Zlib::FINISH</tt>. See zlib.h for
+details.
+</p>
+<p>
+TODO: document better!
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001932-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001932-source">
+<pre>
+/*
+ * call-seq: deflate(string[, flush])
+ *
+ * Inputs +string+ into the deflate stream and returns the output from the
+ * stream.  On calling this method, both the input and the output buffers of
+ * the stream are flushed. If +string+ is nil, this method finishes the
+ * stream, just like Zlib::ZStream#finish.
+ *
+ * The value of +flush+ should be either &lt;tt&gt;Zlib::NO_FLUSH&lt;/tt&gt;,
+ * &lt;tt&gt;Zlib::SYNC_FLUSH&lt;/tt&gt;, &lt;tt&gt;Zlib::FULL_FLUSH&lt;/tt&gt;, or
+ * &lt;tt&gt;Zlib::FINISH&lt;/tt&gt;. See zlib.h for details.
+ *
+ * TODO: document better!
+ */
+static VALUE
+rb_deflate_deflate(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    struct zstream *z = get_zstream(obj);
+    VALUE src, flush, dst;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;src, &amp;flush);
+    OBJ_INFECT(obj, src);
+    do_deflate(z, src, ARG_FLUSH(flush));
+    dst = zstream_detach_buffer(z);
+
+    OBJ_INFECT(dst, obj);
+    return dst;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001934" class="method-detail">
+        <a name="M001934"></a>
+
+        <div class="method-heading">
+          <a href="#M001934" class="method-signature">
+          <span class="method-name"> flush(flush)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This method is equivalent to <tt><a
+href="Deflate.html#M001929">deflate</a>(&#8217;&#8217;, <a
+href="Deflate.html#M001934">flush</a>)</tt>. If <a
+href="Deflate.html#M001934">flush</a> is omitted, <tt>Zlib::SYNC_FLUSH</tt>
+is used as <a href="Deflate.html#M001934">flush</a>. This method is just
+provided to improve the readability of your Ruby program.
+</p>
+<p>
+TODO: document better!
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001934-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001934-source">
+<pre>
+/*
+ * call-seq: flush(flush)
+ *
+ * This method is equivalent to &lt;tt&gt;deflate('', flush)&lt;/tt&gt;.  If flush is omitted,
+ * &lt;tt&gt;Zlib::SYNC_FLUSH&lt;/tt&gt; is used as flush.  This method is just provided
+ * to improve the readability of your Ruby program.
+ *
+ * TODO: document better!
+ */
+static VALUE
+rb_deflate_flush(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    struct zstream *z = get_zstream(obj);
+    VALUE v_flush, dst;
+    int flush;
+
+    rb_scan_args(argc, argv, &quot;01&quot;, &amp;v_flush);
+    flush = FIXNUMARG(v_flush, Z_SYNC_FLUSH);
+    if (flush != Z_NO_FLUSH) {  /* prevent Z_BUF_ERROR */
+        zstream_run(z, &quot;&quot;, 0, flush);
+    }
+    dst = zstream_detach_buffer(z);
+
+    OBJ_INFECT(dst, obj);
+    return dst;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001931" class="method-detail">
+        <a name="M001931"></a>
+
+        <div class="method-heading">
+          <a href="#M001931" class="method-signature">
+          <span class="method-name">initialize_copy</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Duplicates the <a href="Deflate.html#M001929">deflate</a> stream.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001931-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001931-source">
+<pre>
+/*
+ * Duplicates the deflate stream.
+ */
+static VALUE
+rb_deflate_init_copy(self, orig)
+    VALUE self, orig;
+{
+    struct zstream *z1, *z2;
+    int err;
+
+    Data_Get_Struct(self, struct zstream, z1);
+    z2 = get_zstream(orig);
+
+    err = deflateCopy(&amp;z1-&gt;stream, &amp;z2-&gt;stream);
+    if (err != Z_OK) {
+        raise_zlib_error(err, 0);
+    }
+    z1-&gt;input = NIL_P(z2-&gt;input) ? Qnil : rb_str_dup(z2-&gt;input);
+    z1-&gt;buf   = NIL_P(z2-&gt;buf)   ? Qnil : rb_str_dup(z2-&gt;buf);
+    z1-&gt;buf_filled = z2-&gt;buf_filled;
+    z1-&gt;flags = z2-&gt;flags;
+
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001935" class="method-detail">
+        <a name="M001935"></a>
+
+        <div class="method-heading">
+          <a href="#M001935" class="method-signature">
+          <span class="method-name"> params(level, strategy)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Changes the parameters of the <a href="Deflate.html#M001929">deflate</a>
+stream. See zlib.h for details. The output from the stream by changing the
+<a href="Deflate.html#M001935">params</a> is preserved in output buffer.
+</p>
+<p>
+TODO: document better!
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001935-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001935-source">
+<pre>
+/*
+ * call-seq: params(level, strategy)
+ * 
+ * Changes the parameters of the deflate stream. See zlib.h for details. The
+ * output from the stream by changing the params is preserved in output
+ * buffer.
+ *
+ * TODO: document better!
+ */
+static VALUE
+rb_deflate_params(obj, v_level, v_strategy)
+    VALUE obj, v_level, v_strategy;
+{
+    struct zstream *z = get_zstream(obj);
+    int level, strategy;
+    int err;
+
+    level = ARG_LEVEL(v_level);
+    strategy = ARG_STRATEGY(v_strategy);
+
+    err = deflateParams(&amp;z-&gt;stream, level, strategy);
+    while (err == Z_BUF_ERROR) {
+        rb_warning(&quot;deflateParams() returned Z_BUF_ERROR&quot;);
+        zstream_expand_buffer(z);
+        err = deflateParams(&amp;z-&gt;stream, level, strategy);
+    }
+    if (err != Z_OK) {
+        raise_zlib_error(err, z-&gt;stream.msg);
+    }
+
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001936" class="method-detail">
+        <a name="M001936"></a>
+
+        <div class="method-heading">
+          <a href="#M001936" class="method-signature">
+          <span class="method-name"> set_dictionary(string)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the preset dictionary and returns <tt>string</tt>. This method is
+available just only after <a
+href="Deflate.html#M001930">Zlib::Deflate.new</a> or <a
+href="ZStream.html#M001950">Zlib::ZStream#reset</a> method was called. See
+zlib.h for details.
+</p>
+<p>
+TODO: document better!
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001936-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001936-source">
+<pre>
+/*
+ * call-seq: set_dictionary(string)
+ *
+ * Sets the preset dictionary and returns +string+. This method is available
+ * just only after Zlib::Deflate.new or Zlib::ZStream#reset method was called.
+ * See zlib.h for details.
+ *
+ * TODO: document better!
+ */
+static VALUE
+rb_deflate_set_dictionary(obj, dic)
+    VALUE obj, dic;
+{
+    struct zstream *z = get_zstream(obj);
+    VALUE src = dic;
+    int err;
+
+    OBJ_INFECT(obj, dic);
+    StringValue(src);
+    err = deflateSetDictionary(&amp;z-&gt;stream,
+                               RSTRING(src)-&gt;ptr, RSTRING(src)-&gt;len);
+    if (err != Z_OK) {
+        raise_zlib_error(err, z-&gt;stream.msg);
+    }
+
+    return dic;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

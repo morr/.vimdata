@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>scan (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.scan(pattern)                         =&gt; array
+ *     str.scan(pattern) {|match, ...| block }   =&gt; str
+ *  
+ *  Both forms iterate through &lt;i&gt;str&lt;/i&gt;, matching the pattern (which may be a
+ *  &lt;code&gt;Regexp&lt;/code&gt; or a &lt;code&gt;String&lt;/code&gt;). For each match, a result is
+ *  generated and either added to the result array or passed to the block. If
+ *  the pattern contains no groups, each individual result consists of the
+ *  matched string, &lt;code&gt;$&amp;&lt;/code&gt;.  If the pattern contains groups, each
+ *  individual result is itself an array containing one entry per group.
+ *     
+ *     a = &quot;cruel world&quot;
+ *     a.scan(/\w+/)        #=&gt; [&quot;cruel&quot;, &quot;world&quot;]
+ *     a.scan(/.../)        #=&gt; [&quot;cru&quot;, &quot;el &quot;, &quot;wor&quot;]
+ *     a.scan(/(...)/)      #=&gt; [[&quot;cru&quot;], [&quot;el &quot;], [&quot;wor&quot;]]
+ *     a.scan(/(..)(..)/)   #=&gt; [[&quot;cr&quot;, &quot;ue&quot;], [&quot;l &quot;, &quot;wo&quot;]]
+ *     
+ *  And the block form:
+ *     
+ *     a.scan(/\w+/) {|w| print &quot;&lt;&lt;#{w}&gt;&gt; &quot; }
+ *     print &quot;\n&quot;
+ *     a.scan(/(.)(.)/) {|x,y| print y, x }
+ *     print &quot;\n&quot;
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     &lt;&lt;cruel&gt;&gt; &lt;&lt;world&gt;&gt;
+ *     rceu lowlr
+ */
+
+static VALUE
+rb_str_scan(str, pat)
+    VALUE str, pat;
+{
+    VALUE result;
+    long start = 0;
+    VALUE match = Qnil;
+    char *p = RSTRING(str)-&gt;ptr; long len = RSTRING(str)-&gt;len;
+
+    pat = get_pat(pat, 1);
+    if (!rb_block_given_p()) {
+        VALUE ary = rb_ary_new();
+
+        while (!NIL_P(result = scan_once(str, pat, &amp;start))) {
+            match = rb_backref_get();
+            rb_ary_push(ary, result);
+        }
+        rb_backref_set(match);
+        return ary;
+    }
+
+    while (!NIL_P(result = scan_once(str, pat, &amp;start))) {
+        match = rb_backref_get();
+        rb_match_busy(match);
+        rb_yield(result);
+        str_mod_check(str, p, len);
+        rb_backref_set(match); /* restore $~ value */
+    }
+    rb_backref_set(match);
+    return str;
+}</pre>
+</body>
+</html>

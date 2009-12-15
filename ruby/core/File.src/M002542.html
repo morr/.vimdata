@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>dirname (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.dirname(file_name ) -&gt; dir_name
+ *  
+ *  Returns all components of the filename given in &lt;i&gt;file_name&lt;/i&gt;
+ *  except the last one. The filename must be formed using forward
+ *  slashes (``&lt;code&gt;/&lt;/code&gt;'') regardless of the separator used on the
+ *  local file system.
+ *     
+ *     File.dirname(&quot;/home/gumby/work/ruby.rb&quot;)   #=&gt; &quot;/home/gumby/work&quot;
+ */
+
+static VALUE
+rb_file_s_dirname(klass, fname)
+    VALUE klass, fname;
+{
+    const char *name, *root, *p;
+    VALUE dirname;
+
+    name = StringValueCStr(fname);
+    root = skiproot(name);
+#ifdef DOSISH_UNC
+    if (root &gt; name + 1 &amp;&amp; isdirsep(*name))
+        root = skipprefix(name = root - 2);
+#else
+    if (root &gt; name + 1)
+        name = root - 1;
+#endif
+    p = strrdirsep(root);
+    if (!p) {
+        p = root;
+    }
+    if (p == name)
+        return rb_str_new2(&quot;.&quot;);
+#ifdef DOSISH_DRIVE_LETTER
+    if (has_drive_letter(name) &amp;&amp; isdirsep(*(name + 2))) {
+        const char *top = skiproot(name + 2);
+        dirname = rb_str_new(name, 3);
+        rb_str_cat(dirname, top, p - top);
+    }
+    else
+#endif
+    dirname = rb_str_new(name, p - name);
+#ifdef DOSISH_DRIVE_LETTER
+    if (has_drive_letter(name) &amp;&amp; root == name + 2 &amp;&amp; p - name == 2)
+        rb_str_cat(dirname, &quot;.&quot;, 1);
+#endif
+    OBJ_INFECT(dirname, fname);
+    return dirname;
+}</pre>
+</body>
+</html>

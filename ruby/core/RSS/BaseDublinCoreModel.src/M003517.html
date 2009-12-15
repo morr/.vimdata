@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>append_features (RSS::BaseDublinCoreModel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rss/dublincore.rb, line 11</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">append_features</span>(<span class="ruby-identifier">klass</span>)
+      <span class="ruby-keyword kw">super</span>
+
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">instance_of?</span>(<span class="ruby-constant">Module</span>)
+      <span class="ruby-constant">DublinCoreModel</span><span class="ruby-operator">::</span><span class="ruby-constant">ELEMENT_NAME_INFOS</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">plural_name</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">plural</span> = <span class="ruby-identifier">plural_name</span> <span class="ruby-operator">||</span> <span class="ruby-node">&quot;#{name}s&quot;</span>
+        <span class="ruby-identifier">full_name</span> = <span class="ruby-node">&quot;#{DC_PREFIX}_#{name}&quot;</span>
+        <span class="ruby-identifier">full_plural_name</span> = <span class="ruby-node">&quot;#{DC_PREFIX}_#{plural}&quot;</span>
+        <span class="ruby-identifier">klass_name</span> = <span class="ruby-node">&quot;DublinCore#{Utils.to_class_name(name)}&quot;</span>
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">install_must_call_validator</span>(<span class="ruby-constant">DC_PREFIX</span>, <span class="ruby-constant">DC_URI</span>)
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">install_have_children_element</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">DC_URI</span>, <span class="ruby-value str">&quot;*&quot;</span>,
+                                            <span class="ruby-identifier">full_name</span>, <span class="ruby-identifier">full_plural_name</span>)
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">module_eval</span>(<span class="ruby-value str">&quot;remove_method :\#{full_name}\nremove_method :\#{full_name}=\nremove_method :set_\#{full_name}\n\ndef \#{full_name}\n@\#{full_name}.first and @\#{full_name}.first.value\nend\n\ndef \#{full_name}=(new_value)\n@\#{full_name}[0] = Utils.new_with_value_if_need(\#{klass_name}, new_value)\nend\nalias set_\#{full_name} \#{full_name}=\n&quot;</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">get_file_and_line_from_caller</span>(<span class="ruby-value">0</span>))
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">module_eval</span>(<span class="ruby-value str">&quot;alias date \#{DC_PREFIX}_date\nalias date= \#{DC_PREFIX}_date=\n&quot;</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">get_file_and_line_from_caller</span>(<span class="ruby-value">0</span>))
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

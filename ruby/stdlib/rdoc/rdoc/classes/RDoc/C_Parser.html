@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: RDoc::C_Parser</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">RDoc::C_Parser</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/rdoc/parsers/parse_c_rb.html">
+                rdoc/parsers/parse_c.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+We attempt to parse C extension files. Basically we look for the standard
+patterns that you find in extensions: <tt>rb_define_class,
+rb_define_method</tt> and so on. We also try to find the corresponding C
+source for the methods and extract comments, but if we fail we don&#8216;t
+worry too much.
+</p>
+<p>
+The comments associated with a Ruby method are extracted from the C comment
+block associated with the routine that <em>implements</em> that method,
+that is to say the method whose name is given in the
+<tt>rb_define_method</tt> call. For example, you might write:
+</p>
+<pre>
+ /*
+  * Returns a new array that is a one-dimensional flattening of this
+  * array (recursively). That is, for every element that is an array,
+  * extract its elements into the new array.
+  *
+  *    s = [ 1, 2, 3 ]           #=&gt; [1, 2, 3]
+  *    t = [ 4, 5, 6, [7, 8] ]   #=&gt; [4, 5, 6, [7, 8]]
+  *    a = [ s, t, 9, 10 ]       #=&gt; [[1, 2, 3], [4, 5, 6, [7, 8]], 9, 10]
+  *    a.flatten                 #=&gt; [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  */
+  static VALUE
+  rb_ary_flatten(ary)
+      VALUE ary;
+  {
+      ary = rb_obj_dup(ary);
+      rb_ary_flatten_bang(ary);
+      return ary;
+  }
+
+  ...
+
+  void
+  Init_Array()
+  {
+    ...
+    rb_define_method(rb_cArray, &quot;flatten&quot;, rb_ary_flatten, 0);
+</pre>
+<p>
+Here <a href="../RDoc.html">RDoc</a> will determine from the
+rb_define_method line that there&#8216;s a method called
+&quot;flatten&quot; in class Array, and will look for the implementation in
+the method rb_ary_flatten. It will then use the comment from that method in
+the HTML output. This method must be in the same source file as the
+rb_define_method.
+</p>
+<p>
+C classes can be diagramed (see /tc/dl/ruby/ruby/error.c), and <a
+href="../RDoc.html">RDoc</a> integrates C and Ruby source into one tree
+</p>
+<p>
+The comment blocks may include special direcives:
+</p>
+<dl>
+<dt>Document-class: <em>name</em></dt><dd>This comment block is documentation for the given class. Use this when the
+<tt>Init_xxx</tt> method is not named after the class.
+
+</dd>
+<dt>Document-method: <em>name</em></dt><dd>This comment documents the named method. Use when <a
+href="../RDoc.html">RDoc</a> cannot automatically find the method from
+it&#8216;s declaration
+
+</dd>
+<dt>call-seq:  <em>text up to an empty line</em></dt><dd>Because C source doesn&#8216;t give descripive names to Ruby-level
+parameters, you need to document the calling sequence explicitly
+
+</dd>
+</dl>
+<p>
+In additon, <a href="../RDoc.html">RDoc</a> assumes by default that the C
+method implementing a Ruby function is in the same source file as the
+rb_define_method call. If this isn&#8216;t the case, add the comment
+</p>
+<pre>
+   rb_define_method(....);  // in: filename
+</pre>
+<p>
+As an example, we might have an extension that defines multiple classes in
+its Init_xxx method. We could document them using
+</p>
+<pre>
+ /*
+  * Document-class:  MyClass
+  *
+  * Encapsulate the writing and reading of the configuration
+  * file. ...
+  */
+
+ /*
+  * Document-method: read_value
+  *
+  * call-seq:
+  *   cfg.read_value(key)            -&gt; value
+  *   cfg.read_value(key} { |key| }  -&gt; value
+  *
+  * Return the value corresponding to +key+ from the configuration.
+  * In the second form, if the key isn't found, invoke the
+  * block and return its value.
+  */
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002287">new</a>&nbsp;&nbsp;
+      <a href="#M002288">scan</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">progress</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M002287" class="m-detail">
+        <a name="M002287"></a>
+
+        <div class="method-heading">
+          <a href="#M002287" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(top_level, file_name, body, options, stats)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+prepare to parse a C file
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002287-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002287-source">
+<pre>
+<span class="ruby-comment cmt"># File rdoc/parsers/parse_c.rb, line 177</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">top_level</span>, <span class="ruby-identifier">file_name</span>, <span class="ruby-identifier">body</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">stats</span>)
+      <span class="ruby-ivar">@known_classes</span> = <span class="ruby-constant">KNOWN_CLASSES</span>.<span class="ruby-identifier">dup</span>
+      <span class="ruby-ivar">@body</span> = <span class="ruby-identifier">handle_tab_width</span>(<span class="ruby-identifier">handle_ifdefs_in</span>(<span class="ruby-identifier">body</span>))
+      <span class="ruby-ivar">@options</span> = <span class="ruby-identifier">options</span>
+      <span class="ruby-ivar">@stats</span>   = <span class="ruby-identifier">stats</span>
+      <span class="ruby-ivar">@top_level</span> = <span class="ruby-identifier">top_level</span>
+      <span class="ruby-ivar">@classes</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-ivar">@file_dir</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">dirname</span>(<span class="ruby-identifier">file_name</span>)
+      <span class="ruby-ivar">@progress</span> = <span class="ruby-identifier">$stderr</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">quiet</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002288" class="m-detail">
+        <a name="M002288"></a>
+
+        <div class="method-heading">
+          <a href="#M002288" class="method-signature">
+          <span class="method-name">scan</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Extract the classes/modules and methods from a C file and return the
+corresponding top-level object
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002288-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002288-source">
+<pre>
+<span class="ruby-comment cmt"># File rdoc/parsers/parse_c.rb, line 190</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">scan</span>
+      <span class="ruby-identifier">remove_commented_out_lines</span>
+      <span class="ruby-identifier">do_classes</span>
+      <span class="ruby-identifier">do_constants</span>
+      <span class="ruby-identifier">do_methods</span>
+      <span class="ruby-identifier">do_includes</span>
+      <span class="ruby-identifier">do_aliases</span>
+      <span class="ruby-ivar">@top_level</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 4 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

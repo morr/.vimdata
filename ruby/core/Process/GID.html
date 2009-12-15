@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Process::GID</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Process::GID</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/process_c.html">
+                process.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The <tt><a href="GID.html">Process::GID</a></tt> module contains a
+collection of module functions which can be used to portably get, set, and
+<a href="GID.html#M003205">switch</a> the current process&#8216;s real,
+effective, and saved group IDs.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M003200">change_privilege</a>&nbsp;&nbsp;
+      <a href="#M003199">eid</a>&nbsp;&nbsp;
+      <a href="#M003201">grant_privilege</a>&nbsp;&nbsp;
+      <a href="#M003202">re_exchange</a>&nbsp;&nbsp;
+      <a href="#M003203">re_exchangeable?</a>&nbsp;&nbsp;
+      <a href="#M003198">rid</a>&nbsp;&nbsp;
+      <a href="#M003204">sid_available?</a>&nbsp;&nbsp;
+      <a href="#M003205">switch</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M003200" class="method-detail">
+        <a name="M003200"></a>
+
+        <div class="method-heading">
+          <a href="GID.src/M003200.html" target="Code" class="method-signature"
+            onclick="popupCode('GID.src/M003200.html');return false;">
+          <span class="method-name">Process::GID.change_privilege(integer)   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Change the current process&#8216;s real and effective group ID to that
+specified by <em>integer</em>. Returns the new group ID. Not available on
+all platforms.
+</p>
+<pre>
+   [Process.gid, Process.egid]          #=&gt; [0, 0]
+   Process::GID.change_privilege(33)    #=&gt; 33
+   [Process.gid, Process.egid]          #=&gt; [33, 33]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003199" class="method-detail">
+        <a name="M003199"></a>
+
+        <div class="method-heading">
+          <a href="GID.src/M003199.html" target="Code" class="method-signature"
+            onclick="popupCode('GID.src/M003199.html');return false;">
+          <span class="method-name">Process.egid          => fixnum<br />
+Process::GID.eid      => fixnum<br />
+Process::Sys.geteid   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the effective group ID for this process. Not available on all
+platforms.
+</p>
+<pre>
+   Process.egid   #=&gt; 500
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003201" class="method-detail">
+        <a name="M003201"></a>
+
+        <div class="method-heading">
+          <a href="GID.src/M003201.html" target="Code" class="method-signature"
+            onclick="popupCode('GID.src/M003201.html');return false;">
+          <span class="method-name">Process::GID.grant_privilege(integer)    => fixnum<br />
+Process::GID.eid = integer               => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="../Set.html">Set</a> the effective group ID, and if possible, the
+saved group ID of the process to the given <em>integer</em>. Returns the
+new effective group ID. Not available on all platforms.
+</p>
+<pre>
+   [Process.gid, Process.egid]          #=&gt; [0, 0]
+   Process::GID.grant_privilege(31)     #=&gt; 33
+   [Process.gid, Process.egid]          #=&gt; [0, 33]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003202" class="method-detail">
+        <a name="M003202"></a>
+
+        <div class="method-heading">
+          <a href="GID.src/M003202.html" target="Code" class="method-signature"
+            onclick="popupCode('GID.src/M003202.html');return false;">
+          <span class="method-name">Process::GID.re_exchange   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Exchange real and effective group IDs and return the new effective group
+ID. Not available on all platforms.
+</p>
+<pre>
+   [Process.gid, Process.egid]   #=&gt; [0, 33]
+   Process::GID.re_exchange      #=&gt; 0
+   [Process.gid, Process.egid]   #=&gt; [33, 0]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003203" class="method-detail">
+        <a name="M003203"></a>
+
+        <div class="method-heading">
+          <a href="GID.src/M003203.html" target="Code" class="method-signature"
+            onclick="popupCode('GID.src/M003203.html');return false;">
+          <span class="method-name">Process::GID.re_exchangeable?   => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if the real and effective group IDs of a process may
+be exchanged on the current platform.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003198" class="method-detail">
+        <a name="M003198"></a>
+
+        <div class="method-heading">
+          <a href="GID.src/M003198.html" target="Code" class="method-signature"
+            onclick="popupCode('GID.src/M003198.html');return false;">
+          <span class="method-name">Process.gid           => fixnum<br />
+Process::GID.rid      => fixnum<br />
+Process::Sys.getgid   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the (real) group ID for this process.
+</p>
+<pre>
+   Process.gid   #=&gt; 500
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003204" class="method-detail">
+        <a name="M003204"></a>
+
+        <div class="method-heading">
+          <a href="GID.src/M003204.html" target="Code" class="method-signature"
+            onclick="popupCode('GID.src/M003204.html');return false;">
+          <span class="method-name">Process::GID.sid_available?   => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if the current platform has saved group ID
+functionality.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003205" class="method-detail">
+        <a name="M003205"></a>
+
+        <div class="method-heading">
+          <a href="GID.src/M003205.html" target="Code" class="method-signature"
+            onclick="popupCode('GID.src/M003205.html');return false;">
+          <span class="method-name">Process::GID.switch              => fixnum<br />
+Process::GID.switch {|| block}   => object<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Switch the effective and real group IDs of the current process. If a
+<em>block</em> is given, the group IDs will be switched back after the
+block is executed. Returns the new effective group ID if called without a
+block, and the return value of the block if one is given.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

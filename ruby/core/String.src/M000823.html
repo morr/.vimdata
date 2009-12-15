@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sub! (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.sub!(pattern, replacement)          =&gt; str or nil
+ *     str.sub!(pattern) {|match| block }      =&gt; str or nil
+ *  
+ *  Performs the substitutions of &lt;code&gt;String#sub&lt;/code&gt; in place,
+ *  returning &lt;i&gt;str&lt;/i&gt;, or &lt;code&gt;nil&lt;/code&gt; if no substitutions were
+ *  performed.
+ */
+
+static VALUE
+rb_str_sub_bang(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    VALUE pat, repl, match;
+    struct re_registers *regs;
+    int iter = 0;
+    int tainted = 0;
+    long plen;
+
+    if (argc == 1 &amp;&amp; rb_block_given_p()) {
+        iter = 1;
+    }
+    else if (argc == 2) {
+        repl = argv[1];
+        StringValue(repl);
+        if (OBJ_TAINTED(repl)) tainted = 1;
+    }
+    else {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments (%d for 2)&quot;, argc);
+    }
+
+    pat = get_pat(argv[0], 1);
+    if (rb_reg_search(pat, str, 0, 0) &gt;= 0) {
+        match = rb_backref_get();
+        regs = RMATCH(match)-&gt;regs;
+
+        if (iter) {
+            char *p = RSTRING(str)-&gt;ptr; long len = RSTRING(str)-&gt;len;
+
+            rb_match_busy(match);
+            repl = rb_obj_as_string(rb_yield(rb_reg_nth_match(0, match)));
+            str_mod_check(str, p, len);
+            str_frozen_check(str);
+            rb_backref_set(match);
+        }
+        else {
+            repl = rb_reg_regsub(repl, str, regs);
+        }
+        rb_str_modify(str);
+        if (OBJ_TAINTED(repl)) tainted = 1;
+        plen = END(0) - BEG(0);
+        if (RSTRING(repl)-&gt;len &gt; plen) {
+            RESIZE_CAPA(str, RSTRING(str)-&gt;len + RSTRING(repl)-&gt;len - plen);
+        }
+        if (RSTRING(repl)-&gt;len != plen) {
+            memmove(RSTRING(str)-&gt;ptr + BEG(0) + RSTRING(repl)-&gt;len,
+                    RSTRING(str)-&gt;ptr + BEG(0) + plen,
+                    RSTRING(str)-&gt;len - BEG(0) - plen);
+        }
+        memcpy(RSTRING(str)-&gt;ptr + BEG(0),
+               RSTRING(repl)-&gt;ptr, RSTRING(repl)-&gt;len);
+        RSTRING(str)-&gt;len += RSTRING(repl)-&gt;len - plen;
+        RSTRING(str)-&gt;ptr[RSTRING(str)-&gt;len] = '\0';
+        if (tainted) OBJ_TAINT(str);
+
+        return str;
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

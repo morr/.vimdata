@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>init_config (IRB)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb/init.rb, line 29</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">init_config</span>(<span class="ruby-identifier">ap_path</span>)
+    <span class="ruby-comment cmt"># class instance variables</span>
+    <span class="ruby-ivar">@TRACER_INITIALIZED</span> = <span class="ruby-keyword kw">false</span>
+
+    <span class="ruby-comment cmt"># default configurations</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">ap_path</span> <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:AP_NAME</span>]
+      <span class="ruby-identifier">ap_path</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">dirname</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">dirname</span>(<span class="ruby-keyword kw">__FILE__</span>)), <span class="ruby-value str">&quot;irb.rb&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:AP_NAME</span>] = <span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-identifier">basename</span>(<span class="ruby-identifier">ap_path</span>, <span class="ruby-value str">&quot;.rb&quot;</span>)
+
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:IRB_NAME</span>] = <span class="ruby-value str">&quot;irb&quot;</span>
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:IRB_LIB_PATH</span>] = <span class="ruby-constant">File</span>.<span class="ruby-identifier">dirname</span>(<span class="ruby-keyword kw">__FILE__</span>)
+
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:RC</span>] = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:LOAD_MODULES</span>] = []
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:IRB_RC</span>] = <span class="ruby-keyword kw">nil</span>
+
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:MATH_MODE</span>] = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:USE_READLINE</span>] = <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">defined?</span>(<span class="ruby-constant">ReadlineInputMethod</span>)
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:INSPECT_MODE</span>] = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:USE_TRACER</span>] = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:USE_LOADER</span>] = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:IGNORE_SIGINT</span>] = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:IGNORE_EOF</span>] = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:ECHO</span>] = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:VERBOSE</span>] = <span class="ruby-keyword kw">nil</span>
+
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:EVAL_HISTORY</span>] = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:SAVE_HISTORY</span>] = <span class="ruby-keyword kw">nil</span>
+
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:BACK_TRACE_LIMIT</span>] = <span class="ruby-value">16</span>
+
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:PROMPT</span>] = {
+      <span class="ruby-identifier">:NULL</span> =<span class="ruby-operator">&gt;</span> {
+        <span class="ruby-identifier">:PROMPT_I</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>,
+        <span class="ruby-identifier">:PROMPT_N</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>,
+        <span class="ruby-identifier">:PROMPT_S</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>,
+        <span class="ruby-identifier">:PROMPT_C</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>,
+        <span class="ruby-identifier">:RETURN</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;%s\n&quot;</span>
+      },
+      <span class="ruby-identifier">:DEFAULT</span> =<span class="ruby-operator">&gt;</span> {
+        <span class="ruby-identifier">:PROMPT_I</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;%N(%m):%03n:%i&gt; &quot;</span>,
+        <span class="ruby-identifier">:PROMPT_N</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;%N(%m):%03n:%i&gt; &quot;</span>,
+        <span class="ruby-identifier">:PROMPT_S</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;%N(%m):%03n:%i%l &quot;</span>,
+        <span class="ruby-identifier">:PROMPT_C</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;%N(%m):%03n:%i* &quot;</span>,
+        <span class="ruby-identifier">:RETURN</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;=&gt; %s\n&quot;</span>
+      },
+      <span class="ruby-identifier">:CLASSIC</span> =<span class="ruby-operator">&gt;</span> {
+        <span class="ruby-identifier">:PROMPT_I</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;%N(%m):%03n:%i&gt; &quot;</span>,
+        <span class="ruby-identifier">:PROMPT_N</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;%N(%m):%03n:%i&gt; &quot;</span>,
+        <span class="ruby-identifier">:PROMPT_S</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;%N(%m):%03n:%i%l &quot;</span>,
+        <span class="ruby-identifier">:PROMPT_C</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;%N(%m):%03n:%i* &quot;</span>,
+        <span class="ruby-identifier">:RETURN</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;%s\n&quot;</span>
+      },
+      <span class="ruby-identifier">:SIMPLE</span> =<span class="ruby-operator">&gt;</span> {
+        <span class="ruby-identifier">:PROMPT_I</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;&gt;&gt; &quot;</span>,
+        <span class="ruby-identifier">:PROMPT_N</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;&gt;&gt; &quot;</span>,
+        <span class="ruby-identifier">:PROMPT_S</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>,
+        <span class="ruby-identifier">:PROMPT_C</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;?&gt; &quot;</span>,
+        <span class="ruby-identifier">:RETURN</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;=&gt; %s\n&quot;</span>
+      },
+      <span class="ruby-identifier">:INF_RUBY</span> =<span class="ruby-operator">&gt;</span> {
+        <span class="ruby-identifier">:PROMPT_I</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;%N(%m):%03n:%i&gt; &quot;</span>,
+<span class="ruby-comment cmt">#       :PROMPT_N =&gt; &quot;%N(%m):%03n:%i&gt; &quot;,</span>
+        <span class="ruby-identifier">:PROMPT_N</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>,
+        <span class="ruby-identifier">:PROMPT_S</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>,
+        <span class="ruby-identifier">:PROMPT_C</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>,
+        <span class="ruby-identifier">:RETURN</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;%s\n&quot;</span>,
+        <span class="ruby-identifier">:AUTO_INDENT</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>
+      },
+      <span class="ruby-identifier">:XMP</span> =<span class="ruby-operator">&gt;</span> {
+        <span class="ruby-identifier">:PROMPT_I</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>,
+        <span class="ruby-identifier">:PROMPT_N</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>,
+        <span class="ruby-identifier">:PROMPT_S</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>,
+        <span class="ruby-identifier">:PROMPT_C</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>,
+        <span class="ruby-identifier">:RETURN</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;    ==&gt;%s\n&quot;</span>
+      }
+    }
+
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:PROMPT_MODE</span>] = (<span class="ruby-constant">STDIN</span>.<span class="ruby-identifier">tty?</span> <span class="ruby-value">? </span><span class="ruby-operator">:</span><span class="ruby-constant">DEFAULT</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">:NULL</span>)
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:AUTO_INDENT</span>] = <span class="ruby-keyword kw">false</span>
+
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:CONTEXT_MODE</span>] = <span class="ruby-value">3</span> <span class="ruby-comment cmt"># use binding in function on TOPLEVEL_BINDING</span>
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:SINGLE_IRB</span>] = <span class="ruby-keyword kw">false</span>
+
+<span class="ruby-comment cmt">#    @CONF[:LC_MESSAGES] = &quot;en&quot;</span>
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:LC_MESSAGES</span>] = <span class="ruby-constant">Locale</span>.<span class="ruby-identifier">new</span>
+    
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:DEBUG_LEVEL</span>] = <span class="ruby-value">1</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>list (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Thread.list   =&gt; array
+ *  
+ *  Returns an array of &lt;code&gt;Thread&lt;/code&gt; objects for all threads that are
+ *  either runnable or stopped.
+ *     
+ *     Thread.new { sleep(200) }
+ *     Thread.new { 1000000.times {|i| i*i } }
+ *     Thread.new { Thread.stop }
+ *     Thread.list.each {|t| p t}
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     #&lt;Thread:0x401b3e84 sleep&gt;
+ *     #&lt;Thread:0x401b3f38 run&gt;
+ *     #&lt;Thread:0x401b3fb0 sleep&gt;
+ *     #&lt;Thread:0x401bdf4c run&gt;
+ */
+
+VALUE
+rb_thread_list()
+{
+    rb_thread_t th;
+    VALUE ary = rb_ary_new();
+
+    FOREACH_THREAD(th) {
+        switch (th-&gt;status) {
+          case THREAD_RUNNABLE:
+          case THREAD_STOPPED:
+          case THREAD_TO_KILL:
+            rb_ary_push(ary, th-&gt;thread);
+          default:
+            break;
+        }
+    }
+    END_FOREACH(th);
+
+    return ary;
+}</pre>
+</body>
+</html>

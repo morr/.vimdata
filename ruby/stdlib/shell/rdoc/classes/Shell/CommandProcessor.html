@@ -1,0 +1,1421 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Shell::CommandProcessor</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Shell::CommandProcessor</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/shell/command-processor_rb.html">
+                shell/command-processor.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001218">[]</a>&nbsp;&nbsp;
+      <a href="#M001242">add_delegate_command_to_shell</a>&nbsp;&nbsp;
+      <a href="#M001238">alias_command</a>&nbsp;&nbsp;
+      <a href="#M001237">alias_map</a>&nbsp;&nbsp;
+      <a href="#M001230">append</a>&nbsp;&nbsp;
+      <a href="#M001228">cat</a>&nbsp;&nbsp;
+      <a href="#M001223">check_point</a>&nbsp;&nbsp;
+      <a href="#M001232">concat</a>&nbsp;&nbsp;
+      <a href="#M001240">def_builtin_commands</a>&nbsp;&nbsp;
+      <a href="#M001235">def_system_command</a>&nbsp;&nbsp;
+      <a href="#M001227">echo</a>&nbsp;&nbsp;
+      <a href="#M001213">expand_path</a>&nbsp;&nbsp;
+      <a href="#M001234">find_system_command</a>&nbsp;&nbsp;
+      <a href="#M001224">finish_all_jobs</a>&nbsp;&nbsp;
+      <a href="#M001214">foreach</a>&nbsp;&nbsp;
+      <a href="#M001229">glob</a>&nbsp;&nbsp;
+      <a href="#M001209">initialize</a>&nbsp;&nbsp;
+      <a href="#M001243">install_builtin_commands</a>&nbsp;&nbsp;
+      <a href="#M001241">install_system_commands</a>&nbsp;&nbsp;
+      <a href="#M001210">method_added</a>&nbsp;&nbsp;
+      <a href="#M001219">mkdir</a>&nbsp;&nbsp;
+      <a href="#M001212">new</a>&nbsp;&nbsp;
+      <a href="#M001233">notify</a>&nbsp;&nbsp;
+      <a href="#M001215">open</a>&nbsp;&nbsp;
+      <a href="#M001226">out</a>&nbsp;&nbsp;
+      <a href="#M001222">rehash</a>&nbsp;&nbsp;
+      <a href="#M001220">rmdir</a>&nbsp;&nbsp;
+      <a href="#M001211">run_config</a>&nbsp;&nbsp;
+      <a href="#M001221">system</a>&nbsp;&nbsp;
+      <a href="#M001231">tee</a>&nbsp;&nbsp;
+      <a href="#M001217">test</a>&nbsp;&nbsp;
+      <a href="#M001225">transact</a>&nbsp;&nbsp;
+      <a href="#M001239">unalias_command</a>&nbsp;&nbsp;
+      <a href="#M001236">undef_system_command</a>&nbsp;&nbsp;
+      <a href="#M001216">unlink</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NoDelegateMethods</td>
+          <td>=</td>
+          <td class="context-item-value">[&quot;initialize&quot;, &quot;expand_path&quot;]</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+<a href="CommandProcessor.html#M001209">initialize</a> of <a
+href="../Shell.html">Shell</a> and related classes.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">test</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">top_level_test</td>
+        </tr>
+      <tr class="top-aligned-row context-row">
+        <td>&nbsp;</td>
+        <td colspan="2" class="context-item-desc">
+<a href="CommandProcessor.html#M001217">CommandProcessor#test</a>(command,
+file1, file2) <a
+href="CommandProcessor.html">CommandProcessor</a>#[command, file1, file2]
+
+<pre>
+    command: char or String or Symbol
+    file1:   String
+    file2:   String(optional)
+    return: Boolean
+  same as:
+    test()     (when command is char or length 1 string or symbol)
+    FileTest.command (others)
+  example:
+    sh[?e, &quot;foo&quot;]
+    sh[:e, &quot;foo&quot;]
+    sh[&quot;e&quot;, &quot;foo&quot;]
+    sh[:exists?, &quot;foo&quot;]
+    sh[&quot;exists?&quot;, &quot;foo&quot;]
+</pre>
+</td>
+      </tr>
+                        </table>
+      </div>
+    </div>
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001242" class="method-detail">
+        <a name="M001242"></a>
+
+        <div class="method-heading">
+          <a href="#M001242" class="method-signature">
+          <span class="method-name">add_delegate_command_to_shell</span><span class="method-args">(id)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001242-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001242-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 505</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">add_delegate_command_to_shell</span>(<span class="ruby-identifier">id</span>)
+      <span class="ruby-identifier">id</span> = <span class="ruby-identifier">id</span>.<span class="ruby-identifier">intern</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">id</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">String</span>)
+      <span class="ruby-identifier">name</span> = <span class="ruby-identifier">id</span>.<span class="ruby-identifier">id2name</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">method_defined?</span>(<span class="ruby-identifier">id</span>)
+        <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;warn: override definnition of Shell##{name}.&quot;</span>
+        <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;warn: alias Shell##{name} to Shell##{name}_org.\n&quot;</span>
+        <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">module_eval</span> <span class="ruby-node">&quot;alias #{name}_org #{name}&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;method added: Shell##{name}.&quot;</span>, <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug?</span>
+      <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">module_eval</span>(<span class="ruby-node">%Q[def #{name}(*args, &amp;block)
+                            begin
+                              @command_processor.__send__(:#{name}, *args, &amp;block)
+                            rescue Exception
+                              $@.delete_if{|s| /:in `__getobj__'$/ =~ s} #`
+                              $@.delete_if{|s| /^\\(eval\\):/ =~ s}
+                            raise
+                            end
+                          end]</span>, <span class="ruby-keyword kw">__FILE__</span>, <span class="ruby-keyword kw">__LINE__</span>)
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Shell</span><span class="ruby-operator">::</span><span class="ruby-constant">Filter</span>.<span class="ruby-identifier">method_defined?</span>(<span class="ruby-identifier">id</span>)
+        <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;warn: override definnition of Shell::Filter##{name}.&quot;</span>
+        <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;warn: alias Shell##{name} to Shell::Filter##{name}_org.&quot;</span>
+        <span class="ruby-constant">Filter</span>.<span class="ruby-identifier">module_eval</span> <span class="ruby-node">&quot;alias #{name}_org #{name}&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;method added: Shell::Filter##{name}.&quot;</span>, <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug?</span>
+      <span class="ruby-constant">Filter</span>.<span class="ruby-identifier">module_eval</span>(<span class="ruby-node">%Q[def #{name}(*args, &amp;block)
+                            begin
+                              self | @shell.__send__(:#{name}, *args, &amp;block)
+                            rescue Exception
+                              $@.delete_if{|s| /:in `__getobj__'$/ =~ s} #`
+                              $@.delete_if{|s| /^\\(eval\\):/ =~ s}
+                            raise
+                            end
+                          end]</span>, <span class="ruby-keyword kw">__FILE__</span>, <span class="ruby-keyword kw">__LINE__</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001238" class="method-detail">
+        <a name="M001238"></a>
+
+        <div class="method-heading">
+          <a href="#M001238" class="method-signature">
+          <span class="method-name">alias_command</span><span class="method-args">(ali, command, *opts, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001238-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001238-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 396</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">alias_command</span>(<span class="ruby-identifier">ali</span>, <span class="ruby-identifier">command</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">opts</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-identifier">ali</span> = <span class="ruby-identifier">ali</span>.<span class="ruby-identifier">id2name</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ali</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Symbol</span>)
+      <span class="ruby-identifier">command</span> = <span class="ruby-identifier">command</span>.<span class="ruby-identifier">id2name</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">command</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Symbol</span>)
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">iterator?</span>
+          <span class="ruby-ivar">@alias_map</span>[<span class="ruby-identifier">ali</span>.<span class="ruby-identifier">intern</span>] = <span class="ruby-identifier">proc</span>
+
+          <span class="ruby-identifier">eval</span>((<span class="ruby-identifier">d</span> = <span class="ruby-node">%Q[def #{ali}(*opts)
+                          @shell.__send__(:#{command},
+                                          *(CommandProcessor.alias_map[:#{ali}].call *opts))
+                        end]</span>), <span class="ruby-keyword kw">nil</span>, <span class="ruby-keyword kw">__FILE__</span>, <span class="ruby-keyword kw">__LINE__</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>)
+    
+        <span class="ruby-keyword kw">else</span>
+           <span class="ruby-identifier">args</span> = <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">opt</span><span class="ruby-operator">|</span> <span class="ruby-value str">'&quot;'</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">opt</span> <span class="ruby-operator">+</span> <span class="ruby-value str">'&quot;'</span>}.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;,&quot;</span>)
+           <span class="ruby-identifier">eval</span>((<span class="ruby-identifier">d</span> = <span class="ruby-node">%Q[def #{ali}(*opts)
+                          @shell.__send__(:#{command}, #{args}, *opts)
+                        end]</span>), <span class="ruby-keyword kw">nil</span>, <span class="ruby-keyword kw">__FILE__</span>, <span class="ruby-keyword kw">__LINE__</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">SyntaxError</span>
+        <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;warn: Can't alias #{ali} command: #{command}.&quot;</span> 
+        <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span>(<span class="ruby-node">&quot;Definition of #{ali}: &quot;</span>, <span class="ruby-identifier">d</span>)
+        <span class="ruby-identifier">raise</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;Define #{ali} command: #{command}.&quot;</span>, <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug?</span>
+      <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span>(<span class="ruby-node">&quot;Definition of #{ali}: &quot;</span>, <span class="ruby-identifier">d</span>, 
+             <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>)
+      <span class="ruby-keyword kw">self</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001237" class="method-detail">
+        <a name="M001237"></a>
+
+        <div class="method-heading">
+          <a href="#M001237" class="method-signature">
+          <span class="method-name">alias_map</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001237-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001237-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 393</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">alias_map</span>
+      <span class="ruby-ivar">@alias_map</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001240" class="method-detail">
+        <a name="M001240"></a>
+
+        <div class="method-heading">
+          <a href="#M001240" class="method-signature">
+          <span class="method-name">def_builtin_commands</span><span class="method-args">(delegation_class, command_specs)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a
+href="CommandProcessor.html#M001240">CommandProcessor.def_builtin_commands</a>(delegation_class,
+command_specs)
+</p>
+<pre>
+    delegation_class: Class or Module
+    command_specs: [[command_name, [argument,...]],...]
+       command_name: String
+       arguments:      String
+          FILENAME?? -&gt; expand_path(filename??)
+          *FILENAME?? -&gt; filename??.collect{|f|expand_path(f)}.join(&quot;, &quot;)
+  define command_name(argument,...) as
+      delegation_class.command_name(argument,...)
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001240-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001240-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 442</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">def_builtin_commands</span>(<span class="ruby-identifier">delegation_class</span>, <span class="ruby-identifier">command_specs</span>)
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">meth</span>, <span class="ruby-identifier">args</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">command_specs</span>
+        <span class="ruby-identifier">arg_str</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span> <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">downcase</span>}.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;, &quot;</span>)
+        <span class="ruby-identifier">call_arg_str</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">collect</span>{
+          <span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">arg</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^(FILENAME.*)$/</span>
+            <span class="ruby-identifier">format</span>(<span class="ruby-value str">&quot;expand_path(%s)&quot;</span>, <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">downcase</span>)
+          <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^(\*FILENAME.*)$/</span>
+            <span class="ruby-comment cmt"># \*FILENAME* -&gt; filenames.collect{|fn| expand_path(fn)}.join(&quot;, &quot;)</span>
+            <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">+</span> <span class="ruby-value str">'.collect{|fn| expand_path(fn)}'</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">arg</span>
+          <span class="ruby-keyword kw">end</span>
+        }.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;, &quot;</span>)
+        <span class="ruby-identifier">d</span> = <span class="ruby-node">%Q[def #{meth}(#{arg_str})
+                    #{delegation_class}.#{meth}(#{call_arg_str})
+                 end]</span>
+        <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;Define #{meth}(#{arg_str})&quot;</span>, <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug?</span>
+        <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span>(<span class="ruby-node">&quot;Definition of #{meth}: &quot;</span>, <span class="ruby-identifier">d</span>, 
+             <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>)
+        <span class="ruby-identifier">eval</span> <span class="ruby-identifier">d</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001235" class="method-detail">
+        <a name="M001235"></a>
+
+        <div class="method-heading">
+          <a href="#M001235" class="method-signature">
+          <span class="method-name">def_system_command</span><span class="method-args">(command, path = command)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a
+href="CommandProcessor.html#M001235">CommandProcessor.def_system_command</a>(command,
+path)
+</p>
+<pre>
+    command:  String
+    path:       String
+  define 'command()' method as method.
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001235-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001235-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 366</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">def_system_command</span>(<span class="ruby-identifier">command</span>, <span class="ruby-identifier">path</span> = <span class="ruby-identifier">command</span>)
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">eval</span>((<span class="ruby-identifier">d</span> = <span class="ruby-node">%Q[def #{command}(*opts)
+                  SystemCommand.new(@shell, '#{path}', *opts)
+               end]</span>), <span class="ruby-keyword kw">nil</span>, <span class="ruby-keyword kw">__FILE__</span>, <span class="ruby-keyword kw">__LINE__</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>)
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">SyntaxError</span>
+        <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;warn: Can't define #{command} path: #{path}.&quot;</span> 
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;Define #{command} path: #{path}.&quot;</span>, <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug?</span>
+      <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span>(<span class="ruby-node">&quot;Definition of #{command}: &quot;</span>, <span class="ruby-identifier">d</span>, 
+             <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001209" class="method-detail">
+        <a name="M001209"></a>
+
+        <div class="method-heading">
+          <a href="#M001209" class="method-signature">
+          <span class="method-name">initialize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001209-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001209-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 30</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">initialize</span>
+
+      <span class="ruby-identifier">install_builtin_commands</span>
+
+      <span class="ruby-comment cmt"># define CommandProccessor#methods to Shell#methods and Filter#methods</span>
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">m</span> <span class="ruby-keyword kw">in</span> <span class="ruby-constant">CommandProcessor</span>.<span class="ruby-identifier">instance_methods</span>(<span class="ruby-keyword kw">false</span>) <span class="ruby-operator">-</span> <span class="ruby-constant">NoDelegateMethods</span>
+        <span class="ruby-identifier">add_delegate_command_to_shell</span>(<span class="ruby-identifier">m</span>)
+      <span class="ruby-keyword kw">end</span>
+      
+      <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">method_added</span>(<span class="ruby-identifier">id</span>)
+        <span class="ruby-identifier">add_delegate_command_to_shell</span>(<span class="ruby-identifier">id</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001243" class="method-detail">
+        <a name="M001243"></a>
+
+        <div class="method-heading">
+          <a href="#M001243" class="method-signature">
+          <span class="method-name">install_builtin_commands</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+define default builtin commands
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001243-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001243-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 544</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">install_builtin_commands</span>
+      <span class="ruby-comment cmt"># method related File.</span>
+      <span class="ruby-comment cmt"># (exclude open/foreach/unlink)</span>
+      <span class="ruby-identifier">normal_delegation_file_methods</span> = [
+        [<span class="ruby-value str">&quot;atime&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;basename&quot;</span>, [<span class="ruby-value str">&quot;fn&quot;</span>, <span class="ruby-value str">&quot;*opts&quot;</span>]],
+        [<span class="ruby-value str">&quot;chmod&quot;</span>, [<span class="ruby-value str">&quot;mode&quot;</span>, <span class="ruby-value str">&quot;*FILENAMES&quot;</span>]], 
+        [<span class="ruby-value str">&quot;chown&quot;</span>, [<span class="ruby-value str">&quot;owner&quot;</span>, <span class="ruby-value str">&quot;group&quot;</span>, <span class="ruby-value str">&quot;*FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;ctime&quot;</span>, [<span class="ruby-value str">&quot;FILENAMES&quot;</span>]],
+        [<span class="ruby-value str">&quot;delete&quot;</span>, [<span class="ruby-value str">&quot;*FILENAMES&quot;</span>]],
+        [<span class="ruby-value str">&quot;dirname&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;ftype&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;join&quot;</span>, [<span class="ruby-value str">&quot;*items&quot;</span>]],
+        [<span class="ruby-value str">&quot;link&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_O&quot;</span>, <span class="ruby-value str">&quot;FILENAME_N&quot;</span>]],
+        [<span class="ruby-value str">&quot;lstat&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;mtime&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;readlink&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;rename&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_FROM&quot;</span>, <span class="ruby-value str">&quot;FILENAME_TO&quot;</span>]],
+        <span class="ruby-comment cmt">#      [&quot;size&quot;, [&quot;FILENAME&quot;]],</span>
+        [<span class="ruby-value str">&quot;split&quot;</span>, [<span class="ruby-value str">&quot;pathname&quot;</span>]],
+        [<span class="ruby-value str">&quot;stat&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]],
+        [<span class="ruby-value str">&quot;symlink&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_O&quot;</span>, <span class="ruby-value str">&quot;FILENAME_N&quot;</span>]],
+        [<span class="ruby-value str">&quot;truncate&quot;</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>, <span class="ruby-value str">&quot;length&quot;</span>]],
+        [<span class="ruby-value str">&quot;utime&quot;</span>, [<span class="ruby-value str">&quot;atime&quot;</span>, <span class="ruby-value str">&quot;mtime&quot;</span>, <span class="ruby-value str">&quot;*FILENAMES&quot;</span>]]]
+
+      <span class="ruby-identifier">def_builtin_commands</span>(<span class="ruby-constant">File</span>, <span class="ruby-identifier">normal_delegation_file_methods</span>)
+      <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:rm</span>, <span class="ruby-identifier">:delete</span>
+
+      <span class="ruby-comment cmt"># method related FileTest</span>
+      <span class="ruby-identifier">def_builtin_commands</span>(<span class="ruby-constant">FileTest</span>, 
+                   <span class="ruby-constant">FileTest</span>.<span class="ruby-identifier">singleton_methods</span>(<span class="ruby-keyword kw">false</span>).<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> [<span class="ruby-identifier">m</span>, [<span class="ruby-value str">&quot;FILENAME&quot;</span>]]})
+
+      <span class="ruby-comment cmt"># method related ftools</span>
+      <span class="ruby-identifier">normal_delegation_ftools_methods</span> = [
+        [<span class="ruby-value str">&quot;syscopy&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_FROM&quot;</span>, <span class="ruby-value str">&quot;FILENAME_TO&quot;</span>]],
+        [<span class="ruby-value str">&quot;copy&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_FROM&quot;</span>, <span class="ruby-value str">&quot;FILENAME_TO&quot;</span>]],
+        [<span class="ruby-value str">&quot;move&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_FROM&quot;</span>, <span class="ruby-value str">&quot;FILENAME_TO&quot;</span>]],
+        [<span class="ruby-value str">&quot;compare&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_FROM&quot;</span>, <span class="ruby-value str">&quot;FILENAME_TO&quot;</span>]],
+        [<span class="ruby-value str">&quot;safe_unlink&quot;</span>, [<span class="ruby-value str">&quot;*FILENAMES&quot;</span>]],
+        [<span class="ruby-value str">&quot;makedirs&quot;</span>, [<span class="ruby-value str">&quot;*FILENAMES&quot;</span>]],
+        <span class="ruby-comment cmt">#    [&quot;chmod&quot;, [&quot;mode&quot;, &quot;*FILENAMES&quot;]],</span>
+        [<span class="ruby-value str">&quot;install&quot;</span>, [<span class="ruby-value str">&quot;FILENAME_FROM&quot;</span>, <span class="ruby-value str">&quot;FILENAME_TO&quot;</span>, <span class="ruby-value str">&quot;mode&quot;</span>]],
+      ]
+      <span class="ruby-identifier">def_builtin_commands</span>(<span class="ruby-constant">File</span>,
+                   <span class="ruby-identifier">normal_delegation_ftools_methods</span>)
+      <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:cmp</span>, <span class="ruby-identifier">:compare</span>
+      <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:mv</span>, <span class="ruby-identifier">:move</span>
+      <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:cp</span>, <span class="ruby-identifier">:copy</span>
+      <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:rm_f</span>, <span class="ruby-identifier">:safe_unlink</span>
+      <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:mkpath</span>, <span class="ruby-identifier">:makedirs</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001241" class="method-detail">
+        <a name="M001241"></a>
+
+        <div class="method-heading">
+          <a href="#M001241" class="method-signature">
+          <span class="method-name">install_system_commands</span><span class="method-args">(pre = &quot;sys_&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a
+href="CommandProcessor.html#M001241">CommandProcessor.install_system_commands(pre)</a>
+</p>
+<pre>
+      pre: String - command name prefix
+</pre>
+<p>
+defines every command which belongs in default_system_path via
+CommandProcessor.command(). It doesn&#8216;t define already defined methods
+twice. By default, &quot;pre_&quot; is prefixes to each method name.
+Characters that may not be used in a method name are all converted to
+&#8216;_&#8217;. Definition errors are just ignored.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001241-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001241-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 476</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">install_system_commands</span>(<span class="ruby-identifier">pre</span> = <span class="ruby-value str">&quot;sys_&quot;</span>)
+      <span class="ruby-identifier">defined_meth</span> = {}
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">m</span> <span class="ruby-keyword kw">in</span> <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">methods</span>
+        <span class="ruby-identifier">defined_meth</span>[<span class="ruby-identifier">m</span>] = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">sh</span> = <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">path</span> <span class="ruby-keyword kw">in</span> <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">default_system_path</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">sh</span>.<span class="ruby-identifier">directory?</span> <span class="ruby-identifier">path</span>
+        <span class="ruby-identifier">sh</span>.<span class="ruby-identifier">cd</span> <span class="ruby-identifier">path</span>
+        <span class="ruby-identifier">sh</span>.<span class="ruby-identifier">foreach</span> <span class="ruby-keyword kw">do</span>
+          <span class="ruby-operator">|</span><span class="ruby-identifier">cn</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">defined_meth</span>[<span class="ruby-identifier">pre</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">cn</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">sh</span>.<span class="ruby-identifier">file?</span>(<span class="ruby-identifier">cn</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">sh</span>.<span class="ruby-identifier">executable?</span>(<span class="ruby-identifier">cn</span>)
+            <span class="ruby-identifier">command</span> = (<span class="ruby-identifier">pre</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">cn</span>).<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\W/</span>, <span class="ruby-value str">&quot;_&quot;</span>).<span class="ruby-identifier">sub</span>(<span class="ruby-regexp re">/^([0-9])/</span>, <span class="ruby-value str">'_\1'</span>)
+            <span class="ruby-keyword kw">begin</span>
+              <span class="ruby-identifier">def_system_command</span>(<span class="ruby-identifier">command</span>, <span class="ruby-identifier">sh</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">cn</span>))
+            <span class="ruby-keyword kw">rescue</span>
+              <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;warn: Can't define #{command} path: #{cn}&quot;</span>
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-identifier">defined_meth</span>[<span class="ruby-identifier">command</span>] = <span class="ruby-identifier">command</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001210" class="method-detail">
+        <a name="M001210"></a>
+
+        <div class="method-heading">
+          <a href="#M001210" class="method-signature">
+          <span class="method-name">method_added</span><span class="method-args">(id)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001210-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001210-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 39</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">method_added</span>(<span class="ruby-identifier">id</span>)
+        <span class="ruby-identifier">add_delegate_command_to_shell</span>(<span class="ruby-identifier">id</span>)
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001212" class="method-detail">
+        <a name="M001212"></a>
+
+        <div class="method-heading">
+          <a href="#M001212" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(shell)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001212-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001212-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 60</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">shell</span>)
+      <span class="ruby-ivar">@shell</span> = <span class="ruby-identifier">shell</span>
+      <span class="ruby-ivar">@system_commands</span> = {}
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001211" class="method-detail">
+        <a name="M001211"></a>
+
+        <div class="method-heading">
+          <a href="#M001211" class="method-signature">
+          <span class="method-name">run_config</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+include run file.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001211-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001211-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 47</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">run_config</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">load</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-value str">&quot;~/.rb_shell&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-constant">ENV</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-value str">&quot;HOME&quot;</span>)
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LoadError</span>, <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">ENOENT</span>
+      <span class="ruby-keyword kw">rescue</span>
+        <span class="ruby-identifier">print</span> <span class="ruby-node">&quot;load error: #{rc}\n&quot;</span>
+        <span class="ruby-identifier">print</span> <span class="ruby-identifier">$!</span>.<span class="ruby-identifier">class</span>, <span class="ruby-value str">&quot;: &quot;</span>, <span class="ruby-identifier">$!</span>, <span class="ruby-value str">&quot;\n&quot;</span>
+        <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">err</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">$@</span>[<span class="ruby-value">0</span>, <span class="ruby-identifier">$@</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">-</span> <span class="ruby-value">2</span>]
+          <span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;\t&quot;</span>, <span class="ruby-identifier">err</span>, <span class="ruby-value str">&quot;\n&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001239" class="method-detail">
+        <a name="M001239"></a>
+
+        <div class="method-heading">
+          <a href="#M001239" class="method-signature">
+          <span class="method-name">unalias_command</span><span class="method-args">(ali)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001239-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001239-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 425</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">unalias_command</span>(<span class="ruby-identifier">ali</span>)
+      <span class="ruby-identifier">ali</span> = <span class="ruby-identifier">ali</span>.<span class="ruby-identifier">id2name</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ali</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Symbol</span>)
+      <span class="ruby-ivar">@alias_map</span>.<span class="ruby-identifier">delete</span> <span class="ruby-identifier">ali</span>.<span class="ruby-identifier">intern</span>
+      <span class="ruby-identifier">undef_system_command</span>(<span class="ruby-identifier">ali</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001236" class="method-detail">
+        <a name="M001236"></a>
+
+        <div class="method-heading">
+          <a href="#M001236" class="method-signature">
+          <span class="method-name">undef_system_command</span><span class="method-args">(command)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001236-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001236-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 379</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">undef_system_command</span>(<span class="ruby-identifier">command</span>)
+      <span class="ruby-identifier">command</span> = <span class="ruby-identifier">command</span>.<span class="ruby-identifier">id2name</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">command</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Symbol</span>)
+      <span class="ruby-identifier">remove_method</span>(<span class="ruby-identifier">command</span>)
+      <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">module_eval</span>{<span class="ruby-identifier">remove_method</span>(<span class="ruby-identifier">command</span>)}
+      <span class="ruby-constant">Filter</span>.<span class="ruby-identifier">module_eval</span>{<span class="ruby-identifier">remove_method</span>(<span class="ruby-identifier">command</span>)}
+      <span class="ruby-keyword kw">self</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001218" class="method-detail">
+        <a name="M001218"></a>
+
+        <div class="method-heading">
+          <span class="method-name">[]</span><span class="method-args">(command, file1, file2=nil)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="CommandProcessor.html#M001217">test</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001230" class="method-detail">
+        <a name="M001230"></a>
+
+        <div class="method-heading">
+          <a href="#M001230" class="method-signature">
+          <span class="method-name">append</span><span class="method-args">(to, filter)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001230-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001230-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 286</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">append</span>(<span class="ruby-identifier">to</span>, <span class="ruby-identifier">filter</span>)
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">to</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>
+        <span class="ruby-constant">AppendFile</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@shell</span>, <span class="ruby-identifier">to</span>, <span class="ruby-identifier">filter</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">IO</span>
+        <span class="ruby-constant">AppendIO</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@shell</span>, <span class="ruby-identifier">to</span>, <span class="ruby-identifier">filter</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">Shell</span>.<span class="ruby-constant">Fail</span> <span class="ruby-constant">Error</span><span class="ruby-operator">::</span><span class="ruby-constant">CantApplyMethod</span>, <span class="ruby-value str">&quot;append&quot;</span>, <span class="ruby-identifier">to</span>.<span class="ruby-identifier">class</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001228" class="method-detail">
+        <a name="M001228"></a>
+
+        <div class="method-heading">
+          <a href="#M001228" class="method-signature">
+          <span class="method-name">cat</span><span class="method-args">(*filenames)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001228-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001228-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 274</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">cat</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">filenames</span>)
+      <span class="ruby-constant">Cat</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@shell</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">filenames</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001223" class="method-detail">
+        <a name="M001223"></a>
+
+        <div class="method-heading">
+          <a href="#M001223" class="method-signature">
+          <span class="method-name">check_point</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+ProcessCommand#transact
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001223-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001223-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 250</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">check_point</span>
+      <span class="ruby-ivar">@shell</span>.<span class="ruby-identifier">process_controller</span>.<span class="ruby-identifier">wait_all_jobs_execution</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001232" class="method-detail">
+        <a name="M001232"></a>
+
+        <div class="method-heading">
+          <a href="#M001232" class="method-signature">
+          <span class="method-name">concat</span><span class="method-args">(*jobs)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001232-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001232-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 301</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">concat</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">jobs</span>)
+      <span class="ruby-constant">Concat</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@shell</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">jobs</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001227" class="method-detail">
+        <a name="M001227"></a>
+
+        <div class="method-heading">
+          <a href="#M001227" class="method-signature">
+          <span class="method-name">echo</span><span class="method-args">(*strings)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001227-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001227-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 270</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">echo</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">strings</span>)
+      <span class="ruby-constant">Echo</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@shell</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">strings</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001213" class="method-detail">
+        <a name="M001213"></a>
+
+        <div class="method-heading">
+          <a href="#M001213" class="method-signature">
+          <span class="method-name">expand_path</span><span class="method-args">(path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a
+href="CommandProcessor.html#M001213">CommandProcessor#expand_path(path)</a>
+</p>
+<pre>
+    path:     String
+    return: String
+  returns the absolute path for &lt;path&gt;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001213-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001213-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 71</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-ivar">@shell</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">path</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001234" class="method-detail">
+        <a name="M001234"></a>
+
+        <div class="method-heading">
+          <a href="#M001234" class="method-signature">
+          <span class="method-name">find_system_command</span><span class="method-args">(command)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001234-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001234-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 336</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">find_system_command</span>(<span class="ruby-identifier">command</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">command</span> <span class="ruby-keyword kw">if</span> <span class="ruby-regexp re">/^\//</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">command</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">path</span> = <span class="ruby-ivar">@system_commands</span>[<span class="ruby-identifier">command</span>]
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">exists?</span>(<span class="ruby-identifier">path</span>)
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">path</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-constant">Shell</span>.<span class="ruby-constant">Fail</span> <span class="ruby-constant">Error</span><span class="ruby-operator">::</span><span class="ruby-constant">CommandNotFound</span>, <span class="ruby-identifier">command</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-keyword kw">false</span>
+        <span class="ruby-constant">Shell</span>.<span class="ruby-constant">Fail</span> <span class="ruby-constant">Error</span><span class="ruby-operator">::</span><span class="ruby-constant">CommandNotFound</span>, <span class="ruby-identifier">command</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">p</span> <span class="ruby-keyword kw">in</span> <span class="ruby-ivar">@shell</span>.<span class="ruby-identifier">system_path</span>
+        <span class="ruby-identifier">path</span> = <span class="ruby-identifier">join</span>(<span class="ruby-identifier">p</span>, <span class="ruby-identifier">command</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-constant">FileTest</span>.<span class="ruby-identifier">exists?</span>(<span class="ruby-identifier">path</span>)
+          <span class="ruby-ivar">@system_commands</span>[<span class="ruby-identifier">command</span>] = <span class="ruby-identifier">path</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">path</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@system_commands</span>[<span class="ruby-identifier">command</span>] = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-constant">Shell</span>.<span class="ruby-constant">Fail</span> <span class="ruby-constant">Error</span><span class="ruby-operator">::</span><span class="ruby-constant">CommandNotFound</span>, <span class="ruby-identifier">command</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001224" class="method-detail">
+        <a name="M001224"></a>
+
+        <div class="method-heading">
+          <span class="method-name">finish_all_jobs</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="CommandProcessor.html#M001223">check_point</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001214" class="method-detail">
+        <a name="M001214"></a>
+
+        <div class="method-heading">
+          <a href="#M001214" class="method-signature">
+          <span class="method-name">foreach</span><span class="method-args">(path = nil, *rs) {|fn| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+File related commands Shell#foreach Shell#open Shell#unlink Shell#test
+</p>
+<p>
+-
+</p>
+<p>
+<a href="CommandProcessor.html#M001214">CommandProcessor#foreach</a>(path,
+rs)
+</p>
+<pre>
+    path: String
+    rs:     String - record separator
+    iterator
+  Same as:
+    File#foreach (when path is file)
+    Dir#foreach (when path is directory)
+  path is relative to pwd
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001214-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001214-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 93</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">foreach</span>(<span class="ruby-identifier">path</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">rs</span>)
+      <span class="ruby-identifier">path</span> = <span class="ruby-value str">&quot;.&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">path</span>
+      <span class="ruby-identifier">path</span> = <span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">path</span>)
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">directory?</span>(<span class="ruby-identifier">path</span>)
+        <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">foreach</span>(<span class="ruby-identifier">path</span>){<span class="ruby-operator">|</span><span class="ruby-identifier">fn</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">fn</span>}
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">IO</span>.<span class="ruby-identifier">foreach</span>(<span class="ruby-identifier">path</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">rs</span>){<span class="ruby-operator">|</span><span class="ruby-identifier">l</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">l</span>}
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001229" class="method-detail">
+        <a name="M001229"></a>
+
+        <div class="method-heading">
+          <a href="#M001229" class="method-signature">
+          <span class="method-name">glob</span><span class="method-args">(pattern)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+def sort(*filenames)
+</p>
+<pre>
+  Sort.new(self, *filenames)
+</pre>
+<p>
+end
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001229-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001229-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 282</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">glob</span>(<span class="ruby-identifier">pattern</span>)
+      <span class="ruby-constant">Glob</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@shell</span>, <span class="ruby-identifier">pattern</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001219" class="method-detail">
+        <a name="M001219"></a>
+
+        <div class="method-heading">
+          <a href="#M001219" class="method-signature">
+          <span class="method-name">mkdir</span><span class="method-args">(*path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Dir related methods
+</p>
+<p>
+Shell#mkdir Shell#rmdir
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001219-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001219-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 201</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mkdir</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">path</span>)
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">dir</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">path</span>
+        <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">mkdir</span>(<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">dir</span>))
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001233" class="method-detail">
+        <a name="M001233"></a>
+
+        <div class="method-heading">
+          <a href="#M001233" class="method-signature">
+          <span class="method-name">notify</span><span class="method-args">(*opts) {|mes if iterator?| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+%pwd, %cwd -&gt; @pwd
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001233-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001233-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 306</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">notify</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">opts</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">exclusive</span> <span class="ruby-keyword kw">do</span>
+        <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">opts</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">mes</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">mes</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">iterator?</span>
+        
+          <span class="ruby-identifier">mes</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-value str">&quot;%pwd&quot;</span>, <span class="ruby-node">&quot;#{@cwd}&quot;</span>)
+          <span class="ruby-identifier">mes</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-value str">&quot;%cwd&quot;</span>, <span class="ruby-node">&quot;#{@cwd}&quot;</span>)
+        }
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001215" class="method-detail">
+        <a name="M001215"></a>
+
+        <div class="method-heading">
+          <a href="#M001215" class="method-signature">
+          <span class="method-name">open</span><span class="method-args">(path, mode)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="CommandProcessor.html#M001215">CommandProcessor#open</a>(path,
+mode)
+</p>
+<pre>
+    path:     String
+    mode:     String
+    return: File or Dir
+  Same as:
+    File#open (when path is file)
+    Dir#open  (when path is directory)
+  mode has an effect only when path is a file
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001215-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001215-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 114</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">open</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">mode</span>)
+      <span class="ruby-identifier">path</span> = <span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">directory?</span>(<span class="ruby-identifier">path</span>)
+        <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">effect_umask</span> <span class="ruby-keyword kw">do</span>
+          <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">mode</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001226" class="method-detail">
+        <a name="M001226"></a>
+
+        <div class="method-heading">
+          <a href="#M001226" class="method-signature">
+          <span class="method-name">out</span><span class="method-args">(dev = STDOUT, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+internal commands
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001226-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001226-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 266</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">out</span>(<span class="ruby-identifier">dev</span> = <span class="ruby-constant">STDOUT</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-identifier">dev</span>.<span class="ruby-identifier">print</span> <span class="ruby-identifier">transact</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001222" class="method-detail">
+        <a name="M001222"></a>
+
+        <div class="method-heading">
+          <a href="#M001222" class="method-signature">
+          <span class="method-name">rehash</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+ProcessCommand#rehash
+</p>
+<pre>
+  clear command hash table.
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001222-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001222-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 243</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">rehash</span>
+      <span class="ruby-ivar">@system_commands</span> = {}
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001220" class="method-detail">
+        <a name="M001220"></a>
+
+        <div class="method-heading">
+          <a href="#M001220" class="method-signature">
+          <span class="method-name">rmdir</span><span class="method-args">(*path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="CommandProcessor.html#M001220">CommandProcessor#rmdir(*path)</a>
+</p>
+<pre>
+    path: String
+  same as Dir.rmdir()
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001220-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001220-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 212</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">rmdir</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">path</span>)
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">dir</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">path</span>
+        <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">rmdir</span>(<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">dir</span>))
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001221" class="method-detail">
+        <a name="M001221"></a>
+
+        <div class="method-heading">
+          <a href="#M001221" class="method-signature">
+          <span class="method-name">system</span><span class="method-args">(command, *opts)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a
+href="CommandProcessor.html#M001221">CommandProcessor#system</a>(command,
+*opts)
+</p>
+<pre>
+    command: String
+    opts:      String
+    return:  SystemCommand
+  Same as system() function
+  example:
+    print sh.system(&quot;ls&quot;, &quot;-l&quot;)
+    sh.system(&quot;ls&quot;, &quot;-l&quot;) | sh.head &gt; STDOUT
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001221-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001221-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 228</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">system</span>(<span class="ruby-identifier">command</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">opts</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">command</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/\*|\?|\{|\}|\[|\]|&lt;|&gt;|\(|\)|~|&amp;|\||\\|\$|;|'|`|&quot;|\n/</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-constant">SystemCommand</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@shell</span>, <span class="ruby-identifier">find_system_command</span>(<span class="ruby-value str">&quot;sh&quot;</span>), <span class="ruby-value str">&quot;-c&quot;</span>, <span class="ruby-identifier">command</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">command</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">opts</span> = <span class="ruby-identifier">command</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/\s+/</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-constant">SystemCommand</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@shell</span>, <span class="ruby-identifier">find_system_command</span>(<span class="ruby-identifier">command</span>), <span class="ruby-operator">*</span><span class="ruby-identifier">opts</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001231" class="method-detail">
+        <a name="M001231"></a>
+
+        <div class="method-heading">
+          <a href="#M001231" class="method-signature">
+          <span class="method-name">tee</span><span class="method-args">(file)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001231-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001231-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 297</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tee</span>(<span class="ruby-identifier">file</span>)
+      <span class="ruby-constant">Tee</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@shell</span>, <span class="ruby-identifier">file</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001217" class="method-detail">
+        <a name="M001217"></a>
+
+        <div class="method-heading">
+          <a href="#M001217" class="method-signature">
+          <span class="method-name">test</span><span class="method-args">(command, file1, file2=nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001217-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001217-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 159</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">test</span>(<span class="ruby-identifier">command</span>, <span class="ruby-identifier">file1</span>, <span class="ruby-identifier">file2</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">file1</span> = <span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">file1</span>)
+      <span class="ruby-identifier">file2</span> = <span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">file2</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">file2</span>
+      <span class="ruby-identifier">command</span> = <span class="ruby-identifier">command</span>.<span class="ruby-identifier">id2name</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">command</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Symbol</span>)
+
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">command</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Integer</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">file2</span>
+          <span class="ruby-identifier">top_level_test</span>(<span class="ruby-identifier">command</span>, <span class="ruby-identifier">file1</span>, <span class="ruby-identifier">file2</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">top_level_test</span>(<span class="ruby-identifier">command</span>, <span class="ruby-identifier">file1</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">command</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">file2</span>
+            <span class="ruby-identifier">top_level_test</span>(<span class="ruby-identifier">command</span>, <span class="ruby-identifier">file1</span>, <span class="ruby-identifier">file2</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">top_level_test</span>(<span class="ruby-identifier">command</span>, <span class="ruby-identifier">file1</span>)
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">file2</span>
+            <span class="ruby-constant">FileTest</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">command</span>, <span class="ruby-identifier">file1</span>, <span class="ruby-identifier">file2</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-constant">FileTest</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">command</span>, <span class="ruby-identifier">file1</span>)
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001225" class="method-detail">
+        <a name="M001225"></a>
+
+        <div class="method-heading">
+          <a href="#M001225" class="method-signature">
+          <span class="method-name">transact</span><span class="method-args">(&amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001225-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001225-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 255</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">transact</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-ivar">@shell</span>.<span class="ruby-identifier">instance_eval</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-keyword kw">ensure</span>
+        <span class="ruby-identifier">check_point</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001216" class="method-detail">
+        <a name="M001216"></a>
+
+        <div class="method-heading">
+          <a href="#M001216" class="method-signature">
+          <span class="method-name">unlink</span><span class="method-args">(path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="CommandProcessor.html#M001216">CommandProcessor#unlink(path)</a>
+</p>
+<pre>
+  same as:
+    Dir#unlink  (when path is directory)
+    File#unlink (when path is file)
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001216-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001216-source">
+<pre>
+<span class="ruby-comment cmt"># File shell/command-processor.rb, line 132</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">unlink</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-identifier">path</span> = <span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">directory?</span>(<span class="ruby-identifier">path</span>)
+        <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">unlink</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">IO</span>.<span class="ruby-identifier">unlink</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

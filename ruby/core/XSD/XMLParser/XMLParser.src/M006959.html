@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>do_parse (XSD::XMLParser::XMLParser)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/xsd/xmlparser/xmlparser.rb, line 27</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">do_parse</span>(<span class="ruby-identifier">string_or_readable</span>)
+    <span class="ruby-comment cmt"># XMLParser passes a String in utf-8.</span>
+    <span class="ruby-ivar">@charset</span> = <span class="ruby-value str">'utf-8'</span>
+    <span class="ruby-ivar">@parser</span> = <span class="ruby-constant">Listener</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">string_or_readable</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">type</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">data</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">type</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">XML</span><span class="ruby-operator">::</span><span class="ruby-constant">Parser</span><span class="ruby-operator">::</span><span class="ruby-constant">START_ELEM</span>
+        <span class="ruby-identifier">start_element</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">data</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">XML</span><span class="ruby-operator">::</span><span class="ruby-constant">Parser</span><span class="ruby-operator">::</span><span class="ruby-constant">END_ELEM</span>
+        <span class="ruby-identifier">end_element</span>(<span class="ruby-identifier">name</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">XML</span><span class="ruby-operator">::</span><span class="ruby-constant">Parser</span><span class="ruby-operator">::</span><span class="ruby-constant">CDATA</span>
+        <span class="ruby-identifier">characters</span>(<span class="ruby-identifier">data</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">FormatDecodeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;Unexpected XML: #{ type }/#{ name }/#{ data }.&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

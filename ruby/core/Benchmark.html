@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Benchmark</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Benchmark</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/lib/benchmark_rb.html">
+                lib/benchmark.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The <a href="Benchmark.html">Benchmark</a> module provides methods to <a
+href="Benchmark.html#M007401">measure</a> and report the time used to
+execute Ruby code.
+</p>
+<ul>
+<li>Measure the time to construct the string given by the expression
+<tt>&quot;a&quot;*1_000_000</tt>:
+
+<pre>
+    require 'benchmark'
+
+    puts Benchmark.measure { &quot;a&quot;*1_000_000 }
+</pre>
+<p>
+On my machine (FreeBSD 3.2 on P5, 100MHz) this generates:
+</p>
+<pre>
+    1.166667   0.050000   1.216667 (  0.571355)
+</pre>
+<p>
+This report shows the user CPU time, system CPU time, the sum of the user
+and system CPU times, and the elapsed real time. The unit of time is
+seconds.
+</p>
+</li>
+<li>Do some experiments sequentially using the <a
+href="Benchmark.html#M007399">bm</a> method:
+
+<pre>
+    require 'benchmark'
+
+    n = 50000
+    Benchmark.bm do |x|
+      x.report { for i in 1..n; a = &quot;1&quot;; end }
+      x.report { n.times do   ; a = &quot;1&quot;; end }
+      x.report { 1.upto(n) do ; a = &quot;1&quot;; end }
+    end
+</pre>
+<p>
+The result:
+</p>
+<pre>
+           user     system      total        real
+       1.033333   0.016667   1.016667 (  0.492106)
+       1.483333   0.000000   1.483333 (  0.694605)
+       1.516667   0.000000   1.516667 (  0.711077)
+</pre>
+</li>
+<li>Continuing the previous example, put a label in each report:
+
+<pre>
+    require 'benchmark'
+
+    n = 50000
+    Benchmark.bm(7) do |x|
+      x.report(&quot;for:&quot;)   { for i in 1..n; a = &quot;1&quot;; end }
+      x.report(&quot;times:&quot;) { n.times do   ; a = &quot;1&quot;; end }
+      x.report(&quot;upto:&quot;)  { 1.upto(n) do ; a = &quot;1&quot;; end }
+    end
+</pre>
+</li>
+</ul>
+<p>
+The result:
+</p>
+<pre>
+                    user     system      total        real
+       for:     1.050000   0.000000   1.050000 (  0.503462)
+       times:   1.533333   0.016667   1.550000 (  0.735473)
+       upto:    1.500000   0.016667   1.516667 (  0.711239)
+</pre>
+<ul>
+<li>The times for some benchmarks depend on the order in which items are run.
+These differences are due to the cost of memory allocation and garbage
+collection. To avoid these discrepancies, the <a
+href="Benchmark.html#M007400">bmbm</a> method is provided. For example, to
+compare ways to sort an array of floats:
+
+<pre>
+    require 'benchmark'
+
+    array = (1..1000000).map { rand }
+
+    Benchmark.bmbm do |x|
+      x.report(&quot;sort!&quot;) { array.dup.sort! }
+      x.report(&quot;sort&quot;)  { array.dup.sort  }
+    end
+</pre>
+<p>
+The result:
+</p>
+<pre>
+     Rehearsal -----------------------------------------
+     sort!  11.928000   0.010000  11.938000 ( 12.756000)
+     sort   13.048000   0.020000  13.068000 ( 13.857000)
+     ------------------------------- total: 25.006000sec
+
+                 user     system      total        real
+     sort!  12.959000   0.010000  12.969000 ( 13.793000)
+     sort   12.007000   0.000000  12.007000 ( 12.791000)
+</pre>
+</li>
+<li>Report statistics of sequential experiments with unique labels, using the
+<a href="Benchmark.html#M007398">benchmark</a> method:
+
+<pre>
+    require 'benchmark'
+
+    n = 50000
+    Benchmark.benchmark(&quot; &quot;*7 + CAPTION, 7, FMTSTR, &quot;&gt;total:&quot;, &quot;&gt;avg:&quot;) do |x|
+      tf = x.report(&quot;for:&quot;)   { for i in 1..n; a = &quot;1&quot;; end }
+      tt = x.report(&quot;times:&quot;) { n.times do   ; a = &quot;1&quot;; end }
+      tu = x.report(&quot;upto:&quot;)  { 1.upto(n) do ; a = &quot;1&quot;; end }
+      [tf+tt+tu, (tf+tt+tu)/3]
+    end
+</pre>
+<p>
+The result:
+</p>
+<pre>
+                  user     system      total        real
+     for:     1.016667   0.016667   1.033333 (  0.485749)
+     times:   1.450000   0.016667   1.466667 (  0.681367)
+     upto:    1.533333   0.000000   1.533333 (  0.722166)
+     &gt;total:  4.000000   0.033333   4.033333 (  1.889282)
+     &gt;avg:    1.333333   0.011111   1.344444 (  0.629761)
+</pre>
+</li>
+</ul>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M007398">benchmark</a>&nbsp;&nbsp;
+      <a href="#M007399">bm</a>&nbsp;&nbsp;
+      <a href="#M007400">bmbm</a>&nbsp;&nbsp;
+      <a href="#M007401">measure</a>&nbsp;&nbsp;
+      <a href="#M007402">realtime</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="Benchmark/Tms.html" class="link">Benchmark::Tms</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BENCHMARK_VERSION</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;2002-04-25&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CAPTION</td>
+          <td>=</td>
+          <td class="context-item-value">Benchmark::Tms::CAPTION</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+The default caption string (heading above the output times).
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FMTSTR</td>
+          <td>=</td>
+          <td class="context-item-value">Benchmark::Tms::FMTSTR</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+The default format string used to display times. See also <a
+href="Benchmark/Tms.html#M007410">Benchmark::Tms#format</a>.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M007398" class="method-detail">
+        <a name="M007398"></a>
+
+        <div class="method-heading">
+          <a href="Benchmark.src/M007398.html" target="Code" class="method-signature"
+            onclick="popupCode('Benchmark.src/M007398.html');return false;">
+          <span class="method-name">benchmark</span><span class="method-args">(caption = &quot;&quot;, label_width = nil, fmtstr = nil, *labels) {|report| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Invokes the block with a <tt>Benchmark::Report</tt> object, which may be
+used to collect and report on the results of individual <a
+href="Benchmark.html#M007398">benchmark</a> tests. Reserves
+<em>label_width</em> leading spaces for labels on each line. Prints
+<em>caption</em> at the top of the report, and uses <em>fmt</em> to format
+each line. If the block returns an array of <tt><a
+href="Benchmark/Tms.html">Benchmark::Tms</a></tt> objects, these will be
+used to format additional lines of output. If <em>label</em> parameters are
+given, these are used to label these extra lines.
+</p>
+<p>
+<em>Note</em>: Other methods provide a simpler interface to this one, and
+are suitable for nearly all benchmarking requirements. See the examples in
+<a href="Benchmark.html">Benchmark</a>, and the <a
+href="Benchmark.html#M007399">bm</a> and <a
+href="Benchmark.html#M007400">bmbm</a> methods.
+</p>
+<p>
+Example:
+</p>
+<pre>
+    require 'benchmark'
+    include Benchmark          # we need the CAPTION and FMTSTR constants
+
+    n = 50000
+    Benchmark.benchmark(&quot; &quot;*7 + CAPTION, 7, FMTSTR, &quot;&gt;total:&quot;, &quot;&gt;avg:&quot;) do |x|
+      tf = x.report(&quot;for:&quot;)   { for i in 1..n; a = &quot;1&quot;; end }
+      tt = x.report(&quot;times:&quot;) { n.times do   ; a = &quot;1&quot;; end }
+      tu = x.report(&quot;upto:&quot;)  { 1.upto(n) do ; a = &quot;1&quot;; end }
+      [tf+tt+tu, (tf+tt+tu)/3]
+    end
+</pre>
+<p>
+<em>Generates:</em>
+</p>
+<pre>
+                    user     system      total        real
+       for:     1.016667   0.016667   1.033333 (  0.485749)
+       times:   1.450000   0.016667   1.466667 (  0.681367)
+       upto:    1.533333   0.000000   1.533333 (  0.722166)
+       &gt;total:  4.000000   0.033333   4.033333 (  1.889282)
+       &gt;avg:    1.333333   0.011111   1.344444 (  0.629761)
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M007399" class="method-detail">
+        <a name="M007399"></a>
+
+        <div class="method-heading">
+          <a href="Benchmark.src/M007399.html" target="Code" class="method-signature"
+            onclick="popupCode('Benchmark.src/M007399.html');return false;">
+          <span class="method-name">bm</span><span class="method-args">(label_width = 0, *labels) {|report| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+A simple interface to the <a href="Benchmark.html#M007398">benchmark</a>
+method, <a href="Benchmark.html#M007399">bm</a> is generates sequential
+reports with labels. The parameters have the same meaning as for <a
+href="Benchmark.html#M007398">benchmark</a>.
+</p>
+<pre>
+    require 'benchmark'
+
+    n = 50000
+    Benchmark.bm(7) do |x|
+      x.report(&quot;for:&quot;)   { for i in 1..n; a = &quot;1&quot;; end }
+      x.report(&quot;times:&quot;) { n.times do   ; a = &quot;1&quot;; end }
+      x.report(&quot;upto:&quot;)  { 1.upto(n) do ; a = &quot;1&quot;; end }
+    end
+</pre>
+<p>
+<em>Generates:</em>
+</p>
+<pre>
+                    user     system      total        real
+       for:     1.050000   0.000000   1.050000 (  0.503462)
+       times:   1.533333   0.016667   1.550000 (  0.735473)
+       upto:    1.500000   0.016667   1.516667 (  0.711239)
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M007400" class="method-detail">
+        <a name="M007400"></a>
+
+        <div class="method-heading">
+          <a href="Benchmark.src/M007400.html" target="Code" class="method-signature"
+            onclick="popupCode('Benchmark.src/M007400.html');return false;">
+          <span class="method-name">bmbm</span><span class="method-args">(width = 0) {|job| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sometimes <a href="Benchmark.html#M007398">benchmark</a> results are skewed
+because code executed earlier encounters different garbage collection
+overheads than that run later. <a href="Benchmark.html#M007400">bmbm</a>
+attempts to minimize this effect by running the tests twice, the first time
+as a rehearsal in order to get the runtime environment stable, the second
+time for real. <tt><a href="GC.html#M003682">GC.start</a></tt> is executed
+before the start of each of the real timings; the cost of this is not
+included in the timings. In reality, though, there&#8216;s only so much
+that <a href="Benchmark.html#M007400">bmbm</a> can do, and the results are
+not guaranteed to be isolated from garbage collection and other effects.
+</p>
+<p>
+Because <a href="Benchmark.html#M007400">bmbm</a> takes two passes through
+the tests, it can calculate the required label width.
+</p>
+<pre>
+      require 'benchmark'
+
+      array = (1..1000000).map { rand }
+
+      Benchmark.bmbm do |x|
+        x.report(&quot;sort!&quot;) { array.dup.sort! }
+        x.report(&quot;sort&quot;)  { array.dup.sort  }
+      end
+</pre>
+<p>
+<em>Generates:</em>
+</p>
+<pre>
+       Rehearsal -----------------------------------------
+       sort!  11.928000   0.010000  11.938000 ( 12.756000)
+       sort   13.048000   0.020000  13.068000 ( 13.857000)
+       ------------------------------- total: 25.006000sec
+
+                   user     system      total        real
+       sort!  12.959000   0.010000  12.969000 ( 13.793000)
+       sort   12.007000   0.000000  12.007000 ( 12.791000)
+</pre>
+<p>
+<a href="Benchmark.html#M007400">bmbm</a> yields a Benchmark::Job object
+and returns an array of <a href="Benchmark/Tms.html">Benchmark::Tms</a>
+objects.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007401" class="method-detail">
+        <a name="M007401"></a>
+
+        <div class="method-heading">
+          <a href="Benchmark.src/M007401.html" target="Code" class="method-signature"
+            onclick="popupCode('Benchmark.src/M007401.html');return false;">
+          <span class="method-name">measure</span><span class="method-args">(label = &quot;&quot;) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the time used to execute the given block as a <a
+href="Benchmark/Tms.html">Benchmark::Tms</a> object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007402" class="method-detail">
+        <a name="M007402"></a>
+
+        <div class="method-heading">
+          <a href="Benchmark.src/M007402.html" target="Code" class="method-signature"
+            onclick="popupCode('Benchmark.src/M007402.html');return false;">
+          <span class="method-name">realtime</span><span class="method-args">() {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the elapsed real time used to execute the given block.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

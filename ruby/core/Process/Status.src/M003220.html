@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>inspect (Process::Status)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     stat.inspect   =&gt; string
+ *
+ *  Override the inspection method.
+ */
+
+static VALUE
+pst_inspect(st)
+    VALUE st;
+{
+    VALUE pid;
+    int status;
+    VALUE str;
+    char buf[256];
+
+    pid = pst_pid(st);
+    status = NUM2INT(st);
+
+    snprintf(buf, sizeof(buf), &quot;#&lt;%s: pid=%ld&quot;, rb_class2name(CLASS_OF(st)), NUM2LONG(pid));
+    str = rb_str_new2(buf);
+    if (WIFSTOPPED(status)) {
+        int stopsig = WSTOPSIG(status);
+        const char *signame = ruby_signal_name(stopsig);
+        if (signame) {
+            snprintf(buf, sizeof(buf), &quot;,stopped(SIG%s=%d)&quot;, signame, stopsig);
+        }
+        else {
+            snprintf(buf, sizeof(buf), &quot;,stopped(%d)&quot;, stopsig);
+        }
+        rb_str_cat2(str, buf);
+    }
+    if (WIFSIGNALED(status)) {
+        int termsig = WTERMSIG(status);
+        const char *signame = ruby_signal_name(termsig);
+        if (signame) {
+            snprintf(buf, sizeof(buf), &quot;,signaled(SIG%s=%d)&quot;, signame, termsig);
+        }
+        else {
+            snprintf(buf, sizeof(buf), &quot;,signaled(%d)&quot;, termsig);
+        }
+        rb_str_cat2(str, buf);
+    }
+    if (WIFEXITED(status)) {
+        snprintf(buf, sizeof(buf), &quot;,exited(%d)&quot;, WEXITSTATUS(status));
+        rb_str_cat2(str, buf);
+    }
+#ifdef WCOREDUMP
+    if (WCOREDUMP(status)) {
+        rb_str_cat2(str, &quot;,coredumped&quot;);
+    }
+#endif
+    rb_str_cat2(str, &quot;&gt;&quot;);
+    return str;
+}</pre>
+</body>
+</html>

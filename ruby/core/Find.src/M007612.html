@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>find (Find)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/find.rb, line 35</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">find</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">paths</span>) <span class="ruby-comment cmt"># :yield: path</span>
+    <span class="ruby-identifier">paths</span>.<span class="ruby-identifier">collect!</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">d</span>.<span class="ruby-identifier">dup</span>}
+    <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">file</span> = <span class="ruby-identifier">paths</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-identifier">catch</span>(<span class="ruby-identifier">:prune</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">file</span>.<span class="ruby-identifier">dup</span>.<span class="ruby-identifier">taint</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span> <span class="ruby-identifier">file</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">lstat</span>(<span class="ruby-identifier">file</span>).<span class="ruby-identifier">directory?</span> <span class="ruby-keyword kw">then</span>
+            <span class="ruby-identifier">d</span> = <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">file</span>)
+            <span class="ruby-keyword kw">begin</span>
+              <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">f</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">d</span>
+                <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">f</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;.&quot;</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">f</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;..&quot;</span>
+                <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-constant">ALT_SEPARATOR</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">file</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^(?:[\/\\]|[A-Za-z]:[\/\\]?)$/</span> <span class="ruby-keyword kw">then</span>
+                  <span class="ruby-identifier">f</span> = <span class="ruby-identifier">file</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">f</span>
+                <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">file</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;/&quot;</span> <span class="ruby-keyword kw">then</span>
+                  <span class="ruby-identifier">f</span> = <span class="ruby-value str">&quot;/&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">f</span>
+                <span class="ruby-keyword kw">else</span>
+                  <span class="ruby-identifier">f</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">file</span>, <span class="ruby-identifier">f</span>)
+                <span class="ruby-keyword kw">end</span>
+                <span class="ruby-identifier">paths</span>.<span class="ruby-identifier">unshift</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">untaint</span>
+              <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">ensure</span>
+              <span class="ruby-identifier">d</span>.<span class="ruby-identifier">close</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">ENOENT</span>, <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">EACCES</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

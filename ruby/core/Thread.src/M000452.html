@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>run (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     thr.run   =&gt; thr
+ *  
+ *  Wakes up &lt;i&gt;thr&lt;/i&gt;, making it eligible for scheduling. If not in a critical
+ *  section, then invokes the scheduler.
+ *     
+ *     a = Thread.new { puts &quot;a&quot;; Thread.stop; puts &quot;c&quot; }
+ *     Thread.pass
+ *     puts &quot;Got here&quot;
+ *     a.run
+ *     a.join
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     a
+ *     Got here
+ *     c
+ */
+
+VALUE
+rb_thread_run(thread)
+    VALUE thread;
+{
+    rb_thread_wakeup(thread);
+    if (!rb_thread_critical) rb_thread_schedule();
+
+    return thread;
+}</pre>
+</body>
+</html>

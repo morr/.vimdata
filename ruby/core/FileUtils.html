@@ -1,0 +1,1382 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: FileUtils</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">FileUtils</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/lib/fileutils_rb.html">
+                lib/fileutils.rb
+                </a>
+        <br />
+                <a href="../files/lib/un_rb.html">
+                lib/un.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1>fileutils.rb</h1>
+<p>
+Copyright (c) 2000-2006 Minero Aoki
+</p>
+<p>
+This program is free software. You can distribute/modify this program under
+the same terms of ruby.
+</p>
+<h2>module <a href="FileUtils.html">FileUtils</a></h2>
+<p>
+Namespace for several file utility methods for copying, moving, removing,
+etc.
+</p>
+<h3><a href="Module.html">Module</a> Functions</h3>
+<pre>
+  cd(dir, options)
+  cd(dir, options) {|dir| .... }
+  pwd()
+  mkdir(dir, options)
+  mkdir(list, options)
+  mkdir_p(dir, options)
+  mkdir_p(list, options)
+  rmdir(dir, options)
+  rmdir(list, options)
+  ln(old, new, options)
+  ln(list, destdir, options)
+  ln_s(old, new, options)
+  ln_s(list, destdir, options)
+  ln_sf(src, dest, options)
+  cp(src, dest, options)
+  cp(list, dir, options)
+  cp_r(src, dest, options)
+  cp_r(list, dir, options)
+  mv(src, dest, options)
+  mv(list, dir, options)
+  rm(list, options)
+  rm_r(list, options)
+  rm_rf(list, options)
+  install(src, dest, mode = &lt;src's&gt;, options)
+  chmod(mode, list, options)
+  chmod_R(mode, list, options)
+  chown(user, group, list, options)
+  chown_R(user, group, list, options)
+  touch(list, options)
+</pre>
+<p>
+The <tt>options</tt> parameter is a hash of options, taken from the list
+<tt>:force</tt>, <tt>:noop</tt>, <tt>:preserve</tt>, and <tt>:verbose</tt>.
+<tt>:noop</tt> means that no changes are made. The other two are obvious.
+Each method documents the options that it honours.
+</p>
+<p>
+All methods that have the concept of a &quot;source&quot; file or directory
+can take either one file or a list of files in that argument. See the
+method documentation for examples.
+</p>
+<p>
+There are some `low level&#8217; methods, which do not accept any option:
+</p>
+<pre>
+  copy_entry(src, dest, preserve = false, dereference = false)
+  copy_file(src, dest, preserve = false, dereference = true)
+  copy_stream(srcstream, deststream)
+  remove_entry(path, force = false)
+  remove_entry_secure(path, force = false)
+  remove_file(path, force = false)
+  compare_file(path_a, path_b)
+  compare_stream(stream_a, stream_b)
+  uptodate?(file, cmp_list)
+</pre>
+<h2>module <a href="FileUtils/Verbose.html">FileUtils::Verbose</a></h2>
+<p>
+This module has all methods of <a href="FileUtils.html">FileUtils</a>
+module, but it outputs messages before acting. This equates to passing the
+<tt>:verbose</tt> flag to methods in <a
+href="FileUtils.html">FileUtils</a>.
+</p>
+<h2>module <a href="FileUtils/NoWrite.html">FileUtils::NoWrite</a></h2>
+<p>
+This module has all methods of <a href="FileUtils.html">FileUtils</a>
+module, but never changes files/directories. This equates to passing the
+<tt>:noop</tt> flag to methods in <a href="FileUtils.html">FileUtils</a>.
+</p>
+<h2>module <a href="FileUtils/DryRun.html">FileUtils::DryRun</a></h2>
+<p>
+This module has all methods of <a href="FileUtils.html">FileUtils</a>
+module, but never changes files/directories. This equates to passing the
+<tt>:noop</tt> and <tt>:verbose</tt> flags to methods in <a
+href="FileUtils.html">FileUtils</a>.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004311">cd</a>&nbsp;&nbsp;
+      <a href="#M004312">chdir</a>&nbsp;&nbsp;
+      <a href="#M004350">chmod</a>&nbsp;&nbsp;
+      <a href="#M004351">chmod_R</a>&nbsp;&nbsp;
+      <a href="#M004352">chown</a>&nbsp;&nbsp;
+      <a href="#M004353">chown_R</a>&nbsp;&nbsp;
+      <a href="#M004347">cmp</a>&nbsp;&nbsp;
+      <a href="#M004345">compare_file</a>&nbsp;&nbsp;
+      <a href="#M004348">compare_stream</a>&nbsp;&nbsp;
+      <a href="#M004325">copy</a>&nbsp;&nbsp;
+      <a href="#M004327">copy_entry</a>&nbsp;&nbsp;
+      <a href="#M004328">copy_file</a>&nbsp;&nbsp;
+      <a href="#M004329">copy_stream</a>&nbsp;&nbsp;
+      <a href="#M004324">cp</a>&nbsp;&nbsp;
+      <a href="#M004326">cp_r</a>&nbsp;&nbsp;
+      <a href="#M004341">fu_have_symlink?</a>&nbsp;&nbsp;
+      <a href="#M004340">fu_world_writable?</a>&nbsp;&nbsp;
+      <a href="#M004310">getwd</a>&nbsp;&nbsp;
+      <a href="#M004346">identical?</a>&nbsp;&nbsp;
+      <a href="#M004349">install</a>&nbsp;&nbsp;
+      <a href="#M004320">link</a>&nbsp;&nbsp;
+      <a href="#M004319">ln</a>&nbsp;&nbsp;
+      <a href="#M004321">ln_s</a>&nbsp;&nbsp;
+      <a href="#M004323">ln_sf</a>&nbsp;&nbsp;
+      <a href="#M004317">makedirs</a>&nbsp;&nbsp;
+      <a href="#M004314">mkdir</a>&nbsp;&nbsp;
+      <a href="#M004315">mkdir_p</a>&nbsp;&nbsp;
+      <a href="#M004316">mkpath</a>&nbsp;&nbsp;
+      <a href="#M004331">move</a>&nbsp;&nbsp;
+      <a href="#M004330">mv</a>&nbsp;&nbsp;
+      <a href="#M004309">pwd</a>&nbsp;&nbsp;
+      <a href="#M004333">remove</a>&nbsp;&nbsp;
+      <a href="#M004344">remove_dir</a>&nbsp;&nbsp;
+      <a href="#M004342">remove_entry</a>&nbsp;&nbsp;
+      <a href="#M004339">remove_entry_secure</a>&nbsp;&nbsp;
+      <a href="#M004343">remove_file</a>&nbsp;&nbsp;
+      <a href="#M004332">rm</a>&nbsp;&nbsp;
+      <a href="#M004334">rm_f</a>&nbsp;&nbsp;
+      <a href="#M004336">rm_r</a>&nbsp;&nbsp;
+      <a href="#M004337">rm_rf</a>&nbsp;&nbsp;
+      <a href="#M004318">rmdir</a>&nbsp;&nbsp;
+      <a href="#M004338">rmtree</a>&nbsp;&nbsp;
+      <a href="#M004335">safe_unlink</a>&nbsp;&nbsp;
+      <a href="#M004322">symlink</a>&nbsp;&nbsp;
+      <a href="#M004354">touch</a>&nbsp;&nbsp;
+      <a href="#M004313">uptodate?</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="FileUtils/StreamUtils_.html">StreamUtils_</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="FileUtils/DryRun.html" class="link">FileUtils::DryRun</a><br />
+Module <a href="FileUtils/NoWrite.html" class="link">FileUtils::NoWrite</a><br />
+Module <a href="FileUtils/StreamUtils_.html" class="link">FileUtils::StreamUtils_</a><br />
+Module <a href="FileUtils/Verbose.html" class="link">FileUtils::Verbose</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">METHODS</td>
+          <td>=</td>
+          <td class="context-item-value">singleton_methods() - %w( private_module_function       commands options have_option? options_of collect_method )</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004311" class="method-detail">
+        <a name="M004311"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004311.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004311.html');return false;">
+          <span class="method-name">cd</span><span class="method-args">(dir, options = {}) {|dir| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: verbose
+</p>
+<p>
+Changes the current directory to the directory <tt>dir</tt>.
+</p>
+<p>
+If this method is called with block, resumes to the old working directory
+after the block execution finished.
+</p>
+<pre>
+  FileUtils.cd('/', :verbose =&gt; true)   # chdir and report it
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004312" class="method-detail">
+        <a name="M004312"></a>
+
+        <div class="method-heading">
+          <span class="method-name">chdir</span><span class="method-args">(dir, options = {})</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FileUtils.html#M004311">cd</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004350" class="method-detail">
+        <a name="M004350"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004350.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004350.html');return false;">
+          <span class="method-name">chmod</span><span class="method-args">(mode, list, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: noop verbose
+</p>
+<p>
+Changes permission bits on the named files (in <tt>list</tt>) to the bit
+pattern represented by <tt>mode</tt>.
+</p>
+<pre>
+  FileUtils.chmod 0755, 'somecommand'
+  FileUtils.chmod 0644, %w(my.rb your.rb his.rb her.rb)
+  FileUtils.chmod 0755, '/usr/bin/ruby', :verbose =&gt; true
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004351" class="method-detail">
+        <a name="M004351"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004351.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004351.html');return false;">
+          <span class="method-name">chmod_R</span><span class="method-args">(mode, list, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: noop verbose force
+</p>
+<p>
+Changes permission bits on the named files (in <tt>list</tt>) to the bit
+pattern represented by <tt>mode</tt>.
+</p>
+<pre>
+  FileUtils.chmod_R 0700, &quot;/tmp/app.#{$$}&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004352" class="method-detail">
+        <a name="M004352"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004352.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004352.html');return false;">
+          <span class="method-name">chown</span><span class="method-args">(user, group, list, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: noop verbose
+</p>
+<p>
+Changes owner and group on the named files (in <tt>list</tt>) to the user
+<tt>user</tt> and the group <tt>group</tt>. <tt>user</tt> and
+<tt>group</tt> may be an ID (<a href="Integer.html">Integer</a>/<a
+href="String.html">String</a>) or a name (<a
+href="String.html">String</a>). If <tt>user</tt> or <tt>group</tt> is nil,
+this method does not change the attribute.
+</p>
+<pre>
+  FileUtils.chown 'root', 'staff', '/usr/local/bin/ruby'
+  FileUtils.chown nil, 'bin', Dir.glob('/usr/bin/*'), :verbose =&gt; true
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004353" class="method-detail">
+        <a name="M004353"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004353.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004353.html');return false;">
+          <span class="method-name">chown_R</span><span class="method-args">(user, group, list, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: noop verbose force
+</p>
+<p>
+Changes owner and group on the named files (in <tt>list</tt>) to the user
+<tt>user</tt> and the group <tt>group</tt> recursively. <tt>user</tt> and
+<tt>group</tt> may be an ID (<a href="Integer.html">Integer</a>/<a
+href="String.html">String</a>) or a name (<a
+href="String.html">String</a>). If <tt>user</tt> or <tt>group</tt> is nil,
+this method does not change the attribute.
+</p>
+<pre>
+  FileUtils.chown_R 'www', 'www', '/var/www/htdocs'
+  FileUtils.chown_R 'cvs', 'cvs', '/var/cvs', :verbose =&gt; true
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004347" class="method-detail">
+        <a name="M004347"></a>
+
+        <div class="method-heading">
+          <span class="method-name">cmp</span><span class="method-args">(a, b)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FileUtils.html#M004345">compare_file</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004345" class="method-detail">
+        <a name="M004345"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004345.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004345.html');return false;">
+          <span class="method-name">compare_file</span><span class="method-args">(a, b)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if the contents of a file A and a file B are identical.
+</p>
+<pre>
+  FileUtils.compare_file('somefile', 'somefile')  #=&gt; true
+  FileUtils.compare_file('/bin/cp', '/bin/mv')    #=&gt; maybe false
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004348" class="method-detail">
+        <a name="M004348"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004348.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004348.html');return false;">
+          <span class="method-name">compare_stream</span><span class="method-args">(a, b)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if the contents of a stream <tt>a</tt> and <tt>b</tt> are
+identical.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004325" class="method-detail">
+        <a name="M004325"></a>
+
+        <div class="method-heading">
+          <span class="method-name">copy</span><span class="method-args">(src, dest, options = {})</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FileUtils.html#M004324">cp</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004327" class="method-detail">
+        <a name="M004327"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004327.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004327.html');return false;">
+          <span class="method-name">copy_entry</span><span class="method-args">(src, dest, preserve = false, dereference_root = false, remove_destination = false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Copies a file system entry <tt>src</tt> to <tt>dest</tt>. If <tt>src</tt>
+is a directory, this method copies its contents recursively. This method
+preserves file types, c.f. <a href="FileUtils.html#M004322">symlink</a>,
+directory&#8230; (FIFO, device files and etc. are not supported yet)
+</p>
+<p>
+Both of <tt>src</tt> and <tt>dest</tt> must be a path name. <tt>src</tt>
+must exist, <tt>dest</tt> must not exist.
+</p>
+<p>
+If <tt>preserve</tt> is true, this method preserves owner, group,
+permissions and modified time.
+</p>
+<p>
+If <tt>dereference_root</tt> is true, this method dereference tree root.
+</p>
+<p>
+If <tt>remove_destination</tt> is true, this method removes each
+destination file before <a href="FileUtils.html#M004325">copy</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004328" class="method-detail">
+        <a name="M004328"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004328.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004328.html');return false;">
+          <span class="method-name">copy_file</span><span class="method-args">(src, dest, preserve = false, dereference = true)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Copies file contents of <tt>src</tt> to <tt>dest</tt>. Both of <tt>src</tt>
+and <tt>dest</tt> must be a path name.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004329" class="method-detail">
+        <a name="M004329"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004329.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004329.html');return false;">
+          <span class="method-name">copy_stream</span><span class="method-args">(src, dest)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Copies stream <tt>src</tt> to <tt>dest</tt>. <tt>src</tt> must respond to
+read(n) and <tt>dest</tt> must respond to write(str).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004324" class="method-detail">
+        <a name="M004324"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004324.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004324.html');return false;">
+          <span class="method-name">cp</span><span class="method-args">(src, dest, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: preserve noop verbose
+</p>
+<p>
+Copies a file content <tt>src</tt> to <tt>dest</tt>. If <tt>dest</tt> is a
+directory, copies <tt>src</tt> to +dest/src+.
+</p>
+<p>
+If <tt>src</tt> is a list of files, then <tt>dest</tt> must be a directory.
+</p>
+<pre>
+  FileUtils.cp 'eval.c', 'eval.c.org'
+  FileUtils.cp %w(cgi.rb complex.rb date.rb), '/usr/lib/ruby/1.6'
+  FileUtils.cp %w(cgi.rb complex.rb date.rb), '/usr/lib/ruby/1.6', :verbose =&gt; true
+  FileUtils.cp 'symlink', 'dest'   # copy content, &quot;dest&quot; is not a symlink
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004326" class="method-detail">
+        <a name="M004326"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004326.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004326.html');return false;">
+          <span class="method-name">cp_r</span><span class="method-args">(src, dest, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: preserve noop verbose dereference_root
+remove_destination
+</p>
+<p>
+Copies <tt>src</tt> to <tt>dest</tt>. If <tt>src</tt> is a directory, this
+method copies all its contents recursively. If <tt>dest</tt> is a
+directory, copies <tt>src</tt> to +dest/src+.
+</p>
+<p>
+<tt>src</tt> can be a list of files.
+</p>
+<pre>
+  # Installing ruby library &quot;mylib&quot; under the site_ruby
+  FileUtils.rm_r site_ruby + '/mylib', :force
+  FileUtils.cp_r 'lib/', site_ruby + '/mylib'
+
+  # Examples of copying several files to target directory.
+  FileUtils.cp_r %w(mail.rb field.rb debug/), site_ruby + '/tmail'
+  FileUtils.cp_r Dir.glob('*.rb'), '/home/aamine/lib/ruby', :noop =&gt; true, :verbose =&gt; true
+
+  # If you want to copy all contents of a directory instead of the
+  # directory itself, c.f. src/x -&gt; dest/x, src/y -&gt; dest/y,
+  # use following code.
+  FileUtils.cp_r 'src/.', 'dest'     # cp_r('src', 'dest') makes src/dest,
+                                     # but this doesn't.
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004341" class="method-detail">
+        <a name="M004341"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004341.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004341.html');return false;">
+          <span class="method-name">fu_have_symlink?</span><span class="method-args">(</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004340" class="method-detail">
+        <a name="M004340"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004340.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004340.html');return false;">
+          <span class="method-name">fu_world_writable?</span><span class="method-args">(st)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004310" class="method-detail">
+        <a name="M004310"></a>
+
+        <div class="method-heading">
+          <span class="method-name">getwd</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FileUtils.html#M004309">pwd</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004346" class="method-detail">
+        <a name="M004346"></a>
+
+        <div class="method-heading">
+          <span class="method-name">identical?</span><span class="method-args">(a, b)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FileUtils.html#M004345">compare_file</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004349" class="method-detail">
+        <a name="M004349"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004349.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004349.html');return false;">
+          <span class="method-name">install</span><span class="method-args">(src, dest, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: mode preserve noop verbose
+</p>
+<p>
+If <tt>src</tt> is not same as <tt>dest</tt>, copies it and changes the
+permission mode to <tt>mode</tt>. If <tt>dest</tt> is a directory,
+destination is <tt>dest</tt>/<tt>src</tt>. This method removes destination
+before <a href="FileUtils.html#M004325">copy</a>.
+</p>
+<pre>
+  FileUtils.install 'ruby', '/usr/local/bin/ruby', :mode =&gt; 0755, :verbose =&gt; true
+  FileUtils.install 'lib.rb', '/usr/local/lib/ruby/site_ruby', :verbose =&gt; true
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004320" class="method-detail">
+        <a name="M004320"></a>
+
+        <div class="method-heading">
+          <span class="method-name">link</span><span class="method-args">(src, dest, options = {})</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FileUtils.html#M004319">ln</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004319" class="method-detail">
+        <a name="M004319"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004319.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004319.html');return false;">
+          <span class="method-name">ln</span><span class="method-args">(src, dest, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: force noop verbose
+</p>
+<p>
+<b><tt><a href="FileUtils.html#M004319">ln</a>(old, new, options =
+{})</tt></b>
+</p>
+<p>
+Creates a hard <a href="FileUtils.html#M004320">link</a> <tt>new</tt> which
+points to <tt>old</tt>. If <tt>new</tt> already exists and it is a
+directory, creates a <a href="FileUtils.html#M004320">link</a> +new/old+.
+If <tt>new</tt> already exists and it is not a directory, raises
+Errno::EEXIST. But if :force option is set, overwrite <tt>new</tt>.
+</p>
+<pre>
+  FileUtils.ln 'gcc', 'cc', :verbose =&gt; true
+  FileUtils.ln '/usr/bin/emacs21', '/usr/bin/emacs'
+</pre>
+<p>
+<b><tt><a href="FileUtils.html#M004319">ln</a>(list, destdir, options =
+{})</tt></b>
+</p>
+<p>
+Creates several hard links in a directory, with each one pointing to the
+item in <tt>list</tt>. If <tt>destdir</tt> is not a directory, raises
+Errno::ENOTDIR.
+</p>
+<pre>
+  include FileUtils
+  cd '/sbin'
+  FileUtils.ln %w(cp mv mkdir), '/bin'   # Now /sbin/cp and /bin/cp are linked.
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004321" class="method-detail">
+        <a name="M004321"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004321.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004321.html');return false;">
+          <span class="method-name">ln_s</span><span class="method-args">(src, dest, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: force noop verbose
+</p>
+<p>
+<b><tt><a href="FileUtils.html#M004321">ln_s</a>(old, new, options =
+{})</tt></b>
+</p>
+<p>
+Creates a symbolic <a href="FileUtils.html#M004320">link</a> <tt>new</tt>
+which points to <tt>old</tt>. If <tt>new</tt> already exists and it is a
+directory, creates a symbolic <a href="FileUtils.html#M004320">link</a>
++new/old+. If <tt>new</tt> already exists and it is not a directory, raises
+Errno::EEXIST. But if :force option is set, overwrite <tt>new</tt>.
+</p>
+<pre>
+  FileUtils.ln_s '/usr/bin/ruby', '/usr/local/bin/ruby'
+  FileUtils.ln_s 'verylongsourcefilename.c', 'c', :force =&gt; true
+</pre>
+<p>
+<b><tt><a href="FileUtils.html#M004321">ln_s</a>(list, destdir, options =
+{})</tt></b>
+</p>
+<p>
+Creates several symbolic links in a directory, with each one pointing to
+the item in <tt>list</tt>. If <tt>destdir</tt> is not a directory, raises
+Errno::ENOTDIR.
+</p>
+<p>
+If <tt>destdir</tt> is not a directory, raises Errno::ENOTDIR.
+</p>
+<pre>
+  FileUtils.ln_s Dir.glob('bin/*.rb'), '/home/aamine/bin'
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004323" class="method-detail">
+        <a name="M004323"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004323.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004323.html');return false;">
+          <span class="method-name">ln_sf</span><span class="method-args">(src, dest, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: noop verbose
+</p>
+<p>
+Same as
+</p>
+<pre>
+  #ln_s(src, dest, :force)
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004317" class="method-detail">
+        <a name="M004317"></a>
+
+        <div class="method-heading">
+          <span class="method-name">makedirs</span><span class="method-args">(list, options = {})</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FileUtils.html#M004315">mkdir_p</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004314" class="method-detail">
+        <a name="M004314"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004314.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004314.html');return false;">
+          <span class="method-name">mkdir</span><span class="method-args">(list, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: mode noop verbose
+</p>
+<p>
+Creates one or more directories.
+</p>
+<pre>
+  FileUtils.mkdir 'test'
+  FileUtils.mkdir %w( tmp data )
+  FileUtils.mkdir 'notexist', :noop =&gt; true  # Does not really create.
+  FileUtils.mkdir 'tmp', :mode =&gt; 0700
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004315" class="method-detail">
+        <a name="M004315"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004315.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004315.html');return false;">
+          <span class="method-name">mkdir_p</span><span class="method-args">(list, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: mode noop verbose
+</p>
+<p>
+Creates a directory and all its parent directories. For example,
+</p>
+<pre>
+  FileUtils.mkdir_p '/usr/local/lib/ruby'
+</pre>
+<p>
+causes to make following directories, if it does not exist.
+</p>
+<pre>
+    * /usr
+    * /usr/local
+    * /usr/local/lib
+    * /usr/local/lib/ruby
+</pre>
+<p>
+You can pass several directories at a time in a list.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004316" class="method-detail">
+        <a name="M004316"></a>
+
+        <div class="method-heading">
+          <span class="method-name">mkpath</span><span class="method-args">(list, options = {})</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FileUtils.html#M004315">mkdir_p</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004331" class="method-detail">
+        <a name="M004331"></a>
+
+        <div class="method-heading">
+          <span class="method-name">move</span><span class="method-args">(src, dest, options = {})</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FileUtils.html#M004330">mv</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004330" class="method-detail">
+        <a name="M004330"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004330.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004330.html');return false;">
+          <span class="method-name">mv</span><span class="method-args">(src, dest, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: force noop verbose
+</p>
+<p>
+Moves file(s) <tt>src</tt> to <tt>dest</tt>. If <tt>file</tt> and
+<tt>dest</tt> exist on the different disk partition, the file is copied
+instead.
+</p>
+<pre>
+  FileUtils.mv 'badname.rb', 'goodname.rb'
+  FileUtils.mv 'stuff.rb', '/notexist/lib/ruby', :force =&gt; true  # no error
+
+  FileUtils.mv %w(junk.txt dust.txt), '/home/aamine/.trash/'
+  FileUtils.mv Dir.glob('test*.rb'), 'test', :noop =&gt; true, :verbose =&gt; true
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004309" class="method-detail">
+        <a name="M004309"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004309.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004309.html');return false;">
+          <span class="method-name">pwd</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: (none)
+</p>
+<p>
+Returns the name of the current directory.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004333" class="method-detail">
+        <a name="M004333"></a>
+
+        <div class="method-heading">
+          <span class="method-name">remove</span><span class="method-args">(list, options = {})</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FileUtils.html#M004332">rm</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004344" class="method-detail">
+        <a name="M004344"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004344.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004344.html');return false;">
+          <span class="method-name">remove_dir</span><span class="method-args">(path, force = false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Removes a directory <tt>dir</tt> and its contents recursively. This method
+ignores <a href="StandardError.html">StandardError</a> if <tt>force</tt> is
+true.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004342" class="method-detail">
+        <a name="M004342"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004342.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004342.html');return false;">
+          <span class="method-name">remove_entry</span><span class="method-args">(path, force = false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This method removes a file system entry <tt>path</tt>. <tt>path</tt> might
+be a regular file, a directory, or something. If <tt>path</tt> is a
+directory, <a href="FileUtils.html#M004333">remove</a> it recursively.
+</p>
+<p>
+See also <a href="FileUtils.html#M004339">remove_entry_secure</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004339" class="method-detail">
+        <a name="M004339"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004339.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004339.html');return false;">
+          <span class="method-name">remove_entry_secure</span><span class="method-args">(path, force = false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This method removes a file system entry <tt>path</tt>. <tt>path</tt> shall
+be a regular file, a directory, or something. If <tt>path</tt> is a
+directory, <a href="FileUtils.html#M004333">remove</a> it recursively. This
+method is required to avoid TOCTTOU (time-of-check-to-time-of-use) local
+security vulnerability of <a href="FileUtils.html#M004336">rm_r</a>. <a
+href="FileUtils.html#M004336">rm_r</a> causes security hole when:
+</p>
+<pre>
+  * Parent directory is world writable (including /tmp).
+  * Removing directory tree includes world writable directory.
+  * The system has symbolic link.
+</pre>
+<p>
+To avoid this security hole, this method applies special preprocess. If
+<tt>path</tt> is a directory, this method <a
+href="FileUtils.html#M004352">chown</a>(2) and <a
+href="FileUtils.html#M004350">chmod</a>(2) all removing directories. This
+requires the current process is the owner of the removing whole directory
+tree, or is the super user (root).
+</p>
+<p>
+WARNING: You must ensure that <b>ALL</b> parent directories are not world
+writable. Otherwise this method does not work. Only exception is temporary
+directory like /tmp and /var/tmp, whose permission is 1777.
+</p>
+<p>
+WARNING: Only the owner of the removing directory tree, or Unix super user
+(root) should invoke this method. Otherwise this method does not work.
+</p>
+<p>
+For details of this security vulnerability, see Perl&#8216;s case:
+</p>
+<pre>
+  http://www.cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0448
+  http://www.cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0452
+</pre>
+<p>
+For fileutils.rb, this vulnerability is reported in [ruby-dev:26100].
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004343" class="method-detail">
+        <a name="M004343"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004343.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004343.html');return false;">
+          <span class="method-name">remove_file</span><span class="method-args">(path, force = false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Removes a file <tt>path</tt>. This method ignores <a
+href="StandardError.html">StandardError</a> if <tt>force</tt> is true.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004332" class="method-detail">
+        <a name="M004332"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004332.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004332.html');return false;">
+          <span class="method-name">rm</span><span class="method-args">(list, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: force noop verbose
+</p>
+<p>
+Remove file(s) specified in <tt>list</tt>. This method cannot <a
+href="FileUtils.html#M004333">remove</a> directories. All StandardErrors
+are ignored when the :force option is set.
+</p>
+<pre>
+  FileUtils.rm %w( junk.txt dust.txt )
+  FileUtils.rm Dir.glob('*.so')
+  FileUtils.rm 'NotExistFile', :force =&gt; true   # never raises exception
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004334" class="method-detail">
+        <a name="M004334"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004334.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004334.html');return false;">
+          <span class="method-name">rm_f</span><span class="method-args">(list, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: noop verbose
+</p>
+<p>
+Equivalent to
+</p>
+<pre>
+  #rm(list, :force =&gt; true)
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004336" class="method-detail">
+        <a name="M004336"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004336.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004336.html');return false;">
+          <span class="method-name">rm_r</span><span class="method-args">(list, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: force noop verbose secure
+</p>
+<p>
+<a href="FileUtils.html#M004333">remove</a> files <tt>list</tt>[0]
+<tt>list</tt>[1]&#8230; If <tt>list</tt>[n] is a directory, removes its all
+contents recursively. This method ignores <a
+href="StandardError.html">StandardError</a> when :force option is set.
+</p>
+<pre>
+  FileUtils.rm_r Dir.glob('/tmp/*')
+  FileUtils.rm_r '/', :force =&gt; true          #  :-)
+</pre>
+<p>
+WARNING: This method causes local vulnerability if one of parent
+directories or removing directory tree are world writable (including /tmp,
+whose permission is 1777), and the current process has strong privilege
+such as Unix super user (root), and the system has symbolic <a
+href="FileUtils.html#M004320">link</a>. For secure removing, read the
+documentation of <a href="FileUtils.html#M004339">remove_entry_secure</a>
+carefully, and set :secure option to true. Default is :secure=&gt;false.
+</p>
+<p>
+NOTE: This method calls <a
+href="FileUtils.html#M004339">remove_entry_secure</a> if :secure option is
+set. See also <a href="FileUtils.html#M004339">remove_entry_secure</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004337" class="method-detail">
+        <a name="M004337"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004337.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004337.html');return false;">
+          <span class="method-name">rm_rf</span><span class="method-args">(list, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: noop verbose secure
+</p>
+<p>
+Equivalent to
+</p>
+<pre>
+  #rm_r(list, :force =&gt; true)
+</pre>
+<p>
+WARNING: This method causes local vulnerability. Read the documentation of
+<a href="FileUtils.html#M004336">rm_r</a> first.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004318" class="method-detail">
+        <a name="M004318"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004318.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004318.html');return false;">
+          <span class="method-name">rmdir</span><span class="method-args">(list, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: noop, verbose
+</p>
+<p>
+Removes one or more directories.
+</p>
+<pre>
+  FileUtils.rmdir 'somedir'
+  FileUtils.rmdir %w(somedir anydir otherdir)
+  # Does not really remove directory; outputs message.
+  FileUtils.rmdir 'somedir', :verbose =&gt; true, :noop =&gt; true
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004338" class="method-detail">
+        <a name="M004338"></a>
+
+        <div class="method-heading">
+          <span class="method-name">rmtree</span><span class="method-args">(list, options = {})</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FileUtils.html#M004337">rm_rf</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004335" class="method-detail">
+        <a name="M004335"></a>
+
+        <div class="method-heading">
+          <span class="method-name">safe_unlink</span><span class="method-args">(list, options = {})</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FileUtils.html#M004334">rm_f</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004322" class="method-detail">
+        <a name="M004322"></a>
+
+        <div class="method-heading">
+          <span class="method-name">symlink</span><span class="method-args">(src, dest, options = {})</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FileUtils.html#M004321">ln_s</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004354" class="method-detail">
+        <a name="M004354"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004354.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004354.html');return false;">
+          <span class="method-name">touch</span><span class="method-args">(list, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: noop verbose
+</p>
+<p>
+Updates modification time (mtime) and access time (atime) of file(s) in
+<tt>list</tt>. Files are created if they don&#8216;t exist.
+</p>
+<pre>
+  FileUtils.touch 'timestamp'
+  FileUtils.touch Dir.glob('*.c');  system 'make'
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004313" class="method-detail">
+        <a name="M004313"></a>
+
+        <div class="method-heading">
+          <a href="FileUtils.src/M004313.html" target="Code" class="method-signature"
+            onclick="popupCode('FileUtils.src/M004313.html');return false;">
+          <span class="method-name">uptodate?</span><span class="method-args">(new, old_list, options = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Options.html">Options</a>: (none)
+</p>
+<p>
+Returns true if <tt>newer</tt> is newer than all <tt>old_list</tt>.
+Non-existent files are older than any file.
+</p>
+<pre>
+  FileUtils.uptodate?('hello.o', %w(hello.c hello.h)) or    #       system 'make hello.o'
+</pre>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

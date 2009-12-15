@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>params (WIN32OLE_METHOD)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE_METHOD#params
+ * 
+ *  returns array of WIN32OLE_PARAM object corresponding with method parameters.
+ *     tobj = WIN32OLE_TYPE.new('Microsoft Excel 9.0 Object Library', 'Workbook')
+ *     method = WIN32OLE_METHOD.new(tobj, 'SaveAs')
+ *     p method.params # =&gt; [Filename, FileFormat, Password, WriteResPassword, 
+ *                           ReadOnlyRecommended, CreateBackup, AccessMode, 
+ *                           ConflictResolution, AddToMru, TextCodepage, 
+ *                           TextVisualLayout]
+ */
+static VALUE
+folemethod_params(self)
+    VALUE self;
+{
+    struct olemethoddata *pmethod;
+    Data_Get_Struct(self, struct olemethoddata, pmethod);
+    return ole_method_params(pmethod-&gt;pTypeInfo, pmethod-&gt;index);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,926 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Logger</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Logger</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/lib/logger_rb.html">
+                lib/logger.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Simple logging utility.
+</p>
+<table>
+<tr><td valign="top">Author:</td><td>NAKAMURA, Hiroshi &lt;nakahiro@sarion.co.jp&gt;
+
+</td></tr>
+<tr><td valign="top">Documentation:</td><td>NAKAMURA, Hiroshi and Gavin Sinclair
+
+</td></tr>
+<tr><td valign="top">License:</td><td>You can redistribute it and/or modify it under the same terms of
+Ruby&#8216;s license; either the dual license version in 2003, or any later
+version.
+
+</td></tr>
+<tr><td valign="top">Revision:</td><td>$Id: logger.rb 22283 2009-02-13 10:18:12Z shyouhei $
+
+</td></tr>
+</table>
+<h2>Description</h2>
+<p>
+The <a href="Logger.html">Logger</a> class provides a simple but
+sophisticated logging utility that anyone can use because it&#8216;s
+included in the Ruby 1.8.x standard library.
+</p>
+<p>
+The HOWTOs below give a code-based overview of <a
+href="Logger.html">Logger</a>&#8216;s usage, but the basic concept is as
+follows. You create a <a href="Logger.html">Logger</a> object (output to a
+file or elsewhere), and use it to <a href="Logger.html#M001004">log</a>
+messages. The messages will have varying levels (<tt><a
+href="Logger.html#M001007">info</a></tt>, <tt><a
+href="Logger.html#M001009">error</a></tt>, etc), reflecting their varying
+importance. The levels, and their meanings, are:
+</p>
+<table>
+<tr><td valign="top"><tt>FATAL</tt>:</td><td>an unhandleable <a href="Logger.html#M001009">error</a> that results in a
+program crash
+
+</td></tr>
+<tr><td valign="top"><tt>ERROR</tt>:</td><td>a handleable <a href="Logger.html#M001009">error</a> condition
+
+</td></tr>
+<tr><td valign="top"><tt>WARN</tt>:</td><td>a warning
+
+</td></tr>
+<tr><td valign="top"><tt>INFO</tt>:</td><td>generic (useful) information about system operation
+
+</td></tr>
+<tr><td valign="top"><tt>DEBUG</tt>:</td><td>low-level information for developers
+
+</td></tr>
+</table>
+<p>
+So each message has a level, and the <a href="Logger.html">Logger</a>
+itself has a level, which acts as a filter, so you can control the amount
+of information emitted from the logger without having to remove actual
+messages.
+</p>
+<p>
+For instance, in a production system, you may have your logger(s) set to
+<tt>INFO</tt> (or <tt>WARN</tt> if you don&#8216;t want the <a
+href="Logger.html#M001004">log</a> files growing large with repetitive
+information). When you are developing it, though, you probably want to know
+about the program&#8216;s internal state, and would set them to
+<tt>DEBUG</tt>.
+</p>
+<h3>Example</h3>
+<p>
+A simple example demonstrates the above explanation:
+</p>
+<pre>
+  log = Logger.new(STDOUT)
+  log.level = Logger::WARN
+
+  log.debug(&quot;Created logger&quot;)
+  log.info(&quot;Program started&quot;)
+  log.warn(&quot;Nothing to do!&quot;)
+
+  begin
+    File.each_line(path) do |line|
+      unless line =~ /^(\w+) = (.*)$/
+        log.error(&quot;Line in wrong format: #{line}&quot;)
+      end
+    end
+  rescue =&gt; err
+    log.fatal(&quot;Caught exception; exiting&quot;)
+    log.fatal(err)
+  end
+</pre>
+<p>
+Because the <a href="Logger.html">Logger</a>&#8216;s level is set to
+<tt>WARN</tt>, only the warning, <a href="Logger.html#M001009">error</a>,
+and <a href="Logger.html#M001010">fatal</a> messages are recorded. The <a
+href="Logger.html#M001006">debug</a> and <a
+href="Logger.html#M001007">info</a> messages are silently discarded.
+</p>
+<h3>Features</h3>
+<p>
+There are several interesting features that <a
+href="Logger.html">Logger</a> provides, like auto-rolling of <a
+href="Logger.html#M001004">log</a> files, setting the format of <a
+href="Logger.html#M001004">log</a> messages, and specifying a program name
+in conjunction with the message. The next section shows you how to achieve
+these things.
+</p>
+<h2>HOWTOs</h2>
+<h3>How to create a logger</h3>
+<p>
+The options below give you various choices, in more or less increasing
+complexity.
+</p>
+<ol>
+<li>Create a logger which logs messages to STDERR/STDOUT.
+
+<pre>
+  logger = Logger.new(STDERR)
+  logger = Logger.new(STDOUT)
+</pre>
+</li>
+<li>Create a logger for the file which has the specified name.
+
+<pre>
+  logger = Logger.new('logfile.log')
+</pre>
+</li>
+<li>Create a logger for the specified file.
+
+<pre>
+  file = File.open('foo.log', File::WRONLY | File::APPEND)
+  # To create new (and to remove old) logfile, add File::CREAT like;
+  #   file = open('foo.log', File::WRONLY | File::APPEND | File::CREAT)
+  logger = Logger.new(file)
+</pre>
+</li>
+<li>Create a logger which ages logfile once it reaches a certain size. Leave 10
+&quot;old <a href="Logger.html#M001004">log</a> files&quot; and each file
+is about 1,024,000 bytes.
+
+<pre>
+  logger = Logger.new('foo.log', 10, 1024000)
+</pre>
+</li>
+<li>Create a logger which ages logfile daily/weekly/monthly.
+
+<pre>
+  logger = Logger.new('foo.log', 'daily')
+  logger = Logger.new('foo.log', 'weekly')
+  logger = Logger.new('foo.log', 'monthly')
+</pre>
+</li>
+</ol>
+<h3>How to <a href="Logger.html#M001004">log</a> a message</h3>
+<p>
+Notice the different methods (<tt><a
+href="Logger.html#M001010">fatal</a></tt>, <tt><a
+href="Logger.html#M001009">error</a></tt>, <tt><a
+href="Logger.html#M001007">info</a></tt>) being used to <a
+href="Logger.html#M001004">log</a> messages of various levels. Other
+methods in this family are <tt><a href="Logger.html#M001008">warn</a></tt>
+and <tt><a href="Logger.html#M001006">debug</a></tt>. <tt><a
+href="Logger.html#M001003">add</a></tt> is used below to <a
+href="Logger.html#M001004">log</a> a message of an arbitrary (perhaps
+dynamic) level.
+</p>
+<ol>
+<li>Message in block.
+
+<pre>
+  logger.fatal { &quot;Argument 'foo' not given.&quot; }
+</pre>
+</li>
+<li>Message as a string.
+
+<pre>
+  logger.error &quot;Argument #{ @foo } mismatch.&quot;
+</pre>
+</li>
+<li>With progname.
+
+<pre>
+  logger.info('initialize') { &quot;Initializing...&quot; }
+</pre>
+</li>
+<li>With severity.
+
+<pre>
+  logger.add(Logger::FATAL) { 'Fatal error!' }
+</pre>
+</li>
+</ol>
+<h3>How to <a href="Logger.html#M001012">close</a> a logger</h3>
+<pre>
+     logger.close
+</pre>
+<h3>Setting severity threshold</h3>
+<ol>
+<li>Original interface.
+
+<pre>
+  logger.sev_threshold = Logger::WARN
+</pre>
+</li>
+<li>Log4r (somewhat) compatible interface.
+
+<pre>
+  logger.level = Logger::INFO
+
+  DEBUG &lt; INFO &lt; WARN &lt; ERROR &lt; FATAL &lt; UNKNOWN
+</pre>
+</li>
+</ol>
+<h2>Format</h2>
+<p>
+Log messages are rendered in the output stream in a certain format. The
+default format and a sample are shown below:
+</p>
+<p>
+Log format:
+</p>
+<pre>
+  SeverityID, [Date Time mSec #pid] SeverityLabel -- ProgName: message
+</pre>
+<p>
+Log sample:
+</p>
+<pre>
+  I, [Wed Mar 03 02:34:24 JST 1999 895701 #19074]  INFO -- Main: info.
+</pre>
+<p>
+You may change the date and time format in this manner:
+</p>
+<pre>
+  logger.datetime_format = &quot;%Y-%m-%d %H:%M:%S&quot;
+        # e.g. &quot;2004-01-03 00:54:26&quot;
+</pre>
+<p>
+There is currently no supported way to change the overall format, but you
+may have some luck hacking the Format constant.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001005">&lt;&lt;</a>&nbsp;&nbsp;
+      <a href="#M001003">add</a>&nbsp;&nbsp;
+      <a href="#M001012">close</a>&nbsp;&nbsp;
+      <a href="#M000996">datetime_format</a>&nbsp;&nbsp;
+      <a href="#M000995">datetime_format=</a>&nbsp;&nbsp;
+      <a href="#M001006">debug</a>&nbsp;&nbsp;
+      <a href="#M000997">debug?</a>&nbsp;&nbsp;
+      <a href="#M001009">error</a>&nbsp;&nbsp;
+      <a href="#M001000">error?</a>&nbsp;&nbsp;
+      <a href="#M001010">fatal</a>&nbsp;&nbsp;
+      <a href="#M001001">fatal?</a>&nbsp;&nbsp;
+      <a href="#M001007">info</a>&nbsp;&nbsp;
+      <a href="#M000998">info?</a>&nbsp;&nbsp;
+      <a href="#M001004">log</a>&nbsp;&nbsp;
+      <a href="#M001002">new</a>&nbsp;&nbsp;
+      <a href="#M001011">unknown</a>&nbsp;&nbsp;
+      <a href="#M001008">warn</a>&nbsp;&nbsp;
+      <a href="#M000999">warn?</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="Logger/Severity.html">Severity</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="Logger/Severity.html" class="link">Logger::Severity</a><br />
+Class <a href="Logger/Application.html" class="link">Logger::Application</a><br />
+Class <a href="Logger/Error.html" class="link">Logger::Error</a><br />
+Class <a href="Logger/Formatter.html" class="link">Logger::Formatter</a><br />
+Class <a href="Logger/LogDevice.html" class="link">Logger::LogDevice</a><br />
+Class <a href="Logger/ShiftingError.html" class="link">Logger::ShiftingError</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">VERSION</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;1.2.6&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ProgName</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;#{name.chomp(&quot;,v&quot;)}/#{rev}&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SEV_LABEL</td>
+          <td>=</td>
+          <td class="context-item-value">%w(DEBUG INFO WARN ERROR FATAL ANY)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+<a href="Logger/Severity.html">Severity</a> label for logging. (max 5 char)
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">level</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">sev_threshold</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">level=</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">sev_threshold=</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">formatter</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+<a href="Logging.html">Logging</a> formatter. formatter#call is invoked
+with 4 arguments; severity, time, progname and msg for each <a
+href="Logger.html#M001004">log</a>. Bear in mind that time is a <a
+href="Time.html">Time</a> and msg is an <a href="Object.html">Object</a>
+that user passed and it could not be a <a href="String.html">String</a>. It
+is expected to return a logdev#write-able <a href="Object.html">Object</a>.
+Default formatter is used when no formatter is set.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">level</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+<a href="Logging.html">Logging</a> severity threshold (e.g.
+<tt>Logger::INFO</tt>).
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">progname</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+<a href="Logging.html">Logging</a> program name.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001002" class="method-detail">
+        <a name="M001002"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M001002.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M001002.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(logdev, shift_age = 0, shift_size = 1048576)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <h3>Synopsis</h3>
+<pre>
+  Logger.new(name, shift_age = 7, shift_size = 1048576)
+  Logger.new(name, shift_age = 'weekly')
+</pre>
+<h3>Args</h3>
+<table>
+<tr><td valign="top"><tt>logdev</tt>:</td><td>The <a href="Logger.html#M001004">log</a> device. This is a filename (<a
+href="String.html">String</a>) or <a href="IO.html">IO</a> object
+(typically <tt>STDOUT</tt>, <tt>STDERR</tt>, or an open file).
+
+</td></tr>
+<tr><td valign="top"><tt>shift_age</tt>:</td><td>Number of old <a href="Logger.html#M001004">log</a> files to keep,
+<b>or</b> frequency of rotation (<tt>daily</tt>, <tt>weekly</tt> or
+<tt>monthly</tt>).
+
+</td></tr>
+<tr><td valign="top"><tt>shift_size</tt>:</td><td>Maximum logfile size (only applies when <tt>shift_age</tt> is a number).
+
+</td></tr>
+</table>
+<h3>Description</h3>
+<p>
+Create an instance.
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001005" class="method-detail">
+        <a name="M001005"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M001005.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M001005.html');return false;">
+          <span class="method-name">&lt;&lt;</span><span class="method-args">(msg)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Dump given message to the <a href="Logger.html#M001004">log</a> device
+without any formatting. If no <a href="Logger.html#M001004">log</a> device
+exists, return <tt>nil</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001003" class="method-detail">
+        <a name="M001003"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M001003.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M001003.html');return false;">
+          <span class="method-name">add</span><span class="method-args">(severity, message = nil, progname = nil) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <h3>Synopsis</h3>
+<pre>
+  Logger#add(severity, message = nil, progname = nil) { ... }
+</pre>
+<h3>Args</h3>
+<table>
+<tr><td valign="top"><tt>severity</tt>:</td><td><a href="Logger/Severity.html">Severity</a>. Constants are defined in <a
+href="Logger.html">Logger</a> namespace: <tt>DEBUG</tt>, <tt>INFO</tt>,
+<tt>WARN</tt>, <tt>ERROR</tt>, <tt>FATAL</tt>, or <tt>UNKNOWN</tt>.
+
+</td></tr>
+<tr><td valign="top"><tt>message</tt>:</td><td>The <a href="Logger.html#M001004">log</a> message. A <a
+href="String.html">String</a> or <a href="Exception.html">Exception</a>.
+
+</td></tr>
+<tr><td valign="top"><tt>progname</tt>:</td><td>Program name string. Can be omitted. Treated as a message if no
+<tt>message</tt> and <tt>block</tt> are given.
+
+</td></tr>
+<tr><td valign="top"><tt>block</tt>:</td><td>Can be omitted. Called to get a message string if <tt>message</tt> is nil.
+
+</td></tr>
+</table>
+<h3>Return</h3>
+<p>
+<tt>true</tt> if successful, <tt>false</tt> otherwise.
+</p>
+<p>
+When the given severity is not high enough (for this particular logger), <a
+href="Logger.html#M001004">log</a> no message, and return <tt>true</tt>.
+</p>
+<h3>Description</h3>
+<p>
+Log a message if the given severity is high enough. This is the generic
+logging method. Users will be more inclined to use <a
+href="Logger.html#M001006">debug</a>, <a
+href="Logger.html#M001007">info</a>, <a
+href="Logger.html#M001008">warn</a>, <a
+href="Logger.html#M001009">error</a>, and <a
+href="Logger.html#M001010">fatal</a>.
+</p>
+<p>
+<b>Message format</b>: <tt>message</tt> can be any object, but it has to be
+converted to a <a href="String.html">String</a> in order to <a
+href="Logger.html#M001004">log</a> it. Generally, <tt>inspect</tt> is used
+if the given object is not a <a href="String.html">String</a>. A special
+case is an <tt><a href="Exception.html">Exception</a></tt> object, which
+will be printed in detail, including message, class, and backtrace. See
+msg2str for the implementation if required.
+</p>
+<h3>Bugs</h3>
+<ul>
+<li>Logfile is not locked.
+
+</li>
+<li>Append open does not need to lock file.
+
+</li>
+<li>But on the OS which supports multi I/O, records possibly be mixed.
+
+</li>
+</ul>
+        </div>
+      </div>
+
+      <div id="method-M001012" class="method-detail">
+        <a name="M001012"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M001012.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M001012.html');return false;">
+          <span class="method-name">close</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Close the logging device.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000996" class="method-detail">
+        <a name="M000996"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M000996.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M000996.html');return false;">
+          <span class="method-name">datetime_format</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000995" class="method-detail">
+        <a name="M000995"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M000995.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M000995.html');return false;">
+          <span class="method-name">datetime_format=</span><span class="method-args">(datetime_format)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Logging.html">Logging</a> date-time format (string passed to
+<tt>strftime</tt>).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001006" class="method-detail">
+        <a name="M001006"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M001006.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M001006.html');return false;">
+          <span class="method-name">debug</span><span class="method-args">(progname = nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Log a <tt>DEBUG</tt> message.
+</p>
+<p>
+See <a href="Logger.html#M001007">info</a> for more information.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000997" class="method-detail">
+        <a name="M000997"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M000997.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M000997.html');return false;">
+          <span class="method-name">debug?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> iff the current severity level allows for the
+printing of <tt>DEBUG</tt> messages.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001009" class="method-detail">
+        <a name="M001009"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M001009.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M001009.html');return false;">
+          <span class="method-name">error</span><span class="method-args">(progname = nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Log an <tt>ERROR</tt> message.
+</p>
+<p>
+See <a href="Logger.html#M001007">info</a> for more information.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001000" class="method-detail">
+        <a name="M001000"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M001000.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M001000.html');return false;">
+          <span class="method-name">error?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> iff the current severity level allows for the
+printing of <tt>ERROR</tt> messages.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001010" class="method-detail">
+        <a name="M001010"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M001010.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M001010.html');return false;">
+          <span class="method-name">fatal</span><span class="method-args">(progname = nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Log a <tt>FATAL</tt> message.
+</p>
+<p>
+See <a href="Logger.html#M001007">info</a> for more information.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001001" class="method-detail">
+        <a name="M001001"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M001001.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M001001.html');return false;">
+          <span class="method-name">fatal?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> iff the current severity level allows for the
+printing of <tt>FATAL</tt> messages.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001007" class="method-detail">
+        <a name="M001007"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M001007.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M001007.html');return false;">
+          <span class="method-name">info</span><span class="method-args">(progname = nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Log an <tt>INFO</tt> message.
+</p>
+<p>
+The message can come either from the <tt>progname</tt> argument or the
+<tt>block</tt>. If both are provided, then the <tt>block</tt> is used as
+the message, and <tt>progname</tt> is used as the program name.
+</p>
+<h3>Examples</h3>
+<pre>
+  logger.info(&quot;MainApp&quot;) { &quot;Received connection from #{ip}&quot; }
+  # ...
+  logger.info &quot;Waiting for input from user&quot;
+  # ...
+  logger.info { &quot;User typed #{input}&quot; }
+</pre>
+<p>
+You&#8216;ll probably stick to the second form above, unless you want to
+provide a program name (which you can do with <tt>Logger#progname=</tt> as
+well).
+</p>
+<h3>Return</h3>
+<p>
+See <a href="Logger.html#M001003">add</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000998" class="method-detail">
+        <a name="M000998"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M000998.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M000998.html');return false;">
+          <span class="method-name">info?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> iff the current severity level allows for the
+printing of <tt>INFO</tt> messages.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001004" class="method-detail">
+        <a name="M001004"></a>
+
+        <div class="method-heading">
+          <span class="method-name">log</span><span class="method-args">(severity, message = nil, progname = nil, &amp;block)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Logger.html#M001003">add</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001011" class="method-detail">
+        <a name="M001011"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M001011.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M001011.html');return false;">
+          <span class="method-name">unknown</span><span class="method-args">(progname = nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Log an <tt>UNKNOWN</tt> message. This will be printed no matter what the
+logger level.
+</p>
+<p>
+See <a href="Logger.html#M001007">info</a> for more information.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001008" class="method-detail">
+        <a name="M001008"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M001008.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M001008.html');return false;">
+          <span class="method-name">warn</span><span class="method-args">(progname = nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Log a <tt>WARN</tt> message.
+</p>
+<p>
+See <a href="Logger.html#M001007">info</a> for more information.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000999" class="method-detail">
+        <a name="M000999"></a>
+
+        <div class="method-heading">
+          <a href="Logger.src/M000999.html" target="Code" class="method-signature"
+            onclick="popupCode('Logger.src/M000999.html');return false;">
+          <span class="method-name">warn?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> iff the current severity level allows for the
+printing of <tt>WARN</tt> messages.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

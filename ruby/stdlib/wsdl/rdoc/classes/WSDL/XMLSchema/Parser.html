@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: WSDL::XMLSchema::Parser</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">WSDL::XMLSchema::Parser</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/wsdl/xmlSchema/parser_rb.html">
+                wsdl/xmlSchema/parser.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M009929">characters</a>&nbsp;&nbsp;
+      <a href="#M009927">charset</a>&nbsp;&nbsp;
+      <a href="#M009930">end_element</a>&nbsp;&nbsp;
+      <a href="#M009925">new</a>&nbsp;&nbsp;
+      <a href="#M009926">parse</a>&nbsp;&nbsp;
+      <a href="#M009928">start_element</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name">XSD</span>
+      </div>
+    </div>
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="Parser/AttributeConstraintError.html" class="link">WSDL::XMLSchema::Parser::AttributeConstraintError</a><br />
+Class <a href="Parser/ElementConstraintError.html" class="link">WSDL::XMLSchema::Parser::ElementConstraintError</a><br />
+Class <a href="Parser/FormatDecodeError.html" class="link">WSDL::XMLSchema::Parser::FormatDecodeError</a><br />
+Class <a href="Parser/ParseError.html" class="link">WSDL::XMLSchema::Parser::ParseError</a><br />
+Class <a href="Parser/ParseFrame.html" class="link">WSDL::XMLSchema::Parser::ParseFrame</a><br />
+Class <a href="Parser/UnexpectedElementError.html" class="link">WSDL::XMLSchema::Parser::UnexpectedElementError</a><br />
+Class <a href="Parser/UnknownAttributeError.html" class="link">WSDL::XMLSchema::Parser::UnknownAttributeError</a><br />
+Class <a href="Parser/UnknownElementError.html" class="link">WSDL::XMLSchema::Parser::UnknownElementError</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M009925" class="m-detail">
+        <a name="M009925"></a>
+
+        <div class="method-heading">
+          <a href="#M009925" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(opt = {})</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009925-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009925-source">
+<pre>
+<span class="ruby-comment cmt"># File wsdl/xmlSchema/parser.rb, line 50</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">opt</span> = {})
+    <span class="ruby-ivar">@parser</span> = <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">XMLParser</span>.<span class="ruby-identifier">create_parser</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">opt</span>)
+    <span class="ruby-ivar">@parsestack</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-ivar">@lastnode</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-ivar">@ignored</span> = {}
+    <span class="ruby-ivar">@location</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:location</span>]
+    <span class="ruby-ivar">@originalroot</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:originalroot</span>]
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M009929" class="m-detail">
+        <a name="M009929"></a>
+
+        <div class="method-heading">
+          <a href="#M009929" class="method-signature">
+          <span class="method-name">characters</span><span class="method-args">(text)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009929-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009929-source">
+<pre>
+<span class="ruby-comment cmt"># File wsdl/xmlSchema/parser.rb, line 86</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">characters</span>(<span class="ruby-identifier">text</span>)
+    <span class="ruby-identifier">lastframe</span> = <span class="ruby-ivar">@parsestack</span>.<span class="ruby-identifier">last</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">lastframe</span>
+      <span class="ruby-comment cmt"># Need not to be cloned because character does not have attr.</span>
+      <span class="ruby-identifier">ns</span> = <span class="ruby-identifier">lastframe</span>.<span class="ruby-identifier">ns</span>
+      <span class="ruby-identifier">decode_text</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">text</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">p</span> <span class="ruby-identifier">text</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$DEBUG</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009927" class="m-detail">
+        <a name="M009927"></a>
+
+        <div class="method-heading">
+          <a href="#M009927" class="method-signature">
+          <span class="method-name">charset</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009927-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009927-source">
+<pre>
+<span class="ruby-comment cmt"># File wsdl/xmlSchema/parser.rb, line 67</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">charset</span>
+    <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">charset</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009930" class="m-detail">
+        <a name="M009930"></a>
+
+        <div class="method-heading">
+          <a href="#M009930" class="method-signature">
+          <span class="method-name">end_element</span><span class="method-args">(name)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009930-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009930-source">
+<pre>
+<span class="ruby-comment cmt"># File wsdl/xmlSchema/parser.rb, line 97</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">end_element</span>(<span class="ruby-identifier">name</span>)
+    <span class="ruby-identifier">lastframe</span> = <span class="ruby-ivar">@parsestack</span>.<span class="ruby-identifier">pop</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">lastframe</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">UnexpectedElementError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;closing element name '#{name}' does not match with opening element '#{lastframe.name}'&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">decode_tag_end</span>(<span class="ruby-identifier">lastframe</span>.<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">lastframe</span>.<span class="ruby-identifier">node</span>)
+    <span class="ruby-ivar">@lastnode</span> = <span class="ruby-identifier">lastframe</span>.<span class="ruby-identifier">node</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009926" class="m-detail">
+        <a name="M009926"></a>
+
+        <div class="method-heading">
+          <a href="#M009926" class="method-signature">
+          <span class="method-name">parse</span><span class="method-args">(string_or_readable)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009926-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009926-source">
+<pre>
+<span class="ruby-comment cmt"># File wsdl/xmlSchema/parser.rb, line 59</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse</span>(<span class="ruby-identifier">string_or_readable</span>)
+    <span class="ruby-ivar">@parsestack</span> = []
+    <span class="ruby-ivar">@lastnode</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-ivar">@textbuf</span> = <span class="ruby-value str">''</span>
+    <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">do_parse</span>(<span class="ruby-identifier">string_or_readable</span>)
+    <span class="ruby-ivar">@lastnode</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009928" class="m-detail">
+        <a name="M009928"></a>
+
+        <div class="method-heading">
+          <a href="#M009928" class="method-signature">
+          <span class="method-name">start_element</span><span class="method-args">(name, attrs)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009928-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009928-source">
+<pre>
+<span class="ruby-comment cmt"># File wsdl/xmlSchema/parser.rb, line 71</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">start_element</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">attrs</span>)
+    <span class="ruby-identifier">lastframe</span> = <span class="ruby-ivar">@parsestack</span>.<span class="ruby-identifier">last</span>
+    <span class="ruby-identifier">ns</span> = <span class="ruby-identifier">parent</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">lastframe</span>
+      <span class="ruby-identifier">ns</span> = <span class="ruby-identifier">lastframe</span>.<span class="ruby-identifier">ns</span>.<span class="ruby-identifier">clone_ns</span>
+      <span class="ruby-identifier">parent</span> = <span class="ruby-identifier">lastframe</span>.<span class="ruby-identifier">node</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">ns</span> = <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">NS</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-identifier">parent</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">attrs</span> = <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">XMLParser</span>.<span class="ruby-identifier">filter_ns</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">attrs</span>)
+    <span class="ruby-identifier">node</span> = <span class="ruby-identifier">decode_tag</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">attrs</span>, <span class="ruby-identifier">parent</span>)
+    <span class="ruby-ivar">@parsestack</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">ParseFrame</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">node</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 4 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

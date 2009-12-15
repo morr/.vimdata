@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>re_exchangeable? (Process::UID)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process::UID.re_exchangeable?   =&gt; true or false
+ *
+ *  Returns +true+ if the real and effective user IDs of a
+ *  process may be exchanged on the current platform.
+ *
+ */
+
+static VALUE
+p_uid_exchangeable()
+{
+#if defined(HAVE_SETRESUID) &amp;&amp;  !defined(__CHECKER__)
+    return Qtrue;
+#elif defined(HAVE_SETREUID) &amp;&amp; !defined(OBSOLETE_SETREUID)
+    return Qtrue;
+#else
+    return Qfalse;
+#endif
+}</pre>
+</body>
+</html>

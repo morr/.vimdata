@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>parse_form_data (WEBrick::HTTPUtils)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/httputils.rb, line 306</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_form_data</span>(<span class="ruby-identifier">io</span>, <span class="ruby-identifier">boundary</span>)
+      <span class="ruby-identifier">boundary_regexp</span> = <span class="ruby-node">/\A--#{boundary}(--)?#{CRLF}\z/</span>
+      <span class="ruby-identifier">form_data</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">form_data</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">io</span>
+      <span class="ruby-identifier">data</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">io</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">boundary_regexp</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">line</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">data</span>
+            <span class="ruby-identifier">data</span>.<span class="ruby-identifier">chop!</span>
+            <span class="ruby-identifier">key</span> = <span class="ruby-identifier">data</span>.<span class="ruby-identifier">name</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">form_data</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">key</span>)
+              <span class="ruby-identifier">form_data</span>[<span class="ruby-identifier">key</span>].<span class="ruby-identifier">append_data</span>(<span class="ruby-identifier">data</span>)
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">form_data</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">data</span> 
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">data</span> = <span class="ruby-constant">FormData</span>.<span class="ruby-identifier">new</span>
+          <span class="ruby-keyword kw">next</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">data</span>
+            <span class="ruby-identifier">data</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">line</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      }
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">form_data</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

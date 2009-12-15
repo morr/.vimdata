@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>default (Hash)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     hsh.default(key=nil)   =&gt; obj
+ *  
+ *  Returns the default value, the value that would be returned by
+ *  &lt;i&gt;hsh&lt;/i&gt;[&lt;i&gt;key&lt;/i&gt;] if &lt;i&gt;key&lt;/i&gt; did not exist in &lt;i&gt;hsh&lt;/i&gt;.
+ *  See also &lt;code&gt;Hash::new&lt;/code&gt; and &lt;code&gt;Hash#default=&lt;/code&gt;.
+ *     
+ *     h = Hash.new                            #=&gt; {}
+ *     h.default                               #=&gt; nil
+ *     h.default(2)                            #=&gt; nil
+ *     
+ *     h = Hash.new(&quot;cat&quot;)                     #=&gt; {}
+ *     h.default                               #=&gt; &quot;cat&quot;
+ *     h.default(2)                            #=&gt; &quot;cat&quot;
+ *     
+ *     h = Hash.new {|h,k| h[k] = k.to_i*10}   #=&gt; {}
+ *     h.default                               #=&gt; 0
+ *     h.default(2)                            #=&gt; 20
+ */
+
+static VALUE
+rb_hash_default(argc, argv, hash)
+    int argc;
+    VALUE *argv;
+    VALUE hash;
+{
+    VALUE key;
+
+    rb_scan_args(argc, argv, &quot;01&quot;, &amp;key);
+    if (FL_TEST(hash, HASH_PROC_DEFAULT)) {
+        if (argc == 0) return Qnil;
+        return rb_funcall(RHASH(hash)-&gt;ifnone, id_call, 2, hash, key);
+    }
+    return RHASH(hash)-&gt;ifnone;
+}</pre>
+</body>
+</html>

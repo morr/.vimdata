@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>open (Dir)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Dir.open( string ) =&gt; aDir
+ *     Dir.open( string ) {| aDir | block } =&gt; anObject
+ *
+ *  With no block, &lt;code&gt;open&lt;/code&gt; is a synonym for
+ *  &lt;code&gt;Dir::new&lt;/code&gt;. If a block is present, it is passed
+ *  &lt;i&gt;aDir&lt;/i&gt; as a parameter. The directory is closed at the end of
+ *  the block, and &lt;code&gt;Dir::open&lt;/code&gt; returns the value of the
+ *  block.
+ */
+
+static VALUE
+dir_s_open(klass, dirname)
+    VALUE klass, dirname;
+{
+    struct dir_data *dp;
+    VALUE dir = Data_Make_Struct(klass, struct dir_data, 0, free_dir, dp);
+
+    dir_initialize(dir, dirname);
+    if (rb_block_given_p()) {
+        return rb_ensure(rb_yield, dir, dir_close, dir);
+    }
+
+    return dir;
+}</pre>
+</body>
+</html>

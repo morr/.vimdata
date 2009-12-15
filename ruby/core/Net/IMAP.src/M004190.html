@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>authenticate (Net::IMAP)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/net/imap.rb, line 356</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">authenticate</span>(<span class="ruby-identifier">auth_type</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+      <span class="ruby-identifier">auth_type</span> = <span class="ruby-identifier">auth_type</span>.<span class="ruby-identifier">upcase</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@@authenticators</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">auth_type</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>,
+          <span class="ruby-identifier">format</span>(<span class="ruby-value str">'unknown auth type - &quot;%s&quot;'</span>, <span class="ruby-identifier">auth_type</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">authenticator</span> = <span class="ruby-ivar">@@authenticators</span>[<span class="ruby-identifier">auth_type</span>].<span class="ruby-identifier">new</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+      <span class="ruby-identifier">send_command</span>(<span class="ruby-value str">&quot;AUTHENTICATE&quot;</span>, <span class="ruby-identifier">auth_type</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">resp</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">resp</span>.<span class="ruby-identifier">instance_of?</span>(<span class="ruby-constant">ContinuationRequest</span>)
+          <span class="ruby-identifier">data</span> = <span class="ruby-identifier">authenticator</span>.<span class="ruby-identifier">process</span>(<span class="ruby-identifier">resp</span>.<span class="ruby-identifier">data</span>.<span class="ruby-identifier">text</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">&quot;m&quot;</span>)[<span class="ruby-value">0</span>])
+          <span class="ruby-identifier">s</span> = [<span class="ruby-identifier">data</span>].<span class="ruby-identifier">pack</span>(<span class="ruby-value str">&quot;m&quot;</span>).<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\n/</span>, <span class="ruby-value str">&quot;&quot;</span>)
+          <span class="ruby-identifier">send_string_data</span>(<span class="ruby-identifier">s</span>)
+          <span class="ruby-identifier">put_string</span>(<span class="ruby-constant">CRLF</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

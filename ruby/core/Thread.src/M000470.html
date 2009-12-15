@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>safe_level (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     thr.safe_level   =&gt; integer
+ *  
+ *  Returns the safe level in effect for &lt;i&gt;thr&lt;/i&gt;. Setting thread-local safe
+ *  levels can help when implementing sandboxes which run insecure code.
+ *     
+ *     thr = Thread.new { $SAFE = 3; sleep }
+ *     Thread.current.safe_level   #=&gt; 0
+ *     thr.safe_level              #=&gt; 3
+ */
+
+static VALUE
+rb_thread_safe_level(thread)
+    VALUE thread;
+{
+    rb_thread_t th;
+
+    th = rb_thread_check(thread);
+    if (th == curr_thread) {
+        return INT2NUM(ruby_safe_level);
+    }
+    return INT2NUM(th-&gt;safe);
+}</pre>
+</body>
+</html>

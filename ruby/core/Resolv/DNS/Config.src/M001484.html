@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>parse_resolv_conf (Resolv::DNS::Config)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/resolv.rb, line 768</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Config</span>.<span class="ruby-identifier">parse_resolv_conf</span>(<span class="ruby-identifier">filename</span>)
+        <span class="ruby-identifier">nameserver</span> = []
+        <span class="ruby-identifier">search</span> = <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-identifier">ndots</span> = <span class="ruby-value">1</span>
+        <span class="ruby-identifier">open</span>(<span class="ruby-identifier">filename</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">f</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">line</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/[#;].*/</span>, <span class="ruby-value str">''</span>)
+            <span class="ruby-identifier">keyword</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> = <span class="ruby-identifier">line</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/\s+/</span>)
+            <span class="ruby-identifier">args</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+              <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">untaint</span>
+            }
+            <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">keyword</span>
+            <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">keyword</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'nameserver'</span>
+              <span class="ruby-identifier">nameserver</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">args</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'domain'</span>
+              <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">empty?</span>
+              <span class="ruby-identifier">search</span> = [<span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>]]
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'search'</span>
+              <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">empty?</span>
+              <span class="ruby-identifier">search</span> = <span class="ruby-identifier">args</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'options'</span>
+              <span class="ruby-identifier">args</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+                <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">arg</span>
+                <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\Andots:(\d+)\z/</span>
+                  <span class="ruby-identifier">ndots</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+                <span class="ruby-keyword kw">end</span>
+              }
+            <span class="ruby-keyword kw">end</span>
+          }
+        }
+        <span class="ruby-keyword kw">return</span> { <span class="ruby-identifier">:nameserver</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">nameserver</span>, <span class="ruby-identifier">:search</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">search</span>, <span class="ruby-identifier">:ndots</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ndots</span> }
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

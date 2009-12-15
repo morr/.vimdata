@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>[]= (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str[fixnum] = fixnum
+ *     str[fixnum] = new_str
+ *     str[fixnum, fixnum] = new_str
+ *     str[range] = aString
+ *     str[regexp] = new_str
+ *     str[regexp, fixnum] = new_str
+ *     str[other_str] = new_str
+ *  
+ *  Element Assignment---Replaces some or all of the content of &lt;i&gt;str&lt;/i&gt;. The
+ *  portion of the string affected is determined using the same criteria as
+ *  &lt;code&gt;String#[]&lt;/code&gt;. If the replacement string is not the same length as
+ *  the text it is replacing, the string will be adjusted accordingly. If the
+ *  regular expression or string is used as the index doesn't match a position
+ *  in the string, &lt;code&gt;IndexError&lt;/code&gt; is raised. If the regular expression
+ *  form is used, the optional second &lt;code&gt;Fixnum&lt;/code&gt; allows you to specify
+ *  which portion of the match to replace (effectively using the
+ *  &lt;code&gt;MatchData&lt;/code&gt; indexing rules. The forms that take a
+ *  &lt;code&gt;Fixnum&lt;/code&gt; will raise an &lt;code&gt;IndexError&lt;/code&gt; if the value is
+ *  out of range; the &lt;code&gt;Range&lt;/code&gt; form will raise a
+ *  &lt;code&gt;RangeError&lt;/code&gt;, and the &lt;code&gt;Regexp&lt;/code&gt; and &lt;code&gt;String&lt;/code&gt;
+ *  forms will silently ignore the assignment.
+ */
+
+static VALUE
+rb_str_aset_m(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    if (argc == 3) {
+        if (TYPE(argv[0]) == T_REGEXP) {
+            rb_str_subpat_set(str, argv[0], NUM2INT(argv[1]), argv[2]);
+        }
+        else {
+            rb_str_splice(str, NUM2LONG(argv[0]), NUM2LONG(argv[1]), argv[2]);
+        }
+        return argv[2];
+    }
+    if (argc != 2) {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments (%d for 2)&quot;, argc);
+    }
+    return rb_str_aset(str, argv[0], argv[1]);
+}</pre>
+</body>
+</html>

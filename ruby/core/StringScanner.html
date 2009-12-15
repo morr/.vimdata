@@ -1,0 +1,1536 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: StringScanner</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">StringScanner</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/ext/strscan/strscan_c.html">
+                ext/strscan/strscan.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="StringScanner.html">StringScanner</a> provides for lexical
+scanning operations on a <a href="String.html">String</a>. Here is an
+example of its usage:
+</p>
+<pre>
+  s = StringScanner.new('This is an example string')
+  s.eos?               # -&gt; false
+
+  p s.scan(/\w+/)      # -&gt; &quot;This&quot;
+  p s.scan(/\w+/)      # -&gt; nil
+  p s.scan(/\s+/)      # -&gt; &quot; &quot;
+  p s.scan(/\s+/)      # -&gt; nil
+  p s.scan(/\w+/)      # -&gt; &quot;is&quot;
+  s.eos?               # -&gt; false
+
+  p s.scan(/\s+/)      # -&gt; &quot; &quot;
+  p s.scan(/\w+/)      # -&gt; &quot;an&quot;
+  p s.scan(/\s+/)      # -&gt; &quot; &quot;
+  p s.scan(/\w+/)      # -&gt; &quot;example&quot;
+  p s.scan(/\s+/)      # -&gt; &quot; &quot;
+  p s.scan(/\w+/)      # -&gt; &quot;string&quot;
+  s.eos?               # -&gt; true
+
+  p s.scan(/\s+/)      # -&gt; nil
+  p s.scan(/\w+/)      # -&gt; nil
+</pre>
+<p>
+Scanning a <a href="StringScanner.html#M002010">string</a> means
+remembering the position of a <em><a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a></em>, which is just an index.
+The point of scanning is to move forward a bit at a time, so matches are
+sought after the <a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>; usually immediately after
+it.
+</p>
+<p>
+Given the <a href="StringScanner.html#M002010">string</a> &quot;test <a
+href="StringScanner.html#M002010">string</a>&quot;, here are the pertinent
+<a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a> positions:
+</p>
+<pre>
+    t e s t   s t r i n g
+  0 1 2 ...             1
+                        0
+</pre>
+<p>
+When you <a href="StringScanner.html#M002018">scan</a> for a pattern (a
+regular expression), the match must occur at the character after the <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>. If you use <a
+href="StringScanner.html#M002023">scan_until</a>, then the match can occur
+anywhere after the <a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>. In both cases, the <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a> moves <em>just beyond</em>
+the last character of the match, ready to <a
+href="StringScanner.html#M002018">scan</a> again from the next character
+onwards. This is demonstrated by the example above.
+</p>
+<h2><a href="Method.html">Method</a> Categories</h2>
+<p>
+There are other methods besides the plain scanners. You can look ahead in
+the <a href="StringScanner.html#M002010">string</a> without actually
+scanning. You can access the most recent match. You can modify the <a
+href="StringScanner.html#M002010">string</a> being scanned, <a
+href="StringScanner.html#M002007">reset</a> or <a
+href="StringScanner.html#M002008">terminate</a> the scanner, find out or
+change the position of the <a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>, <a
+href="StringScanner.html#M002019">skip</a> ahead, and so on.
+</p>
+<h3>Advancing the Scan Pointer</h3>
+<ul>
+<li><a href="StringScanner.html#M002028">getch</a>
+
+</li>
+<li><a href="StringScanner.html#M002029">get_byte</a>
+
+</li>
+<li><a href="StringScanner.html#M002018">scan</a>
+
+</li>
+<li><a href="StringScanner.html#M002023">scan_until</a>
+
+</li>
+<li><a href="StringScanner.html#M002019">skip</a>
+
+</li>
+<li><a href="StringScanner.html#M002024">skip_until</a>
+
+</li>
+</ul>
+<h3>Looking Ahead</h3>
+<ul>
+<li><a href="StringScanner.html#M002021">check</a>
+
+</li>
+<li><a href="StringScanner.html#M002026">check_until</a>
+
+</li>
+<li>exist?
+
+</li>
+<li>match?
+
+</li>
+<li><a href="StringScanner.html#M002031">peek</a>
+
+</li>
+</ul>
+<h3>Finding Where we Are</h3>
+<ul>
+<li>beginning_of_line? (bol?)
+
+</li>
+<li>eos?
+
+</li>
+<li><a href="StringScanner.html#M002045">rest</a>?
+
+</li>
+<li><a href="StringScanner.html#M002046">rest_size</a>
+
+</li>
+<li><a href="StringScanner.html#M002014">pos</a>
+
+</li>
+</ul>
+<h3>Setting Where we Are</h3>
+<ul>
+<li><a href="StringScanner.html#M002007">reset</a>
+
+</li>
+<li><a href="StringScanner.html#M002008">terminate</a>
+
+</li>
+<li><a href="StringScanner.html#M002014">pos</a>=
+
+</li>
+</ul>
+<h3>Match <a href="Data.html">Data</a></h3>
+<ul>
+<li><a href="StringScanner.html#M002039">matched</a>
+
+</li>
+<li><a href="StringScanner.html#M002039">matched</a>?
+
+</li>
+<li><a href="StringScanner.html#M002040">matched_size</a>
+
+</li>
+<li>[]
+
+</li>
+<li><a href="StringScanner.html#M002043">pre_match</a>
+
+</li>
+<li><a href="StringScanner.html#M002044">post_match</a>
+
+</li>
+</ul>
+<h3>Miscellaneous</h3>
+<ul>
+<li>&lt;&lt;
+
+</li>
+<li><a href="StringScanner.html#M002012">concat</a>
+
+</li>
+<li><a href="StringScanner.html#M002010">string</a>
+
+</li>
+<li><a href="StringScanner.html#M002010">string</a>=
+
+</li>
+<li><a href="StringScanner.html#M002033">unscan</a>
+
+</li>
+</ul>
+<p>
+There are aliases to several of the methods.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002013">&lt;&lt;</a>&nbsp;&nbsp;
+      <a href="#M002042">[]</a>&nbsp;&nbsp;
+      <a href="#M002034">beginning_of_line?</a>&nbsp;&nbsp;
+      <a href="#M002021">check</a>&nbsp;&nbsp;
+      <a href="#M002026">check_until</a>&nbsp;&nbsp;
+      <a href="#M002009">clear</a>&nbsp;&nbsp;
+      <a href="#M002012">concat</a>&nbsp;&nbsp;
+      <a href="#M002036">empty?</a>&nbsp;&nbsp;
+      <a href="#M002035">eos?</a>&nbsp;&nbsp;
+      <a href="#M002025">exist?</a>&nbsp;&nbsp;
+      <a href="#M002029">get_byte</a>&nbsp;&nbsp;
+      <a href="#M002030">getbyte</a>&nbsp;&nbsp;
+      <a href="#M002028">getch</a>&nbsp;&nbsp;
+      <a href="#M002005">initialize_copy</a>&nbsp;&nbsp;
+      <a href="#M002048">inspect</a>&nbsp;&nbsp;
+      <a href="#M002020">match?</a>&nbsp;&nbsp;
+      <a href="#M002039">matched</a>&nbsp;&nbsp;
+      <a href="#M002038">matched?</a>&nbsp;&nbsp;
+      <a href="#M002040">matched_size</a>&nbsp;&nbsp;
+      <a href="#M002041">matchedsize</a>&nbsp;&nbsp;
+      <a href="#M002006">must_C_version</a>&nbsp;&nbsp;
+      <a href="#M002004">new</a>&nbsp;&nbsp;
+      <a href="#M002031">peek</a>&nbsp;&nbsp;
+      <a href="#M002032">peep</a>&nbsp;&nbsp;
+      <a href="#M002016">pointer</a>&nbsp;&nbsp;
+      <a href="#M002017">pointer=</a>&nbsp;&nbsp;
+      <a href="#M002014">pos</a>&nbsp;&nbsp;
+      <a href="#M002015">pos=</a>&nbsp;&nbsp;
+      <a href="#M002044">post_match</a>&nbsp;&nbsp;
+      <a href="#M002043">pre_match</a>&nbsp;&nbsp;
+      <a href="#M002007">reset</a>&nbsp;&nbsp;
+      <a href="#M002045">rest</a>&nbsp;&nbsp;
+      <a href="#M002037">rest?</a>&nbsp;&nbsp;
+      <a href="#M002046">rest_size</a>&nbsp;&nbsp;
+      <a href="#M002047">restsize</a>&nbsp;&nbsp;
+      <a href="#M002018">scan</a>&nbsp;&nbsp;
+      <a href="#M002022">scan_full</a>&nbsp;&nbsp;
+      <a href="#M002023">scan_until</a>&nbsp;&nbsp;
+      <a href="#M002027">search_full</a>&nbsp;&nbsp;
+      <a href="#M002019">skip</a>&nbsp;&nbsp;
+      <a href="#M002024">skip_until</a>&nbsp;&nbsp;
+      <a href="#M002010">string</a>&nbsp;&nbsp;
+      <a href="#M002011">string=</a>&nbsp;&nbsp;
+      <a href="#M002008">terminate</a>&nbsp;&nbsp;
+      <a href="#M002033">unscan</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="StringScanner/Error.html" class="link">StringScanner::Error</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M002006" class="method-detail">
+        <a name="M002006"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002006.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002006.html');return false;">
+          <span class="method-name"> StringScanner.must_C_version<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This method is defined for backward compatibility.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002004" class="method-detail">
+        <a name="M002004"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002004.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002004.html');return false;">
+          <span class="method-name"> StringScanner.new(string, dup = false)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="StringScanner.html#M002004">new</a> <a
+href="StringScanner.html">StringScanner</a> object to <a
+href="StringScanner.html#M002018">scan</a> over the given <tt><a
+href="StringScanner.html#M002010">string</a></tt>. <tt>dup</tt> argument is
+obsolete and not used now.
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002013" class="method-detail">
+        <a name="M002013"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002013.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002013.html');return false;">
+          <span class="method-name">concat(str)<br />
+<<(str)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Appends <tt>str</tt> to the <a href="StringScanner.html#M002010">string</a>
+being scanned. This method does not affect <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.scan(/Fri /)
+  s &lt;&lt; &quot; +1000 GMT&quot;
+  s.string            # -&gt; &quot;Fri Dec 12 1975 14:39 +1000 GMT&quot;
+  s.scan(/Dec/)       # -&gt; &quot;Dec&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002042" class="method-detail">
+        <a name="M002042"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002042.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002042.html');return false;">
+          <span class="method-name"> [](n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the n-th subgroup in the most recent match.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.scan(/(\w+) (\w+) (\d+) /)       # -&gt; &quot;Fri Dec 12 &quot;
+  s[0]                               # -&gt; &quot;Fri Dec 12 &quot;
+  s[1]                               # -&gt; &quot;Fri&quot;
+  s[2]                               # -&gt; &quot;Dec&quot;
+  s[3]                               # -&gt; &quot;12&quot;
+  s.post_match                       # -&gt; &quot;1975 14:39&quot;
+  s.pre_match                        # -&gt; &quot;&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002034" class="method-detail">
+        <a name="M002034"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002034.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002034.html');return false;">
+          <span class="method-name">beginning_of_line?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> iff the <a href="StringScanner.html#M002018">scan</a>
+<a href="StringScanner.html#M002016">pointer</a> is at the beginning of the
+line.
+</p>
+<pre>
+  s = StringScanner.new(&quot;test\ntest\n&quot;)
+  s.bol?           # =&gt; true
+  s.scan(/te/)
+  s.bol?           # =&gt; false
+  s.scan(/st\n/)
+  s.bol?           # =&gt; true
+  s.terminate
+  s.bol?           # =&gt; true
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002021" class="method-detail">
+        <a name="M002021"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002021.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002021.html');return false;">
+          <span class="method-name"> check(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This returns the value that <a href="StringScanner.html#M002018">scan</a>
+would return, without advancing the <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>. The match register is
+affected, though.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.check /Fri/               # -&gt; &quot;Fri&quot;
+  s.pos                       # -&gt; 0
+  s.matched                   # -&gt; &quot;Fri&quot;
+  s.check /12/                # -&gt; nil
+  s.matched                   # -&gt; nil
+</pre>
+<p>
+Mnemonic: it &quot;checks&quot; to see whether a <a
+href="StringScanner.html#M002018">scan</a> will return a value.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002026" class="method-detail">
+        <a name="M002026"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002026.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002026.html');return false;">
+          <span class="method-name"> check_until(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This returns the value that <a
+href="StringScanner.html#M002023">scan_until</a> would return, without
+advancing the <a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>. The match register is
+affected, though.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.check_until /12/          # -&gt; &quot;Fri Dec 12&quot;
+  s.pos                       # -&gt; 0
+  s.matched                   # -&gt; 12
+</pre>
+<p>
+Mnemonic: it &quot;checks&quot; to see whether a <a
+href="StringScanner.html#M002023">scan_until</a> will return a value.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002009" class="method-detail">
+        <a name="M002009"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002009.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002009.html');return false;">
+          <span class="method-name">clear</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <a href="StringScanner.html#M002008">terminate</a>. This
+method is obsolete; use <a href="StringScanner.html#M002008">terminate</a>
+instead.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002012" class="method-detail">
+        <a name="M002012"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002012.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002012.html');return false;">
+          <span class="method-name">concat(str)<br />
+<<(str)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Appends <tt>str</tt> to the <a href="StringScanner.html#M002010">string</a>
+being scanned. This method does not affect <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.scan(/Fri /)
+  s &lt;&lt; &quot; +1000 GMT&quot;
+  s.string            # -&gt; &quot;Fri Dec 12 1975 14:39 +1000 GMT&quot;
+  s.scan(/Dec/)       # -&gt; &quot;Dec&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002036" class="method-detail">
+        <a name="M002036"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002036.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002036.html');return false;">
+          <span class="method-name">empty?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to eos?. This method is obsolete, use eos? instead.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002035" class="method-detail">
+        <a name="M002035"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002035.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002035.html');return false;">
+          <span class="method-name">eos?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if the <a href="StringScanner.html#M002018">scan</a>
+<a href="StringScanner.html#M002016">pointer</a> is at the end of the <a
+href="StringScanner.html#M002010">string</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  p s.eos?          # =&gt; false
+  s.scan(/test/)
+  p s.eos?          # =&gt; false
+  s.terminate
+  p s.eos?          # =&gt; true
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002025" class="method-detail">
+        <a name="M002025"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002025.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002025.html');return false;">
+          <span class="method-name"> exist?(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Looks <em>ahead</em> to see if the <tt>pattern</tt> exists
+<em>anywhere</em> in the <a href="StringScanner.html#M002010">string</a>,
+without advancing the <a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>. This predicates whether a <a
+href="StringScanner.html#M002023">scan_until</a> will return a value.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.exist? /s/            # -&gt; 3
+  s.scan /test/           # -&gt; &quot;test&quot;
+  s.exist? /s/            # -&gt; 6
+  s.exist? /e/            # -&gt; nil
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002029" class="method-detail">
+        <a name="M002029"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002029.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002029.html');return false;">
+          <span class="method-name">get_byte</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Scans one byte and returns it. This method is NOT multi-byte character
+sensitive. See also <a href="StringScanner.html#M002028">getch</a>.
+</p>
+<pre>
+  s = StringScanner.new('ab')
+  s.get_byte         # =&gt; &quot;a&quot;
+  s.get_byte         # =&gt; &quot;b&quot;
+  s.get_byte         # =&gt; nil
+
+  s = StringScanner.new(&quot;\244\242&quot;)
+  s.get_byte         # =&gt; &quot;\244&quot;
+  s.get_byte         # =&gt; &quot;\242&quot;
+  s.get_byte         # =&gt; nil
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002030" class="method-detail">
+        <a name="M002030"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002030.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002030.html');return false;">
+          <span class="method-name">getbyte</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <a href="StringScanner.html#M002029">get_byte</a>. This
+method is obsolete; use <a href="StringScanner.html#M002029">get_byte</a>
+instead.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002028" class="method-detail">
+        <a name="M002028"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002028.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002028.html');return false;">
+          <span class="method-name">getch</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Scans one character and returns it. This method is multi-byte character
+sensitive. See also <a href="StringScanner.html#M002029">get_byte</a>.
+</p>
+<pre>
+  s = StringScanner.new('ab')
+  s.getch           # =&gt; &quot;a&quot;
+  s.getch           # =&gt; &quot;b&quot;
+  s.getch           # =&gt; nil
+
+  $KCODE = 'EUC'
+  s = StringScanner.new(&quot;\244\242&quot;)
+  s.getch           # =&gt; &quot;\244\242&quot;   # Japanese hira-kana &quot;A&quot; in EUC-JP
+  s.getch           # =&gt; nil
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002005" class="method-detail">
+        <a name="M002005"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002005.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002005.html');return false;">
+          <span class="method-name">dup<br />
+clone<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Duplicates a <a href="StringScanner.html">StringScanner</a> object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002048" class="method-detail">
+        <a name="M002048"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002048.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002048.html');return false;">
+          <span class="method-name">inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="StringScanner.html#M002010">string</a> that represents
+the <a href="StringScanner.html">StringScanner</a> object, showing:
+</p>
+<ul>
+<li>the current position
+
+</li>
+<li>the size of the <a href="StringScanner.html#M002010">string</a>
+
+</li>
+<li>the characters surrounding the <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>
+
+<p>
+s = <a href="StringScanner.html#M002004">StringScanner.new</a>(&quot;Fri
+Dec 12 1975 14:39&quot;) s.inspect # -&gt; &#8217;#&lt;<a
+href="StringScanner.html">StringScanner</a> 0/21 @ &quot;Fri
+D&#8230;&quot;&gt;&#8217; s.scan_until /12/ # -&gt; &quot;Fri Dec 12&quot;
+s.inspect # -&gt; &#8217;#&lt;<a
+href="StringScanner.html">StringScanner</a> 10/21 &quot;&#8230;ec 12&quot;
+@ &quot; 1975&#8230;&quot;&gt;&#8217;
+</p>
+</li>
+</ul>
+        </div>
+      </div>
+
+      <div id="method-M002020" class="method-detail">
+        <a name="M002020"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002020.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002020.html');return false;">
+          <span class="method-name"> match?(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Tests whether the given <tt>pattern</tt> is <a
+href="StringScanner.html#M002039">matched</a> from the current <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>. Returns the length of the
+match, or <tt>nil</tt>. The <a href="StringScanner.html#M002018">scan</a>
+<a href="StringScanner.html#M002016">pointer</a> is not advanced.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  p s.match?(/\w+/)   # -&gt; 4
+  p s.match?(/\w+/)   # -&gt; 4
+  p s.match?(/\s+/)   # -&gt; nil
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002039" class="method-detail">
+        <a name="M002039"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002039.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002039.html');return false;">
+          <span class="method-name">matched</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the last <a href="StringScanner.html#M002039">matched</a> <a
+href="StringScanner.html#M002010">string</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.match?(/\w+/)     # -&gt; 4
+  s.matched           # -&gt; &quot;test&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002038" class="method-detail">
+        <a name="M002038"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002038.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002038.html');return false;">
+          <span class="method-name">matched?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> iff the last match was successful.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.match?(/\w+/)     # =&gt; 4
+  s.matched?          # =&gt; true
+  s.match?(/\d+/)     # =&gt; nil
+  s.matched?          # =&gt; false
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002040" class="method-detail">
+        <a name="M002040"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002040.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002040.html');return false;">
+          <span class="method-name">matched_size</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the size of the most recent match (see <a
+href="StringScanner.html#M002039">matched</a>), or <tt>nil</tt> if there
+was no recent match.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.check /\w+/           # -&gt; &quot;test&quot;
+  s.matched_size          # -&gt; 4
+  s.check /\d+/           # -&gt; nil
+  s.matched_size          # -&gt; nil
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002041" class="method-detail">
+        <a name="M002041"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002041.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002041.html');return false;">
+          <span class="method-name">matchedsize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <a href="StringScanner.html#M002040">matched_size</a>. This
+method is obsolete; use <a
+href="StringScanner.html#M002040">matched_size</a> instead.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002031" class="method-detail">
+        <a name="M002031"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002031.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002031.html');return false;">
+          <span class="method-name"> peek(len)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Extracts a <a href="StringScanner.html#M002010">string</a> corresponding to
+<tt><a href="StringScanner.html#M002010">string</a>[<a
+href="StringScanner.html#M002014">pos</a>,len]</tt>, without advancing the
+<a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.peek(7)          # =&gt; &quot;test st&quot;
+  s.peek(7)          # =&gt; &quot;test st&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002032" class="method-detail">
+        <a name="M002032"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002032.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002032.html');return false;">
+          <span class="method-name">peep</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <a href="StringScanner.html#M002031">peek</a>. This method is
+obsolete; use <a href="StringScanner.html#M002031">peek</a> instead.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002016" class="method-detail">
+        <a name="M002016"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002016.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002016.html');return false;">
+          <span class="method-name">pointer</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the position of the <a href="StringScanner.html#M002018">scan</a>
+<a href="StringScanner.html#M002016">pointer</a>. In the &#8216;<a
+href="StringScanner.html#M002007">reset</a>&#8217; position, this value is
+zero. In the &#8216;terminated&#8217; position (i.e. the <a
+href="StringScanner.html#M002010">string</a> is exhausted), this value is
+the length of the <a href="StringScanner.html#M002010">string</a>.
+</p>
+<p>
+In short, it&#8216;s a 0-based index into the <a
+href="StringScanner.html#M002010">string</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.pos               # -&gt; 0
+  s.scan_until /str/  # -&gt; &quot;test str&quot;
+  s.pos               # -&gt; 8
+  s.terminate         # -&gt; #&lt;StringScanner fin&gt;
+  s.pos               # -&gt; 11
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002017" class="method-detail">
+        <a name="M002017"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002017.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002017.html');return false;">
+          <span class="method-name"> pos=(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Modify the <a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.pos = 7            # -&gt; 7
+  s.rest               # -&gt; &quot;ring&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002014" class="method-detail">
+        <a name="M002014"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002014.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002014.html');return false;">
+          <span class="method-name">pos</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the position of the <a href="StringScanner.html#M002018">scan</a>
+<a href="StringScanner.html#M002016">pointer</a>. In the &#8216;<a
+href="StringScanner.html#M002007">reset</a>&#8217; position, this value is
+zero. In the &#8216;terminated&#8217; position (i.e. the <a
+href="StringScanner.html#M002010">string</a> is exhausted), this value is
+the length of the <a href="StringScanner.html#M002010">string</a>.
+</p>
+<p>
+In short, it&#8216;s a 0-based index into the <a
+href="StringScanner.html#M002010">string</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.pos               # -&gt; 0
+  s.scan_until /str/  # -&gt; &quot;test str&quot;
+  s.pos               # -&gt; 8
+  s.terminate         # -&gt; #&lt;StringScanner fin&gt;
+  s.pos               # -&gt; 11
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002015" class="method-detail">
+        <a name="M002015"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002015.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002015.html');return false;">
+          <span class="method-name"> pos=(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Modify the <a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.pos = 7            # -&gt; 7
+  s.rest               # -&gt; &quot;ring&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002044" class="method-detail">
+        <a name="M002044"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002044.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002044.html');return false;">
+          <span class="method-name">post_match</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the <b><em>post</b>-match</em> (in the regular expression sense) of
+the last <a href="StringScanner.html#M002018">scan</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.scan(/\w+/)           # -&gt; &quot;test&quot;
+  s.scan(/\s+/)           # -&gt; &quot; &quot;
+  s.pre_match             # -&gt; &quot;test&quot;
+  s.post_match            # -&gt; &quot;string&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002043" class="method-detail">
+        <a name="M002043"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002043.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002043.html');return false;">
+          <span class="method-name">pre_match</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the <b><em>pre</b>-match</em> (in the regular expression sense) of
+the last <a href="StringScanner.html#M002018">scan</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.scan(/\w+/)           # -&gt; &quot;test&quot;
+  s.scan(/\s+/)           # -&gt; &quot; &quot;
+  s.pre_match             # -&gt; &quot;test&quot;
+  s.post_match            # -&gt; &quot;string&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002007" class="method-detail">
+        <a name="M002007"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002007.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002007.html');return false;">
+          <span class="method-name">reset</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reset the <a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a> (index 0) and <a
+href="StringScanner.html#M002009">clear</a> matching data.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002045" class="method-detail">
+        <a name="M002045"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002045.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002045.html');return false;">
+          <span class="method-name">rest</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the &quot;<a href="StringScanner.html#M002045">rest</a>&quot; of
+the <a href="StringScanner.html#M002010">string</a> (i.e. everything after
+the <a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>). If there is no more data
+(<a href="StringScanner.html#M002035">eos?</a> = true), it returns
+<tt>&quot;&quot;</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002037" class="method-detail">
+        <a name="M002037"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002037.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002037.html');return false;">
+          <span class="method-name">rest?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true iff there is more data in the <a
+href="StringScanner.html#M002010">string</a>. See eos?. This method is
+obsolete; use eos? instead.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.eos?              # These two
+  s.rest?             # are opposites.
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002046" class="method-detail">
+        <a name="M002046"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002046.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002046.html');return false;">
+          <span class="method-name">rest_size</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<tt>s.rest_size</tt> is equivalent to <tt>s.rest.size</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002047" class="method-detail">
+        <a name="M002047"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002047.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002047.html');return false;">
+          <span class="method-name">restsize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<tt>s.restsize</tt> is equivalent to <tt>s.rest_size</tt>. This method is
+obsolete; use <a href="StringScanner.html#M002046">rest_size</a> instead.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002018" class="method-detail">
+        <a name="M002018"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002018.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002018.html');return false;">
+          <span class="method-name"> scan(pattern) => String<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Tries to match with <tt>pattern</tt> at the current position. If
+there&#8216;s a match, the scanner advances the &quot;<a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>&quot; and returns the <a
+href="StringScanner.html#M002039">matched</a> <a
+href="StringScanner.html#M002010">string</a>. Otherwise, the scanner
+returns <tt>nil</tt>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  p s.scan(/\w+/)   # -&gt; &quot;test&quot;
+  p s.scan(/\w+/)   # -&gt; nil
+  p s.scan(/\s+/)   # -&gt; &quot; &quot;
+  p s.scan(/\w+/)   # -&gt; &quot;string&quot;
+  p s.scan(/./)     # -&gt; nil
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002022" class="method-detail">
+        <a name="M002022"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002022.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002022.html');return false;">
+          <span class="method-name"> scan_full(pattern, return_string_p, advance_pointer_p)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Tests whether the given <tt>pattern</tt> is <a
+href="StringScanner.html#M002039">matched</a> from the current <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>. Returns the <a
+href="StringScanner.html#M002039">matched</a> <a
+href="StringScanner.html#M002010">string</a> if <tt>return_string_p</tt> is
+true. Advances the <a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a> if <tt>advance_pointer_p</tt>
+is true. The match register is affected.
+</p>
+<p>
+&quot;full&quot; means &quot;<a href="StringScanner.html#M002018">scan</a>
+with full parameters&quot;.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002023" class="method-detail">
+        <a name="M002023"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002023.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002023.html');return false;">
+          <span class="method-name"> scan_until(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Scans the <a href="StringScanner.html#M002010">string</a> <em>until</em>
+the <tt>pattern</tt> is <a href="StringScanner.html#M002039">matched</a>.
+Returns the substring up to and including the end of the match, advancing
+the <a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a> to that location. If there is
+no match, <tt>nil</tt> is returned.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.scan_until(/1/)        # -&gt; &quot;Fri Dec 1&quot;
+  s.pre_match              # -&gt; &quot;Fri Dec &quot;
+  s.scan_until(/XYZ/)      # -&gt; nil
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002027" class="method-detail">
+        <a name="M002027"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002027.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002027.html');return false;">
+          <span class="method-name"> search_full(pattern, return_string_p, advance_pointer_p)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Scans the <a href="StringScanner.html#M002010">string</a> <em>until</em>
+the <tt>pattern</tt> is <a href="StringScanner.html#M002039">matched</a>.
+Returns the <a href="StringScanner.html#M002039">matched</a> <a
+href="StringScanner.html#M002010">string</a> if <tt>return_string_p</tt> is
+true, otherwise returns the number of bytes advanced. Advances the <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a> if
+<tt>advance_pointer_p</tt>, otherwise not. This method does affect the
+match register.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002019" class="method-detail">
+        <a name="M002019"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002019.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002019.html');return false;">
+          <span class="method-name"> skip(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Attempts to <a href="StringScanner.html#M002019">skip</a> over the given
+<tt>pattern</tt> beginning with the <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a>. If it matches, the <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a> is advanced to the end of the
+match, and the length of the match is returned. Otherwise, <tt>nil</tt> is
+returned.
+</p>
+<p>
+It&#8216;s similar to <a href="StringScanner.html#M002018">scan</a>, but
+without returning the <a href="StringScanner.html#M002039">matched</a> <a
+href="StringScanner.html#M002010">string</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  p s.skip(/\w+/)   # -&gt; 4
+  p s.skip(/\w+/)   # -&gt; nil
+  p s.skip(/\s+/)   # -&gt; 1
+  p s.skip(/\w+/)   # -&gt; 6
+  p s.skip(/./)     # -&gt; nil
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002024" class="method-detail">
+        <a name="M002024"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002024.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002024.html');return false;">
+          <span class="method-name"> skip_until(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Advances the <a href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a> until <tt>pattern</tt> is <a
+href="StringScanner.html#M002039">matched</a> and consumed. Returns the
+number of bytes advanced, or <tt>nil</tt> if no match was found.
+</p>
+<p>
+Look ahead to match <tt>pattern</tt>, and advance the <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a> to the <em>end</em> of the
+match. Return the number of characters advanced, or <tt>nil</tt> if the
+match was unsuccessful.
+</p>
+<p>
+It&#8216;s similar to <a href="StringScanner.html#M002023">scan_until</a>,
+but without returning the intervening <a
+href="StringScanner.html#M002010">string</a>.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.skip_until /12/           # -&gt; 10
+  s                           #
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002010" class="method-detail">
+        <a name="M002010"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002010.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002010.html');return false;">
+          <span class="method-name">string</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="StringScanner.html#M002010">string</a> being scanned.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002011" class="method-detail">
+        <a name="M002011"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002011.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002011.html');return false;">
+          <span class="method-name"> string=(str)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Changes the <a href="StringScanner.html#M002010">string</a> being scanned
+to <tt>str</tt> and resets the scanner. Returns <tt>str</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002008" class="method-detail">
+        <a name="M002008"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002008.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002008.html');return false;">
+          <span class="method-name">terminate<br />
+clear<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Set.html">Set</a> the <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a> to the end of the <a
+href="StringScanner.html#M002010">string</a> and <a
+href="StringScanner.html#M002009">clear</a> matching data.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002033" class="method-detail">
+        <a name="M002033"></a>
+
+        <div class="method-heading">
+          <a href="StringScanner.src/M002033.html" target="Code" class="method-signature"
+            onclick="popupCode('StringScanner.src/M002033.html');return false;">
+          <span class="method-name">unscan</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Set.html">Set</a> the <a
+href="StringScanner.html#M002018">scan</a> <a
+href="StringScanner.html#M002016">pointer</a> to the previous position.
+Only one previous position is remembered, and it changes with each scanning
+operation.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.scan(/\w+/)        # =&gt; &quot;test&quot;
+  s.unscan
+  s.scan(/../)         # =&gt; &quot;te&quot;
+  s.scan(/\d/)         # =&gt; nil
+  s.unscan             # ScanError: unscan failed: previous match had failed
+</pre>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

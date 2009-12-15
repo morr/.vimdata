@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>catch (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     catch(symbol) {| | block }  &gt; obj
+ *  
+ *  +catch+ executes its block. If a +throw+ is
+ *  executed, Ruby searches up its stack for a +catch+ block
+ *  with a tag corresponding to the +throw+'s
+ *  _symbol_. If found, that block is terminated, and
+ *  +catch+ returns the value given to +throw+. If
+ *  +throw+ is not called, the block terminates normally, and
+ *  the value of +catch+ is the value of the last expression
+ *  evaluated. +catch+ expressions may be nested, and the
+ *  +throw+ call need not be in lexical scope.
+ *     
+ *     def routine(n)
+ *       puts n
+ *       throw :done if n &lt;= 0
+ *       routine(n-1)
+ *     end
+ *     
+ *     
+ *     catch(:done) { routine(3) }
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     3
+ *     2
+ *     1
+ *     0
+ */
+
+static VALUE
+rb_f_catch(dmy, tag)
+    VALUE dmy, tag;
+{
+    int state;
+    VALUE val = Qnil;           /* OK */
+
+    tag = ID2SYM(rb_to_id(tag));
+    PUSH_TAG(tag);
+    if ((state = EXEC_TAG()) == 0) {
+        val = rb_yield_0(tag, 0, 0, 0, Qfalse);
+    }
+    else if (state == TAG_THROW &amp;&amp; tag == prot_tag-&gt;dst) {
+        val = prot_tag-&gt;retval;
+        state = 0;
+    }
+    POP_TAG();
+    if (state) JUMP_TAG(state);
+
+    return val;
+}</pre>
+</body>
+</html>

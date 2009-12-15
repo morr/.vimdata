@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.each(separator=$/) {|substr| block }        =&gt; str
+ *     str.each_line(separator=$/) {|substr| block }   =&gt; str
+ *  
+ *  Splits &lt;i&gt;str&lt;/i&gt; using the supplied parameter as the record separator
+ *  (&lt;code&gt;$/&lt;/code&gt; by default), passing each substring in turn to the supplied
+ *  block. If a zero-length record separator is supplied, the string is split on
+ *  &lt;code&gt;\n&lt;/code&gt; characters, except that multiple successive newlines are
+ *  appended together.
+ *     
+ *     print &quot;Example one\n&quot;
+ *     &quot;hello\nworld&quot;.each {|s| p s}
+ *     print &quot;Example two\n&quot;
+ *     &quot;hello\nworld&quot;.each('l') {|s| p s}
+ *     print &quot;Example three\n&quot;
+ *     &quot;hello\n\n\nworld&quot;.each('') {|s| p s}
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     Example one
+ *     &quot;hello\n&quot;
+ *     &quot;world&quot;
+ *     Example two
+ *     &quot;hel&quot;
+ *     &quot;l&quot;
+ *     &quot;o\nworl&quot;
+ *     &quot;d&quot;
+ *     Example three
+ *     &quot;hello\n\n\n&quot;
+ *     &quot;world&quot;
+ */
+
+static VALUE
+rb_str_each_line(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    VALUE rs;
+    int newline;
+    char *p = RSTRING(str)-&gt;ptr, *pend = p + RSTRING(str)-&gt;len, *s;
+    char *ptr = p;
+    long len = RSTRING(str)-&gt;len, rslen;
+    VALUE line;
+
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;rs) == 0) {
+        rs = rb_rs;
+    }
+
+    if (NIL_P(rs)) {
+        rb_yield(str);
+        return str;
+    }
+    StringValue(rs);
+    rslen = RSTRING(rs)-&gt;len;
+    if (rslen == 0) {
+        newline = '\n';
+    }
+    else {
+        newline = RSTRING(rs)-&gt;ptr[rslen-1];
+    }
+
+    for (s = p, p += rslen; p &lt; pend; p++) {
+        if (rslen == 0 &amp;&amp; *p == '\n') {
+            if (*++p != '\n') continue;
+            while (*p == '\n') p++;
+        }
+        if (RSTRING(str)-&gt;ptr &lt; p &amp;&amp; p[-1] == newline &amp;&amp;
+            (rslen &lt;= 1 ||
+             rb_memcmp(RSTRING(rs)-&gt;ptr, p-rslen, rslen) == 0)) {
+            line = rb_str_new5(str, s, p - s);
+            OBJ_INFECT(line, str);
+            rb_yield(line);
+            str_mod_check(str, ptr, len);
+            s = p;
+        }
+    }
+
+    if (s != pend) {
+        if (p &gt; pend) p = pend;
+        line = rb_str_new5(str, s, p - s);
+        OBJ_INFECT(line, str);
+        rb_yield(line);
+    }
+
+    return str;
+}</pre>
+</body>
+</html>

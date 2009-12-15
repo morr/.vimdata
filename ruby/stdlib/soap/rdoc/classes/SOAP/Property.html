@@ -1,0 +1,813 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: SOAP::Property</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">SOAP::Property</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/soap/property_rb.html">
+                soap/property.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="Property.html">Property</a> stream format:
+</p>
+<pre>
+  line separator is \r?\n.  1 line per a property.
+  line which begins with '#' is a comment line.  empty line is ignored, too.
+  key/value separator is ':' or '='.
+  '\' as escape character.  but line separator cannot be escaped.
+  \s at the head/tail of key/value are trimmed.
+
+  '[' + key + ']' indicates property section.  for example,
+
+    [aaa.bbb]
+    ccc = ddd
+    eee.fff = ggg
+    []
+    aaa.hhh = iii
+
+  is the same as;
+
+    aaa.bbb.ccc = ddd
+    aaa.bbb.eee.fff = ggg
+    aaa.hhh = iii
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004102">&lt;&lt;</a>&nbsp;&nbsp;
+      <a href="#M004100">[]</a>&nbsp;&nbsp;
+      <a href="#M004101">[]=</a>&nbsp;&nbsp;
+      <a href="#M004103">add_hook</a>&nbsp;&nbsp;
+      <a href="#M004111">deref_key</a>&nbsp;&nbsp;
+      <a href="#M004104">each</a>&nbsp;&nbsp;
+      <a href="#M004105">empty?</a>&nbsp;&nbsp;
+      <a href="#M004106">keys</a>&nbsp;&nbsp;
+      <a href="#M004095">load</a>&nbsp;&nbsp;
+      <a href="#M004098">load</a>&nbsp;&nbsp;
+      <a href="#M004099">loadproperty</a>&nbsp;&nbsp;
+      <a href="#M004096">loadproperty</a>&nbsp;&nbsp;
+      <a href="#M004113">local_assign</a>&nbsp;&nbsp;
+      <a href="#M004115">local_assign_hook</a>&nbsp;&nbsp;
+      <a href="#M004114">local_hook</a>&nbsp;&nbsp;
+      <a href="#M004112">local_referent</a>&nbsp;&nbsp;
+      <a href="#M004108">lock</a>&nbsp;&nbsp;
+      <a href="#M004110">locked?</a>&nbsp;&nbsp;
+      <a href="#M004097">new</a>&nbsp;&nbsp;
+      <a href="#M004109">unlock</a>&nbsp;&nbsp;
+      <a href="#M004107">values</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="../Enumerable.html">Enumerable</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="Property/Util.html" class="link">SOAP::Property::Util</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FrozenError</td>
+          <td>=</td>
+          <td class="context-item-value">(RUBY_VERSION &gt;= &quot;1.9.0&quot;) ? RuntimeError : TypeError</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">KEY_REGSRC</td>
+          <td>=</td>
+          <td class="context-item-value">'([^=:\\\\]*(?:\\\\.[^=:\\\\]*)*)'</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DEF_REGSRC</td>
+          <td>=</td>
+          <td class="context-item-value">'\\s*' + KEY_REGSRC + '\\s*[=:]\\s*(.*)'</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">COMMENT_REGEXP</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.new('^(?:#.*|)$')</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CATDEF_REGEXP</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.new(&quot;^\\[\\s*#{KEY_REGSRC}\\s*\\]$&quot;)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">LINE_REGEXP</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.new(&quot;^#{DEF_REGSRC}$&quot;)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NO_HOOK</td>
+          <td>=</td>
+          <td class="context-item-value">[].freeze</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M004095" class="m-detail">
+        <a name="M004095"></a>
+
+        <div class="method-heading">
+          <a href="#M004095" class="method-signature">
+          <span class="method-name">load</span><span class="method-args">(stream)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004095-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004095-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 51</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">stream</span>)
+    <span class="ruby-identifier">new</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">stream</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004096" class="m-detail">
+        <a name="M004096"></a>
+
+        <div class="method-heading">
+          <a href="#M004096" class="method-signature">
+          <span class="method-name">loadproperty</span><span class="method-args">(propname)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004096-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004096-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 55</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">loadproperty</span>(<span class="ruby-identifier">propname</span>)
+    <span class="ruby-identifier">new</span>.<span class="ruby-identifier">loadproperty</span>(<span class="ruby-identifier">propname</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004097" class="m-detail">
+        <a name="M004097"></a>
+
+        <div class="method-heading">
+          <a href="#M004097" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004097-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004097-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 59</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>
+    <span class="ruby-ivar">@store</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-ivar">@hook</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-ivar">@self_hook</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-ivar">@locked</span> = <span class="ruby-keyword kw">false</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004102" class="m-detail">
+        <a name="M004102"></a>
+
+        <div class="method-heading">
+          <a href="#M004102" class="method-signature">
+          <span class="method-name">&lt;&lt;</span><span class="method-args">(value)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+value: an <a href="../Object.html">Object</a> key is generated by property
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004102-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004102-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 122</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">&lt;&lt;</span>(<span class="ruby-identifier">value</span>)
+    <span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">generate_new_key</span>] = <span class="ruby-identifier">value</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004100" class="m-detail">
+        <a name="M004100"></a>
+
+        <div class="method-heading">
+          <a href="#M004100" class="method-signature">
+          <span class="method-name">[]</span><span class="method-args">(name)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+name: a Symbol, String or an Array
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004100-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004100-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 105</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]</span>(<span class="ruby-identifier">name</span>)
+    <span class="ruby-identifier">referent</span>(<span class="ruby-identifier">name_to_a</span>(<span class="ruby-identifier">name</span>))
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004101" class="m-detail">
+        <a name="M004101"></a>
+
+        <div class="method-heading">
+          <a href="#M004101" class="method-signature">
+          <span class="method-name">[]=</span><span class="method-args">(name, value)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+name: a Symbol, String or an Array value: an <a
+href="../Object.html">Object</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004101-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004101-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 111</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]=</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span>)
+    <span class="ruby-identifier">name_pair</span> = <span class="ruby-identifier">name_to_a</span>(<span class="ruby-identifier">name</span>).<span class="ruby-identifier">freeze</span>
+    <span class="ruby-identifier">hooks</span> = <span class="ruby-identifier">assign</span>(<span class="ruby-identifier">name_pair</span>, <span class="ruby-identifier">value</span>)
+    <span class="ruby-identifier">hooks</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">hook</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">hook</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">name_pair</span>, <span class="ruby-identifier">value</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">value</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004103" class="m-detail">
+        <a name="M004103"></a>
+
+        <div class="method-heading">
+          <a href="#M004103" class="method-signature">
+          <span class="method-name">add_hook</span><span class="method-args">(name = nil, cascade = false, &amp;hook)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+name: a Symbol, String or an Array; nil means hook to the root cascade:
+true/false; for cascading hook of sub key hook: block which will be called
+with 2 args, name and value
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004103-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004103-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 129</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_hook</span>(<span class="ruby-identifier">name</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">cascade</span> = <span class="ruby-keyword kw">false</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">hook</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">false</span>
+      <span class="ruby-identifier">cascade</span> = <span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">assign_self_hook</span>(<span class="ruby-identifier">cascade</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">hook</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">assign_hook</span>(<span class="ruby-identifier">name_to_a</span>(<span class="ruby-identifier">name</span>), <span class="ruby-identifier">cascade</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">hook</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004104" class="m-detail">
+        <a name="M004104"></a>
+
+        <div class="method-heading">
+          <a href="#M004104" class="method-signature">
+          <span class="method-name">each</span><span class="method-args">() {|key, value| ...}</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004104-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004104-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 138</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each</span>
+    <span class="ruby-ivar">@store</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004105" class="m-detail">
+        <a name="M004105"></a>
+
+        <div class="method-heading">
+          <a href="#M004105" class="method-signature">
+          <span class="method-name">empty?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004105-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004105-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 144</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">empty?</span>
+    <span class="ruby-ivar">@store</span>.<span class="ruby-identifier">empty?</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004106" class="m-detail">
+        <a name="M004106"></a>
+
+        <div class="method-heading">
+          <a href="#M004106" class="method-signature">
+          <span class="method-name">keys</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004106-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004106-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 148</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">keys</span>
+    <span class="ruby-ivar">@store</span>.<span class="ruby-identifier">keys</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004098" class="m-detail">
+        <a name="M004098"></a>
+
+        <div class="method-heading">
+          <a href="#M004098" class="method-signature">
+          <span class="method-name">load</span><span class="method-args">(stream)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004098-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004098-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 71</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load</span>(<span class="ruby-identifier">stream</span>)
+    <span class="ruby-identifier">key_prefix</span> = <span class="ruby-value str">&quot;&quot;</span>
+    <span class="ruby-identifier">stream</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">line</span>, <span class="ruby-identifier">lineno</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">line</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/\r?\n\z/</span>, <span class="ruby-value str">''</span>)
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">line</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">COMMENT_REGEXP</span>
+        <span class="ruby-keyword kw">next</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">CATDEF_REGEXP</span>
+        <span class="ruby-identifier">key_prefix</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">strip</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">LINE_REGEXP</span>
+        <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">strip</span>, <span class="ruby-identifier">$2</span>.<span class="ruby-identifier">strip</span>
+        <span class="ruby-identifier">key</span> = <span class="ruby-node">&quot;#{key_prefix}.#{key}&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">key_prefix</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> = <span class="ruby-identifier">loadstr</span>(<span class="ruby-identifier">key</span>), <span class="ruby-identifier">loadstr</span>(<span class="ruby-identifier">value</span>)
+        <span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">value</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>.<span class="ruby-identifier">new</span>(
+          <span class="ruby-node">&quot;property format error at line #{lineno + 1}: `#{line}'&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004099" class="m-detail">
+        <a name="M004099"></a>
+
+        <div class="method-heading">
+          <a href="#M004099" class="method-signature">
+          <span class="method-name">loadproperty</span><span class="method-args">(propname)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+find property from $:.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004099-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004099-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 94</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">loadproperty</span>(<span class="ruby-identifier">propname</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">loadpropertyfile</span>(<span class="ruby-identifier">propname</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">file?</span>(<span class="ruby-identifier">propname</span>)
+    <span class="ruby-identifier">$:</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">path</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">file?</span>(<span class="ruby-identifier">file</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">propname</span>))
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">loadpropertyfile</span>(<span class="ruby-identifier">file</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">nil</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004108" class="m-detail">
+        <a name="M004108"></a>
+
+        <div class="method-heading">
+          <a href="#M004108" class="method-signature">
+          <span class="method-name">lock</span><span class="method-args">(cascade = false)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004108-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004108-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 156</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">lock</span>(<span class="ruby-identifier">cascade</span> = <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cascade</span>
+      <span class="ruby-identifier">each_key</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">key</span>.<span class="ruby-identifier">lock</span>(<span class="ruby-identifier">cascade</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@locked</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004110" class="m-detail">
+        <a name="M004110"></a>
+
+        <div class="method-heading">
+          <a href="#M004110" class="method-signature">
+          <span class="method-name">locked?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004110-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004110-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 176</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">locked?</span>
+    <span class="ruby-ivar">@locked</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004109" class="m-detail">
+        <a name="M004109"></a>
+
+        <div class="method-heading">
+          <a href="#M004109" class="method-signature">
+          <span class="method-name">unlock</span><span class="method-args">(cascade = false)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004109-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004109-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 166</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">unlock</span>(<span class="ruby-identifier">cascade</span> = <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-ivar">@locked</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cascade</span>
+      <span class="ruby-identifier">each_key</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">key</span>.<span class="ruby-identifier">unlock</span>(<span class="ruby-identifier">cascade</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004107" class="m-detail">
+        <a name="M004107"></a>
+
+        <div class="method-heading">
+          <a href="#M004107" class="method-signature">
+          <span class="method-name">values</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004107-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004107-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 152</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">values</span>
+    <span class="ruby-ivar">@store</span>.<span class="ruby-identifier">values</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M004111" class="m-detail">
+        <a name="M004111"></a>
+
+        <div class="method-heading">
+          <a href="#M004111" class="method-signature">
+          <span class="method-name">deref_key</span><span class="method-args">(key)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004111-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004111-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 182</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">deref_key</span>(<span class="ruby-identifier">key</span>)
+    <span class="ruby-identifier">check_lock</span>(<span class="ruby-identifier">key</span>)
+    <span class="ruby-identifier">ref</span> = <span class="ruby-ivar">@store</span>[<span class="ruby-identifier">key</span>] <span class="ruby-operator">||=</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">propkey?</span>(<span class="ruby-identifier">ref</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;key `#{key}' already defined as a value&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">ref</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004113" class="m-detail">
+        <a name="M004113"></a>
+
+        <div class="method-heading">
+          <a href="#M004113" class="method-signature">
+          <span class="method-name">local_assign</span><span class="method-args">(key, value)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004113-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004113-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 199</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">local_assign</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>)
+    <span class="ruby-identifier">check_lock</span>(<span class="ruby-identifier">key</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@locked</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">propkey?</span>(<span class="ruby-identifier">value</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">FrozenError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;cannot add any key to locked property&quot;</span>)
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">propkey?</span>(<span class="ruby-ivar">@store</span>[<span class="ruby-identifier">key</span>])
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">FrozenError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;cannot override any key in locked property&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@store</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">value</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004115" class="m-detail">
+        <a name="M004115"></a>
+
+        <div class="method-heading">
+          <a href="#M004115" class="method-signature">
+          <span class="method-name">local_assign_hook</span><span class="method-args">(key, cascade, &amp;hook)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004115-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004115-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 219</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">local_assign_hook</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">cascade</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">hook</span>)
+    <span class="ruby-identifier">check_lock</span>(<span class="ruby-identifier">key</span>)
+    <span class="ruby-ivar">@store</span>[<span class="ruby-identifier">key</span>] <span class="ruby-operator">||=</span> <span class="ruby-keyword kw">nil</span>
+    (<span class="ruby-ivar">@hook</span>[<span class="ruby-identifier">key</span>] <span class="ruby-operator">||=</span> []) <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">hook</span>, <span class="ruby-identifier">cascade</span>]
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004114" class="m-detail">
+        <a name="M004114"></a>
+
+        <div class="method-heading">
+          <a href="#M004114" class="method-signature">
+          <span class="method-name">local_hook</span><span class="method-args">(key, direct)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004114-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004114-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 211</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">local_hook</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">direct</span>)
+    <span class="ruby-identifier">hooks</span> = []
+    (<span class="ruby-ivar">@self_hook</span> <span class="ruby-operator">+</span> (<span class="ruby-ivar">@hook</span>[<span class="ruby-identifier">key</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">NO_HOOK</span>)).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">hook</span>, <span class="ruby-identifier">cascade</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">hooks</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">hook</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">direct</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">cascade</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">hooks</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004112" class="m-detail">
+        <a name="M004112"></a>
+
+        <div class="method-heading">
+          <a href="#M004112" class="method-signature">
+          <span class="method-name">local_referent</span><span class="method-args">(key)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004112-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004112-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/property.rb, line 191</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">local_referent</span>(<span class="ruby-identifier">key</span>)
+    <span class="ruby-identifier">check_lock</span>(<span class="ruby-identifier">key</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">propkey?</span>(<span class="ruby-ivar">@store</span>[<span class="ruby-identifier">key</span>]) <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@store</span>[<span class="ruby-identifier">key</span>].<span class="ruby-identifier">locked?</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">FrozenError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;cannot split any key from locked property&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@store</span>[<span class="ruby-identifier">key</span>]
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+<!-- 1  --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and maintained by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. The site was created in 2002 as part of the Ruby Documentation Project to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>source_file (IRB::IrbLoader)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb/ext/loader.rb, line 44</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">source_file</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-identifier">irb</span>.<span class="ruby-identifier">suspend_name</span>(<span class="ruby-identifier">path</span>, <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">path</span>)) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-identifier">irb</span>.<span class="ruby-identifier">suspend_input_method</span>(<span class="ruby-constant">FileInputMethod</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>)) <span class="ruby-keyword kw">do</span>
+          <span class="ruby-operator">|</span><span class="ruby-identifier">back_io</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">irb</span>.<span class="ruby-identifier">signal_status</span>(<span class="ruby-identifier">:IN_LOAD</span>) <span class="ruby-keyword kw">do</span> 
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">back_io</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">FileInputMethod</span>)
+              <span class="ruby-identifier">irb</span>.<span class="ruby-identifier">eval_input</span>
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-keyword kw">begin</span>
+                <span class="ruby-identifier">irb</span>.<span class="ruby-identifier">eval_input</span>
+              <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LoadAbort</span>
+                <span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;load abort!!\n&quot;</span>
+              <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

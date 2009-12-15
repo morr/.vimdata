@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>initgroups (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.initgroups(username, gid)   =&gt; array
+ *
+ *  Initializes the supplemental group access list by reading the
+ *  system group database and using all groups of which the given user
+ *  is a member. The group with the specified &lt;em&gt;gid&lt;/em&gt; is also
+ *  added to the list. Returns the resulting &lt;code&gt;Array&lt;/code&gt; of the
+ *  gids of all the groups in the supplementary group access list. Not
+ *  available on all platforms.
+ *
+ *     Process.groups   #=&gt; [0, 1, 2, 3, 4, 6, 10, 11, 20, 26, 27]
+ *     Process.initgroups( &quot;mgranger&quot;, 30 )   #=&gt; [30, 6, 10, 11]
+ *     Process.groups   #=&gt; [30, 6, 10, 11]
+ *
+ */
+
+static VALUE
+proc_initgroups(obj, uname, base_grp)
+    VALUE obj, uname, base_grp;
+{
+#ifdef HAVE_INITGROUPS
+    if (initgroups(StringValuePtr(uname), (rb_gid_t)NUM2INT(base_grp)) != 0) {
+        rb_sys_fail(0);
+    }
+    return proc_getgroups(obj);
+#else
+    rb_notimplement();
+    return Qnil;
+#endif
+}</pre>
+</body>
+</html>

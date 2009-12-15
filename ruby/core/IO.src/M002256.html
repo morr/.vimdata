@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each_byte (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.each_byte {|byte| block }  =&gt; nil
+ *  
+ *  Calls the given block once for each byte (0..255) in &lt;em&gt;ios&lt;/em&gt;,
+ *  passing the byte as an argument. The stream must be opened for
+ *  reading or an &lt;code&gt;IOError&lt;/code&gt; will be raised.
+ *     
+ *     f = File.new(&quot;testfile&quot;)
+ *     checksum = 0
+ *     f.each_byte {|x| checksum ^= x }   #=&gt; #&lt;File:testfile&gt;
+ *     checksum                           #=&gt; 12
+ */
+
+static VALUE
+rb_io_each_byte(io)
+    VALUE io;
+{
+    OpenFile *fptr;
+    FILE *f;
+    int c;
+
+    GetOpenFile(io, fptr);
+
+    for (;;) {
+        rb_io_check_readable(fptr);
+        f = fptr-&gt;f;
+        READ_CHECK(f);
+        clearerr(f);
+        TRAP_BEG;
+        c = getc(f);
+        TRAP_END;
+        if (c == EOF) {
+            if (ferror(f)) {
+                clearerr(f);
+                if (!rb_io_wait_readable(fileno(f)))
+                    rb_sys_fail(fptr-&gt;path);
+                continue;
+            }
+            break;
+        }
+        rb_yield(INT2FIX(c &amp; 0xff));
+    }
+    if (ferror(f)) rb_sys_fail(fptr-&gt;path);
+    return io;
+}</pre>
+</body>
+</html>

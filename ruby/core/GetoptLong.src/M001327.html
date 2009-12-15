@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>set_options (GetoptLong)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/getoptlong.rb, line 277</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_options</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">arguments</span>)
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-comment cmt"># The method is failed if option processing has already started.</span>
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@status</span> <span class="ruby-operator">!=</span> <span class="ruby-constant">STATUS_YET</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">RuntimeError</span>, 
+        <span class="ruby-value str">&quot;invoke set_options, but option processing has already started&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-comment cmt"># Clear tables of option names and argument flags.</span>
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-ivar">@canonical_names</span>.<span class="ruby-identifier">clear</span>
+    <span class="ruby-ivar">@argument_flags</span>.<span class="ruby-identifier">clear</span>
+
+    <span class="ruby-identifier">arguments</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-comment cmt"># Each argument must be an Array.</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">arg</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;the option list contains non-Array argument&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-comment cmt"># Find an argument flag and it set to `argument_flag'.</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-identifier">argument_flag</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-constant">ARGUMENT_FLAGS</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">i</span>)
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">argument_flag</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;too many argument-flags&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">argument_flag</span> = <span class="ruby-identifier">i</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;no argument-flag&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">argument_flag</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+
+      <span class="ruby-identifier">canonical_name</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+        <span class="ruby-comment cmt">#</span>
+        <span class="ruby-comment cmt"># Check an option name.</span>
+        <span class="ruby-comment cmt">#</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">i</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">argument_flag</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">i</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">String</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">i</span> <span class="ruby-operator">!~</span> <span class="ruby-regexp re">/^-([^-]|-.+)$/</span>
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;an invalid option `#{i}'&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> (<span class="ruby-ivar">@canonical_names</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">i</span>))
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;option redefined `#{i}'&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">rescue</span>
+          <span class="ruby-ivar">@canonical_names</span>.<span class="ruby-identifier">clear</span>
+          <span class="ruby-ivar">@argument_flags</span>.<span class="ruby-identifier">clear</span>
+          <span class="ruby-identifier">raise</span>
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-comment cmt">#</span>
+        <span class="ruby-comment cmt"># Register the option (`i') to the `@canonical_names' and </span>
+        <span class="ruby-comment cmt"># `@canonical_names' Hashes.</span>
+        <span class="ruby-comment cmt">#</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">canonical_name</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+          <span class="ruby-identifier">canonical_name</span> = <span class="ruby-identifier">i</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-ivar">@canonical_names</span>[<span class="ruby-identifier">i</span>] = <span class="ruby-identifier">canonical_name</span>
+        <span class="ruby-ivar">@argument_flags</span>[<span class="ruby-identifier">i</span>] = <span class="ruby-identifier">argument_flag</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;no option name&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">canonical_name</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

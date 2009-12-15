@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>def_builtin_commands (Shell::CommandProcessor)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/shell/command-processor.rb, line 442</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">def_builtin_commands</span>(<span class="ruby-identifier">delegation_class</span>, <span class="ruby-identifier">command_specs</span>)
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">meth</span>, <span class="ruby-identifier">args</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">command_specs</span>
+        <span class="ruby-identifier">arg_str</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span> <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">downcase</span>}.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;, &quot;</span>)
+        <span class="ruby-identifier">call_arg_str</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">collect</span>{
+          <span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">arg</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^(FILENAME.*)$/</span>
+            <span class="ruby-identifier">format</span>(<span class="ruby-value str">&quot;expand_path(%s)&quot;</span>, <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">downcase</span>)
+          <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^(\*FILENAME.*)$/</span>
+            <span class="ruby-comment cmt"># \*FILENAME* -&gt; filenames.collect{|fn| expand_path(fn)}.join(&quot;, &quot;)</span>
+            <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">+</span> <span class="ruby-value str">'.collect{|fn| expand_path(fn)}'</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">arg</span>
+          <span class="ruby-keyword kw">end</span>
+        }.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;, &quot;</span>)
+        <span class="ruby-identifier">d</span> = <span class="ruby-node">%Q[def #{meth}(#{arg_str})
+                    #{delegation_class}.#{meth}(#{call_arg_str})
+                 end]</span>
+        <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;Define #{meth}(#{arg_str})&quot;</span>, <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug?</span>
+        <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">notify</span>(<span class="ruby-node">&quot;Definition of #{meth}: &quot;</span>, <span class="ruby-identifier">d</span>, 
+             <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Shell</span>.<span class="ruby-identifier">debug</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>)
+        <span class="ruby-identifier">eval</span> <span class="ruby-identifier">d</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

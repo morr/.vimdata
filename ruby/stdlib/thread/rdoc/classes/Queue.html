@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Queue</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Queue</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/thread_rb.html">
+                thread.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+This class provides a way to synchronize communication between threads.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  require 'thread'
+
+  queue = Queue.new
+
+  producer = Thread.new do
+    5.times do |i|
+      sleep rand(i) # simulate expense
+      queue &lt;&lt; i
+      puts &quot;#{i} produced&quot;
+    end
+  end
+
+  consumer = Thread.new do
+    5.times do |i|
+      value = queue.pop
+      sleep rand(i/2) # simulate expense
+      puts &quot;consumed #{value}&quot;
+    end
+  end
+
+  consumer.join
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004593">&lt;&lt;</a>&nbsp;&nbsp;
+      <a href="#M004599">clear</a>&nbsp;&nbsp;
+      <a href="#M004597">deq</a>&nbsp;&nbsp;
+      <a href="#M004598">empty?</a>&nbsp;&nbsp;
+      <a href="#M004594">enq</a>&nbsp;&nbsp;
+      <a href="#M004600">length</a>&nbsp;&nbsp;
+      <a href="#M004591">new</a>&nbsp;&nbsp;
+      <a href="#M004602">num_waiting</a>&nbsp;&nbsp;
+      <a href="#M004595">pop</a>&nbsp;&nbsp;
+      <a href="#M004592">push</a>&nbsp;&nbsp;
+      <a href="#M004596">shift</a>&nbsp;&nbsp;
+      <a href="#M004601">size</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M004591" class="m-detail">
+        <a name="M004591"></a>
+
+        <div class="method-heading">
+          <a href="#M004591" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Creates a <a href="Queue.html#M004591">new</a> queue.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004591-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004591-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 266</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>
+    <span class="ruby-ivar">@que</span> = []
+    <span class="ruby-ivar">@waiting</span> = []
+    <span class="ruby-ivar">@que</span>.<span class="ruby-identifier">taint</span>          <span class="ruby-comment cmt"># enable tainted comunication</span>
+    <span class="ruby-ivar">@waiting</span>.<span class="ruby-identifier">taint</span>
+    <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">taint</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004593" class="m-detail">
+        <a name="M004593"></a>
+
+        <div class="method-heading">
+          <span class="method-name">&lt;&lt;</span><span class="method-args">(obj)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="Queue.html#M004592">push</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004599" class="m-detail">
+        <a name="M004599"></a>
+
+        <div class="method-heading">
+          <a href="#M004599" class="method-signature">
+          <span class="method-name">clear</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Removes all objects from the queue.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004599-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004599-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 340</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">clear</span>
+    <span class="ruby-ivar">@que</span>.<span class="ruby-identifier">clear</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004597" class="m-detail">
+        <a name="M004597"></a>
+
+        <div class="method-heading">
+          <span class="method-name">deq</span><span class="method-args">(non_block=false)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="Queue.html#M004595">pop</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004598" class="m-detail">
+        <a name="M004598"></a>
+
+        <div class="method-heading">
+          <a href="#M004598" class="method-signature">
+          <span class="method-name">empty?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns <tt>true</tt> is the queue is empty.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004598-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004598-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 333</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">empty?</span>
+    <span class="ruby-ivar">@que</span>.<span class="ruby-identifier">empty?</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004594" class="m-detail">
+        <a name="M004594"></a>
+
+        <div class="method-heading">
+          <span class="method-name">enq</span><span class="method-args">(obj)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="Queue.html#M004592">push</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004600" class="m-detail">
+        <a name="M004600"></a>
+
+        <div class="method-heading">
+          <a href="#M004600" class="method-signature">
+          <span class="method-name">length</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the <a href="Queue.html#M004600">length</a> of the queue.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004600-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004600-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 347</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">length</span>
+    <span class="ruby-ivar">@que</span>.<span class="ruby-identifier">length</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004602" class="m-detail">
+        <a name="M004602"></a>
+
+        <div class="method-heading">
+          <a href="#M004602" class="method-signature">
+          <span class="method-name">num_waiting</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the number of threads waiting on the queue.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004602-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004602-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 359</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">num_waiting</span>
+    <span class="ruby-ivar">@waiting</span>.<span class="ruby-identifier">size</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004595" class="m-detail">
+        <a name="M004595"></a>
+
+        <div class="method-heading">
+          <a href="#M004595" class="method-signature">
+          <span class="method-name">pop</span><span class="method-args">(non_block=false)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Retrieves data from the queue. If the queue is empty, the calling thread is
+suspended until data is pushed onto the queue. If <tt>non_block</tt> is
+true, the thread isn&#8216;t suspended, and an exception is raised.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004595-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004595-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 309</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">pop</span>(<span class="ruby-identifier">non_block</span>=<span class="ruby-keyword kw">false</span>)
+    <span class="ruby-keyword kw">while</span> (<span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">true</span>; <span class="ruby-ivar">@que</span>.<span class="ruby-identifier">empty?</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ThreadError</span>, <span class="ruby-value str">&quot;queue empty&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">non_block</span>
+      <span class="ruby-ivar">@waiting</span>.<span class="ruby-identifier">push</span> <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">stop</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@que</span>.<span class="ruby-identifier">shift</span>
+  <span class="ruby-keyword kw">ensure</span>
+    <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">false</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004592" class="m-detail">
+        <a name="M004592"></a>
+
+        <div class="method-heading">
+          <a href="#M004592" class="method-signature">
+          <span class="method-name">push</span><span class="method-args">(obj)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Pushes <tt>obj</tt> to the queue.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004592-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004592-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 277</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">push</span>(<span class="ruby-identifier">obj</span>)
+    <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-ivar">@que</span>.<span class="ruby-identifier">push</span> <span class="ruby-identifier">obj</span>
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">t</span> = <span class="ruby-ivar">@waiting</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-identifier">t</span>.<span class="ruby-identifier">wakeup</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">t</span>
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">ThreadError</span>
+      <span class="ruby-keyword kw">retry</span>
+    <span class="ruby-keyword kw">ensure</span>
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">t</span>.<span class="ruby-identifier">run</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">t</span>
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">ThreadError</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004596" class="m-detail">
+        <a name="M004596"></a>
+
+        <div class="method-heading">
+          <span class="method-name">shift</span><span class="method-args">(non_block=false)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="Queue.html#M004595">pop</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004601" class="m-detail">
+        <a name="M004601"></a>
+
+        <div class="method-heading">
+          <span class="method-name">size</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="Queue.html#M004600">length</a>
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+<!-- 1  --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and maintained by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. The site was created in 2002 as part of the Ruby Documentation Project to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

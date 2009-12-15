@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>link (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.link(old_name, new_name)    =&gt; 0
+ *  
+ *  Creates a new name for an existing file using a hard link. Will not
+ *  overwrite &lt;i&gt;new_name&lt;/i&gt; if it already exists (raising a subclass
+ *  of &lt;code&gt;SystemCallError&lt;/code&gt;). Not available on all platforms.
+ *     
+ *     File.link(&quot;testfile&quot;, &quot;.testfile&quot;)   #=&gt; 0
+ *     IO.readlines(&quot;.testfile&quot;)[0]         #=&gt; &quot;This is line one\n&quot;
+ */
+
+static VALUE
+rb_file_s_link(klass, from, to)
+    VALUE klass, from, to;
+{
+#ifdef HAVE_LINK
+    SafeStringValue(from);
+    SafeStringValue(to);
+
+    if (link(StringValueCStr(from), StringValueCStr(to)) &lt; 0) {
+        sys_fail2(from, to);
+    }
+    return INT2FIX(0);
+#else
+    rb_notimplement();
+    return Qnil;                /* not reached */
+#endif
+}</pre>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>call (SOAP::RPC::Proxy)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/rpc/proxy.rb, line 116</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">call</span>(<span class="ruby-identifier">name</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">params</span>)
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">op_info</span> = <span class="ruby-ivar">@operation</span>[<span class="ruby-identifier">name</span>]
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">MethodDefinitionError</span>, <span class="ruby-node">&quot;method: #{name} not defined&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">mapping_opt</span> = <span class="ruby-identifier">create_mapping_opt</span>
+    <span class="ruby-identifier">req_header</span> = <span class="ruby-identifier">create_request_header</span>
+    <span class="ruby-identifier">req_body</span> = <span class="ruby-constant">SOAPBody</span>.<span class="ruby-identifier">new</span>(
+      <span class="ruby-identifier">op_info</span>.<span class="ruby-identifier">request_body</span>(<span class="ruby-identifier">params</span>, <span class="ruby-ivar">@mapping_registry</span>,
+        <span class="ruby-ivar">@literal_mapping_registry</span>, <span class="ruby-identifier">mapping_opt</span>)
+    )
+    <span class="ruby-identifier">reqopt</span> = <span class="ruby-identifier">create_encoding_opt</span>(
+      <span class="ruby-identifier">:soapaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">op_info</span>.<span class="ruby-identifier">soapaction</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@soapaction</span>,
+      <span class="ruby-identifier">:envelopenamespace</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;soap.envelope.requestnamespace&quot;</span>],
+      <span class="ruby-identifier">:default_encodingstyle</span> =<span class="ruby-operator">&gt;</span>
+        <span class="ruby-ivar">@default_encodingstyle</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">op_info</span>.<span class="ruby-identifier">request_default_encodingstyle</span>,
+      <span class="ruby-identifier">:elementformdefault</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">op_info</span>.<span class="ruby-identifier">elementformdefault</span>,
+      <span class="ruby-identifier">:attributeformdefault</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">op_info</span>.<span class="ruby-identifier">attributeformdefault</span>
+    )
+    <span class="ruby-identifier">resopt</span> = <span class="ruby-identifier">create_encoding_opt</span>(
+      <span class="ruby-identifier">:envelopenamespace</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;soap.envelope.responsenamespace&quot;</span>],
+      <span class="ruby-identifier">:default_encodingstyle</span> =<span class="ruby-operator">&gt;</span>
+        <span class="ruby-ivar">@default_encodingstyle</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">op_info</span>.<span class="ruby-identifier">response_default_encodingstyle</span>,
+      <span class="ruby-identifier">:elementformdefault</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">op_info</span>.<span class="ruby-identifier">elementformdefault</span>,
+      <span class="ruby-identifier">:attributeformdefault</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">op_info</span>.<span class="ruby-identifier">attributeformdefault</span>
+    )
+    <span class="ruby-identifier">env</span> = <span class="ruby-identifier">route</span>(<span class="ruby-identifier">req_header</span>, <span class="ruby-identifier">req_body</span>, <span class="ruby-identifier">reqopt</span>, <span class="ruby-identifier">resopt</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">EmptyResponseError</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">env</span>
+    <span class="ruby-identifier">receive_headers</span>(<span class="ruby-identifier">env</span>.<span class="ruby-identifier">header</span>)
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">check_fault</span>(<span class="ruby-identifier">env</span>.<span class="ruby-identifier">body</span>)
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-operator">::</span><span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">FaultError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+      <span class="ruby-identifier">op_info</span>.<span class="ruby-identifier">raise_fault</span>(<span class="ruby-identifier">e</span>, <span class="ruby-ivar">@mapping_registry</span>, <span class="ruby-ivar">@literal_mapping_registry</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">op_info</span>.<span class="ruby-identifier">response_obj</span>(<span class="ruby-identifier">env</span>.<span class="ruby-identifier">body</span>, <span class="ruby-ivar">@mapping_registry</span>,
+      <span class="ruby-ivar">@literal_mapping_registry</span>, <span class="ruby-identifier">mapping_opt</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

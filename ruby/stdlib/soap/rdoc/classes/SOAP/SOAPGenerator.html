@@ -1,0 +1,695 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: SOAP::SOAPGenerator</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">SOAP::SOAPGenerator</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/soap/generator_rb.html">
+                soap/generator.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+CAUTION: MT-unsafe
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004207">add_reftarget</a>&nbsp;&nbsp;
+      <a href="#M004218">assign_ns</a>&nbsp;&nbsp;
+      <a href="#M004216">element_local?</a>&nbsp;&nbsp;
+      <a href="#M004217">element_qualified?</a>&nbsp;&nbsp;
+      <a href="#M004208">encode_child</a>&nbsp;&nbsp;
+      <a href="#M004206">encode_data</a>&nbsp;&nbsp;
+      <a href="#M004209">encode_element</a>&nbsp;&nbsp;
+      <a href="#M004210">encode_name</a>&nbsp;&nbsp;
+      <a href="#M004211">encode_name_end</a>&nbsp;&nbsp;
+      <a href="#M004214">encode_rawstring</a>&nbsp;&nbsp;
+      <a href="#M004215">encode_string</a>&nbsp;&nbsp;
+      <a href="#M004212">encode_tag</a>&nbsp;&nbsp;
+      <a href="#M004213">encode_tag_end</a>&nbsp;&nbsp;
+      <a href="#M004205">generate</a>&nbsp;&nbsp;
+      <a href="#M004204">new</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="../SOAP.html">SOAP</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="SOAPGenerator/FormatEncodeError.html" class="link">SOAP::SOAPGenerator::FormatEncodeError</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EncodeMap</td>
+          <td>=</td>
+          <td class="context-item-value">{     '&amp;' =&gt; '&amp;amp;',     '&lt;' =&gt; '&amp;lt;',     '&gt;' =&gt; '&amp;gt;',     '&quot;' =&gt; '&amp;quot;',     '\'' =&gt; '&amp;apos;',     &quot;\r&quot; =&gt; '&amp;#xd;'</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EncodeCharRegexp</td>
+          <td>=</td>
+          <td class="context-item-value">Regexp.new(&quot;[#{EncodeMap.keys.join}]&quot;)</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">charset</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">default_encodingstyle</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">generate_explicit_type</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">use_numeric_character_reference</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M004218" class="m-detail">
+        <a name="M004218"></a>
+
+        <div class="method-heading">
+          <a href="#M004218" class="method-signature">
+          <span class="method-name">assign_ns</span><span class="method-args">(attrs, ns, namespace, tag = nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004218-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004218-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 225</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">assign_ns</span>(<span class="ruby-identifier">attrs</span>, <span class="ruby-identifier">ns</span>, <span class="ruby-identifier">namespace</span>, <span class="ruby-identifier">tag</span> = <span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">namespace</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">FormatEncodeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;empty namespace&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">ns</span>.<span class="ruby-identifier">assigned?</span>(<span class="ruby-identifier">namespace</span>)
+      <span class="ruby-identifier">tag</span> = <span class="ruby-identifier">ns</span>.<span class="ruby-identifier">assign</span>(<span class="ruby-identifier">namespace</span>, <span class="ruby-identifier">tag</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tag</span> <span class="ruby-operator">==</span> <span class="ruby-value str">''</span>
+        <span class="ruby-identifier">attr</span> = <span class="ruby-value str">'xmlns'</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">attr</span> = <span class="ruby-node">&quot;xmlns:#{tag}&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">attrs</span>[<span class="ruby-identifier">attr</span>] = <span class="ruby-identifier">namespace</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004204" class="m-detail">
+        <a name="M004204"></a>
+
+        <div class="method-heading">
+          <a href="#M004204" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(opt = {})</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004204-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004204-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 33</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">opt</span> = {})
+    <span class="ruby-ivar">@reftarget</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-ivar">@handlers</span> = {}
+    <span class="ruby-ivar">@charset</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:charset</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">Charset</span>.<span class="ruby-identifier">xml_encoding_label</span>
+    <span class="ruby-ivar">@default_encodingstyle</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:default_encodingstyle</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">EncodingNamespace</span>
+    <span class="ruby-ivar">@generate_explicit_type</span> =
+      <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">:generate_explicit_type</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:generate_explicit_type</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword kw">true</span>
+    <span class="ruby-ivar">@elementformdefault</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:elementformdefault</span>]
+    <span class="ruby-ivar">@attributeformdefault</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:attributeformdefault</span>]
+    <span class="ruby-ivar">@use_numeric_character_reference</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:use_numeric_character_reference</span>]
+    <span class="ruby-ivar">@indentstr</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:no_indent</span>] <span class="ruby-operator">?</span> <span class="ruby-value str">''</span> <span class="ruby-operator">:</span> <span class="ruby-value str">'  '</span>
+    <span class="ruby-ivar">@buf</span> = <span class="ruby-ivar">@indent</span> = <span class="ruby-ivar">@curr</span> = <span class="ruby-keyword kw">nil</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004207" class="m-detail">
+        <a name="M004207"></a>
+
+        <div class="method-heading">
+          <a href="#M004207" class="method-signature">
+          <span class="method-name">add_reftarget</span><span class="method-args">(name, node)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004207-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004207-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 97</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_reftarget</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">node</span>)
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@reftarget</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">FormatEncodeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;Reftarget is not defined.&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@reftarget</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">node</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004216" class="m-detail">
+        <a name="M004216"></a>
+
+        <div class="method-heading">
+          <a href="#M004216" class="method-signature">
+          <span class="method-name">element_local?</span><span class="method-args">(element)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004216-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004216-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 209</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">element_local?</span>(<span class="ruby-identifier">element</span>)
+    <span class="ruby-identifier">element</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">namespace</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004217" class="m-detail">
+        <a name="M004217"></a>
+
+        <div class="method-heading">
+          <a href="#M004217" class="method-signature">
+          <span class="method-name">element_qualified?</span><span class="method-args">(element)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004217-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004217-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 213</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">element_qualified?</span>(<span class="ruby-identifier">element</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:qualified</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">qualified</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-ivar">@elementformdefault</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">element</span>.<span class="ruby-identifier">qualified</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-ivar">@elementformdefault</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004208" class="m-detail">
+        <a name="M004208"></a>
+
+        <div class="method-heading">
+          <a href="#M004208" class="method-signature">
+          <span class="method-name">encode_child</span><span class="method-args">(ns, child, parent)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004208-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004208-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 104</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode_child</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">child</span>, <span class="ruby-identifier">parent</span>)
+    <span class="ruby-identifier">indent_backup</span>, <span class="ruby-ivar">@indent</span> = <span class="ruby-ivar">@indent</span>, <span class="ruby-ivar">@indent</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@indentstr</span>
+    <span class="ruby-identifier">encode_data</span>(<span class="ruby-identifier">ns</span>.<span class="ruby-identifier">clone_ns</span>, <span class="ruby-identifier">child</span>, <span class="ruby-identifier">parent</span>)
+    <span class="ruby-ivar">@indent</span> = <span class="ruby-identifier">indent_backup</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004206" class="m-detail">
+        <a name="M004206"></a>
+
+        <div class="method-heading">
+          <a href="#M004206" class="method-signature">
+          <span class="method-name">encode_data</span><span class="method-args">(ns, obj, parent)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004206-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004206-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 68</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode_data</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">parent</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SOAPEnvelopeElement</span>)
+      <span class="ruby-identifier">encode_element</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">parent</span>)
+      <span class="ruby-keyword kw">return</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@reftarget</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">obj</span>.<span class="ruby-identifier">precedents</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">add_reftarget</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">obj</span>)
+      <span class="ruby-identifier">ref</span> = <span class="ruby-constant">SOAPReference</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">obj</span>)
+      <span class="ruby-identifier">ref</span>.<span class="ruby-identifier">elename</span> = <span class="ruby-identifier">ref</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">dup_name</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">name</span>)
+      <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">precedents</span>.<span class="ruby-identifier">clear</span>      <span class="ruby-comment cmt"># Avoid cyclic delay.</span>
+      <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">encodingstyle</span> = <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">encodingstyle</span>
+      <span class="ruby-comment cmt"># SOAPReference is encoded here.</span>
+      <span class="ruby-identifier">obj</span> = <span class="ruby-identifier">ref</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">encodingstyle</span> = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">encodingstyle</span>
+    <span class="ruby-comment cmt"># Children's encodingstyle is derived from its parent.</span>
+    <span class="ruby-identifier">encodingstyle</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">encodingstyle</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">parent</span>
+    <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">encodingstyle</span> = <span class="ruby-identifier">encodingstyle</span>
+    <span class="ruby-identifier">handler</span> = <span class="ruby-identifier">find_handler</span>(<span class="ruby-identifier">encodingstyle</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@default_encodingstyle</span>)
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">handler</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">FormatEncodeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;Unknown encodingStyle: #{ encodingstyle }.&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">obj</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">FormatEncodeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;Element name not defined: #{ obj }.&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">handler</span>.<span class="ruby-identifier">encode_data</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">ns</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">parent</span>)
+    <span class="ruby-identifier">handler</span>.<span class="ruby-identifier">encode_data_end</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">ns</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">parent</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004209" class="m-detail">
+        <a name="M004209"></a>
+
+        <div class="method-heading">
+          <a href="#M004209" class="method-signature">
+          <span class="method-name">encode_element</span><span class="method-args">(ns, obj, parent)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004209-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004209-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 110</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode_element</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">parent</span>)
+    <span class="ruby-identifier">attrs</span> = {}
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SOAPBody</span>)
+      <span class="ruby-ivar">@reftarget</span> = <span class="ruby-identifier">obj</span>
+      <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">encode</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">ns</span>, <span class="ruby-identifier">attrs</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">child</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">indent_backup</span>, <span class="ruby-ivar">@indent</span> = <span class="ruby-ivar">@indent</span>, <span class="ruby-ivar">@indent</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@indentstr</span>
+        <span class="ruby-identifier">encode_data</span>(<span class="ruby-identifier">ns</span>.<span class="ruby-identifier">clone_ns</span>, <span class="ruby-identifier">child</span>, <span class="ruby-identifier">obj</span>)
+        <span class="ruby-ivar">@indent</span> = <span class="ruby-identifier">indent_backup</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@reftarget</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SOAPEnvelope</span>)
+        <span class="ruby-comment cmt"># xsi:nil=&quot;true&quot; can appear even if dumping without explicit type.</span>
+        <span class="ruby-constant">SOAPGenerator</span>.<span class="ruby-identifier">assign_ns</span>(<span class="ruby-identifier">attrs</span>, <span class="ruby-identifier">ns</span>,
+          <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">InstanceNamespace</span>, <span class="ruby-constant">XSINamespaceTag</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@generate_explicit_type</span>
+          <span class="ruby-constant">SOAPGenerator</span>.<span class="ruby-identifier">assign_ns</span>(<span class="ruby-identifier">attrs</span>, <span class="ruby-identifier">ns</span>, <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">Namespace</span>, <span class="ruby-constant">XSDNamespaceTag</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">encode</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">ns</span>, <span class="ruby-identifier">attrs</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">child</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">indent_backup</span>, <span class="ruby-ivar">@indent</span> = <span class="ruby-ivar">@indent</span>, <span class="ruby-ivar">@indent</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@indentstr</span>
+        <span class="ruby-identifier">encode_data</span>(<span class="ruby-identifier">ns</span>.<span class="ruby-identifier">clone_ns</span>, <span class="ruby-identifier">child</span>, <span class="ruby-identifier">obj</span>)
+        <span class="ruby-ivar">@indent</span> = <span class="ruby-identifier">indent_backup</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004210" class="m-detail">
+        <a name="M004210"></a>
+
+        <div class="method-heading">
+          <a href="#M004210" class="method-signature">
+          <span class="method-name">encode_name</span><span class="method-args">(ns, data, attrs)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004210-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004210-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 137</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode_name</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">attrs</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">element_local?</span>(<span class="ruby-identifier">data</span>)
+      <span class="ruby-identifier">data</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">name</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">element_qualified?</span>(<span class="ruby-identifier">data</span>)
+        <span class="ruby-constant">SOAPGenerator</span>.<span class="ruby-identifier">assign_ns</span>(<span class="ruby-identifier">attrs</span>, <span class="ruby-identifier">ns</span>, <span class="ruby-identifier">data</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">namespace</span>, <span class="ruby-value str">''</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">SOAPGenerator</span>.<span class="ruby-identifier">assign_ns</span>(<span class="ruby-identifier">attrs</span>, <span class="ruby-identifier">ns</span>, <span class="ruby-identifier">data</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">namespace</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">ns</span>.<span class="ruby-identifier">name</span>(<span class="ruby-identifier">data</span>.<span class="ruby-identifier">elename</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004211" class="m-detail">
+        <a name="M004211"></a>
+
+        <div class="method-heading">
+          <a href="#M004211" class="method-signature">
+          <span class="method-name">encode_name_end</span><span class="method-args">(ns, data)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004211-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004211-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 150</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode_name_end</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">data</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">element_local?</span>(<span class="ruby-identifier">data</span>)
+      <span class="ruby-identifier">data</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">name</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">ns</span>.<span class="ruby-identifier">name</span>(<span class="ruby-identifier">data</span>.<span class="ruby-identifier">elename</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004214" class="m-detail">
+        <a name="M004214"></a>
+
+        <div class="method-heading">
+          <a href="#M004214" class="method-signature">
+          <span class="method-name">encode_rawstring</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004214-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004214-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 181</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode_rawstring</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">str</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004215" class="m-detail">
+        <a name="M004215"></a>
+
+        <div class="method-heading">
+          <a href="#M004215" class="method-signature">
+          <span class="method-name">encode_string</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004215-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004215-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 194</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode_string</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@use_numeric_character_reference</span> <span class="ruby-keyword kw">and</span> <span class="ruby-operator">!</span><span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">Charset</span>.<span class="ruby-identifier">is_us_ascii</span>(<span class="ruby-identifier">str</span>)
+      <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-constant">EncodeCharRegexp</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-constant">EncodeMap</span>[<span class="ruby-identifier">c</span>] }
+      <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">&quot;U*&quot;</span>).<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">==</span> <span class="ruby-value">0x9</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">==</span> <span class="ruby-value">0xa</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">==</span> <span class="ruby-value">0xd</span> <span class="ruby-keyword kw">or</span> (<span class="ruby-identifier">c</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">0x20</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">0x7f</span>)
+          <span class="ruby-identifier">c</span>.<span class="ruby-identifier">chr</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;&amp;#x%x;&quot;</span>, <span class="ruby-identifier">c</span>)
+        <span class="ruby-keyword kw">end</span>
+      }.<span class="ruby-identifier">join</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-constant">EncodeCharRegexp</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-constant">EncodeMap</span>[<span class="ruby-identifier">c</span>] }
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004212" class="m-detail">
+        <a name="M004212"></a>
+
+        <div class="method-heading">
+          <a href="#M004212" class="method-signature">
+          <span class="method-name">encode_tag</span><span class="method-args">(elename, attrs = nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004212-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004212-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 158</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode_tag</span>(<span class="ruby-identifier">elename</span>, <span class="ruby-identifier">attrs</span> = <span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">attrs</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;\n#{ @indent }&lt;#{ elename }&gt;&quot;</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+      <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> = <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">%Q[\n#{ @indent }&lt;#{ elename } #{ key }=&quot;#{ value }&quot;&gt;]</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;\n#{ @indent }&lt;#{ elename } &quot;</span> <span class="ruby-operator">&lt;&lt;</span>
+        <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+          <span class="ruby-node">%Q[#{ key }=&quot;#{ value }&quot;]</span>
+        }.<span class="ruby-identifier">join</span>(<span class="ruby-node">&quot;\n#{ @indent }#{ @indentstr * 2 }&quot;</span>) <span class="ruby-operator">&lt;&lt;</span>
+        <span class="ruby-value str">'&gt;'</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004213" class="m-detail">
+        <a name="M004213"></a>
+
+        <div class="method-heading">
+          <a href="#M004213" class="method-signature">
+          <span class="method-name">encode_tag_end</span><span class="method-args">(elename, cr = nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004213-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004213-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 173</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode_tag_end</span>(<span class="ruby-identifier">elename</span>, <span class="ruby-identifier">cr</span> = <span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cr</span>
+      <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;\n#{ @indent }&lt;/#{ elename }&gt;&quot;</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;&lt;/#{ elename }&gt;&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004205" class="m-detail">
+        <a name="M004205"></a>
+
+        <div class="method-heading">
+          <a href="#M004205" class="method-signature">
+          <span class="method-name">generate</span><span class="method-args">(obj, io = nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004205-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004205-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/generator.rb, line 47</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generate</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">io</span> = <span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-ivar">@buf</span> = <span class="ruby-identifier">io</span> <span class="ruby-operator">||</span> <span class="ruby-value str">''</span>
+    <span class="ruby-ivar">@indent</span> = <span class="ruby-value str">''</span>
+
+    <span class="ruby-identifier">prologue</span>
+    <span class="ruby-ivar">@handlers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">uri</span>, <span class="ruby-identifier">handler</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">handler</span>.<span class="ruby-identifier">encode_prologue</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">ns</span> = <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">NS</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">xmldecl</span>
+    <span class="ruby-identifier">encode_data</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-keyword kw">nil</span>)
+
+    <span class="ruby-ivar">@handlers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">uri</span>, <span class="ruby-identifier">handler</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">handler</span>.<span class="ruby-identifier">encode_epilogue</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">epilogue</span>
+
+    <span class="ruby-ivar">@buf</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 0 --> <p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and run  by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. Ruby-doc.org was created in 2002 to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>[] (Fixnum)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     fix[n]     =&gt; 0, 1
+ *  
+ *  Bit Reference---Returns the &lt;em&gt;n&lt;/em&gt;th bit in the binary
+ *  representation of &lt;i&gt;fix&lt;/i&gt;, where &lt;i&gt;fix&lt;/i&gt;[0] is the least
+ *  significant bit.
+ *     
+ *     a = 0b11001100101010
+ *     30.downto(0) do |n| print a[n] end
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     0000000000000000011001100101010
+ */
+
+static VALUE
+fix_aref(fix, idx)
+    VALUE fix, idx;
+{
+    long val = FIX2LONG(fix);
+    long i;
+
+    if (!FIXNUM_P(idx = fix_coerce(idx))) {
+        idx = rb_big_norm(idx);
+        if (!FIXNUM_P(idx)) {
+            if (!RBIGNUM(idx)-&gt;sign || val &gt;= 0)
+                return INT2FIX(0);
+            return INT2FIX(1);
+        }
+    }
+    i = FIX2LONG(idx);
+
+    if (i &lt; 0) return INT2FIX(0);
+    if (sizeof(VALUE)*CHAR_BIT-1 &lt; i) {
+        if (val &lt; 0) return INT2FIX(1);
+        return INT2FIX(0);
+    }
+    if (val &amp; (1L&lt;&lt;i))
+        return INT2FIX(1);
+    return INT2FIX(0);
+}</pre>
+</body>
+</html>

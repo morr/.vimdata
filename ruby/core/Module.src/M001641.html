@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>private (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     private                 =&gt; self
+ *     private(symbol, ...)    =&gt; self
+ *  
+ *  With no arguments, sets the default visibility for subsequently
+ *  defined methods to private. With arguments, sets the named methods
+ *  to have private visibility.
+ *     
+ *     module Mod
+ *       def a()  end
+ *       def b()  end
+ *       private
+ *       def c()  end
+ *       private :a
+ *     end
+ *     Mod.private_instance_methods   #=&gt; [&quot;a&quot;, &quot;c&quot;]
+ */
+
+static VALUE
+rb_mod_private(argc, argv, module)
+    int argc;
+    VALUE *argv;
+    VALUE module;
+{
+    secure_visibility(module);
+    if (argc == 0) {
+        SCOPE_SET(SCOPE_PRIVATE);
+    }
+    else {
+        set_method_visibility(module, argc, argv, NOEX_PRIVATE);
+    }
+    return module;
+}</pre>
+</body>
+</html>

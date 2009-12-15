@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>summarize (OptionParser::Switch)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/optparse.rb, line 370</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">summarize</span>(<span class="ruby-identifier">sdone</span> = [], <span class="ruby-identifier">ldone</span> = [], <span class="ruby-identifier">width</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">max</span> = <span class="ruby-identifier">width</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>, <span class="ruby-identifier">indent</span> = <span class="ruby-value str">&quot;&quot;</span>)
+      <span class="ruby-identifier">sopts</span>, <span class="ruby-identifier">lopts</span>, <span class="ruby-identifier">s</span> = [], [], <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@short</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span> <span class="ruby-identifier">sdone</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">s</span>) {<span class="ruby-identifier">sopts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">s</span>}; <span class="ruby-identifier">sdone</span>[<span class="ruby-identifier">s</span>] = <span class="ruby-keyword kw">true</span>} <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@short</span>
+      <span class="ruby-ivar">@long</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span> <span class="ruby-identifier">ldone</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">s</span>) {<span class="ruby-identifier">lopts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">s</span>}; <span class="ruby-identifier">ldone</span>[<span class="ruby-identifier">s</span>] = <span class="ruby-keyword kw">true</span>} <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@long</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">sopts</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">lopts</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-comment cmt"># completely hidden</span>
+
+      <span class="ruby-identifier">left</span> = [<span class="ruby-identifier">sopts</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>)]
+      <span class="ruby-identifier">right</span> = <span class="ruby-identifier">desc</span>.<span class="ruby-identifier">dup</span>
+
+      <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">s</span> = <span class="ruby-identifier">lopts</span>.<span class="ruby-identifier">shift</span>
+        <span class="ruby-identifier">l</span> = <span class="ruby-identifier">left</span>[<span class="ruby-value">-1</span>].<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">s</span>.<span class="ruby-identifier">length</span>
+        <span class="ruby-identifier">l</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">length</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">left</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">arg</span>
+        <span class="ruby-identifier">l</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">max</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">sopts</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">left</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">''</span>
+        <span class="ruby-identifier">left</span>[<span class="ruby-value">-1</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">left</span>[<span class="ruby-value">-1</span>].<span class="ruby-identifier">empty?</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">*</span> <span class="ruby-value">4</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value str">', '</span> <span class="ruby-keyword kw">end</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">s</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">left</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">arg</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">arg</span>
+      <span class="ruby-identifier">mlen</span> = <span class="ruby-identifier">left</span>.<span class="ruby-identifier">collect</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span> <span class="ruby-identifier">s</span>.<span class="ruby-identifier">length</span>}.<span class="ruby-identifier">max</span>.<span class="ruby-identifier">to_i</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">mlen</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">width</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">l</span> = <span class="ruby-identifier">left</span>.<span class="ruby-identifier">shift</span>
+        <span class="ruby-identifier">mlen</span> = <span class="ruby-identifier">left</span>.<span class="ruby-identifier">collect</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span> <span class="ruby-identifier">s</span>.<span class="ruby-identifier">length</span>}.<span class="ruby-identifier">max</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">l</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">mlen</span>
+        <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">indent</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">l</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">begin</span> <span class="ruby-identifier">l</span> = <span class="ruby-identifier">left</span>.<span class="ruby-identifier">shift</span>; <span class="ruby-identifier">r</span> = <span class="ruby-identifier">right</span>.<span class="ruby-identifier">shift</span>; <span class="ruby-identifier">l</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">r</span> <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">l</span> = <span class="ruby-identifier">l</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">ljust</span>(<span class="ruby-identifier">width</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">r</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">r</span> <span class="ruby-keyword kw">and</span> <span class="ruby-operator">!</span><span class="ruby-identifier">r</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">indent</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">l</span>)
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

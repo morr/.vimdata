@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>remove_entry_secure (FileUtils)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/fileutils.rb, line 676</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">remove_entry_secure</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">force</span> = <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">fu_have_symlink?</span>
+      <span class="ruby-identifier">remove_entry</span> <span class="ruby-identifier">path</span>, <span class="ruby-identifier">force</span>
+      <span class="ruby-keyword kw">return</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">fullpath</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">path</span>)
+    <span class="ruby-identifier">st</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">lstat</span>(<span class="ruby-identifier">fullpath</span>)
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">st</span>.<span class="ruby-identifier">directory?</span>
+      <span class="ruby-constant">File</span>.<span class="ruby-identifier">unlink</span> <span class="ruby-identifier">fullpath</span>
+      <span class="ruby-keyword kw">return</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># is a directory.</span>
+    <span class="ruby-identifier">parent_st</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">stat</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">dirname</span>(<span class="ruby-identifier">fullpath</span>))
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">fu_world_writable?</span>(<span class="ruby-identifier">parent_st</span>)
+      <span class="ruby-identifier">remove_entry</span> <span class="ruby-identifier">path</span>, <span class="ruby-identifier">force</span>
+      <span class="ruby-keyword kw">return</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">parent_st</span>.<span class="ruby-identifier">sticky?</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;parent directory is world writable, FileUtils#remove_entry_secure does not work; abort: #{path.inspect} (parent directory mode #{'%o' % parent_st.mode})&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># freeze tree root</span>
+    <span class="ruby-identifier">euid</span> = <span class="ruby-constant">Process</span>.<span class="ruby-identifier">euid</span>
+    <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">fullpath</span> <span class="ruby-operator">+</span> <span class="ruby-value str">'/.'</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">fu_stat_identical_entry?</span>(<span class="ruby-identifier">st</span>, <span class="ruby-identifier">f</span>.<span class="ruby-identifier">stat</span>)
+        <span class="ruby-comment cmt"># symlink (TOC-to-TOU attack?)</span>
+        <span class="ruby-constant">File</span>.<span class="ruby-identifier">unlink</span> <span class="ruby-identifier">fullpath</span>
+        <span class="ruby-keyword kw">return</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">f</span>.<span class="ruby-identifier">chown</span> <span class="ruby-identifier">euid</span>, <span class="ruby-value">-1</span>
+      <span class="ruby-identifier">f</span>.<span class="ruby-identifier">chmod</span> <span class="ruby-value">0700</span>
+    }
+    <span class="ruby-comment cmt"># ---- tree root is frozen ----</span>
+    <span class="ruby-identifier">root</span> = <span class="ruby-constant">Entry_</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>)
+    <span class="ruby-identifier">root</span>.<span class="ruby-identifier">preorder_traverse</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ent</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ent</span>.<span class="ruby-identifier">directory?</span>
+        <span class="ruby-identifier">ent</span>.<span class="ruby-identifier">chown</span> <span class="ruby-identifier">euid</span>, <span class="ruby-value">-1</span>
+        <span class="ruby-identifier">ent</span>.<span class="ruby-identifier">chmod</span> <span class="ruby-value">0700</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">root</span>.<span class="ruby-identifier">postorder_traverse</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ent</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">ent</span>.<span class="ruby-identifier">remove</span>
+      <span class="ruby-keyword kw">rescue</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">force</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">rescue</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">force</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

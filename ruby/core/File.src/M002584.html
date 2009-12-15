@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>compare (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/ftools.rb, line 130</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">compare</span>(<span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>, <span class="ruby-identifier">verbose</span> = <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">print</span> <span class="ruby-identifier">from</span>, <span class="ruby-value str">&quot; &lt;=&gt; &quot;</span>, <span class="ruby-identifier">to</span>, <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verbose</span>
+
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">stat</span>(<span class="ruby-identifier">from</span>).<span class="ruby-identifier">size</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">stat</span>(<span class="ruby-identifier">to</span>).<span class="ruby-identifier">size</span>
+
+    <span class="ruby-identifier">from</span> = <span class="ruby-identifier">open</span>(<span class="ruby-identifier">from</span>, <span class="ruby-value str">&quot;rb&quot;</span>)
+    <span class="ruby-identifier">to</span> = <span class="ruby-identifier">open</span>(<span class="ruby-identifier">to</span>, <span class="ruby-value str">&quot;rb&quot;</span>)
+
+    <span class="ruby-identifier">ret</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-identifier">fr</span> = <span class="ruby-identifier">tr</span> = <span class="ruby-value str">''</span>
+
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">fr</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">tr</span>
+        <span class="ruby-identifier">fr</span> = <span class="ruby-identifier">from</span>.<span class="ruby-identifier">read</span>(<span class="ruby-constant">BUFSIZE</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">fr</span>
+          <span class="ruby-identifier">tr</span> = <span class="ruby-identifier">to</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">fr</span>.<span class="ruby-identifier">size</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">ret</span> = <span class="ruby-identifier">to</span>.<span class="ruby-identifier">read</span>(<span class="ruby-constant">BUFSIZE</span>)
+          <span class="ruby-identifier">ret</span> = <span class="ruby-operator">!</span><span class="ruby-identifier">ret</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">ret</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+          <span class="ruby-keyword kw">break</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">rescue</span>
+      <span class="ruby-identifier">ret</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">ensure</span>
+      <span class="ruby-identifier">to</span>.<span class="ruby-identifier">close</span>
+      <span class="ruby-identifier">from</span>.<span class="ruby-identifier">close</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">ret</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

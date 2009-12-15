@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>mkdir_p (FileUtils)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/fileutils.rb, line 195</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mkdir_p</span>(<span class="ruby-identifier">list</span>, <span class="ruby-identifier">options</span> = {})
+    <span class="ruby-identifier">fu_check_options</span> <span class="ruby-identifier">options</span>, <span class="ruby-constant">OPT_TABLE</span>[<span class="ruby-value str">'mkdir_p'</span>]
+    <span class="ruby-identifier">list</span> = <span class="ruby-identifier">fu_list</span>(<span class="ruby-identifier">list</span>)
+    <span class="ruby-identifier">fu_output_message</span> <span class="ruby-node">&quot;mkdir -p #{options[:mode] ? ('-m %03o ' % options[:mode]) : ''}#{list.join ' '}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:verbose</span>]
+    <span class="ruby-keyword kw">return</span> <span class="ruby-operator">*</span><span class="ruby-identifier">list</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:noop</span>]
+
+    <span class="ruby-identifier">list</span>.<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">path</span><span class="ruby-operator">|</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">sub</span>(<span class="ruby-regexp re">%r&lt;/\z&gt;</span>, <span class="ruby-value str">''</span>) }.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">path</span><span class="ruby-operator">|</span>
+      <span class="ruby-comment cmt"># optimize for the most common case</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">fu_mkdir</span> <span class="ruby-identifier">path</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:mode</span>]
+        <span class="ruby-keyword kw">next</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">SystemCallError</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">directory?</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">stack</span> = []
+      <span class="ruby-keyword kw">until</span> <span class="ruby-identifier">path</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">last</span>   <span class="ruby-comment cmt"># dirname(&quot;/&quot;)==&quot;/&quot;, dirname(&quot;C:/&quot;)==&quot;C:/&quot;</span>
+        <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">push</span> <span class="ruby-identifier">path</span>
+        <span class="ruby-identifier">path</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">dirname</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">reverse_each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">path</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">fu_mkdir</span> <span class="ruby-identifier">path</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:mode</span>]
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">SystemCallError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">err</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">directory?</span>(<span class="ruby-identifier">path</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">return</span> <span class="ruby-operator">*</span><span class="ruby-identifier">list</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>class_attribute_values (Generators::HtmlClass)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/generators/html_generator.rb, line 706</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">class_attribute_values</span>
+      <span class="ruby-identifier">h_name</span> = <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">escapeHTML</span>(<span class="ruby-identifier">name</span>)
+
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;classmod&quot;</span>]  = <span class="ruby-ivar">@is_module</span> <span class="ruby-operator">?</span> <span class="ruby-value str">&quot;Module&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-value str">&quot;Class&quot;</span>
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;title&quot;</span>]     = <span class="ruby-node">&quot;#{@values['classmod']}: #{h_name}&quot;</span>
+
+      <span class="ruby-identifier">c</span> = <span class="ruby-ivar">@context</span>
+      <span class="ruby-identifier">c</span> = <span class="ruby-identifier">c</span>.<span class="ruby-identifier">parent</span> <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">c</span> <span class="ruby-keyword kw">and</span> <span class="ruby-operator">!</span><span class="ruby-identifier">c</span>.<span class="ruby-identifier">diagram</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">diagram</span>
+        <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;diagram&quot;</span>] = <span class="ruby-identifier">diagram_reference</span>(<span class="ruby-identifier">c</span>.<span class="ruby-identifier">diagram</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;full_name&quot;</span>] = <span class="ruby-identifier">h_name</span>
+
+      <span class="ruby-identifier">parent_class</span> = <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">superclass</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">parent_class</span>
+        <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;parent&quot;</span>] = <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">escapeHTML</span>(<span class="ruby-identifier">parent_class</span>)
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">parent_name</span>
+          <span class="ruby-identifier">lookup</span> = <span class="ruby-identifier">parent_name</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;::&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">parent_class</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">lookup</span> = <span class="ruby-identifier">parent_class</span>
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-identifier">parent_url</span> = <span class="ruby-constant">AllReferences</span>[<span class="ruby-identifier">lookup</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">AllReferences</span>[<span class="ruby-identifier">parent_class</span>]
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">parent_url</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">parent_url</span>.<span class="ruby-identifier">document_self</span>
+          <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;par_url&quot;</span>] = <span class="ruby-identifier">aref_to</span>(<span class="ruby-identifier">parent_url</span>.<span class="ruby-identifier">path</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">files</span> = []
+      <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">in_files</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">res</span> = {}
+        <span class="ruby-identifier">full_path</span> = <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">escapeHTML</span>(<span class="ruby-identifier">f</span>.<span class="ruby-identifier">file_absolute_name</span>)
+
+        <span class="ruby-identifier">res</span>[<span class="ruby-value str">&quot;full_path&quot;</span>]     = <span class="ruby-identifier">full_path</span>
+        <span class="ruby-identifier">res</span>[<span class="ruby-value str">&quot;full_path_url&quot;</span>] = <span class="ruby-identifier">aref_to</span>(<span class="ruby-identifier">f</span>.<span class="ruby-identifier">viewer</span>.<span class="ruby-identifier">path</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">document_self</span>
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">webcvs</span>
+          <span class="ruby-identifier">res</span>[<span class="ruby-value str">&quot;cvsurl&quot;</span>] = <span class="ruby-identifier">cvs_url</span>( <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">webcvs</span>, <span class="ruby-identifier">full_path</span> )
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-identifier">files</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">res</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">'infiles'</span>] = <span class="ruby-identifier">files</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

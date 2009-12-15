@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>peek (StringScanner)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: peek(len)
+ *
+ * Extracts a string corresponding to &lt;tt&gt;string[pos,len]&lt;/tt&gt;, without
+ * advancing the scan pointer.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.peek(7)          # =&gt; &quot;test st&quot;
+ *   s.peek(7)          # =&gt; &quot;test st&quot;
+ *
+ */
+static VALUE
+strscan_peek(VALUE self, VALUE vlen)
+{
+    struct strscanner *p;
+    long len;
+
+    GET_SCANNER(self, p);
+    len = NUM2LONG(vlen);
+    if (EOS_P(p)) {
+        return infect(rb_str_new(&quot;&quot;, 0), p);
+    }
+    if (p-&gt;curr + len &gt; S_LEN(p)) {
+        len = S_LEN(p) - p-&gt;curr;
+    }
+    return extract_beg_len(p, p-&gt;curr, len);
+}</pre>
+</body>
+</html>

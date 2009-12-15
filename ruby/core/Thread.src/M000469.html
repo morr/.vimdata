@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>priority= (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     thr.priority= integer   =&gt; thr
+ *
+ *  Sets the priority of &lt;i&gt;thr&lt;/i&gt; to &lt;i&gt;integer&lt;/i&gt;. Higher-priority threads
+ *  will run before lower-priority threads.
+ *
+ *     count1 = count2 = 0
+ *     a = Thread.new do
+ *           loop { count1 += 1 }
+ *         end
+ *     a.priority = -1
+ *     
+ *     b = Thread.new do
+ *           loop { count2 += 1 }
+ *         end
+ *     b.priority = -2
+ *     sleep 1   #=&gt; 1
+ *     Thread.critical = 1
+ *     count1    #=&gt; 622504
+ *     count2    #=&gt; 5832
+ */
+
+static VALUE
+rb_thread_priority_set(thread, prio)
+    VALUE thread, prio;
+{
+    rb_thread_t th;
+
+    rb_secure(4);
+    th = rb_thread_check(thread);
+
+    th-&gt;priority = NUM2INT(prio);
+    rb_thread_schedule();
+    return prio;
+}</pre>
+</body>
+</html>

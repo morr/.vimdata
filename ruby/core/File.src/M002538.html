@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>umask (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.umask()          =&gt; integer
+ *     File.umask(integer)   =&gt; integer
+ *  
+ *  Returns the current umask value for this process. If the optional
+ *  argument is given, set the umask to that value and return the
+ *  previous value. Umask values are &lt;em&gt;subtracted&lt;/em&gt; from the
+ *  default permissions, so a umask of &lt;code&gt;0222&lt;/code&gt; would make a
+ *  file read-only for everyone.
+ *     
+ *     File.umask(0006)   #=&gt; 18
+ *     File.umask         #=&gt; 6
+ */
+
+static VALUE
+rb_file_s_umask(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    int omask = 0;
+
+    rb_secure(2);
+    if (argc == 0) {
+        omask = umask(0);
+        umask(omask);
+    }
+    else if (argc == 1) {
+        omask = umask(NUM2INT(argv[0]));
+    }
+    else {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments&quot;);
+    }
+    return INT2FIX(omask);
+}</pre>
+</body>
+</html>

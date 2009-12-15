@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>owned? (File::Stat)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     stat.owned?    =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; if the effective user id of the process is
+ *  the same as the owner of &lt;i&gt;stat&lt;/i&gt;.
+ *     
+ *     File.stat(&quot;testfile&quot;).owned?      #=&gt; true
+ *     File.stat(&quot;/etc/passwd&quot;).owned?   #=&gt; false
+ *     
+ */
+
+static VALUE
+rb_stat_owned(obj)
+    VALUE obj;
+{
+    if (get_stat(obj)-&gt;st_uid == geteuid()) return Qtrue;
+    return Qfalse;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>getaddrinfo (Socket)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Document-method: getaddrinfo
+ * call-seq: Socket.getaddrinfo(host, service, family=nil, socktype=nil, protocol=nil, flags=nil) =&gt; addrinfo
+ *
+ * Return address information for +host+ and +port+. The remaining arguments
+ * are hints that limit the address information returned.
+ *
+ * This method corresponds closely to the POSIX.1g getaddrinfo() definition.
+ *
+ * === Parameters
+ * - +host+ is a host name or an address string (dotted decimal for IPv4, or a hex string
+ *   for IPv6) for which to return information. A nil is also allowed, its meaning
+ *   depends on +flags+, see below.
+ * - +service+ is a service name (&quot;http&quot;, &quot;ssh&quot;, ...), or 
+ *   a port number (80, 22, ...), see Socket.getservbyname for more
+ *   information. A nil is also allowed, meaning zero.
+ * - +family+ limits the output to a specific address family, one of the
+ *   Socket::AF_* constants. Socket::AF_INET (IPv4) and Socket::AF_INET6 (IPv6)
+ *   are the most commonly used families. You will usually pass either nil or
+ *   Socket::AF_UNSPEC, allowing the IPv6 information to be returned first if
+ *   +host+ is reachable via IPv6, and IPv4 information otherwise.  The two
+ *   strings &quot;AF_INET&quot; or &quot;AF_INET6&quot; are also allowed, they are converted to
+ *   their respective Socket::AF_* constants.
+ * - +socktype+ limits the output to a specific type of socket, one of the
+ *   Socket::SOCK_* constants. Socket::SOCK_STREAM (for TCP) and
+ *   Socket::SOCK_DGRAM (for UDP) are the most commonly used socket types. If
+ *   nil, then information for all types of sockets supported by +service+ will
+ *   be returned. You will usually know what type of socket you intend to
+ *   create, and should pass that socket type in.
+ * - +protocol+ limits the output to a specific protocol numpber, one of the
+ *   Socket::IPPROTO_* constants. It is usually implied by the socket type
+ *   (Socket::SOCK_STREAM =&gt; Socket::IPPROTO_TCP, ...), if you pass other than
+ *   nil you already know what this is for.
+ * - +flags+ is one of the Socket::AI_* constants. They mean:
+ *   - Socket::AI_PASSIVE: when set, if +host+ is nil the 'any' address will be
+ *     returned, Socket::INADDR_ANY or 0 for IPv4, &quot;0::0&quot; or &quot;::&quot; for IPv6.  This
+ *     address is suitable for use by servers that will bind their socket and do
+ *     a passive listen, thus the name of the flag. Otherwise the local or
+ *     loopback address will be returned, this is &quot;127.0.0.1&quot; for IPv4 and &quot;::1'
+ *     for IPv6.
+ *   - ...
+ *
+ *
+ * === Returns
+ *
+ * Returns an array of arrays, where each subarray contains:
+ * - address family, a string like &quot;AF_INET&quot; or &quot;AF_INET6&quot;
+ * - port number, the port number for +service+
+ * - host name, either a canonical name for +host+, or it's address in presentation
+ *   format if the address could not be looked up.
+ * - host IP, the address of +host+ in presentation format
+ * - address family, as a numeric value (one of the Socket::AF_* constants).
+ * - socket type, as a numeric value (one of the Socket::SOCK_* constants).
+ * - protocol number, as a numeric value (one of the Socket::IPPROTO_* constants).
+ *
+ * The first four values are identical to what is commonly returned as an
+ * address array, see IPSocket for more information.
+ *
+ * === Examples
+ *
+ * Not all input combinations are valid, and while there are many combinations,
+ * only a few cases are common.
+ *
+ * A typical client will call getaddrinfo with the +host+ and +service+ it
+ * wants to connect to. It knows that it will attempt to connect with either
+ * TCP or UDP, and specifies +socktype+ accordingly. It loops through all
+ * returned addresses, and try to connect to them in turn:
+ *
+ *   addrinfo = Socket::getaddrinfo('www.example.com', 'www', nil, Socket::SOCK_STREAM)
+ *   addrinfo.each do |af, port, name, addr|
+ *     begin
+ *       sock = TCPSocket.new(addr, port)
+ *       # ...
+ *       exit 1
+ *     rescue
+ *     end
+ *   end
+ *
+ * With UDP you don't know if connect suceeded, but if communication fails,
+ * the next address can be tried.
+ *
+ * A typical server will call getaddrinfo with a +host+ of nil, the +service+
+ * it listens to, and a +flags+ of Socket::AI_PASSIVE. It will listen for
+ * connections on the first returned address:
+ *   addrinfo = Socket::getaddrinfo(nil, 'www', nil, Socket::SOCK_STREAM, nil, Socket::AI_PASSIVE)
+ *   af, port, name, addr = addrinfo.first
+ *   sock = TCPServer(addr, port)
+ *   while( client = s.accept )
+ *     # ...
+ *   end
+ */
+static VALUE
+sock_s_getaddrinfo(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE host, port, family, socktype, protocol, flags, ret;
+    char hbuf[1024], pbuf[1024];
+    char *hptr, *pptr, *ap;
+    struct addrinfo hints, *res;
+    int error;
+
+    host = port = family = socktype = protocol = flags = Qnil;
+    rb_scan_args(argc, argv, &quot;24&quot;, &amp;host, &amp;port, &amp;family, &amp;socktype, &amp;protocol, &amp;flags);
+    if (NIL_P(host)) {
+        hptr = NULL;
+    }
+    else {
+        strncpy(hbuf, StringValuePtr(host), sizeof(hbuf));
+        hbuf[sizeof(hbuf) - 1] = '\0';
+        hptr = hbuf;
+    }
+    if (NIL_P(port)) {
+        pptr = NULL;
+    }
+    else if (FIXNUM_P(port)) {
+        snprintf(pbuf, sizeof(pbuf), &quot;%ld&quot;, FIX2LONG(port));
+        pptr = pbuf;
+    }
+    else {
+        strncpy(pbuf, StringValuePtr(port), sizeof(pbuf));
+        pbuf[sizeof(pbuf) - 1] = '\0';
+        pptr = pbuf;
+    }
+
+    MEMZERO(&amp;hints, struct addrinfo, 1);
+    if (NIL_P(family)) {
+        hints.ai_family = PF_UNSPEC;
+    }
+    else if (FIXNUM_P(family)) {
+        hints.ai_family = FIX2INT(family);
+    }
+    else if ((ap = StringValuePtr(family)) != 0) {
+        if (strcmp(ap, &quot;AF_INET&quot;) == 0) {
+            hints.ai_family = PF_INET;
+        }
+#ifdef INET6
+        else if (strcmp(ap, &quot;AF_INET6&quot;) == 0) {
+            hints.ai_family = PF_INET6;
+        }
+#endif
+    }
+
+    if (!NIL_P(socktype)) {
+        hints.ai_socktype = NUM2INT(socktype);
+    }
+    if (!NIL_P(protocol)) {
+        hints.ai_protocol = NUM2INT(protocol);
+    }
+    if (!NIL_P(flags)) {
+        hints.ai_flags = NUM2INT(flags);
+    }
+    error = getaddrinfo(hptr, pptr, &amp;hints, &amp;res);
+    if (error) {
+        rb_raise(rb_eSocket, &quot;getaddrinfo: %s&quot;, gai_strerror(error));
+    }
+
+    ret = make_addrinfo(res);
+    freeaddrinfo(res);
+    return ret;
+}</pre>
+</body>
+</html>

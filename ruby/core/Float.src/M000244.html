@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>round (Float)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     flt.round   =&gt; integer
+ *  
+ *  Rounds &lt;i&gt;flt&lt;/i&gt; to the nearest integer. Equivalent to:
+ *     
+ *     def round
+ *       return (self+0.5).floor if self &gt; 0.0
+ *       return (self-0.5).ceil  if self &lt; 0.0
+ *       return 0
+ *     end
+ *     
+ *     1.5.round      #=&gt; 2
+ *     (-1.5).round   #=&gt; -2
+ *     
+ */
+
+static VALUE
+flo_round(num)
+    VALUE num;
+{
+    double f = RFLOAT(num)-&gt;value;
+    long val;
+
+    f = round(f);
+
+    if (!FIXABLE(f)) {
+        return rb_dbl2big(f);
+    }
+    val = f;
+    return LONG2FIX(val);
+}</pre>
+</body>
+</html>

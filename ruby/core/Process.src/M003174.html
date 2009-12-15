@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>euid= (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.euid= integer
+ *
+ *  Sets the effective user ID for this process. Not available on all
+ *  platforms.
+ */
+
+static VALUE
+proc_seteuid(obj, euid)
+    VALUE obj, euid;
+{
+    check_uid_switch();
+#if defined(HAVE_SETRESUID) &amp;&amp; !defined(__CHECKER__)
+    if (setresuid(-1, NUM2INT(euid), -1) &lt; 0) rb_sys_fail(0);
+#elif defined HAVE_SETREUID
+    if (setreuid(-1, NUM2INT(euid)) &lt; 0) rb_sys_fail(0);
+#elif defined HAVE_SETEUID
+    if (seteuid(NUM2INT(euid)) &lt; 0) rb_sys_fail(0);
+#elif defined HAVE_SETUID
+    euid = NUM2INT(euid);
+    if (euid == getuid()) {
+        if (setuid(euid) &lt; 0) rb_sys_fail(0);
+    }
+    else {
+        rb_notimplement();
+    }
+#else
+    rb_notimplement();
+#endif
+    return euid;
+}</pre>
+</body>
+</html>

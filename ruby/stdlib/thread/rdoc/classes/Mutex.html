@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Mutex</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Mutex</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/thread_rb.html">
+                thread.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="Mutex.html">Mutex</a> implements a simple semaphore that can be
+used to coordinate access to shared data from multiple concurrent threads.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  require 'thread'
+  semaphore = Mutex.new
+
+  a = Thread.new {
+    semaphore.synchronize {
+      # access shared resource
+    }
+  }
+
+  b = Thread.new {
+    semaphore.synchronize {
+      # access shared resource
+    }
+  }
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004575">exclusive_unlock</a>&nbsp;&nbsp;
+      <a href="#M004572">lock</a>&nbsp;&nbsp;
+      <a href="#M004570">locked?</a>&nbsp;&nbsp;
+      <a href="#M004569">new</a>&nbsp;&nbsp;
+      <a href="#M004574">synchronize</a>&nbsp;&nbsp;
+      <a href="#M004571">try_lock</a>&nbsp;&nbsp;
+      <a href="#M004573">unlock</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M004569" class="m-detail">
+        <a name="M004569"></a>
+
+        <div class="method-heading">
+          <a href="#M004569" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Creates a <a href="Mutex.html#M004569">new</a> <a
+href="Mutex.html">Mutex</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004569-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004569-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 60</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>
+    <span class="ruby-ivar">@waiting</span> = []
+    <span class="ruby-ivar">@locked</span> = <span class="ruby-keyword kw">false</span>;
+    <span class="ruby-ivar">@waiting</span>.<span class="ruby-identifier">taint</span>              <span class="ruby-comment cmt"># enable tainted comunication</span>
+    <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">taint</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004575" class="m-detail">
+        <a name="M004575"></a>
+
+        <div class="method-heading">
+          <a href="#M004575" class="method-signature">
+          <span class="method-name">exclusive_unlock</span><span class="method-args">() {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+If the mutex is locked, unlocks the mutex, wakes one waiting thread, and
+yields in a critical section.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004575-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004575-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 140</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">exclusive_unlock</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@locked</span>
+    <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">exclusive</span> <span class="ruby-keyword kw">do</span>
+      <span class="ruby-ivar">@locked</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">t</span> = <span class="ruby-ivar">@waiting</span>.<span class="ruby-identifier">shift</span>
+        <span class="ruby-identifier">t</span>.<span class="ruby-identifier">wakeup</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">t</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">ThreadError</span>
+        <span class="ruby-keyword kw">retry</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">yield</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004572" class="m-detail">
+        <a name="M004572"></a>
+
+        <div class="method-heading">
+          <a href="#M004572" class="method-signature">
+          <span class="method-name">lock</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Attempts to grab the <a href="Mutex.html#M004572">lock</a> and waits if it
+isn&#8216;t available.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004572-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004572-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 92</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">lock</span>
+    <span class="ruby-keyword kw">while</span> (<span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">true</span>; <span class="ruby-ivar">@locked</span>)
+      <span class="ruby-ivar">@waiting</span>.<span class="ruby-identifier">push</span> <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">stop</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@locked</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004570" class="m-detail">
+        <a name="M004570"></a>
+
+        <div class="method-heading">
+          <a href="#M004570" class="method-signature">
+          <span class="method-name">locked?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns <tt>true</tt> if this <a href="Mutex.html#M004572">lock</a> is
+currently held by some thread.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004570-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004570-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 70</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">locked?</span>
+    <span class="ruby-ivar">@locked</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004574" class="m-detail">
+        <a name="M004574"></a>
+
+        <div class="method-heading">
+          <a href="#M004574" class="method-signature">
+          <span class="method-name">synchronize</span><span class="method-args">() {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Obtains a <a href="Mutex.html#M004572">lock</a>, runs the block, and
+releases the <a href="Mutex.html#M004572">lock</a> when the block
+completes. See the example under <a href="Mutex.html">Mutex</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004574-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004574-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 127</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">synchronize</span>
+    <span class="ruby-identifier">lock</span>
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-keyword kw">yield</span>
+    <span class="ruby-keyword kw">ensure</span>
+      <span class="ruby-identifier">unlock</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004571" class="m-detail">
+        <a name="M004571"></a>
+
+        <div class="method-heading">
+          <a href="#M004571" class="method-signature">
+          <span class="method-name">try_lock</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Attempts to obtain the <a href="Mutex.html#M004572">lock</a> and returns
+immediately. Returns <tt>true</tt> if the <a
+href="Mutex.html#M004572">lock</a> was granted.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004571-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004571-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 78</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">try_lock</span>
+    <span class="ruby-identifier">result</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@locked</span>
+      <span class="ruby-ivar">@locked</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-identifier">result</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-identifier">result</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004573" class="m-detail">
+        <a name="M004573"></a>
+
+        <div class="method-heading">
+          <a href="#M004573" class="method-signature">
+          <span class="method-name">unlock</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Releases the <a href="Mutex.html#M004572">lock</a>. Returns <tt>nil</tt> if
+ref wasn&#8216;t locked.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004573-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004573-source">
+<pre>
+<span class="ruby-comment cmt"># File thread.rb, line 105</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">unlock</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@locked</span>
+    <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-ivar">@locked</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">t</span> = <span class="ruby-ivar">@waiting</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-identifier">t</span>.<span class="ruby-identifier">wakeup</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">t</span>
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">ThreadError</span>
+      <span class="ruby-keyword kw">retry</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">t</span>.<span class="ruby-identifier">run</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">t</span>
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">ThreadError</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 4 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

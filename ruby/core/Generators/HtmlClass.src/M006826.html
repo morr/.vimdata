@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>build_attribute_list (Generators::HtmlClass)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/generators/html_generator.rb, line 686</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">build_attribute_list</span>(<span class="ruby-identifier">section</span>)
+      <span class="ruby-identifier">atts</span> = <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">sort</span>
+      <span class="ruby-identifier">res</span> = []
+      <span class="ruby-identifier">atts</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">att</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">att</span>.<span class="ruby-identifier">section</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">section</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">att</span>.<span class="ruby-identifier">visibility</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:public</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">att</span>.<span class="ruby-identifier">visibility</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:protected</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">show_all</span>
+          <span class="ruby-identifier">entry</span> = {
+            <span class="ruby-value str">&quot;name&quot;</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">escapeHTML</span>(<span class="ruby-identifier">att</span>.<span class="ruby-identifier">name</span>), 
+            <span class="ruby-value str">&quot;rw&quot;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">att</span>.<span class="ruby-identifier">rw</span>, 
+            <span class="ruby-value str">&quot;a_desc&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">markup</span>(<span class="ruby-identifier">att</span>.<span class="ruby-identifier">comment</span>, <span class="ruby-keyword kw">true</span>)
+          }
+          <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">att</span>.<span class="ruby-identifier">visibility</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:public</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">att</span>.<span class="ruby-identifier">visibility</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:protected</span>
+            <span class="ruby-identifier">entry</span>[<span class="ruby-value str">&quot;rw&quot;</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;-&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">res</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">entry</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">res</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

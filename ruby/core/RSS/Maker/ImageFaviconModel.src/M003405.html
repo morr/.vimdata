@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>append_features (RSS::Maker::ImageFaviconModel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rss/maker/image.rb, line 50</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">append_features</span>(<span class="ruby-identifier">klass</span>)
+        <span class="ruby-keyword kw">super</span>
+
+        <span class="ruby-identifier">name</span> = <span class="ruby-node">&quot;#{RSS::IMAGE_PREFIX}_favicon&quot;</span>
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">add_need_initialize_variable</span>(<span class="ruby-identifier">name</span>, <span class="ruby-node">&quot;make_#{name}&quot;</span>)
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">add_other_element</span>(<span class="ruby-identifier">name</span>)
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">module_eval</span>(<span class="ruby-value str">&quot;attr_reader :\#{name}\ndef setup_\#{name}(rss, current)\nif @\#{name}\n@\#{name}.to_rss(rss, current)\nend\nend\n\ndef make_\#{name}\nself.class::\#{Utils.to_class_name(name)}.new(@maker)\nend\n&quot;</span>, <span class="ruby-keyword kw">__FILE__</span>, <span class="ruby-keyword kw">__LINE__</span><span class="ruby-operator">+</span><span class="ruby-value">1</span>)
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

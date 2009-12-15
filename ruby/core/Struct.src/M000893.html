@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_s (Struct)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   struct.to_s      =&gt; string
+ *   struct.inspect   =&gt; string
+ *
+ * Describe the contents of this struct in a string.
+ */
+
+static VALUE
+rb_struct_inspect(s)
+    VALUE s;
+{
+    if (rb_inspecting_p(s)) {
+        char *cname = rb_class2name(rb_obj_class(s));
+        size_t len = strlen(cname) + 14;
+        VALUE str = rb_str_new(0, len);
+
+        snprintf(RSTRING(str)-&gt;ptr, len+1, &quot;#&lt;struct %s:...&gt;&quot;, cname);
+        RSTRING(str)-&gt;len = strlen(RSTRING(str)-&gt;ptr);
+        return str;
+    }
+    return rb_protect_inspect(inspect_struct, s, 0);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: RDoc::RDoc</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">RDoc::RDoc</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/rdoc/rdoc_rb.html">
+                rdoc/rdoc.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Encapsulate the production of rdoc documentation. Basically you can use
+this as you would invoke rdoc from the command line:
+</p>
+<pre>
+   rdoc = RDoc::RDoc.new
+   rdoc.document(args)
+</pre>
+<p>
+where <em>args</em> is an array of strings, each corresponding to an
+argument you&#8216;d give rdoc on the command line. See rdoc/rdoc.rb for
+details.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002266">document</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Generator</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:file_name, :class_name, :key)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+This is the list of output generators that we support
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">GENERATORS</td>
+          <td>=</td>
+          <td class="context-item-value">{}</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002266" class="m-detail">
+        <a name="M002266"></a>
+
+        <div class="method-heading">
+          <a href="#M002266" class="method-signature">
+          <span class="method-name">document</span><span class="method-args">(argv)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Format up one or more files according to the given arguments. For
+simplicity, <em>argv</em> is an array of strings, equivalent to the strings
+that would be passed on the command line. (This isn&#8216;t a coincidence,
+as we <em>do</em> pass in ARGV when running interactively). For a list of
+options, see rdoc/rdoc.rb. By default, output will be stored in a directory
+called <tt>doc</tt> below the current directory, so make sure you&#8216;re
+somewhere writable before invoking.
+</p>
+<p>
+Throws: <a href="RDocError.html">RDocError</a> on error
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002266-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002266-source">
+<pre>
+<span class="ruby-comment cmt"># File rdoc/rdoc.rb, line 249</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">document</span>(<span class="ruby-identifier">argv</span>)
+
+      <span class="ruby-constant">TopLevel</span><span class="ruby-operator">::</span><span class="ruby-identifier">reset</span>
+
+      <span class="ruby-ivar">@stats</span> = <span class="ruby-constant">Stats</span>.<span class="ruby-identifier">new</span>
+
+      <span class="ruby-identifier">options</span> = <span class="ruby-constant">Options</span>.<span class="ruby-identifier">instance</span>
+      <span class="ruby-identifier">options</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">argv</span>, <span class="ruby-constant">GENERATORS</span>)
+
+      <span class="ruby-ivar">@last_created</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">all_one_file</span>
+        <span class="ruby-ivar">@last_created</span> = <span class="ruby-identifier">setup_output_dir</span>(<span class="ruby-identifier">options</span>.<span class="ruby-identifier">op_dir</span>, <span class="ruby-identifier">options</span>.<span class="ruby-identifier">force_update</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">start_time</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
+
+      <span class="ruby-identifier">file_info</span> = <span class="ruby-identifier">parse_files</span>(<span class="ruby-identifier">options</span>)
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">file_info</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;\nNo newer files.&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">quiet</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">gen</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">generator</span>
+
+        <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;\nGenerating #{gen.key.upcase}...&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">quiet</span>
+
+        <span class="ruby-identifier">require</span> <span class="ruby-identifier">gen</span>.<span class="ruby-identifier">file_name</span>
+
+        <span class="ruby-identifier">gen_class</span> = <span class="ruby-constant">Generators</span>.<span class="ruby-identifier">const_get</span>(<span class="ruby-identifier">gen</span>.<span class="ruby-identifier">class_name</span>)
+        <span class="ruby-identifier">gen</span> = <span class="ruby-identifier">gen_class</span>.<span class="ruby-identifier">for</span>(<span class="ruby-identifier">options</span>)
+
+        <span class="ruby-identifier">pwd</span> = <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">pwd</span>
+
+        <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span>(<span class="ruby-identifier">options</span>.<span class="ruby-identifier">op_dir</span>)  <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">all_one_file</span>
+
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-constant">Diagram</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">file_info</span>, <span class="ruby-identifier">options</span>).<span class="ruby-identifier">draw</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">diagram</span>
+          <span class="ruby-identifier">gen</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-identifier">file_info</span>)
+          <span class="ruby-identifier">update_output_dir</span>(<span class="ruby-value str">&quot;.&quot;</span>, <span class="ruby-identifier">start_time</span>)
+        <span class="ruby-keyword kw">ensure</span>
+          <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span>(<span class="ruby-identifier">pwd</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">quiet</span>
+        <span class="ruby-identifier">puts</span>
+        <span class="ruby-ivar">@stats</span>.<span class="ruby-identifier">print</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 3 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

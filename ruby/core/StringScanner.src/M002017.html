@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>pointer= (StringScanner)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: pos=(n)
+ *
+ * Modify the scan pointer.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.pos = 7            # -&gt; 7
+ *   s.rest               # -&gt; &quot;ring&quot;
+ */
+static VALUE
+strscan_set_pos(VALUE self, VALUE v)
+{
+    struct strscanner *p;
+    long i;
+
+    GET_SCANNER(self, p);
+    i = NUM2INT(v);
+    if (i &lt; 0) i += S_LEN(p);
+    if (i &lt; 0) rb_raise(rb_eRangeError, &quot;index out of range&quot;);
+    if (i &gt; S_LEN(p)) rb_raise(rb_eRangeError, &quot;index out of range&quot;);
+    p-&gt;curr = i;
+    return INT2NUM(i);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>[] (REXML::Elements)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/element.rb, line 752</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]</span>( <span class="ruby-identifier">index</span>, <span class="ruby-identifier">name</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">index</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Integer</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;index (#{index}) must be &gt;= 1&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">index</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">1</span>
+        <span class="ruby-identifier">name</span> = <span class="ruby-identifier">literalize</span>(<span class="ruby-identifier">name</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>
+        <span class="ruby-identifier">num</span> = <span class="ruby-value">0</span>
+        <span class="ruby-identifier">child</span> = <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-ivar">@element</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">child</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">child</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Element</span> <span class="ruby-keyword kw">and</span>
+          (<span class="ruby-identifier">name</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">true</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">has_name?</span>( <span class="ruby-identifier">name</span> )) <span class="ruby-keyword kw">and</span> 
+          (<span class="ruby-identifier">num</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>) <span class="ruby-operator">==</span> <span class="ruby-identifier">index</span>
+        }
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-constant">XPath</span><span class="ruby-operator">::</span><span class="ruby-identifier">first</span>( <span class="ruby-ivar">@element</span>, <span class="ruby-identifier">index</span> )
+        <span class="ruby-comment cmt">#{ |element| </span>
+        <span class="ruby-comment cmt">#       return element if element.kind_of? Element</span>
+        <span class="ruby-comment cmt">#}</span>
+        <span class="ruby-comment cmt">#return nil</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

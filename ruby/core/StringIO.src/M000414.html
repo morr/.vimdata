@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each_line (StringIO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   strio.each(sep_string=$/)      {|line| block }  -&gt; strio
+ *   strio.each_line(sep_string=$/) {|line| block }  -&gt; strio
+ *
+ * See IO#each.
+ */
+static VALUE
+strio_each(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    struct StringIO *ptr = StringIO(self);
+    VALUE line;
+
+    while (!NIL_P(line = strio_getline(argc, argv, readable(ptr)))) {
+        rb_yield(line);
+    }
+    return self;
+}</pre>
+</body>
+</html>

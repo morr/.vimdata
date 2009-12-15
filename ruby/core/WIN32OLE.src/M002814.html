@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (WIN32OLE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE.new(server, [host]) -&gt; WIN32OLE object
+ * 
+ *  Returns a new WIN32OLE object(OLE Automation object).
+ *  The first argument server specifies OLE Automation server.
+ *  The first argument should be CLSID or PROGID.
+ *  If second argument host specified, then returns OLE Automation 
+ *  object on host. 
+ *
+ *      WIN32OLE.new('Excel.Application') # =&gt; Excel OLE Automation WIN32OLE object.
+ *      WIN32OLE.new('{00024500-0000-0000-C000-000000000046}') # =&gt; Excel OLE Automation WIN32OLE object.
+ */
+static VALUE
+fole_initialize(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE svr_name;
+    VALUE host;
+    VALUE others;
+    HRESULT hr;
+    CLSID   clsid;
+    OLECHAR *pBuf;
+    IDispatch *pDispatch;
+
+    rb_secure(4);
+    rb_call_super(0, 0);
+    rb_scan_args(argc, argv, &quot;11*&quot;, &amp;svr_name, &amp;host, &amp;others);
+
+    if (ruby_safe_level &gt; 0 &amp;&amp; OBJ_TAINTED(svr_name)) {
+        rb_raise(rb_eSecurityError, &quot;Insecure Object Creation - %s&quot;,
+                 StringValuePtr(svr_name));
+    }
+    if (!NIL_P(host)) {
+        if (ruby_safe_level &gt; 0 &amp;&amp; OBJ_TAINTED(host)) {
+            rb_raise(rb_eSecurityError, &quot;Insecure Object Creation - %s&quot;,
+                     StringValuePtr(svr_name));
+        }
+        return ole_create_dcom(argc, argv, self);
+    }
+
+    /* get CLSID from OLE server name */
+    pBuf  = ole_mb2wc(StringValuePtr(svr_name), -1);
+    hr = CLSIDFromProgID(pBuf, &amp;clsid);
+    if(FAILED(hr)) {
+        hr = CLSIDFromString(pBuf, &amp;clsid);
+    }
+    SysFreeString(pBuf);
+    if(FAILED(hr)) {
+        ole_raise(hr, eWIN32OLE_RUNTIME_ERROR, 
+                  &quot;unknown OLE server: `%s'&quot;,
+                  StringValuePtr(svr_name));
+    }
+
+    /* get IDispatch interface */
+    hr = CoCreateInstance(&amp;clsid, NULL, CLSCTX_INPROC_SERVER | CLSCTX_LOCAL_SERVER,
+                          &amp;IID_IDispatch, (void**)&amp;pDispatch);
+    if(FAILED(hr)) {
+        ole_raise(hr, eWIN32OLE_RUNTIME_ERROR,
+                  &quot;failed to create WIN32OLE object from `%s'&quot;,
+                  StringValuePtr(svr_name));
+    }
+    
+    ole_set_member(self, pDispatch);
+    return self;
+}</pre>
+</body>
+</html>

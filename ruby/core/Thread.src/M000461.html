@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>status (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     thr.status   =&gt; string, false or nil
+ *  
+ *  Returns the status of &lt;i&gt;thr&lt;/i&gt;: ``&lt;code&gt;sleep&lt;/code&gt;'' if &lt;i&gt;thr&lt;/i&gt; is
+ *  sleeping or waiting on I/O, ``&lt;code&gt;run&lt;/code&gt;'' if &lt;i&gt;thr&lt;/i&gt; is executing,
+ *  ``&lt;code&gt;aborting&lt;/code&gt;'' if &lt;i&gt;thr&lt;/i&gt; is aborting, &lt;code&gt;false&lt;/code&gt; if
+ *  &lt;i&gt;thr&lt;/i&gt; terminated normally, and &lt;code&gt;nil&lt;/code&gt; if &lt;i&gt;thr&lt;/i&gt;
+ *  terminated with an exception.
+ *     
+ *     a = Thread.new { raise(&quot;die now&quot;) }
+ *     b = Thread.new { Thread.stop }
+ *     c = Thread.new { Thread.exit }
+ *     d = Thread.new { sleep }
+ *     Thread.critical = true
+ *     d.kill                  #=&gt; #&lt;Thread:0x401b3678 aborting&gt;
+ *     a.status                #=&gt; nil
+ *     b.status                #=&gt; &quot;sleep&quot;
+ *     c.status                #=&gt; false
+ *     d.status                #=&gt; &quot;aborting&quot;
+ *     Thread.current.status   #=&gt; &quot;run&quot;
+ */
+
+static VALUE
+rb_thread_status_name(thread)
+    VALUE thread;
+{
+    rb_thread_t th = rb_thread_check(thread);
+
+    if (rb_thread_dead(th)) {
+        if (!NIL_P(th-&gt;errinfo) &amp;&amp; (th-&gt;flags &amp; RAISED_EXCEPTION))
+            return Qnil;
+        return Qfalse;
+    }
+
+    return rb_str_new2(thread_status_name(th-&gt;status));
+}</pre>
+</body>
+</html>

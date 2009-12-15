@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_s (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   mod.to_s   =&gt; string
+ *
+ * Return a string representing this module or class. For basic
+ * classes and modules, this is the name. For singletons, we
+ * show information on the thing we're attached to as well.
+ */
+
+static VALUE
+rb_mod_to_s(klass)
+    VALUE klass;
+
+{
+    if (FL_TEST(klass, FL_SINGLETON)) {
+        VALUE s = rb_str_new2(&quot;#&lt;&quot;);
+        VALUE v = rb_iv_get(klass, &quot;__attached__&quot;);
+
+        rb_str_cat2(s, &quot;Class:&quot;);
+        switch (TYPE(v)) {
+          case T_CLASS: case T_MODULE:
+            rb_str_append(s, rb_inspect(v));
+            break;
+          default:
+            rb_str_append(s, rb_any_to_s(v));
+            break;
+        }
+        rb_str_cat2(s, &quot;&gt;&quot;);
+
+        return s;
+    }
+    return rb_str_dup(rb_class_name(klass));
+}</pre>
+</body>
+</html>

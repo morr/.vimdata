@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: REXML::Parsers::XPathParser</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">REXML::Parsers::XPathParser</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/rexml/parsers/xpathparser_rb.html">
+                rexml/parsers/xpathparser.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+You don&#8216;t want to use this class. Really. Use <a
+href="../XPath.html">XPath</a>, which is a wrapper for this class. Believe
+me. You don&#8216;t want to poke around in here. There is strange, dark
+magic at work in this code. Beware. Go back! Go back while you still can!
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002555">abbreviate</a>&nbsp;&nbsp;
+      <a href="#M002556">expand</a>&nbsp;&nbsp;
+      <a href="#M002552">namespaces=</a>&nbsp;&nbsp;
+      <a href="#M002553">parse</a>&nbsp;&nbsp;
+      <a href="#M002554">predicate</a>&nbsp;&nbsp;
+      <a href="#M002557">predicate_to_string</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="../XMLTokens.html">XMLTokens</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">LITERAL</td>
+          <td>=</td>
+          <td class="context-item-value">/^'([^']*)'|^&quot;([^&quot;]*)&quot;/u</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">AXIS</td>
+          <td>=</td>
+          <td class="context-item-value">/^(ancestor|ancestor-or-self|attribute|child|descendant|descendant-or-self|following|following-sibling|namespace|parent|preceding|preceding-sibling|self)::/</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+RelativeLocationPath
+
+<pre>
+  |                                                    Step
+    | (AXIS_NAME '::' | '@' | '')                     AxisSpecifier
+      NodeTest
+        Predicate
+    | '.' | '..'                                      AbbreviatedStep
+  |  RelativeLocationPath '/' Step
+  | RelativeLocationPath '//' Step
+</pre>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NCNAMETEST</td>
+          <td>=</td>
+          <td class="context-item-value">/^(#{NCNAME_STR}):\*/u</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"><pre>
+ Returns a 1-1 map of the nodeset
+ The contents of the resulting array are either:
+   true/false, if a positive match
+   String, if a name match
+</pre>
+
+NodeTest
+
+<pre>
+  | ('*' | NCNAME ':' '*' | QNAME)                NameTest
+  | NODE_TYPE '(' ')'                              NodeType
+  | PI '(' LITERAL ')'                            PI
+    | '[' expr ']'                                Predicate
+</pre>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">QNAME</td>
+          <td>=</td>
+          <td class="context-item-value">Namespace::NAMESPLIT</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NODE_TYPE</td>
+          <td>=</td>
+          <td class="context-item-value">/^(comment|text|node)\(\s*\)/m</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PI</td>
+          <td>=</td>
+          <td class="context-item-value">/^processing-instruction\(/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">VARIABLE_REFERENCE</td>
+          <td>=</td>
+          <td class="context-item-value">/^\$(#{NAME_STR})/u</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+| VARIABLE_REFERENCE | &#8217;(&#8217; expr &#8217;)&#8217; | LITERAL |
+NUMBER | FunctionCall
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NUMBER</td>
+          <td>=</td>
+          <td class="context-item-value">/^(\d*\.?\d+)/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NT</td>
+          <td>=</td>
+          <td class="context-item-value">/^comment|text|processing-instruction|node$/</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002555" class="m-detail">
+        <a name="M002555"></a>
+
+        <div class="method-heading">
+          <a href="#M002555" class="method-signature">
+          <span class="method-name">abbreviate</span><span class="method-args">( path )</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002555-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002555-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/parsers/xpathparser.rb, line 33</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">abbreviate</span>( <span class="ruby-identifier">path</span> )
+        <span class="ruby-identifier">path</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">String</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">parse</span>( <span class="ruby-identifier">path</span> ) <span class="ruby-operator">:</span> <span class="ruby-identifier">path</span>
+        <span class="ruby-identifier">string</span> = <span class="ruby-value str">&quot;&quot;</span>
+        <span class="ruby-identifier">document</span> = <span class="ruby-keyword kw">false</span>
+        <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+          <span class="ruby-identifier">op</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">op</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:node</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:attribute</span>
+                                                <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;/&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">string</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+                                                <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;@&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:child</span>
+                                                <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;/&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">string</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:descendant_or_self</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;/&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:self</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;.&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:parent</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;..&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:any</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;*&quot;</span>
+                                        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:text</span>
+                                                <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;text()&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:following</span>, <span class="ruby-identifier">:following_sibling</span>, 
+                <span class="ruby-identifier">:ancestor</span>, <span class="ruby-identifier">:ancestor_or_self</span>, <span class="ruby-identifier">:descendant</span>, 
+                <span class="ruby-identifier">:namespace</span>, <span class="ruby-identifier">:preceding</span>, <span class="ruby-identifier">:preceding_sibling</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;/&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">string</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">op</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">tr</span>(<span class="ruby-value str">&quot;_&quot;</span>, <span class="ruby-value str">&quot;-&quot;</span>)
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;::&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:qname</span>
+            <span class="ruby-identifier">prefix</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+            <span class="ruby-identifier">name</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">prefix</span><span class="ruby-operator">+</span><span class="ruby-value str">&quot;:&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">prefix</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">name</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:predicate</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">'['</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">predicate_to_string</span>( <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span> ) {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">abbreviate</span>( <span class="ruby-identifier">x</span> ) }
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">']'</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:document</span>
+            <span class="ruby-identifier">document</span> = <span class="ruby-keyword kw">true</span>
+                                        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:function</span>
+                                                <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+                                                <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;( &quot;</span>
+                                                <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">predicate_to_string</span>( <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>[<span class="ruby-value">0</span>] ) {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">abbreviate</span>( <span class="ruby-identifier">x</span> )}
+                                                <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; )&quot;</span>
+                                        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:literal</span>
+                                                <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">%Q{ &quot;#{path.shift}&quot; }</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;/&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">string</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;UNKNOWN(&quot;</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">op</span>.<span class="ruby-identifier">inspect</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;)&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+                                <span class="ruby-identifier">string</span> = <span class="ruby-value str">&quot;/&quot;</span><span class="ruby-operator">+</span><span class="ruby-identifier">string</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">document</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">string</span>
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002556" class="m-detail">
+        <a name="M002556"></a>
+
+        <div class="method-heading">
+          <a href="#M002556" class="method-signature">
+          <span class="method-name">expand</span><span class="method-args">( path )</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002556-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002556-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/parsers/xpathparser.rb, line 91</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">expand</span>( <span class="ruby-identifier">path</span> )
+        <span class="ruby-identifier">path</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">String</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">parse</span>( <span class="ruby-identifier">path</span> ) <span class="ruby-operator">:</span> <span class="ruby-identifier">path</span>
+        <span class="ruby-identifier">string</span> = <span class="ruby-value str">&quot;&quot;</span>
+        <span class="ruby-identifier">document</span> = <span class="ruby-keyword kw">false</span>
+        <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+          <span class="ruby-identifier">op</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">op</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:node</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;node()&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:attribute</span>, <span class="ruby-identifier">:child</span>, <span class="ruby-identifier">:following</span>, <span class="ruby-identifier">:following_sibling</span>, 
+                <span class="ruby-identifier">:ancestor</span>, <span class="ruby-identifier">:ancestor_or_self</span>, <span class="ruby-identifier">:descendant</span>, <span class="ruby-identifier">:descendant_or_self</span>,
+                <span class="ruby-identifier">:namespace</span>, <span class="ruby-identifier">:preceding</span>, <span class="ruby-identifier">:preceding_sibling</span>, <span class="ruby-identifier">:self</span>, <span class="ruby-identifier">:parent</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;/&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">string</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">op</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">tr</span>(<span class="ruby-value str">&quot;_&quot;</span>, <span class="ruby-value str">&quot;-&quot;</span>)
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;::&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:any</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;*&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:qname</span>
+            <span class="ruby-identifier">prefix</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+            <span class="ruby-identifier">name</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">prefix</span><span class="ruby-operator">+</span><span class="ruby-value str">&quot;:&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">prefix</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">name</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:predicate</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">'['</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">predicate_to_string</span>( <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span> ) { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">expand</span>(<span class="ruby-identifier">x</span>) }
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">']'</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:document</span>
+            <span class="ruby-identifier">document</span> = <span class="ruby-keyword kw">true</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;/&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">string</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;UNKNOWN(&quot;</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">op</span>.<span class="ruby-identifier">inspect</span>
+            <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;)&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">string</span> = <span class="ruby-value str">&quot;/&quot;</span><span class="ruby-operator">+</span><span class="ruby-identifier">string</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">document</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">string</span>
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002552" class="m-detail">
+        <a name="M002552"></a>
+
+        <div class="method-heading">
+          <a href="#M002552" class="method-signature">
+          <span class="method-name">namespaces=</span><span class="method-args">( namespaces )</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002552-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002552-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/parsers/xpathparser.rb, line 14</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">namespaces=</span>( <span class="ruby-identifier">namespaces</span> )
+        <span class="ruby-constant">Functions</span><span class="ruby-operator">::</span><span class="ruby-identifier">namespace_context</span> = <span class="ruby-identifier">namespaces</span>
+        <span class="ruby-ivar">@namespaces</span> = <span class="ruby-identifier">namespaces</span>
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002553" class="m-detail">
+        <a name="M002553"></a>
+
+        <div class="method-heading">
+          <a href="#M002553" class="method-signature">
+          <span class="method-name">parse</span><span class="method-args">(path)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002553-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002553-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/parsers/xpathparser.rb, line 19</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse</span> <span class="ruby-identifier">path</span>
+        <span class="ruby-identifier">path</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/([\(\[])\s+/</span>, <span class="ruby-value str">'\1'</span>) <span class="ruby-comment cmt"># Strip ignorable spaces</span>
+        <span class="ruby-identifier">path</span>.<span class="ruby-identifier">gsub!</span>( <span class="ruby-regexp re">/\s+([\]\)])/</span>, <span class="ruby-value str">'\1'</span> )
+        <span class="ruby-identifier">parsed</span> = []
+        <span class="ruby-identifier">path</span> = <span class="ruby-constant">OrExpr</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">parsed</span>)
+        <span class="ruby-identifier">parsed</span>
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002554" class="m-detail">
+        <a name="M002554"></a>
+
+        <div class="method-heading">
+          <a href="#M002554" class="method-signature">
+          <span class="method-name">predicate</span><span class="method-args">(path)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002554-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002554-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/parsers/xpathparser.rb, line 27</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">predicate</span> <span class="ruby-identifier">path</span>
+        <span class="ruby-identifier">parsed</span> = []
+        <span class="ruby-constant">Predicate</span>( <span class="ruby-node">&quot;[#{path}]&quot;</span>, <span class="ruby-identifier">parsed</span> )
+        <span class="ruby-identifier">parsed</span>
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002557" class="m-detail">
+        <a name="M002557"></a>
+
+        <div class="method-heading">
+          <a href="#M002557" class="method-signature">
+          <span class="method-name">predicate_to_string</span><span class="method-args">( path ) {|path| ...}</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002557-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002557-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/parsers/xpathparser.rb, line 130</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">predicate_to_string</span>( <span class="ruby-identifier">path</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+        <span class="ruby-identifier">string</span> = <span class="ruby-value str">&quot;&quot;</span>
+        <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">path</span>[<span class="ruby-value">0</span>]
+        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:and</span>, <span class="ruby-identifier">:or</span>, <span class="ruby-identifier">:mult</span>, <span class="ruby-identifier">:plus</span>, <span class="ruby-identifier">:minus</span>, <span class="ruby-identifier">:neq</span>, <span class="ruby-identifier">:eq</span>, <span class="ruby-identifier">:lt</span>, <span class="ruby-identifier">:gt</span>, <span class="ruby-identifier">:lteq</span>, <span class="ruby-identifier">:gteq</span>, <span class="ruby-identifier">:div</span>, <span class="ruby-identifier">:mod</span>, <span class="ruby-identifier">:union</span>
+          <span class="ruby-identifier">op</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">op</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:eq</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;=&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:lt</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;&lt;&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:gt</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;&gt;&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:lteq</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;&lt;=&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:gteq</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;&gt;=&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:neq</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;!=&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:union</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;|&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">left</span> = <span class="ruby-identifier">predicate_to_string</span>( <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+          <span class="ruby-identifier">right</span> = <span class="ruby-identifier">predicate_to_string</span>( <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">left</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">op</span>.<span class="ruby-identifier">to_s</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">right</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:function</span>
+          <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+          <span class="ruby-identifier">name</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">name</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;( &quot;</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">predicate_to_string</span>( <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; )&quot;</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:literal</span>
+          <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>.<span class="ruby-identifier">inspect</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword kw">yield</span>( <span class="ruby-identifier">path</span> )
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">string</span>.<span class="ruby-identifier">squeeze</span>(<span class="ruby-value str">&quot; &quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 2 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a service of <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, AZ</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

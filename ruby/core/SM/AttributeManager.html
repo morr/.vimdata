@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: SM::AttributeManager</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">SM::AttributeManager</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/rdoc/markup/simple_markup/inline_rb.html">
+                lib/rdoc/markup/simple_markup/inline.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M005004">add_html</a>&nbsp;&nbsp;
+      <a href="#M005005">add_special</a>&nbsp;&nbsp;
+      <a href="#M005003">add_word_pair</a>&nbsp;&nbsp;
+      <a href="#M004993">attribute</a>&nbsp;&nbsp;
+      <a href="#M004994">change_attribute</a>&nbsp;&nbsp;
+      <a href="#M004995">changed_attribute_by_name</a>&nbsp;&nbsp;
+      <a href="#M004997">convert_attrs</a>&nbsp;&nbsp;
+      <a href="#M004998">convert_html</a>&nbsp;&nbsp;
+      <a href="#M004999">convert_specials</a>&nbsp;&nbsp;
+      <a href="#M004996">copy_string</a>&nbsp;&nbsp;
+      <a href="#M005007">display_attributes</a>&nbsp;&nbsp;
+      <a href="#M005006">flow</a>&nbsp;&nbsp;
+      <a href="#M005000">mask_protected_sequences</a>&nbsp;&nbsp;
+      <a href="#M005002">new</a>&nbsp;&nbsp;
+      <a href="#M005008">split_into_flow</a>&nbsp;&nbsp;
+      <a href="#M005001">unmask_protected_sequences</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NULL</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\000&quot;.freeze</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">A_PROTECT</td>
+          <td>=</td>
+          <td class="context-item-value">004</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+We work by substituting non-printing characters in to the text. For now
+I&#8216;m assuming that I can substitute a character in the range 0..8 for
+a 7 bit character without damaging the encoded string, but this might be
+optimistic
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PROTECT_ATTR</td>
+          <td>=</td>
+          <td class="context-item-value">A_PROTECT.chr</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">MATCHING_WORD_PAIRS</td>
+          <td>=</td>
+          <td class="context-item-value">{}</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+This maps delimiters that occur around words (such as <b>bold</b> or
+<tt>tt</tt>) where the start and end delimiters and the same. This lets us
+optimize the regexp
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">WORD_PAIR_MAP</td>
+          <td>=</td>
+          <td class="context-item-value">{}</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+And this is used when the delimiters aren&#8216;t the same. In this case
+the hash maps a pattern to the <a
+href="AttributeManager.html#M004993">attribute</a> character
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">HTML_TAGS</td>
+          <td>=</td>
+          <td class="context-item-value">{}</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+This maps HTML tags to the corresponding <a
+href="AttributeManager.html#M004993">attribute</a> char
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SPECIAL</td>
+          <td>=</td>
+          <td class="context-item-value">{}</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+And this maps <em>special</em> sequences to a name. A special sequence is
+something like a WikiWord
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PROTECTABLE</td>
+          <td>=</td>
+          <td class="context-item-value">[ &quot;&lt;&quot; &lt;&lt; &quot;\\&quot; ]</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+A \ in front of a character that would normally be processed turns off
+processing. We do this by turning &lt; into &lt;#{PROTECT}
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M005002" class="method-detail">
+        <a name="M005002"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M005002.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M005002.html');return false;">
+          <span class="method-name">new</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M005004" class="method-detail">
+        <a name="M005004"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M005004.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M005004.html');return false;">
+          <span class="method-name">add_html</span><span class="method-args">(tag, name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M005005" class="method-detail">
+        <a name="M005005"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M005005.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M005005.html');return false;">
+          <span class="method-name">add_special</span><span class="method-args">(pattern, name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M005003" class="method-detail">
+        <a name="M005003"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M005003.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M005003.html');return false;">
+          <span class="method-name">add_word_pair</span><span class="method-args">(start, stop, name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004993" class="method-detail">
+        <a name="M004993"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M004993.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M004993.html');return false;">
+          <span class="method-name">attribute</span><span class="method-args">(turn_on, turn_off)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return an <a href="AttributeManager.html#M004993">attribute</a> object with
+the given turn_on and turn_off bits set
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004994" class="method-detail">
+        <a name="M004994"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M004994.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M004994.html');return false;">
+          <span class="method-name">change_attribute</span><span class="method-args">(current, new)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004995" class="method-detail">
+        <a name="M004995"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M004995.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M004995.html');return false;">
+          <span class="method-name">changed_attribute_by_name</span><span class="method-args">(current_set, new_set)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004997" class="method-detail">
+        <a name="M004997"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M004997.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M004997.html');return false;">
+          <span class="method-name">convert_attrs</span><span class="method-args">(str, attrs)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Map attributes like <b>text</b>to the sequence
+\001\002&lt;char&gt;\001\003&lt;char&gt;, where &lt;char&gt; is a per-<a
+href="AttributeManager.html#M004993">attribute</a> specific character
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004998" class="method-detail">
+        <a name="M004998"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M004998.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M004998.html');return false;">
+          <span class="method-name">convert_html</span><span class="method-args">(str, attrs)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004999" class="method-detail">
+        <a name="M004999"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M004999.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M004999.html');return false;">
+          <span class="method-name">convert_specials</span><span class="method-args">(str, attrs)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004996" class="method-detail">
+        <a name="M004996"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M004996.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M004996.html');return false;">
+          <span class="method-name">copy_string</span><span class="method-args">(start_pos, end_pos)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M005007" class="method-detail">
+        <a name="M005007"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M005007.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M005007.html');return false;">
+          <span class="method-name">display_attributes</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M005006" class="method-detail">
+        <a name="M005006"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M005006.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M005006.html');return false;">
+          <span class="method-name">flow</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M005000" class="method-detail">
+        <a name="M005000"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M005000.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M005000.html');return false;">
+          <span class="method-name">mask_protected_sequences</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M005008" class="method-detail">
+        <a name="M005008"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M005008.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M005008.html');return false;">
+          <span class="method-name">split_into_flow</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M005001" class="method-detail">
+        <a name="M005001"></a>
+
+        <div class="method-heading">
+          <a href="AttributeManager.src/M005001.html" target="Code" class="method-signature"
+            onclick="popupCode('AttributeManager.src/M005001.html');return false;">
+          <span class="method-name">unmask_protected_sequences</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

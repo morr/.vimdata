@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (WEBrick::HTTPAuth::DigestAuth)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/httpauth/digestauth.rb, line 34</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">config</span>, <span class="ruby-identifier">default</span>=<span class="ruby-constant">Config</span><span class="ruby-operator">::</span><span class="ruby-constant">DigestAuth</span>)
+        <span class="ruby-identifier">check_init</span>(<span class="ruby-identifier">config</span>)
+        <span class="ruby-ivar">@config</span>                 = <span class="ruby-identifier">default</span>.<span class="ruby-identifier">dup</span>.<span class="ruby-identifier">update</span>(<span class="ruby-identifier">config</span>)
+        <span class="ruby-ivar">@algorithm</span>              = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:Algorithm</span>]
+        <span class="ruby-ivar">@domain</span>                 = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:Domain</span>]
+        <span class="ruby-ivar">@qop</span>                    = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:Qop</span>]
+        <span class="ruby-ivar">@use_opaque</span>             = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:UseOpaque</span>]
+        <span class="ruby-ivar">@use_next_nonce</span>         = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:UseNextNonce</span>]
+        <span class="ruby-ivar">@check_nc</span>               = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:CheckNc</span>]
+        <span class="ruby-ivar">@use_auth_info_header</span>   = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:UseAuthenticationInfoHeader</span>]
+        <span class="ruby-ivar">@nonce_expire_period</span>    = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:NonceExpirePeriod</span>]
+        <span class="ruby-ivar">@nonce_expire_delta</span>     = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:NonceExpireDelta</span>]
+        <span class="ruby-ivar">@internet_explorer_hack</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:InternetExplorerHack</span>]
+        <span class="ruby-ivar">@opera_hack</span>             = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:OperaHack</span>]
+
+        <span class="ruby-keyword kw">case</span> <span class="ruby-ivar">@algorithm</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'MD5'</span>,<span class="ruby-value str">'MD5-sess'</span>
+          <span class="ruby-ivar">@h</span> = <span class="ruby-constant">Digest</span><span class="ruby-operator">::</span><span class="ruby-constant">MD5</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'SHA1'</span>,<span class="ruby-value str">'SHA1-sess'</span>  <span class="ruby-comment cmt"># it is a bonus feature :-)</span>
+          <span class="ruby-ivar">@h</span> = <span class="ruby-constant">Digest</span><span class="ruby-operator">::</span><span class="ruby-constant">SHA1</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">msg</span> = <span class="ruby-identifier">format</span>(<span class="ruby-value str">'Alogrithm &quot;%s&quot; is not supported.'</span>, <span class="ruby-ivar">@algorithm</span>)
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">msg</span>)
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-ivar">@instance_key</span> = <span class="ruby-identifier">hexdigest</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">__id__</span>, <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-constant">Process</span>.<span class="ruby-identifier">pid</span>)
+        <span class="ruby-ivar">@opaques</span> = {}
+        <span class="ruby-ivar">@last_nonce_expire</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
+        <span class="ruby-ivar">@mutex</span> = <span class="ruby-constant">Mutex</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

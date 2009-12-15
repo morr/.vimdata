@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>codepage= (WIN32OLE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* 
+ *  call-seq:
+ *     WIN32OLE.codepage = CP
+ * 
+ *  Sets current codepage.
+ *     WIN32OLE.codepage = WIN32OLE::CP_UTF8
+ */
+static VALUE
+fole_s_set_code_page(self, vcp)
+    VALUE self;
+    VALUE vcp;
+{
+    UINT cp = FIX2INT(vcp);
+
+    switch(cp) {
+    case CP_ACP:
+    case CP_OEMCP:
+    case CP_MACCP:
+    case CP_THREAD_ACP:
+    case CP_SYMBOL:
+    case CP_UTF7:
+    case CP_UTF8:
+        cWIN32OLE_cp = cp;
+        break;
+    default:
+        rb_raise(eWIN32OLE_RUNTIME_ERROR, &quot;codepage should be WIN32OLE::CP_ACP, WIN32OLE::CP_OEMCP, WIN32OLE::CP_MACCP, WIN32OLE::CP_THREAD_ACP, WIN32OLE::CP_SYMBOL, WIN32OLE::CP_UTF7, WIN32OLE::CP_UTF8&quot;);
+        break;
+    }
+
+    /*
+     * Should this method return old codepage?
+     */
+    return Qnil;
+}</pre>
+</body>
+</html>

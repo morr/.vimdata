@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each_object (ObjectSpace)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ObjectSpace.each_object([module]) {|obj| ... } =&gt; fixnum
+ *
+ *  Calls the block once for each living, nonimmediate object in this
+ *  Ruby process. If &lt;i&gt;module&lt;/i&gt; is specified, calls the block
+ *  for only those classes or modules that match (or are a subclass of)
+ *  &lt;i&gt;module&lt;/i&gt;. Returns the number of objects found. Immediate
+ *  objects (&lt;code&gt;Fixnum&lt;/code&gt;s, &lt;code&gt;Symbol&lt;/code&gt;s
+ *  &lt;code&gt;true&lt;/code&gt;, &lt;code&gt;false&lt;/code&gt;, and &lt;code&gt;nil&lt;/code&gt;) are
+ *  never returned. In the example below, &lt;code&gt;each_object&lt;/code&gt;
+ *  returns both the numbers we defined and several constants defined in
+ *  the &lt;code&gt;Math&lt;/code&gt; module.
+ *
+ *     a = 102.7
+ *     b = 95       # Won't be returned
+ *     c = 12345678987654321
+ *     count = ObjectSpace.each_object(Numeric) {|x| p x }
+ *     puts &quot;Total count: #{count}&quot;
+ *
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *
+ *     12345678987654321
+ *     102.7
+ *     2.71828182845905
+ *     3.14159265358979
+ *     2.22044604925031e-16
+ *     1.7976931348623157e+308
+ *     2.2250738585072e-308
+ *     Total count: 7
+ *
+ */
+
+static VALUE
+os_each_obj(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE of;
+
+    rb_secure(4);
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;of) == 0) {
+        of = 0;
+    }
+    return os_obj_of(of);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>protected_methods (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.protected_methods(all=true)   =&gt; array
+ *  
+ *  Returns the list of protected methods accessible to &lt;i&gt;obj&lt;/i&gt;. If
+ *  the &lt;i&gt;all&lt;/i&gt; parameter is set to &lt;code&gt;false&lt;/code&gt;, only those methods
+ *  in the receiver will be listed.
+ */
+
+static VALUE
+rb_obj_protected_methods(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    if (argc == 0) {            /* hack to stop warning */
+        VALUE args[1];
+
+        args[0] = Qtrue;
+        return rb_class_protected_instance_methods(1, args, CLASS_OF(obj));
+    }
+    return rb_class_protected_instance_methods(argc, argv, CLASS_OF(obj));
+}</pre>
+</body>
+</html>

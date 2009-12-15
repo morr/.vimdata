@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>zone (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     time.zone =&gt; string
+ *  
+ *  Returns the name of the time zone used for &lt;i&gt;time&lt;/i&gt;. As of Ruby
+ *  1.8, returns ``UTC'' rather than ``GMT'' for UTC times.
+ *     
+ *     t = Time.gm(2000, &quot;jan&quot;, 1, 20, 15, 1)
+ *     t.zone   #=&gt; &quot;UTC&quot;
+ *     t = Time.local(2000, &quot;jan&quot;, 1, 20, 15, 1)
+ *     t.zone   #=&gt; &quot;CST&quot;
+ */
+
+static VALUE
+time_zone(time)
+    VALUE time;
+{
+    struct time_object *tobj;
+#if !defined(HAVE_TM_ZONE) &amp;&amp; (!defined(HAVE_TZNAME) || !defined(HAVE_DAYLIGHT))
+    char buf[64];
+    int len;
+#endif
+    
+    GetTimeval(time, tobj);
+    if (tobj-&gt;tm_got == 0) {
+        time_get_tm(time, tobj-&gt;gmt);
+    }
+
+    if (tobj-&gt;gmt == 1) {
+        return rb_str_new2(&quot;UTC&quot;);
+    }
+#if defined(HAVE_TM_ZONE)
+    return rb_str_new2(tobj-&gt;tm.tm_zone);
+#elif defined(HAVE_TZNAME) &amp;&amp; defined(HAVE_DAYLIGHT)
+    return rb_str_new2(tzname[daylight &amp;&amp; tobj-&gt;tm.tm_isdst]);
+#else
+    len = strftime(buf, 64, &quot;%Z&quot;, &amp;tobj-&gt;tm);
+    return rb_str_new(buf, len);
+#endif
+}</pre>
+</body>
+</html>

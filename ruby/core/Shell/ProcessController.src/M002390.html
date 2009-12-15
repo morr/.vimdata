@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sfork (Shell::ProcessController)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/shell/process-controller.rb, line 194</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sfork</span>(<span class="ruby-identifier">command</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-identifier">pipe_me_in</span>, <span class="ruby-identifier">pipe_peer_out</span> = <span class="ruby-constant">IO</span>.<span class="ruby-identifier">pipe</span>
+      <span class="ruby-identifier">pipe_peer_in</span>, <span class="ruby-identifier">pipe_me_out</span> = <span class="ruby-constant">IO</span>.<span class="ruby-identifier">pipe</span>
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">true</span>
+
+      <span class="ruby-constant">STDOUT</span>.<span class="ruby-identifier">flush</span>
+      <span class="ruby-constant">ProcessController</span>.<span class="ruby-identifier">each_active_object</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">pc</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">jobs</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">pc</span>.<span class="ruby-identifier">active_jobs</span>
+          <span class="ruby-identifier">jobs</span>.<span class="ruby-identifier">flush</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      
+      <span class="ruby-identifier">pid</span> = <span class="ruby-identifier">fork</span> {
+        <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">true</span>
+
+        <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">th</span><span class="ruby-operator">|</span> 
+          <span class="ruby-identifier">th</span>.<span class="ruby-identifier">kill</span> <span class="ruby-keyword kw">unless</span> [<span class="ruby-constant">Thread</span>.<span class="ruby-identifier">main</span>, <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>].<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">th</span>)
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-constant">STDIN</span>.<span class="ruby-identifier">reopen</span>(<span class="ruby-identifier">pipe_peer_in</span>)
+        <span class="ruby-constant">STDOUT</span>.<span class="ruby-identifier">reopen</span>(<span class="ruby-identifier">pipe_peer_out</span>)
+
+        <span class="ruby-constant">ObjectSpace</span>.<span class="ruby-identifier">each_object</span>(<span class="ruby-constant">IO</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">io</span><span class="ruby-operator">|</span> 
+          <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span>[<span class="ruby-constant">STDIN</span>, <span class="ruby-constant">STDOUT</span>, <span class="ruby-constant">STDERR</span>].<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">io</span>)
+            <span class="ruby-identifier">io</span>.<span class="ruby-identifier">close</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">io</span>.<span class="ruby-identifier">closed?</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">yield</span>
+      }
+
+      <span class="ruby-identifier">pipe_peer_in</span>.<span class="ruby-identifier">close</span>
+      <span class="ruby-identifier">pipe_peer_out</span>.<span class="ruby-identifier">close</span>
+      <span class="ruby-identifier">command</span>.<span class="ruby-identifier">notify</span> <span class="ruby-node">&quot;job(%name:##{pid}) start&quot;</span>, <span class="ruby-ivar">@shell</span>.<span class="ruby-identifier">debug?</span>
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">false</span>
+
+      <span class="ruby-identifier">th</span> = <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">start</span> {
+        <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">_pid</span> = <span class="ruby-keyword kw">nil</span>
+          <span class="ruby-identifier">command</span>.<span class="ruby-identifier">notify</span>(<span class="ruby-value str">&quot;job(%id) start to waiting finish.&quot;</span>, <span class="ruby-ivar">@shell</span>.<span class="ruby-identifier">debug?</span>)
+          <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">false</span>
+          <span class="ruby-identifier">_pid</span> = <span class="ruby-constant">Process</span>.<span class="ruby-identifier">waitpid</span>(<span class="ruby-identifier">pid</span>, <span class="ruby-keyword kw">nil</span>)
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">ECHILD</span>
+          <span class="ruby-identifier">command</span>.<span class="ruby-identifier">notify</span> <span class="ruby-value str">&quot;warn: job(%id) was done already waitipd.&quot;</span>
+          <span class="ruby-identifier">_pid</span> = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-keyword kw">ensure</span>
+          <span class="ruby-comment cmt"># when the process ends, wait until the command termintes</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">_pid</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">command</span>.<span class="ruby-identifier">notify</span>(<span class="ruby-value str">&quot;notice: Process finishing...&quot;</span>,
+                           <span class="ruby-value str">&quot;wait for Job[%id] to finish.&quot;</span>,
+                           <span class="ruby-value str">&quot;You can use Shell#transact or Shell#check_point for more safe execution.&quot;</span>)
+            <span class="ruby-keyword kw">redo</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">exclusive</span> <span class="ruby-keyword kw">do</span>
+            <span class="ruby-ivar">@job_monitor</span>.<span class="ruby-identifier">synchronize</span> <span class="ruby-keyword kw">do</span> 
+              <span class="ruby-identifier">terminate_job</span>(<span class="ruby-identifier">command</span>)
+              <span class="ruby-ivar">@job_condition</span>.<span class="ruby-identifier">signal</span>
+              <span class="ruby-identifier">command</span>.<span class="ruby-identifier">notify</span> <span class="ruby-value str">&quot;job(%id) finish.&quot;</span>, <span class="ruby-ivar">@shell</span>.<span class="ruby-identifier">debug?</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      }
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">pid</span>, <span class="ruby-identifier">pipe_me_in</span>, <span class="ruby-identifier">pipe_me_out</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

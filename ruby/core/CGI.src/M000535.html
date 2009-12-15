@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>unescapeHTML (CGI)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/cgi.rb, line 369</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">CGI</span><span class="ruby-operator">::</span><span class="ruby-identifier">unescapeHTML</span>(<span class="ruby-identifier">string</span>)
+    <span class="ruby-identifier">string</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/&amp;(amp|quot|gt|lt|\#[0-9]+|\#x[0-9A-Fa-f]+);/n</span>) <span class="ruby-keyword kw">do</span>
+      <span class="ruby-identifier">match</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">dup</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">match</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'amp'</span>                 <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'&amp;'</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'quot'</span>                <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'&quot;'</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'gt'</span>                  <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'&gt;'</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'lt'</span>                  <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'&lt;'</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\A#0*(\d+)\z/n</span>       <span class="ruby-keyword kw">then</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Integer</span>(<span class="ruby-identifier">$1</span>) <span class="ruby-operator">&lt;</span> <span class="ruby-value">256</span>
+          <span class="ruby-constant">Integer</span>(<span class="ruby-identifier">$1</span>).<span class="ruby-identifier">chr</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Integer</span>(<span class="ruby-identifier">$1</span>) <span class="ruby-operator">&lt;</span> <span class="ruby-value">65536</span> <span class="ruby-keyword kw">and</span> (<span class="ruby-identifier">$KCODE</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?u</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">$KCODE</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?U</span>)
+            [<span class="ruby-constant">Integer</span>(<span class="ruby-identifier">$1</span>)].<span class="ruby-identifier">pack</span>(<span class="ruby-value str">&quot;U&quot;</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-node">&quot;&amp;##{$1};&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\A#x([0-9a-f]+)\z/n</span><span class="ruby-identifier">i</span> <span class="ruby-keyword kw">then</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">hex</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">256</span>
+          <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">hex</span>.<span class="ruby-identifier">chr</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">hex</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">65536</span> <span class="ruby-keyword kw">and</span> (<span class="ruby-identifier">$KCODE</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?u</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">$KCODE</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?U</span>)
+            [<span class="ruby-identifier">$1</span>.<span class="ruby-identifier">hex</span>].<span class="ruby-identifier">pack</span>(<span class="ruby-value str">&quot;U&quot;</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-node">&quot;&amp;#x#{$1};&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-node">&quot;&amp;#{match};&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

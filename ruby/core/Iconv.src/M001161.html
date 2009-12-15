@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>open (Iconv)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Document-method: open
+ * call-seq: Iconv.open(to, from) { |iconv| ... }
+ *
+ * Equivalent to Iconv.new except that when it is called with a block, it
+ * yields with the new instance and closes it, and returns the result which
+ * returned from the block.
+ */
+static VALUE
+iconv_s_open
+    (self, to, from)
+    VALUE self;
+    VALUE to;
+    VALUE from;
+{
+    VALUE cd = ICONV2VALUE(iconv_create(to, from));
+
+    self = Data_Wrap_Struct(self, NULL, ICONV_FREE, (void *)cd);
+    if (rb_block_given_p()) {
+        return rb_ensure(rb_yield, self, (VALUE(*)())iconv_finish, self);
+    }
+    else {
+        return self;
+    }
+}</pre>
+</body>
+</html>

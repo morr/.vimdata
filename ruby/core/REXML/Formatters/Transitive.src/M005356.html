@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>write_element (REXML::Formatters::Transitive)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/formatters/transitive.rb, line 21</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">write_element</span>( <span class="ruby-identifier">node</span>, <span class="ruby-identifier">output</span> )
+        <span class="ruby-identifier">output</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;&lt;#{node.expanded_name}&quot;</span>
+
+        <span class="ruby-identifier">node</span>.<span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">each_attribute</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">attr</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">output</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+          <span class="ruby-identifier">attr</span>.<span class="ruby-identifier">write</span>( <span class="ruby-identifier">output</span> )
+        <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">empty?</span>
+
+        <span class="ruby-identifier">output</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\n&quot;</span>
+        <span class="ruby-identifier">output</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span><span class="ruby-operator">*</span><span class="ruby-ivar">@level</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">children</span>.<span class="ruby-identifier">empty?</span>
+          <span class="ruby-identifier">output</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;/&quot;</span> 
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">output</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&gt;&quot;</span>
+          <span class="ruby-comment cmt"># If compact and all children are text, and if the formatted output</span>
+          <span class="ruby-comment cmt"># is less than the specified width, then try to print everything on</span>
+          <span class="ruby-comment cmt"># one line</span>
+          <span class="ruby-identifier">skip</span> = <span class="ruby-keyword kw">false</span>
+          <span class="ruby-ivar">@level</span> <span class="ruby-operator">+=</span> <span class="ruby-ivar">@indentation</span>
+          <span class="ruby-identifier">node</span>.<span class="ruby-identifier">children</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">child</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">write</span>( <span class="ruby-identifier">child</span>, <span class="ruby-identifier">output</span> )
+          }
+          <span class="ruby-ivar">@level</span> <span class="ruby-operator">-=</span> <span class="ruby-ivar">@indentation</span>
+          <span class="ruby-identifier">output</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;&lt;/#{node.expanded_name}&quot;</span>
+          <span class="ruby-identifier">output</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\n&quot;</span>
+          <span class="ruby-identifier">output</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span><span class="ruby-operator">*</span><span class="ruby-ivar">@level</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">output</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&gt;&quot;</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

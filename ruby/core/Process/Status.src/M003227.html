@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>exitstatus (Process::Status)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     stat.exitstatus   =&gt; fixnum or nil
+ *
+ *  Returns the least significant eight bits of the return code of
+ *  _stat_. Only available if &lt;code&gt;exited?&lt;/code&gt; is
+ *  +true+.
+ *
+ *     fork { }           #=&gt; 26572
+ *     Process.wait       #=&gt; 26572
+ *     $?.exited?         #=&gt; true
+ *     $?.exitstatus      #=&gt; 0
+ *
+ *     fork { exit 99 }   #=&gt; 26573
+ *     Process.wait       #=&gt; 26573
+ *     $?.exited?         #=&gt; true
+ *     $?.exitstatus      #=&gt; 99
+ */
+
+static VALUE
+pst_wexitstatus(st)
+    VALUE st;
+{
+    int status = NUM2INT(st);
+
+    if (WIFEXITED(status))
+        return INT2NUM(WEXITSTATUS(status));
+    return Qnil;
+}</pre>
+</body>
+</html>

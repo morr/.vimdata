@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>typelibs (WIN32OLE_TYPE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE_TYPE.typelibs
+ * 
+ *  Returns array of type libraries.
+ *
+ */
+static VALUE
+foletype_s_typelibs(self)
+    VALUE self;
+{
+    HKEY htypelib, hclsid;
+    double fversion;
+    DWORD i, j;
+    LONG err;
+    VALUE clsid;
+    VALUE ver;
+    VALUE v = Qnil;
+    VALUE typelibs = rb_ary_new();
+
+    err = reg_open_key(HKEY_CLASSES_ROOT, &quot;TypeLib&quot;, &amp;htypelib);
+    if(err != ERROR_SUCCESS) {
+        return typelibs;
+    }
+    for(i = 0; ; i++) {
+        clsid = reg_enum_key(htypelib, i);
+        if (clsid == Qnil)
+            break;
+        err = reg_open_vkey(htypelib, clsid, &amp;hclsid);
+        if (err != ERROR_SUCCESS)
+            continue;
+        fversion = 0;
+        for(j = 0; ; j++) {
+            ver = reg_enum_key(hclsid, j);
+            if (ver == Qnil)
+                break;
+            if (fversion &gt; atof(StringValuePtr(ver)))
+                continue;
+            fversion = atof(StringValuePtr(ver));
+            if ( (v = reg_get_val(hclsid, StringValuePtr(ver))) != Qnil ) {
+                rb_ary_push(typelibs, v);
+            }
+        }
+        RegCloseKey(hclsid);
+    }
+    RegCloseKey(htypelib);
+    return typelibs;
+}</pre>
+</body>
+</html>

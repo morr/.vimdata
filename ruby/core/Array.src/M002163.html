@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>fetch (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.fetch(index)                    -&gt; obj
+ *     array.fetch(index, default )          -&gt; obj
+ *     array.fetch(index) {|index| block }   -&gt; obj
+ *  
+ *  Tries to return the element at position &lt;i&gt;index&lt;/i&gt;. If the index
+ *  lies outside the array, the first form throws an
+ *  &lt;code&gt;IndexError&lt;/code&gt; exception, the second form returns
+ *  &lt;i&gt;default&lt;/i&gt;, and the third form returns the value of invoking
+ *  the block, passing in the index. Negative values of &lt;i&gt;index&lt;/i&gt;
+ *  count from the end of the array.
+ *     
+ *     a = [ 11, 22, 33, 44 ]
+ *     a.fetch(1)               #=&gt; 22
+ *     a.fetch(-1)              #=&gt; 44
+ *     a.fetch(4, 'cat')        #=&gt; &quot;cat&quot;
+ *     a.fetch(4) { |i| i*i }   #=&gt; 16
+ */
+
+static VALUE
+rb_ary_fetch(argc, argv, ary)
+    int argc;
+    VALUE *argv;
+    VALUE ary;
+{
+    VALUE pos, ifnone;
+    long block_given;
+    long idx;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;pos, &amp;ifnone);
+    block_given = rb_block_given_p();
+    if (block_given &amp;&amp; argc == 2) {
+        rb_warn(&quot;block supersedes default value argument&quot;);
+    }
+    idx = NUM2LONG(pos);
+
+    if (idx &lt; 0) {
+        idx +=  RARRAY(ary)-&gt;len;
+    }
+    if (idx &lt; 0 || RARRAY(ary)-&gt;len &lt;= idx) {
+        if (block_given) return rb_yield(pos);
+        if (argc == 1) {
+            rb_raise(rb_eIndexError, &quot;index %ld out of array&quot;, idx);
+        }
+        return ifnone;
+    }
+    return RARRAY(ary)-&gt;ptr[idx];
+}</pre>
+</body>
+</html>

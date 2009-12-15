@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>chown (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     file.chown(owner_int, group_int )   =&gt; 0
+ *  
+ *  Changes the owner and group of &lt;i&gt;file&lt;/i&gt; to the given numeric
+ *  owner and group id's. Only a process with superuser privileges may
+ *  change the owner of a file. The current owner of a file may change
+ *  the file's group to any group to which the owner belongs. A
+ *  &lt;code&gt;nil&lt;/code&gt; or -1 owner or group id is ignored. Follows
+ *  symbolic links. See also &lt;code&gt;File#lchown&lt;/code&gt;.
+ *     
+ *     File.new(&quot;testfile&quot;).chown(502, 1000)
+ *     
+ */
+
+static VALUE
+rb_file_chown(obj, owner, group)
+    VALUE obj, owner, group;
+{
+    OpenFile *fptr;
+    int o, g;
+
+    rb_secure(2);
+    o = NIL_P(owner) ? -1 : NUM2INT(owner);
+    g = NIL_P(group) ? -1 : NUM2INT(group);
+    GetOpenFile(obj, fptr);
+#if defined(DJGPP) || defined(__CYGWIN32__) || defined(_WIN32) || defined(__EMX__)
+    if (!fptr-&gt;path) return Qnil;
+    if (chown(fptr-&gt;path, o, g) == -1)
+        rb_sys_fail(fptr-&gt;path);
+#else
+    if (fchown(fileno(fptr-&gt;f), o, g) == -1)
+        rb_sys_fail(fptr-&gt;path);
+#endif
+
+    return INT2FIX(0);
+}</pre>
+</body>
+</html>

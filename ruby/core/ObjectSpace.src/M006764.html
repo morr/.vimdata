@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>define_finalizer (ObjectSpace)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ObjectSpace.define_finalizer(obj, aProc=proc())
+ *
+ *  Adds &lt;i&gt;aProc&lt;/i&gt; as a finalizer, to be called after &lt;i&gt;obj&lt;/i&gt;
+ *  was destroyed.
+ *
+ */
+
+static VALUE
+define_final(argc, argv, os)
+    int argc;
+    VALUE *argv;
+    VALUE os;
+{
+    VALUE obj, block, table;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;obj, &amp;block);
+    if (argc == 1) {
+        block = rb_block_proc();
+    }
+    else if (!rb_respond_to(block, rb_intern(&quot;call&quot;))) {
+        rb_raise(rb_eArgError, &quot;wrong type argument %s (should be callable)&quot;,
+                 rb_obj_classname(block));
+    }
+    need_call_final = 1;
+    if (!FL_ABLE(obj)) {
+        rb_raise(rb_eArgError, &quot;cannot define finalizer for %s&quot;,
+                 rb_obj_classname(obj));
+    }
+    RBASIC(obj)-&gt;flags |= FL_FINALIZE;
+
+    block = rb_ary_new3(2, INT2FIX(ruby_safe_level), block);
+    OBJ_FREEZE(block);
+
+    if (!finalizer_table) {
+        finalizer_table = st_init_numtable();
+    }
+    if (st_lookup(finalizer_table, obj, &amp;table)) {
+        rb_ary_push(table, block);
+    }
+    else {
+        table = rb_ary_new3(1, block);
+        RBASIC(table)-&gt;klass = 0;
+        st_add_direct(finalizer_table, obj, table);
+    }
+    return block;
+}</pre>
+</body>
+</html>

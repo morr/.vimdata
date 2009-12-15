@@ -1,0 +1,1891 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Net::HTTP</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Net::HTTP</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/net/http_rb.html">
+                lib/net/http.rb
+                </a>
+        <br />
+                <a href="../../files/lib/net/https_rb.html">
+                lib/net/https.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Protocol
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h2>What Is This Library?</h2>
+<p>
+This library provides your program functions to access WWW documents via <a
+href="HTTP.html">HTTP</a>, Hyper Text Transfer Protocol version 1.1. For
+details of <a href="HTTP.html">HTTP</a>, refer [RFC2616] (<a
+href="http://www.ietf.org/rfc/rfc2616.txt">www.ietf.org/rfc/rfc2616.txt</a>).
+</p>
+<h2>Examples</h2>
+<h3>Getting Document From WWW Server</h3>
+<p>
+Example 1: Simple GET+print
+</p>
+<pre>
+    require 'net/http'
+    Net::HTTP.get_print 'www.example.com', '/index.html'
+</pre>
+<p>
+Example 2: Simple GET+print by URL
+</p>
+<pre>
+    require 'net/http'
+    require 'uri'
+    Net::HTTP.get_print URI.parse('http://www.example.com/index.html')
+</pre>
+<p>
+Example 3: More generic GET+print
+</p>
+<pre>
+    require 'net/http'
+    require 'uri'
+
+    url = URI.parse('http://www.example.com/index.html')
+    res = Net::HTTP.start(url.host, url.port) {|http|
+      http.get('/index.html')
+    }
+    puts res.body
+</pre>
+<p>
+Example 4: More generic GET+print
+</p>
+<pre>
+    require 'net/http'
+
+    url = URI.parse('http://www.example.com/index.html')
+    req = Net::HTTP::Get.new(url.path)
+    res = Net::HTTP.start(url.host, url.port) {|http|
+      http.request(req)
+    }
+    puts res.body
+</pre>
+<h3>Posting Form <a href="../Data.html">Data</a></h3>
+<pre>
+    require 'net/http'
+    require 'uri'
+
+    #1: Simple POST
+    res = Net::HTTP.post_form(URI.parse('http://www.example.com/search.cgi'),
+                              {'q'=&gt;'ruby', 'max'=&gt;'50'})
+    puts res.body
+
+    #2: POST with basic authentication
+    res = Net::HTTP.post_form(URI.parse('http://jack:pass@www.example.com/todo.cgi'),
+                                        {'from'=&gt;'2005-01-01', 'to'=&gt;'2005-03-31'})
+    puts res.body
+
+    #3: Detailed control
+    url = URI.parse('http://www.example.com/todo.cgi')
+    req = Net::HTTP::Post.new(url.path)
+    req.basic_auth 'jack', 'pass'
+    req.set_form_data({'from'=&gt;'2005-01-01', 'to'=&gt;'2005-03-31'}, ';')
+    res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
+    case res
+    when Net::HTTPSuccess, Net::HTTPRedirection
+      # OK
+    else
+      res.error!
+    end
+</pre>
+<h3>Accessing via <a href="HTTP.html#M004262">Proxy</a></h3>
+<p>
+<a href="HTTP.html#M004262">Net::HTTP.Proxy</a> creates http proxy class.
+It has same methods of <a href="HTTP.html">Net::HTTP</a> but its instances
+always connect to proxy, instead of given host.
+</p>
+<pre>
+    require 'net/http'
+
+    proxy_addr = 'your.proxy.host'
+    proxy_port = 8080
+            :
+    Net::HTTP::Proxy(proxy_addr, proxy_port).start('www.example.com') {|http|
+      # always connect to your.proxy.addr:8080
+            :
+    }
+</pre>
+<p>
+Since <a href="HTTP.html#M004262">Net::HTTP.Proxy</a> returns <a
+href="HTTP.html">Net::HTTP</a> itself when proxy_addr is nil, there&#8216;s
+no need to change code if there&#8216;s proxy or not.
+</p>
+<p>
+There are two additional parameters in <a
+href="HTTP.html#M004262">Net::HTTP.Proxy</a> which allow to specify proxy
+user name and password:
+</p>
+<pre>
+    Net::HTTP::Proxy(proxy_addr, proxy_port, proxy_user = nil, proxy_pass = nil)
+</pre>
+<p>
+You may use them to work with authorization-enabled proxies:
+</p>
+<pre>
+    require 'net/http'
+    require 'uri'
+
+    proxy_host = 'your.proxy.host'
+    proxy_port = 8080
+    uri = URI.parse(ENV['http_proxy'])
+    proxy_user, proxy_pass = uri.userinfo.split(/:/) if uri.userinfo
+    Net::HTTP::Proxy(proxy_host, proxy_port,
+                     proxy_user, proxy_pass).start('www.example.com') {|http|
+      # always connect to your.proxy.addr:8080 using specified username and password
+            :
+    }
+</pre>
+<p>
+Note that net/http never rely on HTTP_PROXY environment variable. If you
+want to use proxy, set it explicitly.
+</p>
+<h3>Following Redirection</h3>
+<pre>
+    require 'net/http'
+    require 'uri'
+
+    def fetch(uri_str, limit = 10)
+      # You should choose better exception.
+      raise ArgumentError, 'HTTP redirect too deep' if limit == 0
+
+      response = Net::HTTP.get_response(URI.parse(uri_str))
+      case response
+      when Net::HTTPSuccess     then response
+      when Net::HTTPRedirection then fetch(response['location'], limit - 1)
+      else
+        response.error!
+      end
+    end
+
+    print fetch('http://www.ruby-lang.org')
+</pre>
+<p>
+Net::HTTPSuccess and Net::HTTPRedirection is a <a
+href="HTTPResponse.html">HTTPResponse</a> class. All <a
+href="HTTPResponse.html">HTTPResponse</a> objects belong to its own
+response class which indicate <a href="HTTP.html">HTTP</a> result status.
+For details of response classes, see section &quot;<a
+href="HTTP.html">HTTP</a> Response Classes&quot;.
+</p>
+<h3>Basic Authentication</h3>
+<pre>
+    require 'net/http'
+
+    Net::HTTP.start('www.example.com') {|http|
+      req = Net::HTTP::Get.new('/secret-page.html')
+      req.basic_auth 'account', 'password'
+      response = http.request(req)
+      print response.body
+    }
+</pre>
+<h3><a href="HTTP.html">HTTP</a> Request Classes</h3>
+<p>
+Here is <a href="HTTP.html">HTTP</a> <a
+href="HTTP.html#M004291">request</a> class hierarchy.
+</p>
+<pre>
+  Net::HTTPRequest
+      Net::HTTP::Get
+      Net::HTTP::Head
+      Net::HTTP::Post
+      Net::HTTP::Put
+      Net::HTTP::Proppatch
+      Net::HTTP::Lock
+      Net::HTTP::Unlock
+      Net::HTTP::Options
+      Net::HTTP::Propfind
+      Net::HTTP::Delete
+      Net::HTTP::Move
+      Net::HTTP::Copy
+      Net::HTTP::Mkcol
+      Net::HTTP::Trace
+</pre>
+<h3><a href="HTTP.html">HTTP</a> Response Classes</h3>
+<p>
+Here is <a href="HTTP.html">HTTP</a> response class hierarchy. All classes
+are defined in Net module.
+</p>
+<pre>
+  HTTPResponse
+      HTTPUnknownResponse
+      HTTPInformation                    # 1xx
+          HTTPContinue                       # 100
+          HTTPSwitchProtocl                  # 101
+      HTTPSuccess                        # 2xx
+          HTTPOK                             # 200
+          HTTPCreated                        # 201
+          HTTPAccepted                       # 202
+          HTTPNonAuthoritativeInformation    # 203
+          HTTPNoContent                      # 204
+          HTTPResetContent                   # 205
+          HTTPPartialContent                 # 206
+      HTTPRedirection                    # 3xx
+          HTTPMultipleChoice                 # 300
+          HTTPMovedPermanently               # 301
+          HTTPFound                          # 302
+          HTTPSeeOther                       # 303
+          HTTPNotModified                    # 304
+          HTTPUseProxy                       # 305
+          HTTPTemporaryRedirect              # 307
+      HTTPClientError                    # 4xx
+          HTTPBadRequest                     # 400
+          HTTPUnauthorized                   # 401
+          HTTPPaymentRequired                # 402
+          HTTPForbidden                      # 403
+          HTTPNotFound                       # 404
+          HTTPMethodNotAllowed               # 405
+          HTTPNotAcceptable                  # 406
+          HTTPProxyAuthenticationRequired    # 407
+          HTTPRequestTimeOut                 # 408
+          HTTPConflict                       # 409
+          HTTPGone                           # 410
+          HTTPLengthRequired                 # 411
+          HTTPPreconditionFailed             # 412
+          HTTPRequestEntityTooLarge          # 413
+          HTTPRequestURITooLong              # 414
+          HTTPUnsupportedMediaType           # 415
+          HTTPRequestedRangeNotSatisfiable   # 416
+          HTTPExpectationFailed              # 417
+      HTTPServerError                    # 5xx
+          HTTPInternalServerError            # 500
+          HTTPNotImplemented                 # 501
+          HTTPBadGateway                     # 502
+          HTTPServiceUnavailable             # 503
+          HTTPGatewayTimeOut                 # 504
+          HTTPVersionNotSupported            # 505
+</pre>
+<h2>Switching <a href="HTTP.html">Net::HTTP</a> versions</h2>
+<p>
+You can use net/http.rb 1.1 features (bundled with Ruby 1.6) by calling <a
+href="HTTP.html#M004241">HTTP.version_1_1</a>. Calling <a
+href="HTTP.html#M004240">Net::HTTP.version_1_2</a> allows you to use 1.2
+features again.
+</p>
+<pre>
+    # example
+    Net::HTTP.start {|http1| ...(http1 has 1.2 features)... }
+
+    Net::HTTP.version_1_1
+    Net::HTTP.start {|http2| ...(http2 has 1.1 features)... }
+
+    Net::HTTP.version_1_2
+    Net::HTTP.start {|http3| ...(http3 has 1.2 features)... }
+</pre>
+<p>
+This function is NOT thread-safe.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004262">Proxy</a>&nbsp;&nbsp;
+      <a href="#M004258">active?</a>&nbsp;&nbsp;
+      <a href="#M004281">copy</a>&nbsp;&nbsp;
+      <a href="#M004248">default_port</a>&nbsp;&nbsp;
+      <a href="#M004279">delete</a>&nbsp;&nbsp;
+      <a href="#M004261">finish</a>&nbsp;&nbsp;
+      <a href="#M004245">get</a>&nbsp;&nbsp;
+      <a href="#M004271">get</a>&nbsp;&nbsp;
+      <a href="#M004287">get2</a>&nbsp;&nbsp;
+      <a href="#M004244">get_print</a>&nbsp;&nbsp;
+      <a href="#M004246">get_response</a>&nbsp;&nbsp;
+      <a href="#M004272">head</a>&nbsp;&nbsp;
+      <a href="#M004288">head2</a>&nbsp;&nbsp;
+      <a href="#M004249">http_default_port</a>&nbsp;&nbsp;
+      <a href="#M004250">https_default_port</a>&nbsp;&nbsp;
+      <a href="#M004254">inspect</a>&nbsp;&nbsp;
+      <a href="#M004275">lock</a>&nbsp;&nbsp;
+      <a href="#M004282">mkcol</a>&nbsp;&nbsp;
+      <a href="#M004280">move</a>&nbsp;&nbsp;
+      <a href="#M004253">new</a>&nbsp;&nbsp;
+      <a href="#M004252">new</a>&nbsp;&nbsp;
+      <a href="#M004277">options</a>&nbsp;&nbsp;
+      <a href="#M004299">peer_cert</a>&nbsp;&nbsp;
+      <a href="#M004273">post</a>&nbsp;&nbsp;
+      <a href="#M004289">post2</a>&nbsp;&nbsp;
+      <a href="#M004247">post_form</a>&nbsp;&nbsp;
+      <a href="#M004278">propfind</a>&nbsp;&nbsp;
+      <a href="#M004274">proppatch</a>&nbsp;&nbsp;
+      <a href="#M004264">proxy?</a>&nbsp;&nbsp;
+      <a href="#M004265">proxy_address</a>&nbsp;&nbsp;
+      <a href="#M004263">proxy_class?</a>&nbsp;&nbsp;
+      <a href="#M004268">proxy_pass</a>&nbsp;&nbsp;
+      <a href="#M004266">proxy_port</a>&nbsp;&nbsp;
+      <a href="#M004267">proxy_user</a>&nbsp;&nbsp;
+      <a href="#M004269">proxyaddr</a>&nbsp;&nbsp;
+      <a href="#M004270">proxyport</a>&nbsp;&nbsp;
+      <a href="#M004256">read_timeout=</a>&nbsp;&nbsp;
+      <a href="#M004291">request</a>&nbsp;&nbsp;
+      <a href="#M004284">request_get</a>&nbsp;&nbsp;
+      <a href="#M004285">request_head</a>&nbsp;&nbsp;
+      <a href="#M004286">request_post</a>&nbsp;&nbsp;
+      <a href="#M004290">send_request</a>&nbsp;&nbsp;
+      <a href="#M004255">set_debug_output</a>&nbsp;&nbsp;
+      <a href="#M004295">ssl_context_accessor</a>&nbsp;&nbsp;
+      <a href="#M004296">ssl_timeout</a>&nbsp;&nbsp;
+      <a href="#M004297">ssl_timeout=</a>&nbsp;&nbsp;
+      <a href="#M004260">start</a>&nbsp;&nbsp;
+      <a href="#M004251">start</a>&nbsp;&nbsp;
+      <a href="#M004257">started?</a>&nbsp;&nbsp;
+      <a href="#M004298">timeout=</a>&nbsp;&nbsp;
+      <a href="#M004283">trace</a>&nbsp;&nbsp;
+      <a href="#M004276">unlock</a>&nbsp;&nbsp;
+      <a href="#M004293">use_ssl</a>&nbsp;&nbsp;
+      <a href="#M004294">use_ssl=</a>&nbsp;&nbsp;
+      <a href="#M004292">use_ssl?</a>&nbsp;&nbsp;
+      <a href="#M004259">use_ssl?</a>&nbsp;&nbsp;
+      <a href="#M004241">version_1_1</a>&nbsp;&nbsp;
+      <a href="#M004243">version_1_1?</a>&nbsp;&nbsp;
+      <a href="#M004240">version_1_2</a>&nbsp;&nbsp;
+      <a href="#M004242">version_1_2?</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="HTTP/Copy.html" class="link">Net::HTTP::Copy</a><br />
+Class <a href="HTTP/Delete.html" class="link">Net::HTTP::Delete</a><br />
+Class <a href="HTTP/Get.html" class="link">Net::HTTP::Get</a><br />
+Class <a href="HTTP/Head.html" class="link">Net::HTTP::Head</a><br />
+Class <a href="HTTP/Lock.html" class="link">Net::HTTP::Lock</a><br />
+Class <a href="HTTP/Mkcol.html" class="link">Net::HTTP::Mkcol</a><br />
+Class <a href="HTTP/Move.html" class="link">Net::HTTP::Move</a><br />
+Class <a href="HTTP/Options.html" class="link">Net::HTTP::Options</a><br />
+Class <a href="HTTP/Post.html" class="link">Net::HTTP::Post</a><br />
+Class <a href="HTTP/Propfind.html" class="link">Net::HTTP::Propfind</a><br />
+Class <a href="HTTP/Proppatch.html" class="link">Net::HTTP::Proppatch</a><br />
+Class <a href="HTTP/Put.html" class="link">Net::HTTP::Put</a><br />
+Class <a href="HTTP/Trace.html" class="link">Net::HTTP::Trace</a><br />
+Class <a href="HTTP/Unlock.html" class="link">Net::HTTP::Unlock</a><br />
+
+    </div>
+
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">version_1_1?</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">is_version_1_1?</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">version_1_2?</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">is_version_1_2?</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">new</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">newobj</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">request_put</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">put2</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">address</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The host name to connect to.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">close_on_empty_response</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">open_timeout</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+Seconds to wait until connection is opened. If the <a
+href="HTTP.html">HTTP</a> object cannot open a connection in this many
+seconds, it raises a TimeoutError exception.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">port</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The port number to connect to.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">proxy_address</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">proxy_pass</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">proxy_port</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">proxy_user</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">read_timeout</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Seconds to wait until reading one block (by one read(2) call). If the <a
+href="HTTP.html">HTTP</a> object cannot open a connection in this many
+seconds, it raises a TimeoutError exception.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M004262" class="method-detail">
+        <a name="M004262"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004262.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004262.html');return false;">
+          <span class="method-name">Proxy</span><span class="method-args">(p_addr, p_port = nil, p_user = nil, p_pass = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates an <a href="HTTP.html">HTTP</a> proxy class. Arguments are
+address/port of proxy host and username/password if authorization on proxy
+server is required. You can replace the <a href="HTTP.html">HTTP</a> class
+with created proxy class.
+</p>
+<p>
+If ADDRESS is nil, this method returns self (<a
+href="HTTP.html">Net::HTTP</a>).
+</p>
+<pre>
+    # Example
+    proxy_class = Net::HTTP::Proxy('proxy.example.com', 8080)
+                    :
+    proxy_class.start('www.ruby-lang.org') {|http|
+      # connecting proxy.foo.org:8080
+                    :
+    }
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004248" class="method-detail">
+        <a name="M004248"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004248.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004248.html');return false;">
+          <span class="method-name">default_port</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The default port to use for <a href="HTTP.html">HTTP</a> requests; defaults
+to 80.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004245" class="method-detail">
+        <a name="M004245"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004245.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004245.html');return false;">
+          <span class="method-name">get</span><span class="method-args">(uri_or_host, path = nil, port = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Send a GET <a href="HTTP.html#M004291">request</a> to the target and return
+the response as a string. The target can either be specified as
+(<tt>uri</tt>), or as (<tt>host</tt>, <tt>path</tt>, <tt>port</tt> = 80);
+so:
+</p>
+<pre>
+   print Net::HTTP.get(URI.parse('http://www.example.com/index.html'))
+</pre>
+<p>
+or:
+</p>
+<pre>
+   print Net::HTTP.get('www.example.com', '/index.html')
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004244" class="method-detail">
+        <a name="M004244"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004244.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004244.html');return false;">
+          <span class="method-name">get_print</span><span class="method-args">(uri_or_host, path = nil, port = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="HTTP/Get.html">Get</a> body from target and output it to
++$stdout+. The target can either be specified as (<tt>uri</tt>), or as
+(<tt>host</tt>, <tt>path</tt>, <tt>port</tt> = 80); so:
+</p>
+<pre>
+   Net::HTTP.get_print URI.parse('http://www.example.com/index.html')
+</pre>
+<p>
+or:
+</p>
+<pre>
+   Net::HTTP.get_print 'www.example.com', '/index.html'
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004246" class="method-detail">
+        <a name="M004246"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004246.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004246.html');return false;">
+          <span class="method-name">get_response</span><span class="method-args">(uri_or_host, path = nil, port = nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Send a GET <a href="HTTP.html#M004291">request</a> to the target and return
+the response as a <a href="HTTPResponse.html">Net::HTTPResponse</a> object.
+The target can either be specified as (<tt>uri</tt>), or as (<tt>host</tt>,
+<tt>path</tt>, <tt>port</tt> = 80); so:
+</p>
+<pre>
+   res = Net::HTTP.get_response(URI.parse('http://www.example.com/index.html'))
+   print res.body
+</pre>
+<p>
+or:
+</p>
+<pre>
+   res = Net::HTTP.get_response('www.example.com', '/index.html')
+   print res.body
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004249" class="method-detail">
+        <a name="M004249"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004249.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004249.html');return false;">
+          <span class="method-name">http_default_port</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The default port to use for <a href="HTTP.html">HTTP</a> requests; defaults
+to 80.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004250" class="method-detail">
+        <a name="M004250"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004250.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004250.html');return false;">
+          <span class="method-name">https_default_port</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The default port to use for HTTPS requests; defaults to 443.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004253" class="method-detail">
+        <a name="M004253"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004253.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004253.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(address, port = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="HTTP.html#M004252">new</a> <a
+href="HTTP.html">Net::HTTP</a> object for the specified <tt>address</tt>.
+This method does not open the TCP connection.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004252" class="method-detail">
+        <a name="M004252"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004252.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004252.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(address, port = nil, p_addr = nil, p_port = nil, p_user = nil, p_pass = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="HTTP.html#M004252">new</a> <a
+href="HTTP.html">Net::HTTP</a> object. If <tt>proxy_addr</tt> is given,
+creates an <a href="HTTP.html">Net::HTTP</a> object with proxy support.
+This method does not open the TCP connection.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004247" class="method-detail">
+        <a name="M004247"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004247.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004247.html');return false;">
+          <span class="method-name">post_form</span><span class="method-args">(url, params)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Posts HTML form data to the <tt>URL</tt>. Form data must be represented as
+a <a href="../Hash.html">Hash</a> of <a href="../String.html">String</a> to
+<a href="../String.html">String</a>, e.g:
+</p>
+<pre>
+  { &quot;cmd&quot; =&gt; &quot;search&quot;, &quot;q&quot; =&gt; &quot;ruby&quot;, &quot;max&quot; =&gt; &quot;50&quot; }
+</pre>
+<p>
+This method also does Basic Authentication iff <tt>URL</tt>.user exists.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  require 'net/http'
+  require 'uri'
+
+  HTTP.post_form URI.parse('http://www.example.com/search.cgi'),
+                 { &quot;q&quot; =&gt; &quot;ruby&quot;, &quot;max&quot; =&gt; &quot;50&quot; }
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004263" class="method-detail">
+        <a name="M004263"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004263.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004263.html');return false;">
+          <span class="method-name">proxy_class?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+returns true if self is a class which was created by HTTP::Proxy.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004295" class="method-detail">
+        <a name="M004295"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004295.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004295.html');return false;">
+          <span class="method-name">ssl_context_accessor</span><span class="method-args">(name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004251" class="method-detail">
+        <a name="M004251"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004251.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004251.html');return false;">
+          <span class="method-name">start</span><span class="method-args">(address, port = nil, p_addr = nil, p_port = nil, p_user = nil, p_pass = nil) {|+http+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+creates a <a href="HTTP.html#M004252">new</a> <a
+href="HTTP.html">Net::HTTP</a> object and opens its TCP connection and <a
+href="HTTP.html">HTTP</a> session. If the optional block is given, the
+newly created <a href="HTTP.html">Net::HTTP</a> object is passed to it and
+closed when the block finishes. In this case, the return value of this
+method is the return value of the block. If no block is given, the return
+value of this method is the newly created <a href="HTTP.html">Net::HTTP</a>
+object itself, and the caller is responsible for closing it upon
+completion.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004241" class="method-detail">
+        <a name="M004241"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004241.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004241.html');return false;">
+          <span class="method-name">version_1_1</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Turns on net/http 1.1 (ruby 1.6) features. Defaults to OFF in ruby 1.8.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004243" class="method-detail">
+        <a name="M004243"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004243.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004243.html');return false;">
+          <span class="method-name">version_1_1?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+true if net/http is in version 1.1 compatible mode. Defaults to true.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004240" class="method-detail">
+        <a name="M004240"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004240.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004240.html');return false;">
+          <span class="method-name">version_1_2</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Turns on net/http 1.2 (ruby 1.8) features. Defaults to ON in ruby 1.8.
+</p>
+<p>
+I strongly recommend to call this method always.
+</p>
+<pre>
+  require 'net/http'
+  Net::HTTP.version_1_2
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004242" class="method-detail">
+        <a name="M004242"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004242.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004242.html');return false;">
+          <span class="method-name">version_1_2?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+true if net/http is in version 1.2 mode. Defaults to true.
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004258" class="method-detail">
+        <a name="M004258"></a>
+
+        <div class="method-heading">
+          <span class="method-name">active?</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for started?
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004281" class="method-detail">
+        <a name="M004281"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004281.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004281.html');return false;">
+          <span class="method-name">copy</span><span class="method-args">(path, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a COPY <a href="HTTP.html#M004291">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004279" class="method-detail">
+        <a name="M004279"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004279.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004279.html');return false;">
+          <span class="method-name">delete</span><span class="method-args">(path, initheader = {'Depth' =&gt; 'Infinity'})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a DELETE <a href="HTTP.html#M004291">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004261" class="method-detail">
+        <a name="M004261"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004261.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004261.html');return false;">
+          <span class="method-name">finish</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Finishes <a href="HTTP.html">HTTP</a> session and closes TCP connection.
+Raises <a href="../IOError.html">IOError</a> if not started.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004271" class="method-detail">
+        <a name="M004271"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004271.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004271.html');return false;">
+          <span class="method-name">get</span><span class="method-args">(path, initheader = nil, dest = nil) {|+body_segment+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Gets data from <tt>path</tt> on the connected-to host. <tt>header</tt> must
+be a <a href="../Hash.html">Hash</a> like { &#8216;Accept&#8217; =&gt;
+&#8217;*/*&#8217;, &#8230; }.
+</p>
+<p>
+In version 1.1 (ruby 1.6), this method returns a pair of objects, a <a
+href="HTTPResponse.html">Net::HTTPResponse</a> object and the entity body
+string. In version 1.2 (ruby 1.8), this method returns a <a
+href="HTTPResponse.html">Net::HTTPResponse</a> object.
+</p>
+<p>
+If called with a block, yields each fragment of the entity body in turn as
+a string as it is read from the socket. Note that in this case, the
+returned response object will <b>not</b> contain a (meaningful) body.
+</p>
+<p>
+<tt>dest</tt> argument is obsolete. It still works but you must not use it.
+</p>
+<p>
+In version 1.1, this method might raise an exception for 3xx (redirect). In
+this case you can <a href="HTTP.html#M004245">get</a> a <a
+href="HTTPResponse.html">HTTPResponse</a> object by
+&quot;anException.response&quot;.
+</p>
+<p>
+In version 1.2, this method never raises exception.
+</p>
+<pre>
+    # version 1.1 (bundled with Ruby 1.6)
+    response, body = http.get('/index.html')
+
+    # version 1.2 (bundled with Ruby 1.8 or later)
+    response = http.get('/index.html')
+
+    # using block
+    File.open('result.txt', 'w') {|f|
+      http.get('/~foo/') do |str|
+        f.write str
+      end
+    }
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004287" class="method-detail">
+        <a name="M004287"></a>
+
+        <div class="method-heading">
+          <span class="method-name">get2</span><span class="method-args">(path, initheader = nil)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTP.html#M004284">request_get</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004272" class="method-detail">
+        <a name="M004272"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004272.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004272.html');return false;">
+          <span class="method-name">head</span><span class="method-args">(path, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Gets only the header from <tt>path</tt> on the connected-to host.
+<tt>header</tt> is a <a href="../Hash.html">Hash</a> like {
+&#8216;Accept&#8217; =&gt; &#8217;*/*&#8217;, &#8230; }.
+</p>
+<p>
+This method returns a <a href="HTTPResponse.html">Net::HTTPResponse</a>
+object.
+</p>
+<p>
+In version 1.1, this method might raise an exception for 3xx (redirect). On
+the case you can <a href="HTTP.html#M004245">get</a> a <a
+href="HTTPResponse.html">HTTPResponse</a> object by
+&quot;anException.response&quot;. In version 1.2, this method never raises
+an exception.
+</p>
+<pre>
+    response = nil
+    Net::HTTP.start('some.www.server', 80) {|http|
+      response = http.head('/index.html')
+    }
+    p response['content-type']
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004288" class="method-detail">
+        <a name="M004288"></a>
+
+        <div class="method-heading">
+          <span class="method-name">head2</span><span class="method-args">(path, initheader = nil, &amp;block)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTP.html#M004285">request_head</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004254" class="method-detail">
+        <a name="M004254"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004254.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004254.html');return false;">
+          <span class="method-name">inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004275" class="method-detail">
+        <a name="M004275"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004275.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004275.html');return false;">
+          <span class="method-name">lock</span><span class="method-args">(path, body, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a LOCK <a href="HTTP.html#M004291">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004282" class="method-detail">
+        <a name="M004282"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004282.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004282.html');return false;">
+          <span class="method-name">mkcol</span><span class="method-args">(path, body = nil, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a MKCOL <a href="HTTP.html#M004291">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004280" class="method-detail">
+        <a name="M004280"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004280.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004280.html');return false;">
+          <span class="method-name">move</span><span class="method-args">(path, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a MOVE <a href="HTTP.html#M004291">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004277" class="method-detail">
+        <a name="M004277"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004277.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004277.html');return false;">
+          <span class="method-name">options</span><span class="method-args">(path, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a OPTIONS <a href="HTTP.html#M004291">request</a> to the
+<tt>path</tt> and gets a response, as an <a
+href="HTTPResponse.html">HTTPResponse</a> object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004299" class="method-detail">
+        <a name="M004299"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004299.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004299.html');return false;">
+          <span class="method-name">peer_cert</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004273" class="method-detail">
+        <a name="M004273"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004273.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004273.html');return false;">
+          <span class="method-name">post</span><span class="method-args">(path, data, initheader = nil, dest = nil) {|+body_segment+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Posts <tt>data</tt> (must be a <a href="../String.html">String</a>) to
+<tt>path</tt>. <tt>header</tt> must be a <a href="../Hash.html">Hash</a>
+like { &#8216;Accept&#8217; =&gt; &#8217;*/*&#8217;, &#8230; }.
+</p>
+<p>
+In version 1.1 (ruby 1.6), this method returns a pair of objects, a <a
+href="HTTPResponse.html">Net::HTTPResponse</a> object and an entity body
+string. In version 1.2 (ruby 1.8), this method returns a <a
+href="HTTPResponse.html">Net::HTTPResponse</a> object.
+</p>
+<p>
+If called with a block, yields each fragment of the entity body in turn as
+a string as it are read from the socket. Note that in this case, the
+returned response object will <b>not</b> contain a (meaningful) body.
+</p>
+<p>
+<tt>dest</tt> argument is obsolete. It still works but you must not use it.
+</p>
+<p>
+In version 1.1, this method might raise an exception for 3xx (redirect). In
+this case you can <a href="HTTP.html#M004245">get</a> an <a
+href="HTTPResponse.html">HTTPResponse</a> object by
+&quot;anException.response&quot;. In version 1.2, this method never raises
+exception.
+</p>
+<pre>
+    # version 1.1
+    response, body = http.post('/cgi-bin/search.rb', 'query=foo')
+
+    # version 1.2
+    response = http.post('/cgi-bin/search.rb', 'query=foo')
+
+    # using block
+    File.open('result.txt', 'w') {|f|
+      http.post('/cgi-bin/search.rb', 'query=foo') do |str|
+        f.write str
+      end
+    }
+</pre>
+<p>
+You should set Content-Type: header field for POST. If no Content-Type:
+field given, this method uses &quot;application/x-www-form-urlencoded&quot;
+by default.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004289" class="method-detail">
+        <a name="M004289"></a>
+
+        <div class="method-heading">
+          <span class="method-name">post2</span><span class="method-args">(path, data, initheader = nil)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTP.html#M004286">request_post</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004278" class="method-detail">
+        <a name="M004278"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004278.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004278.html');return false;">
+          <span class="method-name">propfind</span><span class="method-args">(path, body = nil, initheader = {'Depth' =&gt; '0'})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a PROPFIND <a href="HTTP.html#M004291">request</a> to the
+<tt>path</tt> and gets a response, as an <a
+href="HTTPResponse.html">HTTPResponse</a> object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004274" class="method-detail">
+        <a name="M004274"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004274.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004274.html');return false;">
+          <span class="method-name">proppatch</span><span class="method-args">(path, body, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a PROPPATCH <a href="HTTP.html#M004291">request</a> to the
+<tt>path</tt> and gets a response, as an <a
+href="HTTPResponse.html">HTTPResponse</a> object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004264" class="method-detail">
+        <a name="M004264"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004264.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004264.html');return false;">
+          <span class="method-name">proxy?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+True if self is a <a href="HTTP.html">HTTP</a> proxy class.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004265" class="method-detail">
+        <a name="M004265"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004265.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004265.html');return false;">
+          <span class="method-name">proxy_address</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Address of proxy host. If self does not use a proxy, nil.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004268" class="method-detail">
+        <a name="M004268"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004268.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004268.html');return false;">
+          <span class="method-name">proxy_pass</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+User password for accessing proxy. If self does not use a proxy, nil.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004266" class="method-detail">
+        <a name="M004266"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004266.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004266.html');return false;">
+          <span class="method-name">proxy_port</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Port number of proxy host. If self does not use a proxy, nil.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004267" class="method-detail">
+        <a name="M004267"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004267.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004267.html');return false;">
+          <span class="method-name">proxy_user</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+User name for accessing proxy. If self does not use a proxy, nil.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004269" class="method-detail">
+        <a name="M004269"></a>
+
+        <div class="method-heading">
+          <span class="method-name">proxyaddr</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTP.html#M004265">proxy_address</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004270" class="method-detail">
+        <a name="M004270"></a>
+
+        <div class="method-heading">
+          <span class="method-name">proxyport</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTP.html#M004266">proxy_port</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004256" class="method-detail">
+        <a name="M004256"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004256.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004256.html');return false;">
+          <span class="method-name">read_timeout=</span><span class="method-args">(sec)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Setter for the read_timeout attribute.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004291" class="method-detail">
+        <a name="M004291"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004291.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004291.html');return false;">
+          <span class="method-name">request</span><span class="method-args">(req, body = nil) {|+response+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends an <a href="HTTPRequest.html">HTTPRequest</a> object REQUEST to the
+<a href="HTTP.html">HTTP</a> server. This method also sends DATA string if
+REQUEST is a post/put <a href="HTTP.html#M004291">request</a>. Giving DATA
+for get/head <a href="HTTP.html#M004291">request</a> causes <a
+href="../ArgumentError.html">ArgumentError</a>.
+</p>
+<p>
+When called with a block, yields an <a
+href="HTTPResponse.html">HTTPResponse</a> object. The body of this response
+will not have been read yet; the caller can process it using <a
+href="HTTPResponse.html#M004305">HTTPResponse#read_body</a>, if desired.
+</p>
+<p>
+Returns a <a href="HTTPResponse.html">HTTPResponse</a> object.
+</p>
+<p>
+This method never raises Net::* exceptions.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004284" class="method-detail">
+        <a name="M004284"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004284.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004284.html');return false;">
+          <span class="method-name">request_get</span><span class="method-args">(path, initheader = nil) {|+response+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a GET <a href="HTTP.html#M004291">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+<p>
+When called with a block, yields an <a
+href="HTTPResponse.html">HTTPResponse</a> object. The body of this response
+will not have been read yet; the caller can process it using <a
+href="HTTPResponse.html#M004305">HTTPResponse#read_body</a>, if desired.
+</p>
+<p>
+Returns the response.
+</p>
+<p>
+This method never raises Net::* exceptions.
+</p>
+<pre>
+    response = http.request_get('/index.html')
+    # The entity body is already read here.
+    p response['content-type']
+    puts response.body
+
+    # using block
+    http.request_get('/index.html') {|response|
+      p response['content-type']
+      response.read_body do |str|   # read body now
+        print str
+      end
+    }
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004285" class="method-detail">
+        <a name="M004285"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004285.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004285.html');return false;">
+          <span class="method-name">request_head</span><span class="method-args">(path, initheader = nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a HEAD <a href="HTTP.html#M004291">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+<p>
+Returns the response.
+</p>
+<p>
+This method never raises Net::* exceptions.
+</p>
+<pre>
+    response = http.request_head('/index.html')
+    p response['content-type']
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004286" class="method-detail">
+        <a name="M004286"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004286.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004286.html');return false;">
+          <span class="method-name">request_post</span><span class="method-args">(path, data, initheader = nil) {|+response+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a POST <a href="HTTP.html#M004291">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+<p>
+When called with a block, yields an <a
+href="HTTPResponse.html">HTTPResponse</a> object. The body of this response
+will not have been read yet; the caller can process it using <a
+href="HTTPResponse.html#M004305">HTTPResponse#read_body</a>, if desired.
+</p>
+<p>
+Returns the response.
+</p>
+<p>
+This method never raises Net::* exceptions.
+</p>
+<pre>
+    # example
+    response = http.request_post('/cgi-bin/nice.rb', 'datadatadata...')
+    p response.status
+    puts response.body          # body is already read
+
+    # using block
+    http.request_post('/cgi-bin/nice.rb', 'datadatadata...') {|response|
+      p response.status
+      p response['content-type']
+      response.read_body do |str|   # read body now
+        print str
+      end
+    }
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004290" class="method-detail">
+        <a name="M004290"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004290.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004290.html');return false;">
+          <span class="method-name">send_request</span><span class="method-args">(name, path, data = nil, header = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends an <a href="HTTP.html">HTTP</a> <a
+href="HTTP.html#M004291">request</a> to the <a href="HTTP.html">HTTP</a>
+server. This method also sends DATA string if DATA is given.
+</p>
+<p>
+Returns a <a href="HTTPResponse.html">HTTPResponse</a> object.
+</p>
+<p>
+This method never raises Net::* exceptions.
+</p>
+<pre>
+   response = http.send_request('GET', '/index.html')
+   puts response.body
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004255" class="method-detail">
+        <a name="M004255"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004255.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004255.html');return false;">
+          <span class="method-name">set_debug_output</span><span class="method-args">(output)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<b>WARNING</b> This method causes serious security hole. Never use this
+method in production code.
+</p>
+<p>
+<a href="../Set.html">Set</a> an output stream for debugging.
+</p>
+<pre>
+  http = Net::HTTP.new
+  http.set_debug_output $stderr
+  http.start { .... }
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004296" class="method-detail">
+        <a name="M004296"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004296.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004296.html');return false;">
+          <span class="method-name">ssl_timeout</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004297" class="method-detail">
+        <a name="M004297"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004297.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004297.html');return false;">
+          <span class="method-name">ssl_timeout=</span><span class="method-args">(sec)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004260" class="method-detail">
+        <a name="M004260"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004260.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004260.html');return false;">
+          <span class="method-name">start</span><span class="method-args">( {|http| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Opens TCP connection and <a href="HTTP.html">HTTP</a> session.
+</p>
+<p>
+When this method is called with block, gives a <a href="HTTP.html">HTTP</a>
+object to the block and closes the TCP connection / <a
+href="HTTP.html">HTTP</a> session after the block executed.
+</p>
+<p>
+When called with a block, returns the return value of the block; otherwise,
+returns self.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004257" class="method-detail">
+        <a name="M004257"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004257.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004257.html');return false;">
+          <span class="method-name">started?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+returns true if the <a href="HTTP.html">HTTP</a> session is started.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004298" class="method-detail">
+        <a name="M004298"></a>
+
+        <div class="method-heading">
+          <span class="method-name">timeout=</span><span class="method-args">(sec)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTP.html#M004296">ssl_timeout</a>=
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004283" class="method-detail">
+        <a name="M004283"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004283.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004283.html');return false;">
+          <span class="method-name">trace</span><span class="method-args">(path, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a TRACE <a href="HTTP.html#M004291">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004276" class="method-detail">
+        <a name="M004276"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004276.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004276.html');return false;">
+          <span class="method-name">unlock</span><span class="method-args">(path, body, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a UNLOCK <a href="HTTP.html#M004291">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004293" class="method-detail">
+        <a name="M004293"></a>
+
+        <div class="method-heading">
+          <span class="method-name">use_ssl</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTP.html#M004293">use_ssl</a>?
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004294" class="method-detail">
+        <a name="M004294"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004294.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004294.html');return false;">
+          <span class="method-name">use_ssl=</span><span class="method-args">(flag)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Turn on/off SSL. This flag must be set before starting session. If you
+change <a href="HTTP.html#M004293">use_ssl</a> value after session started,
+a <a href="HTTP.html">Net::HTTP</a> object raises <a
+href="../IOError.html">IOError</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004292" class="method-detail">
+        <a name="M004292"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004292.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004292.html');return false;">
+          <span class="method-name">use_ssl?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M004259" class="method-detail">
+        <a name="M004259"></a>
+
+        <div class="method-heading">
+          <a href="HTTP.src/M004259.html" target="Code" class="method-signature"
+            onclick="popupCode('HTTP.src/M004259.html');return false;">
+          <span class="method-name">use_ssl?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+returns true if use SSL/TLS with <a href="HTTP.html">HTTP</a>.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

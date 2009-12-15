@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>&lt;=&gt; (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mod &lt;=&gt; other_mod   =&gt; -1, 0, +1, or nil
+ *  
+ *  Comparison---Returns -1 if &lt;i&gt;mod&lt;/i&gt; includes &lt;i&gt;other_mod&lt;/i&gt;, 0 if
+ *  &lt;i&gt;mod&lt;/i&gt; is the same as &lt;i&gt;other_mod&lt;/i&gt;, and +1 if &lt;i&gt;mod&lt;/i&gt; is
+ *  included by &lt;i&gt;other_mod&lt;/i&gt; or if &lt;i&gt;mod&lt;/i&gt; has no relationship with
+ *  &lt;i&gt;other_mod&lt;/i&gt;. Returns &lt;code&gt;nil&lt;/code&gt; if &lt;i&gt;other_mod&lt;/i&gt; is
+ *  not a module.
+ */
+
+static VALUE
+rb_mod_cmp(mod, arg)
+    VALUE mod, arg;
+{
+    VALUE cmp;
+
+    if (mod == arg) return INT2FIX(0);
+    switch (TYPE(arg)) {
+      case T_MODULE:
+      case T_CLASS:
+        break;
+      default:
+        return Qnil;
+    }
+
+    cmp = rb_class_inherited_p(mod, arg);
+    if (NIL_P(cmp)) return Qnil;
+    if (cmp) {
+        return INT2FIX(-1);
+    }
+    return INT2FIX(1);
+}</pre>
+</body>
+</html>

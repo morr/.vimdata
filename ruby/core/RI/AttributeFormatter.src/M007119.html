@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>wrap (RI::AttributeFormatter)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/ri/ri_formatter.rb, line 305</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">wrap</span>(<span class="ruby-identifier">txt</span>,  <span class="ruby-identifier">prefix</span>=<span class="ruby-ivar">@indent</span>, <span class="ruby-identifier">linelen</span>=<span class="ruby-ivar">@width</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">txt</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">txt</span>.<span class="ruby-identifier">empty?</span>
+
+      <span class="ruby-identifier">txt</span> = <span class="ruby-identifier">add_attributes_to</span>(<span class="ruby-identifier">txt</span>)
+      <span class="ruby-identifier">next_prefix</span> = <span class="ruby-identifier">prefix</span>.<span class="ruby-identifier">tr</span>(<span class="ruby-value str">&quot;^ &quot;</span>, <span class="ruby-value str">&quot; &quot;</span>)
+      <span class="ruby-identifier">linelen</span> <span class="ruby-operator">-=</span> <span class="ruby-identifier">prefix</span>.<span class="ruby-identifier">size</span>
+
+      <span class="ruby-identifier">line</span> = []
+
+      <span class="ruby-keyword kw">until</span> <span class="ruby-identifier">txt</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">word</span> = <span class="ruby-identifier">txt</span>.<span class="ruby-identifier">next_word</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">word</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">line</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">linelen</span>
+          <span class="ruby-identifier">write_attribute_text</span>(<span class="ruby-identifier">prefix</span>, <span class="ruby-identifier">line</span>)
+          <span class="ruby-identifier">prefix</span> = <span class="ruby-identifier">next_prefix</span>
+          <span class="ruby-identifier">line</span> = []
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">line</span>.<span class="ruby-identifier">concat</span>(<span class="ruby-identifier">word</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">write_attribute_text</span>(<span class="ruby-identifier">prefix</span>, <span class="ruby-identifier">line</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">line</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

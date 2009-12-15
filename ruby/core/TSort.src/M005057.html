@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each_strongly_connected_component_from (TSort)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/tsort.rb, line 199</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_strongly_connected_component_from</span>(<span class="ruby-identifier">node</span>, <span class="ruby-identifier">id_map</span>={}, <span class="ruby-identifier">stack</span>=[]) <span class="ruby-comment cmt"># :yields: nodes</span>
+    <span class="ruby-identifier">minimum_id</span> = <span class="ruby-identifier">node_id</span> = <span class="ruby-identifier">id_map</span>[<span class="ruby-identifier">node</span>] = <span class="ruby-identifier">id_map</span>.<span class="ruby-identifier">size</span>
+    <span class="ruby-identifier">stack_length</span> = <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">length</span>
+    <span class="ruby-identifier">stack</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">node</span>
+
+    <span class="ruby-identifier">tsort_each_child</span>(<span class="ruby-identifier">node</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">child</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">id_map</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">child</span>
+        <span class="ruby-identifier">child_id</span> = <span class="ruby-identifier">id_map</span>[<span class="ruby-identifier">child</span>]
+        <span class="ruby-identifier">minimum_id</span> = <span class="ruby-identifier">child_id</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">child_id</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">child_id</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">minimum_id</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">sub_minimum_id</span> =
+          <span class="ruby-identifier">each_strongly_connected_component_from</span>(<span class="ruby-identifier">child</span>, <span class="ruby-identifier">id_map</span>, <span class="ruby-identifier">stack</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">c</span>
+          }
+        <span class="ruby-identifier">minimum_id</span> = <span class="ruby-identifier">sub_minimum_id</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">sub_minimum_id</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">minimum_id</span>
+      <span class="ruby-keyword kw">end</span>
+    }
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">node_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">minimum_id</span>
+      <span class="ruby-identifier">component</span> = <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">slice!</span>(<span class="ruby-identifier">stack_length</span> <span class="ruby-operator">..</span> <span class="ruby-value">-1</span>)
+      <span class="ruby-identifier">component</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-identifier">id_map</span>[<span class="ruby-identifier">n</span>] = <span class="ruby-keyword kw">nil</span>}
+      <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">component</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">minimum_id</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

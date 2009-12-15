@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>insert (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.insert(index, obj...)  -&gt; array
+ *  
+ *  Inserts the given values before the element with the given index
+ *  (which may be negative).
+ *     
+ *     a = %w{ a b c d }
+ *     a.insert(2, 99)         #=&gt; [&quot;a&quot;, &quot;b&quot;, 99, &quot;c&quot;, &quot;d&quot;]
+ *     a.insert(-2, 1, 2, 3)   #=&gt; [&quot;a&quot;, &quot;b&quot;, 99, &quot;c&quot;, 1, 2, 3, &quot;d&quot;]
+ */
+
+static VALUE
+rb_ary_insert(argc, argv, ary)
+    int argc;
+    VALUE *argv;
+    VALUE ary;
+{
+    long pos;
+
+    if (argc == 1) return ary;
+    if (argc &lt; 1) {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments (at least 1)&quot;);
+    }
+    pos = NUM2LONG(argv[0]);
+    if (pos == -1) {
+        pos = RARRAY(ary)-&gt;len;
+    }
+    if (pos &lt; 0) {
+        pos++;
+    }
+    rb_ary_splice(ary, pos, 0, rb_ary_new4(argc - 1, argv + 1));
+    return ary;
+}</pre>
+</body>
+</html>

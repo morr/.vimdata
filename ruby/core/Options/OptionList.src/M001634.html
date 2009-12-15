@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>usage (Options::OptionList)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/options.rb, line 272</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">OptionList</span>.<span class="ruby-identifier">usage</span>(<span class="ruby-identifier">generator_names</span>)
+      
+      <span class="ruby-identifier">puts</span>
+      <span class="ruby-identifier">puts</span>(<span class="ruby-constant">VERSION_STRING</span>)
+      <span class="ruby-identifier">puts</span>
+
+      <span class="ruby-identifier">name</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">$0</span>)
+      <span class="ruby-constant">OptionList</span>.<span class="ruby-identifier">strip_output</span>(<span class="ruby-value str">&quot;Usage:\n\n\#{name} [options]  [names...]\n\nFiles are parsed, and the information they contain\ncollected, before any output is produced. This allows cross\nreferences between all files to be resolved. If a name is a\ndirectory, it is traversed. If no names are specified, all\nRuby files in the current directory (and subdirectories) are\nprocessed.\n\nOptions:\n\n&quot;</span>)
+
+      <span class="ruby-constant">OPTION_LIST</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">long</span>, <span class="ruby-identifier">short</span>, <span class="ruby-identifier">arg</span>, <span class="ruby-identifier">desc</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">opt</span> = <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;%20s&quot;</span>, <span class="ruby-node">&quot;#{long}, #{short}&quot;</span>)
+        <span class="ruby-identifier">oparg</span> = <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;%-7s&quot;</span>, <span class="ruby-identifier">arg</span>)
+        <span class="ruby-identifier">print</span> <span class="ruby-node">&quot;#{opt} #{oparg}&quot;</span>
+        <span class="ruby-identifier">desc</span> = <span class="ruby-identifier">desc</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">&quot;\n&quot;</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">7</span>
+          <span class="ruby-identifier">puts</span> <span class="ruby-identifier">desc</span>.<span class="ruby-identifier">shift</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">puts</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">desc</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">puts</span>(<span class="ruby-value str">&quot; &quot;</span><span class="ruby-operator">*</span><span class="ruby-value">28</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">line</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">puts</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;\nAvailable output formatters: &quot;</span> <span class="ruby-operator">+</span>
+        <span class="ruby-identifier">generator_names</span>.<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\n\n&quot;</span>
+
+      <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;For information on where the output goes, use\n\n&quot;</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;   rdoc --help-output\n\n&quot;</span>
+
+      <span class="ruby-identifier">exit</span> <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

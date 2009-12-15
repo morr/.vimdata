@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>do_POST (SOAP::RPC::SOAPlet)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/rpc/soaplet.rb, line 82</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">do_POST</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span> { <span class="ruby-value str">&quot;SOAP request: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">body</span> } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">logger</span>
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">conn_data</span> = <span class="ruby-operator">::</span><span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">StreamHandler</span><span class="ruby-operator">::</span><span class="ruby-constant">ConnectionData</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-identifier">setup_req</span>(<span class="ruby-identifier">conn_data</span>, <span class="ruby-identifier">req</span>)
+      <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">external_ces</span> = <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:external_ces</span>]
+      <span class="ruby-identifier">conn_data</span> = <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">route</span>(<span class="ruby-identifier">conn_data</span>)
+      <span class="ruby-identifier">setup_res</span>(<span class="ruby-identifier">conn_data</span>, <span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+      <span class="ruby-identifier">conn_data</span> = <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">create_fault_response</span>(<span class="ruby-identifier">e</span>)
+      <span class="ruby-identifier">res</span>.<span class="ruby-identifier">status</span> = <span class="ruby-constant">WEBrick</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">RC_INTERNAL_SERVER_ERROR</span>
+      <span class="ruby-identifier">res</span>.<span class="ruby-identifier">body</span> = <span class="ruby-identifier">conn_data</span>.<span class="ruby-identifier">send_string</span>
+      <span class="ruby-identifier">res</span>[<span class="ruby-value str">'content-type'</span>] = <span class="ruby-identifier">conn_data</span>.<span class="ruby-identifier">send_contenttype</span> <span class="ruby-operator">||</span> <span class="ruby-value str">&quot;text/xml&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">res</span>.<span class="ruby-identifier">body</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">IO</span>)
+      <span class="ruby-identifier">res</span>.<span class="ruby-identifier">chunked</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span> { <span class="ruby-value str">&quot;SOAP response: (chunked response not logged)&quot;</span> } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">logger</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span> { <span class="ruby-value str">&quot;SOAP response: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">res</span>.<span class="ruby-identifier">body</span> } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">logger</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

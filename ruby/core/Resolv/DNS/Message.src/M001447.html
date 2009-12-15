@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>decode (Resolv::DNS::Message)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/resolv.rb, line 1263</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Message</span>.<span class="ruby-identifier">decode</span>(<span class="ruby-identifier">m</span>)
+        <span class="ruby-identifier">o</span> = <span class="ruby-constant">Message</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">0</span>)
+        <span class="ruby-constant">MessageDecoder</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">m</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">msg</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">id</span>, <span class="ruby-identifier">flag</span>, <span class="ruby-identifier">qdcount</span>, <span class="ruby-identifier">ancount</span>, <span class="ruby-identifier">nscount</span>, <span class="ruby-identifier">arcount</span> =
+            <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">get_unpack</span>(<span class="ruby-value str">'nnnnnn'</span>)
+          <span class="ruby-identifier">o</span>.<span class="ruby-identifier">id</span> = <span class="ruby-identifier">id</span>
+          <span class="ruby-identifier">o</span>.<span class="ruby-identifier">qr</span> = (<span class="ruby-identifier">flag</span> <span class="ruby-operator">&gt;&gt;</span> <span class="ruby-value">15</span>) <span class="ruby-operator">&amp;</span> <span class="ruby-value">1</span>
+          <span class="ruby-identifier">o</span>.<span class="ruby-identifier">opcode</span> = (<span class="ruby-identifier">flag</span> <span class="ruby-operator">&gt;&gt;</span> <span class="ruby-value">11</span>) <span class="ruby-operator">&amp;</span> <span class="ruby-value">15</span>
+          <span class="ruby-identifier">o</span>.<span class="ruby-identifier">aa</span> = (<span class="ruby-identifier">flag</span> <span class="ruby-operator">&gt;&gt;</span> <span class="ruby-value">10</span>) <span class="ruby-operator">&amp;</span> <span class="ruby-value">1</span>
+          <span class="ruby-identifier">o</span>.<span class="ruby-identifier">tc</span> = (<span class="ruby-identifier">flag</span> <span class="ruby-operator">&gt;&gt;</span> <span class="ruby-value">9</span>) <span class="ruby-operator">&amp;</span> <span class="ruby-value">1</span>
+          <span class="ruby-identifier">o</span>.<span class="ruby-identifier">rd</span> = (<span class="ruby-identifier">flag</span> <span class="ruby-operator">&gt;&gt;</span> <span class="ruby-value">8</span>) <span class="ruby-operator">&amp;</span> <span class="ruby-value">1</span>
+          <span class="ruby-identifier">o</span>.<span class="ruby-identifier">ra</span> = (<span class="ruby-identifier">flag</span> <span class="ruby-operator">&gt;&gt;</span> <span class="ruby-value">7</span>) <span class="ruby-operator">&amp;</span> <span class="ruby-value">1</span>
+          <span class="ruby-identifier">o</span>.<span class="ruby-identifier">rcode</span> = <span class="ruby-identifier">flag</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">15</span>
+          (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">qdcount</span>).<span class="ruby-identifier">each</span> {
+            <span class="ruby-identifier">name</span>, <span class="ruby-identifier">typeclass</span> = <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">get_question</span>
+            <span class="ruby-identifier">o</span>.<span class="ruby-identifier">add_question</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">typeclass</span>)
+          }
+          (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">ancount</span>).<span class="ruby-identifier">each</span> {
+            <span class="ruby-identifier">name</span>, <span class="ruby-identifier">ttl</span>, <span class="ruby-identifier">data</span> = <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">get_rr</span>
+            <span class="ruby-identifier">o</span>.<span class="ruby-identifier">add_answer</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">ttl</span>, <span class="ruby-identifier">data</span>)
+          }
+          (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">nscount</span>).<span class="ruby-identifier">each</span> {
+            <span class="ruby-identifier">name</span>, <span class="ruby-identifier">ttl</span>, <span class="ruby-identifier">data</span> = <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">get_rr</span>
+            <span class="ruby-identifier">o</span>.<span class="ruby-identifier">add_authority</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">ttl</span>, <span class="ruby-identifier">data</span>)
+          }
+          (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">arcount</span>).<span class="ruby-identifier">each</span> {
+            <span class="ruby-identifier">name</span>, <span class="ruby-identifier">ttl</span>, <span class="ruby-identifier">data</span> = <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">get_rr</span>
+            <span class="ruby-identifier">o</span>.<span class="ruby-identifier">add_additional</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">ttl</span>, <span class="ruby-identifier">data</span>)
+          }
+        }
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">o</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

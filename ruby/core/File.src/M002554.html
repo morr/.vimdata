@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>path (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     file.path -&gt; filename
+ *  
+ *  Returns the pathname used to create &lt;i&gt;file&lt;/i&gt; as a string. Does
+ *  not normalize the name.
+ *     
+ *     File.new(&quot;testfile&quot;).path               #=&gt; &quot;testfile&quot;
+ *     File.new(&quot;/tmp/../tmp/xxx&quot;, &quot;w&quot;).path   #=&gt; &quot;/tmp/../tmp/xxx&quot;
+ *     
+ */
+
+static VALUE
+rb_file_path(obj)
+    VALUE obj;
+{
+    OpenFile *fptr;
+
+    fptr = RFILE(rb_io_taint_check(obj))-&gt;fptr;
+    rb_io_check_initialized(fptr);
+    if (!fptr-&gt;path) return Qnil;
+    return rb_tainted_str_new2(fptr-&gt;path);
+}</pre>
+</body>
+</html>

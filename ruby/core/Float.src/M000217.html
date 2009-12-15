@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>induced_from (Float)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   Float.induced_from(obj)    =&gt;  float
+ *
+ * Convert &lt;code&gt;obj&lt;/code&gt; to a float.
+ */
+
+static VALUE
+rb_flo_induced_from(klass, x)
+    VALUE klass, x;
+{
+    switch (TYPE(x)) {
+    case T_FIXNUM:
+    case T_BIGNUM:
+       return rb_funcall(x, rb_intern(&quot;to_f&quot;), 0);
+    case T_FLOAT:
+       return x;
+    default:
+       rb_raise(rb_eTypeError, &quot;failed to convert %s into Float&quot;,
+                rb_obj_classname(x));
+    }
+}</pre>
+</body>
+</html>

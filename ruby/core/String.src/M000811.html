@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>include? (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.include? other_str   =&gt; true or false
+ *     str.include? fixnum      =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; if &lt;i&gt;str&lt;/i&gt; contains the given string or
+ *  character.
+ *     
+ *     &quot;hello&quot;.include? &quot;lo&quot;   #=&gt; true
+ *     &quot;hello&quot;.include? &quot;ol&quot;   #=&gt; false
+ *     &quot;hello&quot;.include? ?h     #=&gt; true
+ */
+
+static VALUE
+rb_str_include(str, arg)
+    VALUE str, arg;
+{
+    long i;
+
+    if (FIXNUM_P(arg)) {
+        if (memchr(RSTRING(str)-&gt;ptr, FIX2INT(arg), RSTRING(str)-&gt;len))
+            return Qtrue;
+        return Qfalse;
+    }
+
+    StringValue(arg);
+    i = rb_str_index(str, arg, 0);
+
+    if (i == -1) return Qfalse;
+    return Qtrue;
+}</pre>
+</body>
+</html>

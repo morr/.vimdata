@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>[]= (REXML::Attributes)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/element.rb, line 1074</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]=</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span> )
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>             <span class="ruby-comment cmt"># Delete the named attribute</span>
+        <span class="ruby-identifier">attr</span> = <span class="ruby-identifier">get_attribute</span>(<span class="ruby-identifier">name</span>)
+        <span class="ruby-identifier">delete</span> <span class="ruby-identifier">attr</span>
+        <span class="ruby-keyword kw">return</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">element_document</span> = <span class="ruby-ivar">@element</span>.<span class="ruby-identifier">document</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Attribute</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@element</span>.<span class="ruby-identifier">document</span> <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@element</span>.<span class="ruby-identifier">document</span>.<span class="ruby-identifier">doctype</span>
+          <span class="ruby-identifier">value</span> = <span class="ruby-constant">Text</span><span class="ruby-operator">::</span><span class="ruby-identifier">normalize</span>( <span class="ruby-identifier">value</span>, <span class="ruby-ivar">@element</span>.<span class="ruby-identifier">document</span>.<span class="ruby-identifier">doctype</span> )
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">value</span> = <span class="ruby-constant">Text</span><span class="ruby-operator">::</span><span class="ruby-identifier">normalize</span>( <span class="ruby-identifier">value</span>, <span class="ruby-keyword kw">nil</span> )
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">value</span> = <span class="ruby-constant">Attribute</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">value</span>.<span class="ruby-identifier">element</span> = <span class="ruby-ivar">@element</span>
+      <span class="ruby-identifier">old_attr</span> = <span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">value</span>.<span class="ruby-identifier">name</span>, <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">old_attr</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-identifier">store</span>(<span class="ruby-identifier">value</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span>)
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">old_attr</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Hash</span>
+        <span class="ruby-identifier">old_attr</span>[<span class="ruby-identifier">value</span>.<span class="ruby-identifier">prefix</span>] = <span class="ruby-identifier">value</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">old_attr</span>.<span class="ruby-identifier">prefix</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">prefix</span>
+        <span class="ruby-comment cmt"># Check for conflicting namespaces</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>( 
+          <span class="ruby-node">&quot;Namespace conflict in adding attribute \&quot;#{value.name}\&quot;: &quot;</span><span class="ruby-operator">+</span>
+          <span class="ruby-node">&quot;Prefix \&quot;#{old_attr.prefix}\&quot; = &quot;</span><span class="ruby-operator">+</span>
+          <span class="ruby-node">&quot;\&quot;#{@element.namespace(old_attr.prefix)}\&quot; and prefix &quot;</span><span class="ruby-operator">+</span>
+          <span class="ruby-node">&quot;\&quot;#{value.prefix}\&quot; = \&quot;#{@element.namespace(value.prefix)}\&quot;&quot;</span>) <span class="ruby-keyword kw">if</span> 
+          <span class="ruby-identifier">value</span>.<span class="ruby-identifier">prefix</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;xmlns&quot;</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">old_attr</span>.<span class="ruby-identifier">prefix</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;xmlns&quot;</span> <span class="ruby-keyword kw">and</span>
+          <span class="ruby-ivar">@element</span>.<span class="ruby-identifier">namespace</span>( <span class="ruby-identifier">old_attr</span>.<span class="ruby-identifier">prefix</span> ) <span class="ruby-operator">==</span> 
+            <span class="ruby-ivar">@element</span>.<span class="ruby-identifier">namespace</span>( <span class="ruby-identifier">value</span>.<span class="ruby-identifier">prefix</span> )
+          <span class="ruby-identifier">store</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">name</span>, { <span class="ruby-identifier">old_attr</span>.<span class="ruby-identifier">prefix</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">old_attr</span>,
+            <span class="ruby-identifier">value</span>.<span class="ruby-identifier">prefix</span>                =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">value</span> }
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">store</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@element</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: SOAP::RPC::HTTPServer</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">SOAP::RPC::HTTPServer</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/soap/rpc/httpserver_rb.html">
+                soap/rpc/httpserver.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Logger::Application
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M003918">add_document_method</a>&nbsp;&nbsp;
+      <a href="#M003921">add_document_operation</a>&nbsp;&nbsp;
+      <a href="#M003922">add_document_request_operation</a>&nbsp;&nbsp;
+      <a href="#M003912">add_headerhandler</a>&nbsp;&nbsp;
+      <a href="#M003915">add_method</a>&nbsp;&nbsp;
+      <a href="#M003917">add_method_as</a>&nbsp;&nbsp;
+      <a href="#M003911">add_request_headerhandler</a>&nbsp;&nbsp;
+      <a href="#M003913">add_rpc_headerhandler</a>&nbsp;&nbsp;
+      <a href="#M003914">add_rpc_method</a>&nbsp;&nbsp;
+      <a href="#M003916">add_rpc_method_as</a>&nbsp;&nbsp;
+      <a href="#M003919">add_rpc_operation</a>&nbsp;&nbsp;
+      <a href="#M003920">add_rpc_request_operation</a>&nbsp;&nbsp;
+      <a href="#M003909">add_rpc_request_servant</a>&nbsp;&nbsp;
+      <a href="#M003910">add_rpc_servant</a>&nbsp;&nbsp;
+      <a href="#M003907">generate_explicit_type</a>&nbsp;&nbsp;
+      <a href="#M003908">generate_explicit_type=</a>&nbsp;&nbsp;
+      <a href="#M003905">mapping_registry</a>&nbsp;&nbsp;
+      <a href="#M003906">mapping_registry=</a>&nbsp;&nbsp;
+      <a href="#M003901">new</a>&nbsp;&nbsp;
+      <a href="#M003902">on_init</a>&nbsp;&nbsp;
+      <a href="#M003904">shutdown</a>&nbsp;&nbsp;
+      <a href="#M003903">status</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">default_namespace</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">server</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M003901" class="m-detail">
+        <a name="M003901"></a>
+
+        <div class="method-heading">
+          <a href="#M003901" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(config)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003901-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003901-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 23</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">config</span>)
+    <span class="ruby-keyword kw">super</span>(<span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SOAPHTTPServerApplicationName</span>] <span class="ruby-operator">||</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>)
+    <span class="ruby-ivar">@default_namespace</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SOAPDefaultNamespace</span>]
+    <span class="ruby-ivar">@webrick_config</span> = <span class="ruby-identifier">config</span>.<span class="ruby-identifier">dup</span>
+    <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">level</span> = <span class="ruby-constant">Logger</span><span class="ruby-operator">::</span><span class="ruby-constant">Severity</span><span class="ruby-operator">::</span><span class="ruby-constant">ERROR</span> <span class="ruby-comment cmt"># keep silent by default</span>
+    <span class="ruby-ivar">@webrick_config</span>[<span class="ruby-identifier">:Logger</span>] <span class="ruby-operator">||=</span> <span class="ruby-ivar">@log</span>
+    <span class="ruby-ivar">@log</span> = <span class="ruby-ivar">@webrick_config</span>[<span class="ruby-identifier">:Logger</span>]     <span class="ruby-comment cmt"># sync logger of App and HTTPServer</span>
+    <span class="ruby-ivar">@router</span> = <span class="ruby-operator">::</span><span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">RPC</span><span class="ruby-operator">::</span><span class="ruby-constant">Router</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>)
+    <span class="ruby-ivar">@soaplet</span> = <span class="ruby-operator">::</span><span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">RPC</span><span class="ruby-operator">::</span><span class="ruby-constant">SOAPlet</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@router</span>)
+    <span class="ruby-identifier">on_init</span>
+    <span class="ruby-ivar">@server</span> = <span class="ruby-constant">WEBrick</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTPServer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@webrick_config</span>)
+    <span class="ruby-ivar">@server</span>.<span class="ruby-identifier">mount</span>(<span class="ruby-value str">'/'</span>, <span class="ruby-ivar">@soaplet</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M003918" class="m-detail">
+        <a name="M003918"></a>
+
+        <div class="method-heading">
+          <a href="#M003918" class="method-signature">
+          <span class="method-name">add_document_method</span><span class="method-args">(obj, soapaction, name, req_qnames, res_qnames)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003918-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003918-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 99</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_document_method</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">req_qnames</span>, <span class="ruby-identifier">res_qnames</span>)
+    <span class="ruby-identifier">param_def</span> = <span class="ruby-constant">SOAPMethod</span>.<span class="ruby-identifier">create_doc_param_def</span>(<span class="ruby-identifier">req_qnames</span>, <span class="ruby-identifier">res_qnames</span>)
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">add_document_operation</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">param_def</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003921" class="m-detail">
+        <a name="M003921"></a>
+
+        <div class="method-heading">
+          <a href="#M003921" class="method-signature">
+          <span class="method-name">add_document_operation</span><span class="method-args">(receiver, soapaction, name, param_def, opt = {})</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003921-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003921-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 112</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_document_operation</span>(<span class="ruby-identifier">receiver</span>, <span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">param_def</span>, <span class="ruby-identifier">opt</span> = {})
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">add_document_operation</span>(<span class="ruby-identifier">receiver</span>, <span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">param_def</span>, <span class="ruby-identifier">opt</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003922" class="m-detail">
+        <a name="M003922"></a>
+
+        <div class="method-heading">
+          <a href="#M003922" class="method-signature">
+          <span class="method-name">add_document_request_operation</span><span class="method-args">(factory, soapaction, name, param_def, opt = {})</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003922-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003922-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 116</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_document_request_operation</span>(<span class="ruby-identifier">factory</span>, <span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">param_def</span>, <span class="ruby-identifier">opt</span> = {})
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">add_document_request_operation</span>(<span class="ruby-identifier">factory</span>, <span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">param_def</span>, <span class="ruby-identifier">opt</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003912" class="m-detail">
+        <a name="M003912"></a>
+
+        <div class="method-heading">
+          <a href="#M003912" class="method-signature">
+          <span class="method-name">add_headerhandler</span><span class="method-args">(obj)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003912-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003912-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 79</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_headerhandler</span>(<span class="ruby-identifier">obj</span>)
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">add_headerhandler</span>(<span class="ruby-identifier">obj</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003915" class="m-detail">
+        <a name="M003915"></a>
+
+        <div class="method-heading">
+          <span class="method-name">add_method</span><span class="method-args">(obj, name, *param)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="HTTPServer.html#M003914">add_rpc_method</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003917" class="m-detail">
+        <a name="M003917"></a>
+
+        <div class="method-heading">
+          <span class="method-name">add_method_as</span><span class="method-args">(obj, name, name_as, *param)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="HTTPServer.html#M003916">add_rpc_method_as</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003911" class="m-detail">
+        <a name="M003911"></a>
+
+        <div class="method-heading">
+          <a href="#M003911" class="method-signature">
+          <span class="method-name">add_request_headerhandler</span><span class="method-args">(factory)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003911-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003911-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 75</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_request_headerhandler</span>(<span class="ruby-identifier">factory</span>)
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">add_request_headerhandler</span>(<span class="ruby-identifier">factory</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003913" class="m-detail">
+        <a name="M003913"></a>
+
+        <div class="method-heading">
+          <span class="method-name">add_rpc_headerhandler</span><span class="method-args">(obj)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="HTTPServer.html#M003912">add_headerhandler</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003914" class="m-detail">
+        <a name="M003914"></a>
+
+        <div class="method-heading">
+          <a href="#M003914" class="method-signature">
+          <span class="method-name">add_rpc_method</span><span class="method-args">(obj, name, *param)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+method entry interface
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003914-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003914-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 86</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_rpc_method</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">name</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">param</span>)
+    <span class="ruby-identifier">add_rpc_method_as</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">name</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">param</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003916" class="m-detail">
+        <a name="M003916"></a>
+
+        <div class="method-heading">
+          <a href="#M003916" class="method-signature">
+          <span class="method-name">add_rpc_method_as</span><span class="method-args">(obj, name, name_as, *param)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003916-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003916-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 91</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_rpc_method_as</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">name_as</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">param</span>)
+    <span class="ruby-identifier">qname</span> = <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">QName</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@default_namespace</span>, <span class="ruby-identifier">name_as</span>)
+    <span class="ruby-identifier">soapaction</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">param_def</span> = <span class="ruby-constant">SOAPMethod</span>.<span class="ruby-identifier">derive_rpc_param_def</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">name</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">param</span>)
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">add_rpc_operation</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">qname</span>, <span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">param_def</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003919" class="m-detail">
+        <a name="M003919"></a>
+
+        <div class="method-heading">
+          <a href="#M003919" class="method-signature">
+          <span class="method-name">add_rpc_operation</span><span class="method-args">(receiver, qname, soapaction, name, param_def, opt = {})</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003919-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003919-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 104</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_rpc_operation</span>(<span class="ruby-identifier">receiver</span>, <span class="ruby-identifier">qname</span>, <span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">param_def</span>, <span class="ruby-identifier">opt</span> = {})
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">add_rpc_operation</span>(<span class="ruby-identifier">receiver</span>, <span class="ruby-identifier">qname</span>, <span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">param_def</span>, <span class="ruby-identifier">opt</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003920" class="m-detail">
+        <a name="M003920"></a>
+
+        <div class="method-heading">
+          <a href="#M003920" class="method-signature">
+          <span class="method-name">add_rpc_request_operation</span><span class="method-args">(factory, qname, soapaction, name, param_def, opt = {})</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003920-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003920-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 108</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_rpc_request_operation</span>(<span class="ruby-identifier">factory</span>, <span class="ruby-identifier">qname</span>, <span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">param_def</span>, <span class="ruby-identifier">opt</span> = {})
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">add_rpc_request_operation</span>(<span class="ruby-identifier">factory</span>, <span class="ruby-identifier">qname</span>, <span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">param_def</span>, <span class="ruby-identifier">opt</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003909" class="m-detail">
+        <a name="M003909"></a>
+
+        <div class="method-heading">
+          <a href="#M003909" class="method-signature">
+          <span class="method-name">add_rpc_request_servant</span><span class="method-args">(factory, namespace = @default_namespace)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+servant entry interface
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003909-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003909-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 67</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_rpc_request_servant</span>(<span class="ruby-identifier">factory</span>, <span class="ruby-identifier">namespace</span> = <span class="ruby-ivar">@default_namespace</span>)
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">add_rpc_request_servant</span>(<span class="ruby-identifier">factory</span>, <span class="ruby-identifier">namespace</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003910" class="m-detail">
+        <a name="M003910"></a>
+
+        <div class="method-heading">
+          <a href="#M003910" class="method-signature">
+          <span class="method-name">add_rpc_servant</span><span class="method-args">(obj, namespace = @default_namespace)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003910-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003910-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 71</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_rpc_servant</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">namespace</span> = <span class="ruby-ivar">@default_namespace</span>)
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">add_rpc_servant</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">namespace</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003907" class="m-detail">
+        <a name="M003907"></a>
+
+        <div class="method-heading">
+          <a href="#M003907" class="method-signature">
+          <span class="method-name">generate_explicit_type</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003907-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003907-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 57</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generate_explicit_type</span>
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">generate_explicit_type</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003908" class="m-detail">
+        <a name="M003908"></a>
+
+        <div class="method-heading">
+          <a href="#M003908" class="method-signature">
+          <span class="method-name">generate_explicit_type=</span><span class="method-args">(generate_explicit_type)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003908-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003908-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 61</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generate_explicit_type=</span>(<span class="ruby-identifier">generate_explicit_type</span>)
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">generate_explicit_type</span> = <span class="ruby-identifier">generate_explicit_type</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003905" class="m-detail">
+        <a name="M003905"></a>
+
+        <div class="method-heading">
+          <a href="#M003905" class="method-signature">
+          <span class="method-name">mapping_registry</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003905-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003905-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 49</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mapping_registry</span>
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">mapping_registry</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003906" class="m-detail">
+        <a name="M003906"></a>
+
+        <div class="method-heading">
+          <a href="#M003906" class="method-signature">
+          <span class="method-name">mapping_registry=</span><span class="method-args">(mapping_registry)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003906-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003906-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 53</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mapping_registry=</span>(<span class="ruby-identifier">mapping_registry</span>)
+    <span class="ruby-ivar">@router</span>.<span class="ruby-identifier">mapping_registry</span> = <span class="ruby-identifier">mapping_registry</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003902" class="m-detail">
+        <a name="M003902"></a>
+
+        <div class="method-heading">
+          <a href="#M003902" class="method-signature">
+          <span class="method-name">on_init</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003902-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003902-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 37</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">on_init</span>
+    <span class="ruby-comment cmt"># do extra initialization in a derived class if needed.</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003904" class="m-detail">
+        <a name="M003904"></a>
+
+        <div class="method-heading">
+          <a href="#M003904" class="method-signature">
+          <span class="method-name">shutdown</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003904-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003904-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 45</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">shutdown</span>
+    <span class="ruby-ivar">@server</span>.<span class="ruby-identifier">shutdown</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@server</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M003903" class="m-detail">
+        <a name="M003903"></a>
+
+        <div class="method-heading">
+          <a href="#M003903" class="method-signature">
+          <span class="method-name">status</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M003903-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M003903-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/httpserver.rb, line 41</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">status</span>
+    <span class="ruby-ivar">@server</span>.<span class="ruby-identifier">status</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@server</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 0 --> <p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and run  by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. Ruby-doc.org was created in 2002 to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

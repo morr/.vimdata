@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>pull (REXML::Parsers::PullParser)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/parsers/pullparser.rb, line 65</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">pull</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@my_stack</span>.<span class="ruby-identifier">shift</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@my_stack</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+
+        <span class="ruby-identifier">event</span> = <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">pull</span>
+        <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">0</span>]
+        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:entitydecl</span>
+          <span class="ruby-ivar">@entities</span>[ <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] ] = 
+            <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>] <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/PUBLIC|SYSTEM/</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:text</span>
+          <span class="ruby-identifier">unnormalized</span> = <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">unnormalize</span>( <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>], <span class="ruby-ivar">@entities</span> )
+          <span class="ruby-identifier">event</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">unnormalized</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-constant">PullEvent</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">event</span> )
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

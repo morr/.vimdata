@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>get_byte (StringScanner)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Scans one byte and returns it.
+ * This method is NOT multi-byte character sensitive.
+ * See also #getch.
+ *
+ *   s = StringScanner.new('ab')
+ *   s.get_byte         # =&gt; &quot;a&quot;
+ *   s.get_byte         # =&gt; &quot;b&quot;
+ *   s.get_byte         # =&gt; nil
+ *
+ *   s = StringScanner.new(&quot;\244\242&quot;)
+ *   s.get_byte         # =&gt; &quot;\244&quot;
+ *   s.get_byte         # =&gt; &quot;\242&quot;
+ *   s.get_byte         # =&gt; nil
+ */
+static VALUE
+strscan_get_byte(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    CLEAR_MATCH_STATUS(p);
+    if (EOS_P(p)) {
+        return Qnil;
+    }
+    p-&gt;prev = p-&gt;curr;
+    p-&gt;curr++;
+    MATCHED(p);
+    adjust_registers_to_matched(p);
+    return extract_range(p, p-&gt;prev + p-&gt;regs.beg[0],
+                            p-&gt;prev + p-&gt;regs.end[0]);
+}</pre>
+</body>
+</html>

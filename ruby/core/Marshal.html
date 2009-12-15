@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Marshal</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Marshal</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/marshal_c.html">
+                marshal.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The marshaling library converts collections of Ruby objects into a byte
+stream, allowing them to be stored outside the currently active script.
+This data may subsequently be read and the original objects reconstituted.
+Marshaled data has major and minor version numbers stored along with the
+object information. In normal use, marshaling can only <a
+href="Marshal.html#M004932">load</a> data written with the same major
+version number and an equal or lower minor version number. If Ruby&#8216;s
+``verbose&#8217;&#8217; flag is set (normally using -d, -v, -w, or
+&#8212;verbose) the major and minor numbers must match exactly. <a
+href="Marshal.html">Marshal</a> versioning is independent of Ruby&#8216;s
+version numbers. You can extract the version by reading the first two bytes
+of marshaled data.
+</p>
+<pre>
+    str = Marshal.dump(&quot;thing&quot;)
+    RUBY_VERSION   #=&gt; &quot;1.8.0&quot;
+    str[0]         #=&gt; 4
+    str[1]         #=&gt; 8
+</pre>
+<p>
+Some objects cannot be dumped: if the objects to be dumped include
+bindings, procedure or method objects, instances of class <a
+href="IO.html">IO</a>, or singleton objects, a <a
+href="TypeError.html">TypeError</a> will be raised. If your class has
+special serialization needs (for example, if you want to serialize in some
+specific format), or if it contains objects that would otherwise not be
+serializable, you can implement your own serialization strategy by defining
+two methods, _dump and _load: The instance method _dump should return a <a
+href="String.html">String</a> object containing all the information
+necessary to reconstitute objects of this class and all referenced objects
+up to a maximum depth given as an integer parameter (a value of -1 implies
+that you should disable depth checking). The class method _load should take
+a <a href="String.html">String</a> and return an object of this class.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004931">dump</a>&nbsp;&nbsp;
+      <a href="#M004932">load</a>&nbsp;&nbsp;
+      <a href="#M004933">restore</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">MAJOR_VERSION</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(MARSHAL_MAJOR)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">MINOR_VERSION</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(MARSHAL_MINOR)</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M004931" class="method-detail">
+        <a name="M004931"></a>
+
+        <div class="method-heading">
+          <a href="Marshal.src/M004931.html" target="Code" class="method-signature"
+            onclick="popupCode('Marshal.src/M004931.html');return false;">
+          <span class="method-name">dump( obj [, anIO] , limit=--1 ) => anIO<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Serializes obj and all descendent objects. If anIO is specified, the
+serialized data will be written to it, otherwise the data will be returned
+as a <a href="String.html">String</a>. If limit is specified, the traversal
+of subobjects will be limited to that depth. If limit is negative, no
+checking of depth will be performed.
+</p>
+<pre>
+    class Klass
+      def initialize(str)
+        @str = str
+      end
+      def sayHello
+        @str
+      end
+    end
+</pre>
+<p>
+(produces no output)
+</p>
+<pre>
+    o = Klass.new(&quot;hello\n&quot;)
+    data = Marshal.dump(o)
+    obj = Marshal.load(data)
+    obj.sayHello   #=&gt; &quot;hello\n&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004932" class="method-detail">
+        <a name="M004932"></a>
+
+        <div class="method-heading">
+          <a href="Marshal.src/M004932.html" target="Code" class="method-signature"
+            onclick="popupCode('Marshal.src/M004932.html');return false;">
+          <span class="method-name">load( source [, proc] ) => obj<br />
+restore( source [, proc] ) => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the result of converting the serialized data in source into a Ruby
+object (possibly with associated subordinate objects). source may be either
+an instance of <a href="IO.html">IO</a> or an object that responds to
+to_str. If proc is specified, it will be passed each object as it is
+deserialized.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004933" class="method-detail">
+        <a name="M004933"></a>
+
+        <div class="method-heading">
+          <a href="Marshal.src/M004933.html" target="Code" class="method-signature"
+            onclick="popupCode('Marshal.src/M004933.html');return false;">
+          <span class="method-name">load( source [, proc] ) => obj<br />
+restore( source [, proc] ) => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the result of converting the serialized data in source into a Ruby
+object (possibly with associated subordinate objects). source may be either
+an instance of <a href="IO.html">IO</a> or an object that responds to
+to_str. If proc is specified, it will be passed each object as it is
+deserialized.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

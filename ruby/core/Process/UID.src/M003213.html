@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>switch (Process::UID)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process::UID.switch              =&gt; fixnum
+ *     Process::UID.switch {|| block}   =&gt; object
+ *
+ *  Switch the effective and real user IDs of the current process. If
+ *  a &lt;em&gt;block&lt;/em&gt; is given, the user IDs will be switched back
+ *  after the block is executed. Returns the new effective user ID if
+ *  called without a block, and the return value of the block if one
+ *  is given.
+ *
+ */
+
+static VALUE
+p_uid_switch(obj)
+    VALUE obj;
+{
+    int uid, euid;
+
+    check_uid_switch();
+
+    uid = getuid();
+    euid = geteuid();
+
+    if (uid != euid) {
+        proc_seteuid(obj, INT2FIX(uid));
+        if (rb_block_given_p()) {
+            under_uid_switch = 1;
+            return rb_ensure(rb_yield, Qnil, p_uid_sw_ensure, SAVED_USER_ID);
+        } else {
+            return INT2FIX(euid);
+        }
+    } else if (euid != SAVED_USER_ID) {
+        proc_seteuid(obj, INT2FIX(SAVED_USER_ID));
+        if (rb_block_given_p()) {
+            under_uid_switch = 1;
+            return rb_ensure(rb_yield, Qnil, p_uid_sw_ensure, euid);
+        } else {
+            return INT2FIX(uid);
+        }
+    } else {
+        errno = EPERM;
+        rb_sys_fail(0);
+    }
+
+#else
+static VALUE
+p_uid_sw_ensure(obj)
+    VALUE obj;
+{
+    under_uid_switch = 0;
+    return p_uid_exchange(obj);
+}</pre>
+</body>
+</html>

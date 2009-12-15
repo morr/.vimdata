@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>inspect (File::Stat)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   stat.inspect  =&gt;  string
+ *
+ * Produce a nicely formatted description of &lt;i&gt;stat&lt;/i&gt;.
+ *
+ *   File.stat(&quot;/etc/passwd&quot;).inspect
+ *      #=&gt; &quot;#&lt;File::Stat dev=0xe000005, ino=1078078, mode=0100644, 
+ *           nlink=1, uid=0, gid=0, rdev=0x0, size=1374, blksize=4096, 
+ *           blocks=8, atime=Wed Dec 10 10:16:12 CST 2003, 
+ *           mtime=Fri Sep 12 15:41:41 CDT 2003, 
+ *           ctime=Mon Oct 27 11:20:27 CST 2003&gt;&quot;
+ */
+
+static VALUE
+rb_stat_inspect(self)
+    VALUE self;
+{
+    VALUE str;
+    int i;
+    static const struct {
+        const char *name;
+        VALUE (*func)_((VALUE));
+    } member[] = {
+        {&quot;dev&quot;,            rb_stat_dev},
+        {&quot;ino&quot;,            rb_stat_ino},
+        {&quot;mode&quot;,    rb_stat_mode},
+        {&quot;nlink&quot;,   rb_stat_nlink},
+        {&quot;uid&quot;,            rb_stat_uid},
+        {&quot;gid&quot;,            rb_stat_gid},
+        {&quot;rdev&quot;,    rb_stat_rdev},
+        {&quot;size&quot;,    rb_stat_size},
+        {&quot;blksize&quot;, rb_stat_blksize},
+        {&quot;blocks&quot;,  rb_stat_blocks},
+        {&quot;atime&quot;,   rb_stat_atime},
+        {&quot;mtime&quot;,   rb_stat_mtime},
+        {&quot;ctime&quot;,   rb_stat_ctime},
+    };
+
+    str = rb_str_buf_new2(&quot;#&lt;&quot;);
+    rb_str_buf_cat2(str, rb_obj_classname(self));
+    rb_str_buf_cat2(str, &quot; &quot;);
+
+    for (i = 0; i &lt; sizeof(member)/sizeof(member[0]); i++) {
+        VALUE v;
+
+        if (i &gt; 0) {
+            rb_str_buf_cat2(str, &quot;, &quot;);
+        }
+        rb_str_buf_cat2(str, member[i].name);
+        rb_str_buf_cat2(str, &quot;=&quot;);
+        v = (*member[i].func)(self);
+        if (i == 2) {          /* mode */
+            char buf[32];
+
+            sprintf(buf, &quot;0%lo&quot;, NUM2ULONG(v));
+            rb_str_buf_cat2(str, buf);
+        }
+        else if (i == 0 || i == 6) { /* dev/rdev */
+            char buf[32];
+
+            sprintf(buf, &quot;0x%lx&quot;, NUM2ULONG(v));
+            rb_str_buf_cat2(str, buf);
+        }
+        else {
+            rb_str_append(str, rb_inspect(v));
+        }
+    }
+    rb_str_buf_cat2(str, &quot;&gt;&quot;);
+    OBJ_INFECT(str, self);
+
+    return str;
+}</pre>
+</body>
+</html>

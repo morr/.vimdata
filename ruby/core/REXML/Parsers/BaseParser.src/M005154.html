@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>add_listener (REXML::Parsers::BaseParser)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/parsers/baseparser.rb, line 113</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_listener</span>( <span class="ruby-identifier">listener</span> )
+        <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-keyword kw">defined?</span>(<span class="ruby-ivar">@listeners</span>) <span class="ruby-keyword kw">or</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@listeners</span>
+          <span class="ruby-ivar">@listeners</span> = []
+          <span class="ruby-identifier">instance_eval</span> <span class="ruby-value str">&quot;alias :_old_pull :pull\ndef pull\nevent = _old_pull\n@listeners.each do |listener|\nlistener.receive event\nend\nevent\nend\n&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-ivar">@listeners</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">listener</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

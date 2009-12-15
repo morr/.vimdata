@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>chroot (Dir)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Dir.chroot( string ) =&gt; 0
+ *
+ *  Changes this process's idea of the file system root. Only a
+ *  privileged process may make this call. Not available on all
+ *  platforms. On Unix systems, see &lt;code&gt;chroot(2)&lt;/code&gt; for more
+ *  information.
+ */
+static VALUE
+dir_s_chroot(dir, path)
+    VALUE dir, path;
+{
+#if defined(HAVE_CHROOT) &amp;&amp; !defined(__CHECKER__)
+    check_dirname(&amp;path);
+
+    if (chroot(RSTRING(path)-&gt;ptr) == -1)
+        rb_sys_fail(RSTRING(path)-&gt;ptr);
+
+    return INT2FIX(0);
+#else
+    rb_notimplement();
+    return Qnil;                /* not reached */
+#endif
+}</pre>
+</body>
+</html>

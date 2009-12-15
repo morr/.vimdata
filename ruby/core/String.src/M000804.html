@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>reverse (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.reverse   =&gt; new_str
+ *  
+ *  Returns a new string with the characters from &lt;i&gt;str&lt;/i&gt; in reverse order.
+ *     
+ *     &quot;stressed&quot;.reverse   #=&gt; &quot;desserts&quot;
+ */
+
+static VALUE
+rb_str_reverse(str)
+    VALUE str;
+{
+    VALUE obj;
+    char *s, *e, *p;
+
+    if (RSTRING(str)-&gt;len &lt;= 1) return rb_str_dup(str);
+
+    obj = rb_str_new5(str, 0, RSTRING(str)-&gt;len);
+    s = RSTRING(str)-&gt;ptr; e = s + RSTRING(str)-&gt;len - 1;
+    p = RSTRING(obj)-&gt;ptr;
+
+    while (e &gt;= s) {
+        *p++ = *e--;
+    }
+    OBJ_INFECT(obj, str);
+
+    return obj;
+}</pre>
+</body>
+</html>

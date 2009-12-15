@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: LUSolve</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">LUSolve</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/bigdecimal/lib/bigdecimal/ludcmp_rb.html">
+                bigdecimal/lib/bigdecimal/ludcmp.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Solves a*x = b for x, using LU decomposition.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000076">ludecomp</a>&nbsp;&nbsp;
+      <a href="#M000077">lusolve</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000076" class="m-detail">
+        <a name="M000076"></a>
+
+        <div class="method-heading">
+          <a href="#M000076" class="method-signature">
+          <span class="method-name">ludecomp</span><span class="method-args">(a,n,zero=0,one=1)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Performs LU decomposition of the n by n matrix a.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000076-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000076-source">
+<pre>
+<span class="ruby-comment cmt"># File bigdecimal/lib/bigdecimal/ludcmp.rb, line 6</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ludecomp</span>(<span class="ruby-identifier">a</span>,<span class="ruby-identifier">n</span>,<span class="ruby-identifier">zero</span>=<span class="ruby-value">0</span>,<span class="ruby-identifier">one</span>=<span class="ruby-value">1</span>)
+    <span class="ruby-identifier">prec</span> = <span class="ruby-constant">BigDecimal</span>.<span class="ruby-identifier">limit</span>(<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-identifier">ps</span>     = []
+    <span class="ruby-identifier">scales</span> = []
+    <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">i</span> <span class="ruby-keyword kw">in</span> <span class="ruby-value">0</span><span class="ruby-operator">...</span><span class="ruby-identifier">n</span> <span class="ruby-keyword kw">do</span>  <span class="ruby-comment cmt"># pick up largest(abs. val.) element in each row.</span>
+      <span class="ruby-identifier">ps</span> <span class="ruby-operator">&lt;&lt;=</span> <span class="ruby-identifier">i</span>
+      <span class="ruby-identifier">nrmrow</span>  = <span class="ruby-identifier">zero</span>
+      <span class="ruby-identifier">ixn</span> = <span class="ruby-identifier">i</span><span class="ruby-operator">*</span><span class="ruby-identifier">n</span>
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">j</span> <span class="ruby-keyword kw">in</span> <span class="ruby-value">0</span><span class="ruby-operator">...</span><span class="ruby-identifier">n</span> <span class="ruby-keyword kw">do</span>
+         <span class="ruby-identifier">biggst</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">ixn</span><span class="ruby-operator">+</span><span class="ruby-identifier">j</span>].<span class="ruby-identifier">abs</span>
+         <span class="ruby-identifier">nrmrow</span> = <span class="ruby-identifier">biggst</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">biggst</span><span class="ruby-operator">&gt;</span><span class="ruby-identifier">nrmrow</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">nrmrow</span><span class="ruby-operator">&gt;</span><span class="ruby-identifier">zero</span> <span class="ruby-keyword kw">then</span>
+         <span class="ruby-identifier">scales</span> <span class="ruby-operator">&lt;&lt;=</span> <span class="ruby-identifier">one</span>.<span class="ruby-identifier">div</span>(<span class="ruby-identifier">nrmrow</span>,<span class="ruby-identifier">prec</span>)
+      <span class="ruby-keyword kw">else</span> 
+         <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;Singular matrix&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">n1</span>          = <span class="ruby-identifier">n</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+    <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">k</span> <span class="ruby-keyword kw">in</span> <span class="ruby-value">0</span><span class="ruby-operator">...</span><span class="ruby-identifier">n1</span> <span class="ruby-keyword kw">do</span> <span class="ruby-comment cmt"># Gaussian elimination with partial pivoting.</span>
+      <span class="ruby-identifier">biggst</span>  = <span class="ruby-identifier">zero</span>;
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">i</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">k</span><span class="ruby-operator">...</span><span class="ruby-identifier">n</span> <span class="ruby-keyword kw">do</span>
+         <span class="ruby-identifier">size</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">ps</span>[<span class="ruby-identifier">i</span>]<span class="ruby-operator">*</span><span class="ruby-identifier">n</span><span class="ruby-operator">+</span><span class="ruby-identifier">k</span>].<span class="ruby-identifier">abs</span><span class="ruby-operator">*</span><span class="ruby-identifier">scales</span>[<span class="ruby-identifier">ps</span>[<span class="ruby-identifier">i</span>]]
+         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">size</span><span class="ruby-operator">&gt;</span><span class="ruby-identifier">biggst</span> <span class="ruby-keyword kw">then</span>
+            <span class="ruby-identifier">biggst</span> = <span class="ruby-identifier">size</span>
+            <span class="ruby-identifier">pividx</span>  = <span class="ruby-identifier">i</span>
+         <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;Singular matrix&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">biggst</span><span class="ruby-operator">&lt;=</span><span class="ruby-identifier">zero</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">pividx!</span>=<span class="ruby-identifier">k</span> <span class="ruby-keyword kw">then</span>
+        <span class="ruby-identifier">j</span> = <span class="ruby-identifier">ps</span>[<span class="ruby-identifier">k</span>]
+        <span class="ruby-identifier">ps</span>[<span class="ruby-identifier">k</span>] = <span class="ruby-identifier">ps</span>[<span class="ruby-identifier">pividx</span>]
+        <span class="ruby-identifier">ps</span>[<span class="ruby-identifier">pividx</span>] = <span class="ruby-identifier">j</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">pivot</span>   = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">ps</span>[<span class="ruby-identifier">k</span>]<span class="ruby-operator">*</span><span class="ruby-identifier">n</span><span class="ruby-operator">+</span><span class="ruby-identifier">k</span>]
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">i</span> <span class="ruby-keyword kw">in</span> (<span class="ruby-identifier">k</span><span class="ruby-operator">+</span><span class="ruby-value">1</span>)<span class="ruby-operator">...</span><span class="ruby-identifier">n</span> <span class="ruby-keyword kw">do</span>
+        <span class="ruby-identifier">psin</span> = <span class="ruby-identifier">ps</span>[<span class="ruby-identifier">i</span>]<span class="ruby-operator">*</span><span class="ruby-identifier">n</span>
+        <span class="ruby-identifier">a</span>[<span class="ruby-identifier">psin</span><span class="ruby-operator">+</span><span class="ruby-identifier">k</span>] = <span class="ruby-identifier">mult</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">psin</span><span class="ruby-operator">+</span><span class="ruby-identifier">k</span>].<span class="ruby-identifier">div</span>(<span class="ruby-identifier">pivot</span>,<span class="ruby-identifier">prec</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mult!</span>=<span class="ruby-identifier">zero</span> <span class="ruby-keyword kw">then</span>
+           <span class="ruby-identifier">pskn</span> = <span class="ruby-identifier">ps</span>[<span class="ruby-identifier">k</span>]<span class="ruby-operator">*</span><span class="ruby-identifier">n</span>
+           <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">j</span> <span class="ruby-keyword kw">in</span> (<span class="ruby-identifier">k</span><span class="ruby-operator">+</span><span class="ruby-value">1</span>)<span class="ruby-operator">...</span><span class="ruby-identifier">n</span> <span class="ruby-keyword kw">do</span>
+             <span class="ruby-identifier">a</span>[<span class="ruby-identifier">psin</span><span class="ruby-operator">+</span><span class="ruby-identifier">j</span>] <span class="ruby-operator">-=</span> <span class="ruby-identifier">mult</span>.<span class="ruby-identifier">mult</span>(<span class="ruby-identifier">a</span>[<span class="ruby-identifier">pskn</span><span class="ruby-operator">+</span><span class="ruby-identifier">j</span>],<span class="ruby-identifier">prec</span>)
+           <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;Singular matrix&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">a</span>[<span class="ruby-identifier">ps</span>[<span class="ruby-identifier">n1</span>]<span class="ruby-operator">*</span><span class="ruby-identifier">n</span><span class="ruby-operator">+</span><span class="ruby-identifier">n1</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">zero</span>
+    <span class="ruby-identifier">ps</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-comment cmt"># Solves a*x = b for x, using LU decomposition.</span>
+  <span class="ruby-comment cmt">#</span>
+  <span class="ruby-comment cmt"># a is a matrix, b is a constant vector, x is the solution vector.</span>
+  <span class="ruby-comment cmt">#</span>
+  <span class="ruby-comment cmt"># ps is the pivot, a vector which indicates the permutation of rows performed</span>
+  <span class="ruby-comment cmt"># during LU decomposition.</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">lusolve</span>(<span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span>,<span class="ruby-identifier">ps</span>,<span class="ruby-identifier">zero</span>=<span class="ruby-value">0</span><span class="ruby-value">.0</span>)
+    <span class="ruby-identifier">prec</span> = <span class="ruby-constant">BigDecimal</span>.<span class="ruby-identifier">limit</span>(<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-identifier">n</span> = <span class="ruby-identifier">ps</span>.<span class="ruby-identifier">size</span>
+    <span class="ruby-identifier">x</span> = []
+    <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">i</span> <span class="ruby-keyword kw">in</span> <span class="ruby-value">0</span><span class="ruby-operator">...</span><span class="ruby-identifier">n</span> <span class="ruby-keyword kw">do</span>
+      <span class="ruby-identifier">dot</span> = <span class="ruby-identifier">zero</span>
+      <span class="ruby-identifier">psin</span> = <span class="ruby-identifier">ps</span>[<span class="ruby-identifier">i</span>]<span class="ruby-operator">*</span><span class="ruby-identifier">n</span>
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">j</span> <span class="ruby-keyword kw">in</span> <span class="ruby-value">0</span><span class="ruby-operator">...</span><span class="ruby-identifier">i</span> <span class="ruby-keyword kw">do</span>
+        <span class="ruby-identifier">dot</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">psin</span><span class="ruby-operator">+</span><span class="ruby-identifier">j</span>].<span class="ruby-identifier">mult</span>(<span class="ruby-identifier">x</span>[<span class="ruby-identifier">j</span>],<span class="ruby-identifier">prec</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">dot</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">x</span> <span class="ruby-operator">&lt;&lt;=</span> <span class="ruby-identifier">b</span>[<span class="ruby-identifier">ps</span>[<span class="ruby-identifier">i</span>]] <span class="ruby-operator">-</span> <span class="ruby-identifier">dot</span>
+    <span class="ruby-keyword kw">end</span>
+    (<span class="ruby-identifier">n</span><span class="ruby-operator">-</span><span class="ruby-value">1</span>).<span class="ruby-identifier">downto</span>(<span class="ruby-value">0</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+       <span class="ruby-identifier">dot</span> = <span class="ruby-identifier">zero</span>
+       <span class="ruby-identifier">psin</span> = <span class="ruby-identifier">ps</span>[<span class="ruby-identifier">i</span>]<span class="ruby-operator">*</span><span class="ruby-identifier">n</span>
+       <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">j</span> <span class="ruby-keyword kw">in</span> (<span class="ruby-identifier">i</span><span class="ruby-operator">+</span><span class="ruby-value">1</span>)<span class="ruby-operator">...</span><span class="ruby-identifier">n</span> <span class="ruby-keyword kw">do</span>
+         <span class="ruby-identifier">dot</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">psin</span><span class="ruby-operator">+</span><span class="ruby-identifier">j</span>].<span class="ruby-identifier">mult</span>(<span class="ruby-identifier">x</span>[<span class="ruby-identifier">j</span>],<span class="ruby-identifier">prec</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">dot</span>
+       <span class="ruby-keyword kw">end</span>
+       <span class="ruby-identifier">x</span>[<span class="ruby-identifier">i</span>]  = (<span class="ruby-identifier">x</span>[<span class="ruby-identifier">i</span>]<span class="ruby-operator">-</span><span class="ruby-identifier">dot</span>).<span class="ruby-identifier">div</span>(<span class="ruby-identifier">a</span>[<span class="ruby-identifier">psin</span><span class="ruby-operator">+</span><span class="ruby-identifier">i</span>],<span class="ruby-identifier">prec</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">x</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span>
+
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000077" class="m-detail">
+        <a name="M000077"></a>
+
+        <div class="method-heading">
+          <a href="#M000077" class="method-signature">
+          <span class="method-name">lusolve</span><span class="method-args">(a,b,ps,zero=0.0)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Solves a*x = b for x, using LU decomposition.
+</p>
+<p>
+a is a matrix, b is a constant vector, x is the solution vector.
+</p>
+<p>
+ps is the pivot, a vector which indicates the permutation of rows performed
+during LU decomposition.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000077-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000077-source">
+<pre>
+<span class="ruby-comment cmt"># File bigdecimal/lib/bigdecimal/ludcmp.rb, line 62</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">lusolve</span>(<span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span>,<span class="ruby-identifier">ps</span>,<span class="ruby-identifier">zero</span>=<span class="ruby-value">0</span><span class="ruby-value">.0</span>)
+    <span class="ruby-identifier">prec</span> = <span class="ruby-constant">BigDecimal</span>.<span class="ruby-identifier">limit</span>(<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-identifier">n</span> = <span class="ruby-identifier">ps</span>.<span class="ruby-identifier">size</span>
+    <span class="ruby-identifier">x</span> = []
+    <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">i</span> <span class="ruby-keyword kw">in</span> <span class="ruby-value">0</span><span class="ruby-operator">...</span><span class="ruby-identifier">n</span> <span class="ruby-keyword kw">do</span>
+      <span class="ruby-identifier">dot</span> = <span class="ruby-identifier">zero</span>
+      <span class="ruby-identifier">psin</span> = <span class="ruby-identifier">ps</span>[<span class="ruby-identifier">i</span>]<span class="ruby-operator">*</span><span class="ruby-identifier">n</span>
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">j</span> <span class="ruby-keyword kw">in</span> <span class="ruby-value">0</span><span class="ruby-operator">...</span><span class="ruby-identifier">i</span> <span class="ruby-keyword kw">do</span>
+        <span class="ruby-identifier">dot</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">psin</span><span class="ruby-operator">+</span><span class="ruby-identifier">j</span>].<span class="ruby-identifier">mult</span>(<span class="ruby-identifier">x</span>[<span class="ruby-identifier">j</span>],<span class="ruby-identifier">prec</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">dot</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">x</span> <span class="ruby-operator">&lt;&lt;=</span> <span class="ruby-identifier">b</span>[<span class="ruby-identifier">ps</span>[<span class="ruby-identifier">i</span>]] <span class="ruby-operator">-</span> <span class="ruby-identifier">dot</span>
+    <span class="ruby-keyword kw">end</span>
+    (<span class="ruby-identifier">n</span><span class="ruby-operator">-</span><span class="ruby-value">1</span>).<span class="ruby-identifier">downto</span>(<span class="ruby-value">0</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+       <span class="ruby-identifier">dot</span> = <span class="ruby-identifier">zero</span>
+       <span class="ruby-identifier">psin</span> = <span class="ruby-identifier">ps</span>[<span class="ruby-identifier">i</span>]<span class="ruby-operator">*</span><span class="ruby-identifier">n</span>
+       <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">j</span> <span class="ruby-keyword kw">in</span> (<span class="ruby-identifier">i</span><span class="ruby-operator">+</span><span class="ruby-value">1</span>)<span class="ruby-operator">...</span><span class="ruby-identifier">n</span> <span class="ruby-keyword kw">do</span>
+         <span class="ruby-identifier">dot</span> = <span class="ruby-identifier">a</span>[<span class="ruby-identifier">psin</span><span class="ruby-operator">+</span><span class="ruby-identifier">j</span>].<span class="ruby-identifier">mult</span>(<span class="ruby-identifier">x</span>[<span class="ruby-identifier">j</span>],<span class="ruby-identifier">prec</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">dot</span>
+       <span class="ruby-keyword kw">end</span>
+       <span class="ruby-identifier">x</span>[<span class="ruby-identifier">i</span>]  = (<span class="ruby-identifier">x</span>[<span class="ruby-identifier">i</span>]<span class="ruby-operator">-</span><span class="ruby-identifier">dot</span>).<span class="ruby-identifier">div</span>(<span class="ruby-identifier">a</span>[<span class="ruby-identifier">psin</span><span class="ruby-operator">+</span><span class="ruby-identifier">i</span>],<span class="ruby-identifier">prec</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">x</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 0 --> <p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and run  by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. Ruby-doc.org was created in 2002 to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

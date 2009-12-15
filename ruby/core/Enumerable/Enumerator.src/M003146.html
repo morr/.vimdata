@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Enumerable::Enumerator)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *    Enumerable::Enumerator.new(obj, method = :each, *args)
+ *
+ *  Creates a new Enumerable::Enumerator object, which is to be
+ *  used as an Enumerable object using the given object's given
+ *  method with the given arguments.
+ *
+ *  e.g.:
+ *      str = &quot;xyz&quot;
+ *
+ *      enum = Enumerable::Enumerator.new(str, :each_byte)
+ *      a = enum.map {|b| '%02x' % b } #=&gt; [&quot;78&quot;, &quot;79&quot;, &quot;7a&quot;]
+ *
+ */
+static VALUE
+enumerator_initialize(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    VALUE enum_obj, enum_method, enum_args;
+
+    rb_scan_args(argc, argv, &quot;11*&quot;, &amp;enum_obj, &amp;enum_method, &amp;enum_args);
+
+    if (enum_method == Qnil)
+        enum_method = sym_each;
+
+    rb_ivar_set(obj, id_enum_obj, enum_obj);
+    rb_ivar_set(obj, id_enum_method, enum_method);
+    rb_ivar_set(obj, id_enum_args, enum_args);
+
+    return Qnil;
+}</pre>
+</body>
+</html>

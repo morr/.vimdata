@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>soap2array (SOAP::SOAPArray)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/baseData.rb, line 818</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">soap2array</span>(<span class="ruby-identifier">ary</span>)
+    <span class="ruby-identifier">traverse_data</span>(<span class="ruby-ivar">@data</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">v</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">position</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">iteary</span> = <span class="ruby-identifier">ary</span>
+      <span class="ruby-identifier">rank</span> = <span class="ruby-value">1</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">rank</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">position</span>.<span class="ruby-identifier">size</span>
+        <span class="ruby-identifier">idx</span> = <span class="ruby-identifier">position</span>[<span class="ruby-identifier">rank</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>]
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">iteary</span>[<span class="ruby-identifier">idx</span>].<span class="ruby-identifier">nil?</span>
+          <span class="ruby-identifier">iteary</span> = <span class="ruby-identifier">iteary</span>[<span class="ruby-identifier">idx</span>] = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">iteary</span> = <span class="ruby-identifier">iteary</span>[<span class="ruby-identifier">idx</span>]
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">rank</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+        <span class="ruby-identifier">iteary</span>[<span class="ruby-identifier">position</span>.<span class="ruby-identifier">last</span>] = <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">v</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">iteary</span>[<span class="ruby-identifier">position</span>.<span class="ruby-identifier">last</span>] = <span class="ruby-identifier">v</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

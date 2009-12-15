@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>readlink (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.readlink(link_name) -&gt; file_name
+ *  
+ *  Returns the name of the file referenced by the given link.
+ *  Not available on all platforms.
+ *     
+ *     File.symlink(&quot;testfile&quot;, &quot;link2test&quot;)   #=&gt; 0
+ *     File.readlink(&quot;link2test&quot;)              #=&gt; &quot;testfile&quot;
+ */
+
+static VALUE
+rb_file_s_readlink(klass, path)
+    VALUE klass, path;
+{
+#ifdef HAVE_READLINK
+    char *buf;
+    int size = 100;
+    int rv;
+    VALUE v;
+
+    SafeStringValue(path);
+    buf = xmalloc(size);
+    while ((rv = readlink(RSTRING(path)-&gt;ptr, buf, size)) == size
+#ifdef _AIX
+            || (rv &lt; 0 &amp;&amp; errno == ERANGE) /* quirky behavior of GPFS */
+#endif
+        ) {
+        size *= 2;
+        buf = xrealloc(buf, size);
+    }
+    if (rv &lt; 0) {
+        free(buf);
+        rb_sys_fail(RSTRING(path)-&gt;ptr);
+    }
+    v = rb_tainted_str_new(buf, rv);
+    free(buf);
+
+    return v;
+#else
+    rb_notimplement();
+    return Qnil;                /* not reached */
+#endif
+}</pre>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>generate_row (CSV)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/csv.rb, line 271</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">CSV</span>.<span class="ruby-identifier">generate_row</span>(<span class="ruby-identifier">src</span>, <span class="ruby-identifier">cells</span>, <span class="ruby-identifier">out_dev</span>, <span class="ruby-identifier">fs</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">rs</span> = <span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-identifier">fs</span> <span class="ruby-operator">||=</span> <span class="ruby-value str">','</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">fs</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Fixnum</span>)
+      <span class="ruby-identifier">fs</span> = <span class="ruby-identifier">fs</span>.<span class="ruby-identifier">chr</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">rs</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">rs</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Fixnum</span>)
+      <span class="ruby-identifier">rs</span> = <span class="ruby-identifier">rs</span>.<span class="ruby-identifier">chr</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">src_size</span> = <span class="ruby-identifier">src</span>.<span class="ruby-identifier">size</span>
+    <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">src_size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cells</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+        <span class="ruby-identifier">generate_separator</span>(<span class="ruby-identifier">:DT_ROWSEP</span>, <span class="ruby-identifier">out_dev</span>, <span class="ruby-identifier">fs</span>, <span class="ruby-identifier">rs</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">res_type</span> = <span class="ruby-identifier">:DT_COLSEP</span>
+    <span class="ruby-identifier">parsed_cells</span> = <span class="ruby-value">0</span>
+    <span class="ruby-identifier">generate_body</span>(<span class="ruby-identifier">src</span>[<span class="ruby-identifier">parsed_cells</span>], <span class="ruby-identifier">out_dev</span>, <span class="ruby-identifier">fs</span>, <span class="ruby-identifier">rs</span>)
+    <span class="ruby-identifier">parsed_cells</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+    <span class="ruby-keyword kw">while</span> ((<span class="ruby-identifier">parsed_cells</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">cells</span>) <span class="ruby-keyword kw">and</span> (<span class="ruby-identifier">parsed_cells</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">src_size</span>))
+      <span class="ruby-identifier">generate_separator</span>(<span class="ruby-identifier">:DT_COLSEP</span>, <span class="ruby-identifier">out_dev</span>, <span class="ruby-identifier">fs</span>, <span class="ruby-identifier">rs</span>)
+      <span class="ruby-identifier">generate_body</span>(<span class="ruby-identifier">src</span>[<span class="ruby-identifier">parsed_cells</span>], <span class="ruby-identifier">out_dev</span>, <span class="ruby-identifier">fs</span>, <span class="ruby-identifier">rs</span>)
+      <span class="ruby-identifier">parsed_cells</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">parsed_cells</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">cells</span>)
+      <span class="ruby-identifier">generate_separator</span>(<span class="ruby-identifier">:DT_ROWSEP</span>, <span class="ruby-identifier">out_dev</span>, <span class="ruby-identifier">fs</span>, <span class="ruby-identifier">rs</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">generate_separator</span>(<span class="ruby-identifier">:DT_COLSEP</span>, <span class="ruby-identifier">out_dev</span>, <span class="ruby-identifier">fs</span>, <span class="ruby-identifier">rs</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">parsed_cells</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

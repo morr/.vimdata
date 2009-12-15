@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>arity (Method)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     meth.arity    =&gt; fixnum
+ *  
+ *  Returns an indication of the number of arguments accepted by a
+ *  method. Returns a nonnegative integer for methods that take a fixed
+ *  number of arguments. For Ruby methods that take a variable number of
+ *  arguments, returns -n-1, where n is the number of required
+ *  arguments. For methods written in C, returns -1 if the call takes a
+ *  variable number of arguments.
+ *     
+ *     class C
+ *       def one;    end
+ *       def two(a); end
+ *       def three(*a);  end
+ *       def four(a, b); end
+ *       def five(a, b, *c);    end
+ *       def six(a, b, *c, &amp;d); end
+ *     end
+ *     c = C.new
+ *     c.method(:one).arity     #=&gt; 0
+ *     c.method(:two).arity     #=&gt; 1
+ *     c.method(:three).arity   #=&gt; -1
+ *     c.method(:four).arity    #=&gt; 2
+ *     c.method(:five).arity    #=&gt; -3
+ *     c.method(:six).arity     #=&gt; -3
+ *     
+ *     &quot;cat&quot;.method(:size).arity      #=&gt; 0
+ *     &quot;cat&quot;.method(:replace).arity   #=&gt; 1
+ *     &quot;cat&quot;.method(:squeeze).arity   #=&gt; -1
+ *     &quot;cat&quot;.method(:count).arity     #=&gt; -1
+ */
+
+static VALUE
+method_arity(method)
+    VALUE method;
+{
+    struct METHOD *data;
+    NODE *body;
+    int n;
+
+    Data_Get_Struct(method, struct METHOD, data);
+
+    body = data-&gt;body;
+    switch (nd_type(body)) {
+      case NODE_CFUNC:
+        if (body-&gt;nd_argc &lt; 0) return INT2FIX(-1);
+        return INT2FIX(body-&gt;nd_argc);
+      case NODE_ZSUPER:
+        return INT2FIX(-1);
+      case NODE_ATTRSET:
+        return INT2FIX(1);
+      case NODE_IVAR:
+        return INT2FIX(0);
+      case NODE_BMETHOD:
+        return proc_arity(body-&gt;nd_cval);
+      case NODE_DMETHOD:
+        return method_arity(body-&gt;nd_cval);
+      case NODE_SCOPE:
+        body = body-&gt;nd_next;  /* skip NODE_SCOPE */
+        if (nd_type(body) == NODE_BLOCK)
+            body = body-&gt;nd_head;
+        if (!body) return INT2FIX(0);
+        n = body-&gt;nd_cnt;
+        if (body-&gt;nd_opt || body-&gt;nd_rest)
+            n = -n-1;
+        return INT2FIX(n);
+      default:
+        rb_raise(rb_eArgError, &quot;invalid node 0x%x&quot;, nd_type(body));
+   }
+}</pre>
+</body>
+</html>

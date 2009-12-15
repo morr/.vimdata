@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>grep (Enumerable)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     enum.grep(pattern)                   =&gt; array
+ *     enum.grep(pattern) {| obj | block }  =&gt; array
+ *  
+ *  Returns an array of every element in &lt;i&gt;enum&lt;/i&gt; for which
+ *  &lt;code&gt;Pattern === element&lt;/code&gt;. If the optional &lt;em&gt;block&lt;/em&gt; is
+ *  supplied, each matching element is passed to it, and the block's
+ *  result is stored in the output array.
+ *     
+ *     (1..100).grep 38..44   #=&gt; [38, 39, 40, 41, 42, 43, 44]
+ *     c = IO.constants
+ *     c.grep(/SEEK/)         #=&gt; [&quot;SEEK_END&quot;, &quot;SEEK_SET&quot;, &quot;SEEK_CUR&quot;]
+ *     res = c.grep(/SEEK/) {|v| IO.const_get(v) }
+ *     res                    #=&gt; [2, 0, 1]
+ *     
+ */
+
+static VALUE
+enum_grep(obj, pat)
+    VALUE obj, pat;
+{
+    VALUE ary = rb_ary_new();
+    VALUE arg[2];
+
+    arg[0] = pat;
+    arg[1] = ary;
+
+    rb_iterate(rb_each, obj, rb_block_given_p() ? grep_iter_i : grep_i, (VALUE)arg);
+    
+    return ary;
+}</pre>
+</body>
+</html>

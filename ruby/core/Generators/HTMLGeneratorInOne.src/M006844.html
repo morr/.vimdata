@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>generate_xml (Generators::HTMLGeneratorInOne)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/generators/html_generator.rb, line 1451</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generate_xml</span>
+      <span class="ruby-identifier">values</span> = { 
+        <span class="ruby-value str">'charset'</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">charset</span>,
+        <span class="ruby-value str">'files'</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">gen_into</span>(<span class="ruby-ivar">@files</span>),
+        <span class="ruby-value str">'classes'</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">gen_into</span>(<span class="ruby-ivar">@classes</span>),
+        <span class="ruby-value str">'title'</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">escapeHTML</span>(<span class="ruby-ivar">@options</span>.<span class="ruby-identifier">title</span>),
+      }
+      
+      <span class="ruby-comment cmt"># this method is defined in the template file</span>
+      <span class="ruby-identifier">write_extra_pages</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-identifier">write_extra_pages</span>
+
+      <span class="ruby-identifier">template</span> = <span class="ruby-constant">TemplatePage</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">RDoc</span><span class="ruby-operator">::</span><span class="ruby-constant">Page</span><span class="ruby-operator">::</span><span class="ruby-constant">ONE_PAGE</span>)
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">op_name</span>
+        <span class="ruby-identifier">opfile</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-ivar">@options</span>.<span class="ruby-identifier">op_name</span>, <span class="ruby-value str">&quot;w&quot;</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">opfile</span> = <span class="ruby-identifier">$stdout</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">template</span>.<span class="ruby-identifier">write_html_on</span>(<span class="ruby-identifier">opfile</span>, <span class="ruby-identifier">values</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

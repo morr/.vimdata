@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>shift (Hash)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     hsh.shift -&gt; anArray or obj
+ *  
+ *  Removes a key-value pair from &lt;i&gt;hsh&lt;/i&gt; and returns it as the
+ *  two-item array &lt;code&gt;[&lt;/code&gt; &lt;i&gt;key, value&lt;/i&gt; &lt;code&gt;]&lt;/code&gt;, or
+ *  the hash's default value if the hash is empty.
+ *     
+ *     h = { 1 =&gt; &quot;a&quot;, 2 =&gt; &quot;b&quot;, 3 =&gt; &quot;c&quot; }
+ *     h.shift   #=&gt; [1, &quot;a&quot;]
+ *     h         #=&gt; {2=&gt;&quot;b&quot;, 3=&gt;&quot;c&quot;}
+ */
+
+static VALUE
+rb_hash_shift(hash)
+    VALUE hash;
+{
+    struct shift_var var;
+
+    rb_hash_modify(hash);
+    var.key = Qundef;
+    if (RHASH(hash)-&gt;iter_lev &gt; 0) {
+        rb_hash_foreach(hash, shift_i_safe, (st_data_t)&amp;var);
+        if (var.key != Qundef) {
+            st_data_t key = var.key;
+            if (st_delete_safe(RHASH(hash)-&gt;tbl, &amp;key, 0, Qundef)) {
+                FL_SET(hash, HASH_DELETED);
+            }
+        }
+    }
+    else {
+        rb_hash_foreach(hash, shift_i, (st_data_t)&amp;var);
+    }
+
+    if (var.key != Qundef) {
+        return rb_assoc_new(var.key, var.val);
+    }
+    else if (FL_TEST(hash, HASH_PROC_DEFAULT)) {
+        return rb_funcall(RHASH(hash)-&gt;ifnone, id_call, 2, hash, Qnil);
+    }
+    else {
+        return RHASH(hash)-&gt;ifnone;
+    }
+}</pre>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>pop (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.pop  -&gt; obj or nil
+ *  
+ *  Removes the last element from &lt;i&gt;self&lt;/i&gt; and returns it, or
+ *  &lt;code&gt;nil&lt;/code&gt; if the array is empty.
+ *     
+ *     a = [ &quot;a&quot;, &quot;m&quot;, &quot;z&quot; ]
+ *     a.pop   #=&gt; &quot;z&quot;
+ *     a       #=&gt; [&quot;a&quot;, &quot;m&quot;]
+ */
+
+VALUE
+rb_ary_pop(ary)
+    VALUE ary;
+{
+    rb_ary_modify_check(ary);
+    if (RARRAY(ary)-&gt;len == 0) return Qnil;
+    if (!FL_TEST(ary, ELTS_SHARED) &amp;&amp;
+            RARRAY(ary)-&gt;len * 2 &lt; RARRAY(ary)-&gt;aux.capa &amp;&amp;
+            RARRAY(ary)-&gt;aux.capa &gt; ARY_DEFAULT_SIZE) {
+        RARRAY(ary)-&gt;aux.capa = RARRAY(ary)-&gt;len * 2;
+        REALLOC_N(RARRAY(ary)-&gt;ptr, VALUE, RARRAY(ary)-&gt;aux.capa);
+    }
+    return RARRAY(ary)-&gt;ptr[--RARRAY(ary)-&gt;len];
+}</pre>
+</body>
+</html>

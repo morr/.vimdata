@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>delete (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.delete(obj)            -&gt; obj or nil 
+ *     array.delete(obj) { block }  -&gt; obj or nil
+ *  
+ *  Deletes items from &lt;i&gt;self&lt;/i&gt; that are equal to &lt;i&gt;obj&lt;/i&gt;. If
+ *  the item is not found, returns &lt;code&gt;nil&lt;/code&gt;. If the optional
+ *  code block is given, returns the result of &lt;i&gt;block&lt;/i&gt; if the item
+ *  is not found.
+ *     
+ *     a = [ &quot;a&quot;, &quot;b&quot;, &quot;b&quot;, &quot;b&quot;, &quot;c&quot; ]
+ *     a.delete(&quot;b&quot;)                   #=&gt; &quot;b&quot;
+ *     a                               #=&gt; [&quot;a&quot;, &quot;c&quot;]
+ *     a.delete(&quot;z&quot;)                   #=&gt; nil
+ *     a.delete(&quot;z&quot;) { &quot;not found&quot; }   #=&gt; &quot;not found&quot;
+ */
+
+VALUE
+rb_ary_delete(ary, item)
+    VALUE ary;
+    VALUE item;
+{
+    long i1, i2;
+
+    for (i1 = i2 = 0; i1 &lt; RARRAY(ary)-&gt;len; i1++) {
+        VALUE e = RARRAY(ary)-&gt;ptr[i1];
+
+        if (rb_equal(e, item)) continue;
+        if (i1 != i2) {
+            rb_ary_store(ary, i2, e);
+        }
+        i2++;
+    }
+    if (RARRAY(ary)-&gt;len == i2) {
+        if (rb_block_given_p()) {
+            return rb_yield(item);
+        }
+        return Qnil;
+    }
+
+    rb_ary_modify(ary);
+    if (RARRAY(ary)-&gt;len &gt; i2) {
+        RARRAY(ary)-&gt;len = i2;
+        if (i2 * 2 &lt; RARRAY(ary)-&gt;aux.capa &amp;&amp;
+            RARRAY(ary)-&gt;aux.capa &gt; ARY_DEFAULT_SIZE) {
+            REALLOC_N(RARRAY(ary)-&gt;ptr, VALUE, i2 * 2);
+            RARRAY(ary)-&gt;aux.capa = i2 * 2;
+        }
+    }
+
+    return item;
+}</pre>
+</body>
+</html>

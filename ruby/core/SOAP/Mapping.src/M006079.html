@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>create_empty_object (SOAP::Mapping)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/mapping/mapping.rb, line 161</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">create_empty_object</span>(<span class="ruby-identifier">klass</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-constant">Struct</span>
+        <span class="ruby-identifier">name</span> = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">name</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-operator">::</span><span class="ruby-constant">Marshal</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;\004\006S:%c%s\000&quot;</span>, <span class="ruby-identifier">name</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-value">5</span>, <span class="ruby-identifier">name</span>))
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">MARSHAL_TAG</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">klass</span>)
+        <span class="ruby-identifier">tag</span>, <span class="ruby-identifier">terminate</span> = <span class="ruby-constant">MARSHAL_TAG</span>[<span class="ruby-identifier">klass</span>]
+        <span class="ruby-keyword kw">return</span> <span class="ruby-operator">::</span><span class="ruby-constant">Marshal</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;\004\006%s%s&quot;</span>, <span class="ruby-identifier">tag</span>, <span class="ruby-value str">&quot;\000&quot;</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">terminate</span>))
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-constant">MARSHAL_TAG</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">k</span>
+          <span class="ruby-identifier">name</span> = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">name</span>
+          <span class="ruby-identifier">tag</span>, <span class="ruby-identifier">terminate</span> = <span class="ruby-identifier">v</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-operator">::</span><span class="ruby-constant">Marshal</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;\004\006C:%c%s%s%s&quot;</span>, <span class="ruby-identifier">name</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-value">5</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">tag</span>, <span class="ruby-value str">&quot;\000&quot;</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">terminate</span>))
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">name</span> = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-operator">::</span><span class="ruby-constant">Marshal</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;\004\006o:%c%s\000&quot;</span>, <span class="ruby-identifier">name</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-value">5</span>, <span class="ruby-identifier">name</span>))
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

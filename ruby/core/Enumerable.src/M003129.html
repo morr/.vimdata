@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>inject (Enumerable)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     enum.inject(initial) {| memo, obj | block }  =&gt; obj
+ *     enum.inject          {| memo, obj | block }  =&gt; obj
+ *  
+ *  Combines the elements of &lt;i&gt;enum&lt;/i&gt; by applying the block to an
+ *  accumulator value (&lt;i&gt;memo&lt;/i&gt;) and each element in turn. At each
+ *  step, &lt;i&gt;memo&lt;/i&gt; is set to the value returned by the block. The
+ *  first form lets you supply an initial value for &lt;i&gt;memo&lt;/i&gt;. The
+ *  second form uses the first element of the collection as a the
+ *  initial value (and skips that element while iterating).
+ *     
+ *     # Sum some numbers
+ *     (5..10).inject {|sum, n| sum + n }              #=&gt; 45
+ *     # Multiply some numbers
+ *     (5..10).inject(1) {|product, n| product * n }   #=&gt; 151200
+ *     
+ *     # find the longest word
+ *     longest = %w{ cat sheep bear }.inject do |memo,word|
+ *        memo.length &gt; word.length ? memo : word
+ *     end
+ *     longest                                         #=&gt; &quot;sheep&quot;
+ *     
+ *     # find the length of the longest word
+ *     longest = %w{ cat sheep bear }.inject(0) do |memo,word|
+ *        memo &gt;= word.length ? memo : word.length
+ *     end
+ *     longest                                         #=&gt; 5
+ *     
+ */
+
+static VALUE
+enum_inject(argc, argv, obj)
+    int argc;
+    VALUE *argv, obj;
+{
+    VALUE memo = Qundef;
+
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;memo) == 0)
+        memo = Qundef;
+    rb_iterate(rb_each, obj, inject_i, (VALUE)&amp;memo);
+    if (memo == Qundef) return Qnil;
+    return memo;
+}</pre>
+</body>
+</html>

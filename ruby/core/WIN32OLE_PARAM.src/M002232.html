@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>output? (WIN32OLE_PARAM)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE#output?
+ * 
+ *  Returns true if argument is output.
+ *     tobj = WIN32OLE_TYPE.new('Microsoft Internet Controls', 'DWebBrowserEvents')
+ *     method = WIN32OLE_METHOD.new(tobj, 'NewWindow')
+ *     method.params.each do |param|
+ *       puts &quot;#{param.name} #{param.output?}&quot;
+ *     end
+ *
+ *     The result of above script is following:
+ *       URL false
+ *       Flags false
+ *       TargetFrameName false
+ *       PostData false
+ *       Headers false
+ *       Processed true
+ */
+static VALUE foleparam_output(self)
+    VALUE self;
+{
+    struct oleparamdata *pparam;
+    Data_Get_Struct(self, struct oleparamdata, pparam);
+    return ole_param_flag_mask(pparam-&gt;pTypeInfo, pparam-&gt;method_index, 
+                               pparam-&gt;index, PARAMFLAG_FOUT);
+}</pre>
+</body>
+</html>

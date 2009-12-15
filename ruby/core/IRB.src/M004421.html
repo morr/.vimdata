@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>start (IRB)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb.rb, line 51</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">start</span>(<span class="ruby-identifier">ap_path</span> = <span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-identifier">$0</span> = <span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-identifier">basename</span>(<span class="ruby-identifier">ap_path</span>, <span class="ruby-value str">&quot;.rb&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ap_path</span>
+
+    <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">setup</span>(<span class="ruby-identifier">ap_path</span>)
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:SCRIPT</span>]
+      <span class="ruby-identifier">irb</span> = <span class="ruby-constant">Irb</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">nil</span>, <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:SCRIPT</span>])
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">irb</span> = <span class="ruby-constant">Irb</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:IRB_RC</span>].<span class="ruby-identifier">call</span>(<span class="ruby-identifier">irb</span>.<span class="ruby-identifier">context</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:IRB_RC</span>]
+    <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:MAIN_CONTEXT</span>] = <span class="ruby-identifier">irb</span>.<span class="ruby-identifier">context</span>
+
+    <span class="ruby-identifier">trap</span>(<span class="ruby-value str">&quot;SIGINT&quot;</span>) <span class="ruby-keyword kw">do</span>
+      <span class="ruby-identifier">irb</span>.<span class="ruby-identifier">signal_handle</span>
+    <span class="ruby-keyword kw">end</span>
+    
+    <span class="ruby-identifier">catch</span>(<span class="ruby-identifier">:IRB_EXIT</span>) <span class="ruby-keyword kw">do</span>
+      <span class="ruby-identifier">irb</span>.<span class="ruby-identifier">eval_input</span>
+    <span class="ruby-keyword kw">end</span>
+<span class="ruby-comment cmt">#    print &quot;\n&quot;</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

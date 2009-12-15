@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>identical? (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   File.identical?(file_1, file_2)   =&gt;  true or false
+ *
+ * Returns &lt;code&gt;true&lt;/code&gt; if the named files are identical.
+ *
+ *     open(&quot;a&quot;, &quot;w&quot;) {}
+ *     p File.identical?(&quot;a&quot;, &quot;a&quot;)      #=&gt; true
+ *     p File.identical?(&quot;a&quot;, &quot;./a&quot;)    #=&gt; true
+ *     File.link(&quot;a&quot;, &quot;b&quot;)
+ *     p File.identical?(&quot;a&quot;, &quot;b&quot;)      #=&gt; true
+ *     File.symlink(&quot;a&quot;, &quot;c&quot;)
+ *     p File.identical?(&quot;a&quot;, &quot;c&quot;)      #=&gt; true
+ *     open(&quot;d&quot;, &quot;w&quot;) {}
+ *     p File.identical?(&quot;a&quot;, &quot;d&quot;)      #=&gt; false
+ */
+
+static VALUE
+test_identical(obj, fname1, fname2)
+    VALUE obj, fname1, fname2;
+{
+#ifndef DOSISH
+    struct stat st1, st2;
+
+    if (rb_stat(fname1, &amp;st1) &lt; 0) return Qfalse;
+    if (rb_stat(fname2, &amp;st2) &lt; 0) return Qfalse;
+    if (st1.st_dev != st2.st_dev) return Qfalse;
+    if (st1.st_ino != st2.st_ino) return Qfalse;
+#else
+#ifdef _WIN32
+    BY_HANDLE_FILE_INFORMATION st1, st2;
+    HANDLE f1 = 0, f2 = 0;
+#endif
+
+    rb_secure(2);
+#ifdef _WIN32
+    f1 = w32_io_info(&amp;fname1, &amp;st1);
+    if (f1 == INVALID_HANDLE_VALUE) return Qfalse;
+    f2 = w32_io_info(&amp;fname2, &amp;st2);
+    if (f1) CloseHandle(f1);
+    if (f2 == INVALID_HANDLE_VALUE) return Qfalse;
+    if (f2) CloseHandle(f2);
+
+    if (st1.dwVolumeSerialNumber == st2.dwVolumeSerialNumber &amp;&amp;
+        st1.nFileIndexHigh == st2.nFileIndexHigh &amp;&amp;
+        st1.nFileIndexLow == st2.nFileIndexLow)
+        return Qtrue;
+    if (!f1 || !f2) return Qfalse;
+    if (rb_w32_iswin95()) return Qfalse;
+#else
+    SafeStringValue(fname1);
+    fname1 = rb_str_new4(fname1);
+    SafeStringValue(fname2);
+    if (access(RSTRING(fname1)-&gt;ptr, 0)) return Qfalse;
+    if (access(RSTRING(fname2)-&gt;ptr, 0)) return Qfalse;
+#endif
+    fname1 = rb_file_expand_path(fname1, Qnil);
+    fname2 = rb_file_expand_path(fname2, Qnil);
+    if (RSTRING(fname1)-&gt;len != RSTRING(fname2)-&gt;len) return Qfalse;
+    if (rb_memcicmp(RSTRING(fname1)-&gt;ptr, RSTRING(fname2)-&gt;ptr, RSTRING(fname1)-&gt;len))
+        return Qfalse;
+#endif
+    return Qtrue;
+}</pre>
+</body>
+</html>

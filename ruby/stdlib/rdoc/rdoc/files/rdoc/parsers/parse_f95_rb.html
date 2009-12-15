@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: parse_f95.rb</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>parse_f95.rb</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>rdoc/parsers/parse_f95.rb
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Tue Mar 13 02:06:35 -0500 2007</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1>parse_f95.rb - Fortran95 Parser</h1>
+<h2>Overview</h2>
+<p>
+&quot;parse_f95.rb&quot; parses Fortran95 files with suffixes
+&quot;f90&quot;, &quot;F90&quot;, &quot;f95&quot; and &quot;F95&quot;.
+Fortran95 files are expected to be conformed to Fortran95 standards.
+</p>
+<h2>Rules</h2>
+<p>
+Fundamental rules are same as that of the Ruby parser. But comment markers
+are &#8217;!&#8217; not &#8217;#&#8217;.
+</p>
+<h3>Correspondence between <a href="../../../classes/RDoc.html">RDoc</a> documentation and Fortran95 programs</h3>
+<p>
+&quot;parse_f95.rb&quot; parses main programs, modules, subroutines,
+functions, derived-types, public variables, public constants, defined
+operators and defined assignments. These components are described in items
+of <a href="../../../classes/RDoc.html">RDoc</a> documentation, as follows.
+</p>
+<table>
+<tr><td valign="top">Files :</td><td>Files (same as Ruby)
+
+</td></tr>
+<tr><td valign="top">Classes :</td><td>Modules
+
+</td></tr>
+<tr><td valign="top">Methods :</td><td>Subroutines, functions, variables, constants, derived-types, defined
+operators, defined assignments
+
+</td></tr>
+<tr><td valign="top">Required files :</td><td>Files in which imported modules, external subroutines and external
+functions are defined.
+
+</td></tr>
+<tr><td valign="top">Included Modules :</td><td>List of imported modules
+
+</td></tr>
+<tr><td valign="top">Attributes :</td><td>List of derived-types, List of imported modules all of whose components are
+published again
+
+</td></tr>
+</table>
+<p>
+Components listed in &#8216;Methods&#8217; (subroutines, functions,
+&#8230;) defined in modules are described in the item of
+&#8216;Classes&#8217;. On the other hand, components defined in main
+programs or as external procedures are described in the item of
+&#8216;Files&#8217;.
+</p>
+<h3>Components parsed by default</h3>
+<p>
+By default, documentation on public components (subroutines, functions,
+variables, constants, derived-types, defined operators, defined
+assignments) are generated. With &quot;&#8212;all&quot; option,
+documentation on all components are generated (almost same as the Ruby
+parser).
+</p>
+<h3>Information parsed automatically</h3>
+<p>
+The following information is automatically parsed.
+</p>
+<ul>
+<li>Types of arguments
+
+</li>
+<li>Types of variables and constants
+
+</li>
+<li>Types of variables in the derived types, and initial values
+
+</li>
+<li>NAMELISTs and types of variables in them, and initial values
+
+</li>
+</ul>
+<p>
+Aliases by interface statement are described in the item of
+&#8216;Methods&#8217;.
+</p>
+<p>
+Components which are imported from other modules and published again are
+described in the item of &#8216;Methods&#8217;.
+</p>
+<h3>Format of comment blocks</h3>
+<p>
+Comment blocks should be written as follows. Comment blocks are considered
+to be ended when the line without &#8217;!&#8217; appears. The indentation
+is not necessary.
+</p>
+<pre>
+     ! (Top of file)
+     !
+     ! Comment blocks for the files.
+     !
+     !--
+     ! The comment described in the part enclosed by
+     ! &quot;!--&quot; and &quot;!++&quot; is ignored.
+     !++
+     !
+     module hogehoge
+       !
+       ! Comment blocks for the modules (or the programs).
+       !
+
+       private
+
+       logical            :: a     ! a private variable
+       real, public       :: b     ! a public variable
+       integer, parameter :: c = 0 ! a public constant
+
+       public :: c
+       public :: MULTI_ARRAY
+       public :: hoge, foo
+
+       type MULTI_ARRAY
+         !
+         ! Comment blocks for the derived-types.
+         !
+         real, pointer :: var(:) =&gt;null() ! Comments block for the variables.
+         integer       :: num = 0
+       end type MULTI_ARRAY
+
+     contains
+
+       subroutine hoge( in,   &amp;   ! Comment blocks between continuation lines are ignored.
+           &amp;            out )
+         !
+         ! Comment blocks for the subroutines or functions
+         !
+         character(*),intent(in):: in ! Comment blocks for the arguments.
+         character(*),intent(out),allocatable,target  :: in
+                                      ! Comment blocks can be
+                                      ! written under Fortran statements.
+
+         character(32) :: file ! This comment parsed as a variable in below NAMELIST.
+         integer       :: id
+
+         namelist /varinfo_nml/ file, id
+                 !
+                 ! Comment blocks for the NAMELISTs.
+                 ! Information about variables are described above.
+                 !
+
+       ....
+
+       end subroutine hoge
+
+       integer function foo( in )
+         !
+         ! This part is considered as comment block.
+
+         ! Comment blocks under blank lines are ignored.
+         !
+         integer, intent(in):: inA ! This part is considered as comment block.
+
+                                   ! This part is ignored.
+
+       end function foo
+
+       subroutine hide( in,   &amp;
+         &amp;              out )      !:nodoc:
+         !
+         ! If &quot;!:nodoc:&quot; is described at end-of-line in subroutine
+         ! statement as above, the subroutine is ignored.
+         ! This assignment can be used to modules, subroutines,
+         ! functions, variables, constants, derived-types,
+         ! defined operators, defined assignments,
+         ! list of imported modules (&quot;use&quot; statement).
+         !
+
+       ....
+
+       end subroutine hide
+
+     end module hogehoge
+</pre>
+
+    </div>
+
+    <div id="requires-list">
+      <h3 class="section-bar">Required files</h3>
+
+      <div class="name-list">
+      <a href="../code_objects_rb.html">rdoc/code_objects</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 2 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a service of <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, AZ</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

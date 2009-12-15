@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>scan (RDoc::RubyParser)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/parsers/parse_rb.rb, line 1399</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">scan</span>
+      <span class="ruby-ivar">@tokens</span> = []
+      <span class="ruby-ivar">@unget_read</span> = []
+      <span class="ruby-ivar">@read</span> = []
+      <span class="ruby-identifier">catch</span>(<span class="ruby-identifier">:eof</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-identifier">catch</span>(<span class="ruby-identifier">:enddoc</span>) <span class="ruby-keyword kw">do</span>
+          <span class="ruby-keyword kw">begin</span>
+            <span class="ruby-identifier">parse_toplevel_statements</span>(<span class="ruby-ivar">@top_level</span>)
+          <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+            <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;\n\n&quot;</span>
+            <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;RDoc failure in #@input_file_name at or around &quot;</span> <span class="ruby-operator">+</span>
+                         <span class="ruby-node">&quot;line #{@scanner.line_no} column #{@scanner.char_no}&quot;</span>
+            <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> 
+            <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;Before reporting this, could you check that the file&quot;</span>
+            <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;you're documenting compiles cleanly--RDoc is not a&quot;</span>
+            <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;full Ruby parser, and gets confused easily if fed&quot;</span>
+            <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;invalid programs.&quot;</span>
+            <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>
+            <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;The internal error was:\n\n&quot;</span>
+            
+            <span class="ruby-identifier">e</span>.<span class="ruby-identifier">set_backtrace</span>(<span class="ruby-identifier">e</span>.<span class="ruby-identifier">backtrace</span>[<span class="ruby-value">0</span>,<span class="ruby-value">4</span>])
+            <span class="ruby-identifier">raise</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@top_level</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

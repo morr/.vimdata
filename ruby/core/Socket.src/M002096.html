@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sysaccept (Socket)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *      socket.sysaccept =&gt; [client_socket_fd, client_sockaddr]
+ * 
+ * Accepts an incoming connection returnings an array containg the (integer)
+ * file descriptor for the incoming connection, _client_socket_fd_,
+ * and a string that contains the +struct+ sockaddr information
+ * about the caller, _client_sockaddr_.
+ * 
+ * === Example
+ *      # In one script, start this first
+ *      require 'socket'
+ *      include Socket::Constants
+ *      socket = Socket.new( AF_INET, SOCK_STREAM, 0 )
+ *      sockaddr = Socket.pack_sockaddr_in( 2200, 'localhost' )
+ *      socket.bind( sockaddr )
+ *      socket.listen( 5 )
+ *      client_fd, client_sockaddr = socket.sysaccept
+ *      client_socket = Socket.for_fd( client_fd )
+ *      puts &quot;The client said, '#{client_socket.readline.chomp}'&quot;
+ *      client_socket.puts &quot;Hello from script one!&quot;
+ *      socket.close
+ * 
+ *      # In another script, start this second
+ *      require 'socket'
+ *      include Socket::Constants
+ *      socket = Socket.new( AF_INET, SOCK_STREAM, 0 )
+ *      sockaddr = Socket.pack_sockaddr_in( 2200, 'localhost' )
+ *      socket.connect( sockaddr )
+ *      socket.puts &quot;Hello from script 2.&quot; 
+ *      puts &quot;The server said, '#{socket.readline.chomp}'&quot;
+ *      socket.close
+ * 
+ * Refer to Socket#accept for the exceptions that may be thrown if the call
+ * to _sysaccept_ fails. 
+ * 
+ * === See
+ * * Socket#accept
+ */
+static VALUE
+sock_sysaccept(sock)
+    VALUE sock;
+{
+    OpenFile *fptr;
+    VALUE sock2;
+    char buf[1024];
+    socklen_t len = sizeof buf;
+
+    GetOpenFile(sock, fptr);
+    sock2 = s_accept(0,fileno(fptr-&gt;f),(struct sockaddr*)buf,&amp;len);
+
+    return rb_assoc_new(sock2, rb_str_new(buf, len));
+}</pre>
+</body>
+</html>

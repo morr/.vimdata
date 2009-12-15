@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_s (Float)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     flt.to_s    =&gt; string
+ *  
+ *  Returns a string containing a representation of self. As well as a
+ *  fixed or exponential form of the number, the call may return
+ *  ``&lt;code&gt;NaN&lt;/code&gt;'', ``&lt;code&gt;Infinity&lt;/code&gt;'', and
+ *  ``&lt;code&gt;-Infinity&lt;/code&gt;''.
+ */
+
+static VALUE
+flo_to_s(flt)
+    VALUE flt;
+{
+    char buf[32];
+    double value = RFLOAT(flt)-&gt;value;
+    char *p, *e;
+
+    if (isinf(value))
+        return rb_str_new2(value &lt; 0 ? &quot;-Infinity&quot; : &quot;Infinity&quot;);
+    else if(isnan(value))
+        return rb_str_new2(&quot;NaN&quot;);
+
+    sprintf(buf, &quot;%#.15g&quot;, value); /* ensure to print decimal point */
+    if (!(e = strchr(buf, 'e'))) {
+        e = buf + strlen(buf);
+    }
+    if (!ISDIGIT(e[-1])) { /* reformat if ended with decimal point (ex 111111111111111.) */
+        sprintf(buf, &quot;%#.14e&quot;, value);
+        if (!(e = strchr(buf, 'e'))) {
+            e = buf + strlen(buf);
+        }
+    }
+    p = e;
+    while (p[-1]=='0' &amp;&amp; ISDIGIT(p[-2]))
+        p--;
+    memmove(p, e, strlen(e)+1);
+    return rb_str_new2(buf);
+}</pre>
+</body>
+</html>

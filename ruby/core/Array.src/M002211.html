@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>- (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* 
+ *  call-seq:
+ *     array - other_array    -&gt; an_array
+ *
+ *  Array Difference---Returns a new array that is a copy of
+ *  the original array, removing any items that also appear in
+ *  other_array. (If you need set-like behavior, see the
+ *  library class Set.)
+ *
+ *     [ 1, 1, 2, 2, 3, 3, 4, 5 ] - [ 1, 2, 4 ]  #=&gt;  [ 3, 3, 5 ]
+ */
+
+static VALUE
+rb_ary_diff(ary1, ary2)
+    VALUE ary1, ary2;
+{
+    VALUE ary3;
+    volatile VALUE hash;
+    long i;
+
+    hash = ary_make_hash(to_ary(ary2), 0);
+    ary3 = rb_ary_new();
+
+    for (i=0; i&lt;RARRAY(ary1)-&gt;len; i++) {
+        if (st_lookup(RHASH(hash)-&gt;tbl, RARRAY(ary1)-&gt;ptr[i], 0)) continue;
+        rb_ary_push(ary3, rb_ary_elt(ary1, i));
+    }
+    return ary3;
+}</pre>
+</body>
+</html>

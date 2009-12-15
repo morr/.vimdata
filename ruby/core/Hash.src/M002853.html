@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>default= (Hash)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     hsh.default = obj     =&gt; hsh
+ *  
+ *  Sets the default value, the value returned for a key that does not
+ *  exist in the hash. It is not possible to set the a default to a
+ *  &lt;code&gt;Proc&lt;/code&gt; that will be executed on each key lookup.
+ *     
+ *     h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+ *     h.default = &quot;Go fish&quot;
+ *     h[&quot;a&quot;]     #=&gt; 100
+ *     h[&quot;z&quot;]     #=&gt; &quot;Go fish&quot;
+ *     # This doesn't do what you might hope...
+ *     h.default = proc do |hash, key|
+ *       hash[key] = key + key
+ *     end
+ *     h[2]       #=&gt; #&lt;Proc:0x401b3948@-:6&gt;
+ *     h[&quot;cat&quot;]   #=&gt; #&lt;Proc:0x401b3948@-:6&gt;
+ */
+
+static VALUE
+rb_hash_set_default(hash, ifnone)
+    VALUE hash, ifnone;
+{
+    rb_hash_modify(hash);
+    RHASH(hash)-&gt;ifnone = ifnone;
+    FL_UNSET(hash, HASH_PROC_DEFAULT);
+    return ifnone;
+}</pre>
+</body>
+</html>

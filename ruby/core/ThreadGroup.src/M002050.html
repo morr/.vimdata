@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>enclose (ThreadGroup)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     thgrp.enclose   =&gt; thgrp
+ *  
+ *  Prevents threads from being added to or removed from the receiving
+ *  &lt;code&gt;ThreadGroup&lt;/code&gt;. New threads can still be started in an enclosed
+ *  &lt;code&gt;ThreadGroup&lt;/code&gt;.
+ *     
+ *     ThreadGroup::Default.enclose        #=&gt; #&lt;ThreadGroup:0x4029d914&gt;
+ *     thr = Thread::new { Thread.stop }   #=&gt; #&lt;Thread:0x402a7210 sleep&gt;
+ *     tg = ThreadGroup::new               #=&gt; #&lt;ThreadGroup:0x402752d4&gt;
+ *     tg.add thr
+ *
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *
+ *     ThreadError: can't move from the enclosed thread group
+ */
+
+static VALUE
+thgroup_enclose(group)
+    VALUE group;
+{
+    struct thgroup *data;
+
+    Data_Get_Struct(group, struct thgroup, data);
+    data-&gt;enclosed = 1;
+
+    return group;
+}</pre>
+</body>
+</html>

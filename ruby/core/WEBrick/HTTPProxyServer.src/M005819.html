@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>set_cookie (WEBrick::HTTPProxyServer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/httpproxy.rb, line 72</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_cookie</span>(<span class="ruby-identifier">src</span>, <span class="ruby-identifier">dst</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">str</span> = <span class="ruby-identifier">src</span>[<span class="ruby-value str">'set-cookie'</span>]
+        <span class="ruby-identifier">cookies</span> = []
+        <span class="ruby-identifier">str</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/,\s*/</span>).<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">token</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-regexp re">/^[^=]+;/o</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">token</span>
+            <span class="ruby-identifier">cookies</span>[<span class="ruby-value">-1</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;, &quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">token</span>
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-regexp re">/=/o</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">token</span>
+            <span class="ruby-identifier">cookies</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">token</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">cookies</span>[<span class="ruby-value">-1</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;, &quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">token</span>
+          <span class="ruby-keyword kw">end</span>
+        }
+        <span class="ruby-identifier">dst</span>.<span class="ruby-identifier">cookies</span>.<span class="ruby-identifier">replace</span>(<span class="ruby-identifier">cookies</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

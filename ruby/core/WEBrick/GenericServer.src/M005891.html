@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>listen (WEBrick::GenericServer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/ssl.rb, line 86</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">listen</span>(<span class="ruby-identifier">address</span>, <span class="ruby-identifier">port</span>)
+      <span class="ruby-identifier">listeners</span> = <span class="ruby-constant">Utils</span><span class="ruby-operator">::</span><span class="ruby-identifier">create_listeners</span>(<span class="ruby-identifier">address</span>, <span class="ruby-identifier">port</span>, <span class="ruby-ivar">@logger</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:SSLEnable</span>]
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">ssl_context</span>
+          <span class="ruby-ivar">@ssl_context</span> = <span class="ruby-identifier">setup_ssl_context</span>(<span class="ruby-ivar">@config</span>)
+          <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">info</span>(<span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:SSLCertificate</span>].<span class="ruby-identifier">to_text</span>) 
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">listeners</span>.<span class="ruby-identifier">collect!</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">svr</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">ssvr</span> = <span class="ruby-operator">::</span><span class="ruby-constant">OpenSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">SSL</span><span class="ruby-operator">::</span><span class="ruby-constant">SSLServer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">svr</span>, <span class="ruby-identifier">ssl_context</span>)
+          <span class="ruby-identifier">ssvr</span>.<span class="ruby-identifier">start_immediately</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:SSLStartImmediately</span>]
+          <span class="ruby-identifier">ssvr</span>
+        }
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@listeners</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">listeners</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

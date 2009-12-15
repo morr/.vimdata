@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (SOAP::RPC::Router::Operation)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/rpc/router.rb, line 342</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">param_def</span>, <span class="ruby-identifier">opt</span>)
+      <span class="ruby-ivar">@soapaction</span> = <span class="ruby-identifier">soapaction</span>
+      <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>
+      <span class="ruby-ivar">@request_style</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:request_style</span>]
+      <span class="ruby-ivar">@response_style</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:response_style</span>]
+      <span class="ruby-ivar">@request_use</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:request_use</span>]
+      <span class="ruby-ivar">@response_use</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:response_use</span>]
+      <span class="ruby-identifier">check_style</span>(<span class="ruby-ivar">@request_style</span>)
+      <span class="ruby-identifier">check_style</span>(<span class="ruby-ivar">@response_style</span>)
+      <span class="ruby-identifier">check_use</span>(<span class="ruby-ivar">@request_use</span>)
+      <span class="ruby-identifier">check_use</span>(<span class="ruby-ivar">@response_use</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@response_style</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:rpc</span>
+        <span class="ruby-identifier">request_qname</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:request_qname</span>] <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">raise</span>
+        <span class="ruby-ivar">@rpc_method_factory</span> =
+          <span class="ruby-constant">RPC</span><span class="ruby-operator">::</span><span class="ruby-constant">SOAPMethodRequest</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">request_qname</span>, <span class="ruby-identifier">param_def</span>, <span class="ruby-ivar">@soapaction</span>)
+        <span class="ruby-ivar">@rpc_response_qname</span> = <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:response_qname</span>]
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@doc_request_qnames</span> = []
+        <span class="ruby-ivar">@doc_request_qualified</span> = []
+        <span class="ruby-ivar">@doc_response_qnames</span> = []
+        <span class="ruby-ivar">@doc_response_qualified</span> = []
+        <span class="ruby-identifier">param_def</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">inout</span>, <span class="ruby-identifier">paramname</span>, <span class="ruby-identifier">typeinfo</span>, <span class="ruby-identifier">eleinfo</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">nsdef</span>, <span class="ruby-identifier">namedef</span> = <span class="ruby-identifier">typeinfo</span>
+          <span class="ruby-identifier">qualified</span> = <span class="ruby-identifier">eleinfo</span>
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">inout</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">SOAPMethod</span><span class="ruby-operator">::</span><span class="ruby-constant">IN</span>
+            <span class="ruby-ivar">@doc_request_qnames</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">QName</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">nsdef</span>, <span class="ruby-identifier">namedef</span>)
+            <span class="ruby-ivar">@doc_request_qualified</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">qualified</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">SOAPMethod</span><span class="ruby-operator">::</span><span class="ruby-constant">OUT</span>
+            <span class="ruby-ivar">@doc_response_qnames</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">QName</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">nsdef</span>, <span class="ruby-identifier">namedef</span>)
+            <span class="ruby-ivar">@doc_response_qualified</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">qualified</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(
+              <span class="ruby-node">&quot;illegal inout definition for document style: #{inout}&quot;</span>)
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

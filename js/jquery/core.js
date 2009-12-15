@@ -34,10 +34,10 @@ var jQuery = function( selector, context ) {
 
   // Keep a UserAgent string for use with jQuery.browser
   userAgent = navigator.userAgent.toLowerCase(),
-  
+
   // Has the ready events already been bound?
   readyBound = false,
-  
+
   // The functions to execute on DOM ready
   readyList = [],
 
@@ -229,7 +229,7 @@ jQuery.fn = jQuery.prototype = {
   is: function( selector ) {
     return !!selector && jQuery.filter( selector, this ).length > 0;
   },
-  
+
   ready: function( fn ) {
     // Attach the listeners
     jQuery.bindReady();
@@ -324,10 +324,10 @@ jQuery.extend({
 
     return jQuery;
   },
-  
+
   // Is the DOM ready to be used? Set to true once it occurs.
   isReady: false,
-  
+
   // Handle when the DOM is ready
   ready: function() {
     // Make sure that the DOM is not already loaded
@@ -357,7 +357,7 @@ jQuery.extend({
       }
     }
   },
-  
+
   bindReady: function() {
     if ( readyBound ) { return; }
     readyBound = true;
@@ -375,7 +375,7 @@ jQuery.extend({
         document.removeEventListener( "DOMContentLoaded", DOMContentLoaded, false );
         jQuery.ready();
       }, false );
-      
+
       // A fallback to window.onload, that will always work
       window.addEventListener( "load", jQuery.ready, false );
 
@@ -390,7 +390,7 @@ jQuery.extend({
           jQuery.ready();
         }
       });
-      
+
       // A fallback to window.onload, that will always work
       window.attachEvent( "onload", jQuery.ready );
 
@@ -441,20 +441,20 @@ jQuery.extend({
     if ( toString.call(obj) !== "[object Object]" || typeof obj.nodeType === "number" ) {
       return false;
     }
-    
+
     // not own constructor property must be Object
     if ( obj.constructor
       && !hasOwnProperty.call(obj, "constructor")
       && !hasOwnProperty.call(obj.constructor.prototype, "isPrototypeOf") ) {
       return false;
     }
-    
+
     //own properties are iterated firstly,
     //so to speed up, we can test last one if it is own or not
-  
+
     var key;
     for ( key in obj ) {}
-    
+
     return key === undefined || hasOwnProperty.call( obj, key );
   },
 
@@ -658,7 +658,7 @@ function evalScript( i, elem ) {
 // The value/s can be optionally by executed if its a function
 function access( elems, key, value, exec, fn ) {
   var l = elems.length;
-  
+
   // Setting many attributes
   if ( typeof key === "object" ) {
       for (var k in key) {
@@ -666,12 +666,12 @@ function access( elems, key, value, exec, fn ) {
       }
     return elems;
   }
-  
+
   // Setting one attribute
   if (value !== undefined) {
     // Optionally, function values get executed if exec is true
     exec = exec && jQuery.isFunction(value);
-    
+
     for (var i = 0; i < l; i++) {
       var elem = elems[i],
         val = exec ? value.call(elem, i) : value;
@@ -679,7 +679,7 @@ function access( elems, key, value, exec, fn ) {
     }
     return elems;
   }
-  
+
   // Getting an attribute
   return l ? fn(elems[0], key) : null;
 }

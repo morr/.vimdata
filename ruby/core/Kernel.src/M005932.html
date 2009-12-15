@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>at_exit (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     at_exit { block } -&gt; proc
+ *  
+ *  Converts _block_ to a +Proc+ object (and therefore
+ *  binds it at the point of call) and registers it for execution when
+ *  the program exits. If multiple handlers are registered, they are
+ *  executed in reverse order of registration.
+ *     
+ *     def do_at_exit(str1)
+ *       at_exit { print str1 }
+ *     end
+ *     at_exit { puts &quot;cruel world&quot; }
+ *     do_at_exit(&quot;goodbye &quot;)
+ *     exit
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     goodbye cruel world
+ */
+
+static VALUE
+rb_f_at_exit()
+{
+    VALUE proc;
+
+    if (!rb_block_given_p()) {
+        rb_raise(rb_eArgError, &quot;called without a block&quot;);
+    }
+    proc = rb_block_proc();
+    rb_set_end_proc(call_end_proc, proc);
+    return proc;
+}</pre>
+</body>
+</html>

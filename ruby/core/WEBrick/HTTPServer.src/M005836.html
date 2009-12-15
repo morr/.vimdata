@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>lookup_server (WEBrick::HTTPServer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/httpserver.rb, line 147</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">lookup_server</span>(<span class="ruby-identifier">req</span>)
+      <span class="ruby-ivar">@virtual_hosts</span>.<span class="ruby-identifier">find</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span>
+        (<span class="ruby-identifier">s</span>[<span class="ruby-identifier">:BindAddress</span>].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">addr</span>[<span class="ruby-value">3</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">s</span>[<span class="ruby-identifier">:BindAddress</span>]) <span class="ruby-operator">&amp;&amp;</span>
+        (<span class="ruby-identifier">s</span>[<span class="ruby-identifier">:Port</span>].<span class="ruby-identifier">nil?</span>        <span class="ruby-operator">||</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">port</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">s</span>[<span class="ruby-identifier">:Port</span>])           <span class="ruby-operator">&amp;&amp;</span>
+        ((<span class="ruby-identifier">s</span>[<span class="ruby-identifier">:ServerName</span>].<span class="ruby-identifier">nil?</span>  <span class="ruby-operator">||</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">host</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">s</span>[<span class="ruby-identifier">:ServerName</span>]) <span class="ruby-operator">||</span>
+         (<span class="ruby-operator">!</span><span class="ruby-identifier">s</span>[<span class="ruby-identifier">:ServerAlias</span>].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">s</span>[<span class="ruby-identifier">:ServerAlias</span>].<span class="ruby-identifier">find</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">h</span><span class="ruby-operator">|</span> <span class="ruby-identifier">h</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">host</span>}))
+      }
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

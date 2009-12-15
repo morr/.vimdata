@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>get (GetoptLong)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/getoptlong.rb, line 435</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">get</span>
+    <span class="ruby-identifier">option_name</span>, <span class="ruby-identifier">option_argument</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-value str">''</span>
+
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-comment cmt"># Check status.</span>
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@error</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">case</span> <span class="ruby-ivar">@status</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">STATUS_YET</span>
+      <span class="ruby-ivar">@status</span> = <span class="ruby-constant">STATUS_STARTED</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">STATUS_TERMINATED</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-comment cmt"># Get next option argument.</span>
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-value">0</span> <span class="ruby-operator">&lt;</span> <span class="ruby-ivar">@rest_singles</span>.<span class="ruby-identifier">length</span>
+      <span class="ruby-identifier">argument</span> = <span class="ruby-value str">'-'</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@rest_singles</span>
+    <span class="ruby-keyword kw">elsif</span> (<span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>)
+      <span class="ruby-identifier">terminate</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@ordering</span> <span class="ruby-operator">==</span> <span class="ruby-constant">PERMUTE</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-value">0</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">ARGV</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">!~</span> <span class="ruby-regexp re">/^-./</span>
+        <span class="ruby-ivar">@non_option_arguments</span>.<span class="ruby-identifier">push</span>(<span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+        <span class="ruby-identifier">terminate</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">argument</span> = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@ordering</span> <span class="ruby-operator">==</span> <span class="ruby-constant">REQUIRE_ORDER</span> 
+      <span class="ruby-keyword kw">if</span> (<span class="ruby-constant">ARGV</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">!~</span> <span class="ruby-regexp re">/^-./</span>)
+        <span class="ruby-identifier">terminate</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">argument</span> = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">argument</span> = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-comment cmt"># Check the special argument `--'.</span>
+    <span class="ruby-comment cmt"># `--' indicates the end of the option list.</span>
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">argument</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'--'</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@rest_singles</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">terminate</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-comment cmt"># Check for long and short options.</span>
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">argument</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^(--[^=]+)/</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@rest_singles</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-comment cmt"># This is a long style option, which start with `--'.</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-identifier">pattern</span> = <span class="ruby-identifier">$1</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@canonical_names</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">pattern</span>)
+        <span class="ruby-identifier">option_name</span> = <span class="ruby-identifier">pattern</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-comment cmt">#</span>
+        <span class="ruby-comment cmt"># The option `option_name' is not registered in `@canonical_names'.</span>
+        <span class="ruby-comment cmt"># It may be an abbreviated.</span>
+        <span class="ruby-comment cmt">#</span>
+        <span class="ruby-identifier">match_count</span> = <span class="ruby-value">0</span>
+        <span class="ruby-ivar">@canonical_names</span>.<span class="ruby-identifier">each_key</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">key</span>.<span class="ruby-identifier">index</span>(<span class="ruby-identifier">pattern</span>) <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+            <span class="ruby-identifier">option_name</span> = <span class="ruby-identifier">key</span>
+            <span class="ruby-identifier">match_count</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-value">2</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">match_count</span>
+          <span class="ruby-identifier">set_error</span>(<span class="ruby-constant">AmbigousOption</span>, <span class="ruby-node">&quot;option `#{argument}' is ambiguous&quot;</span>)
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">match_count</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+          <span class="ruby-identifier">set_error</span>(<span class="ruby-constant">InvalidOption</span>, <span class="ruby-node">&quot;unrecognized option `#{argument}'&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-comment cmt"># Check an argument to the option.</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@argument_flags</span>[<span class="ruby-identifier">option_name</span>] <span class="ruby-operator">==</span> <span class="ruby-constant">REQUIRED_ARGUMENT</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">argument</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/=(.*)$/</span>
+          <span class="ruby-identifier">option_argument</span> = <span class="ruby-identifier">$1</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-value">0</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">length</span>
+          <span class="ruby-identifier">option_argument</span> = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">set_error</span>(<span class="ruby-constant">MissingArgument</span>,
+                    <span class="ruby-node">&quot;option `#{argument}' requires an argument&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@argument_flags</span>[<span class="ruby-identifier">option_name</span>] <span class="ruby-operator">==</span> <span class="ruby-constant">OPTIONAL_ARGUMENT</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">argument</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/=(.*)$/</span>
+          <span class="ruby-identifier">option_argument</span> = <span class="ruby-identifier">$1</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-value">0</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">ARGV</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">!~</span> <span class="ruby-regexp re">/^-./</span>
+          <span class="ruby-identifier">option_argument</span> = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">option_argument</span> = <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">argument</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/=(.*)$/</span>
+        <span class="ruby-identifier">set_error</span>(<span class="ruby-constant">NeedlessArgument</span>,
+                  <span class="ruby-node">&quot;option `#{option_name}' doesn't allow an argument&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">argument</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^(-(.))(.*)/</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-comment cmt"># This is a short style option, which start with `-' (not `--').</span>
+      <span class="ruby-comment cmt"># Short options may be catenated (e.g. `-l -g' is equivalent to</span>
+      <span class="ruby-comment cmt"># `-lg').</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-identifier">option_name</span>, <span class="ruby-identifier">ch</span>, <span class="ruby-ivar">@rest_singles</span> = <span class="ruby-identifier">$1</span>, <span class="ruby-identifier">$2</span>, <span class="ruby-identifier">$3</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@canonical_names</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">option_name</span>)
+        <span class="ruby-comment cmt">#</span>
+        <span class="ruby-comment cmt"># The option `option_name' is found in `@canonical_names'.</span>
+        <span class="ruby-comment cmt"># Check its argument.</span>
+        <span class="ruby-comment cmt">#</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@argument_flags</span>[<span class="ruby-identifier">option_name</span>] <span class="ruby-operator">==</span> <span class="ruby-constant">REQUIRED_ARGUMENT</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-value">0</span> <span class="ruby-operator">&lt;</span> <span class="ruby-ivar">@rest_singles</span>.<span class="ruby-identifier">length</span>
+            <span class="ruby-identifier">option_argument</span> = <span class="ruby-ivar">@rest_singles</span>
+            <span class="ruby-ivar">@rest_singles</span> = <span class="ruby-value str">''</span>
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-value">0</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">length</span>
+            <span class="ruby-identifier">option_argument</span> = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-comment cmt"># 1003.2 specifies the format of this message.</span>
+            <span class="ruby-identifier">set_error</span>(<span class="ruby-constant">MissingArgument</span>, <span class="ruby-node">&quot;option requires an argument -- #{ch}&quot;</span>)
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@argument_flags</span>[<span class="ruby-identifier">option_name</span>] <span class="ruby-operator">==</span> <span class="ruby-constant">OPTIONAL_ARGUMENT</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-value">0</span> <span class="ruby-operator">&lt;</span> <span class="ruby-ivar">@rest_singles</span>.<span class="ruby-identifier">length</span>
+            <span class="ruby-identifier">option_argument</span> = <span class="ruby-ivar">@rest_singles</span>
+            <span class="ruby-ivar">@rest_singles</span> = <span class="ruby-value str">''</span>
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-value">0</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">ARGV</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">!~</span> <span class="ruby-regexp re">/^-./</span>
+            <span class="ruby-identifier">option_argument</span> = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">option_argument</span> = <span class="ruby-value str">''</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-comment cmt">#</span>
+        <span class="ruby-comment cmt"># This is an invalid option.</span>
+        <span class="ruby-comment cmt"># 1003.2 specifies the format of this message.</span>
+        <span class="ruby-comment cmt">#</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-constant">ENV</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-value str">'POSIXLY_CORRECT'</span>)
+          <span class="ruby-identifier">set_error</span>(<span class="ruby-constant">InvalidOption</span>, <span class="ruby-node">&quot;illegal option -- #{ch}&quot;</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">set_error</span>(<span class="ruby-constant">InvalidOption</span>, <span class="ruby-node">&quot;invalid option -- #{ch}&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-comment cmt"># This is a non-option argument.</span>
+      <span class="ruby-comment cmt"># Only RETURN_IN_ORDER falled into here.</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-value str">''</span>, <span class="ruby-identifier">argument</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@canonical_names</span>[<span class="ruby-identifier">option_name</span>], <span class="ruby-identifier">option_argument</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

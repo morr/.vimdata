@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>class_variable_get (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mod.class_variable_get(symbol)    =&gt; obj
+ *  
+ *  Returns the value of the given class variable (or throws a
+ *  &lt;code&gt;NameError&lt;/code&gt; exception). The &lt;code&gt;@@&lt;/code&gt; part of the
+ *  variable name should be included for regular class variables
+ *     
+ *     class Fred
+ *       @@foo = 99
+ *     end
+ *
+ *     def Fred.foo
+ *       class_variable_get(:@@foo)     #=&gt; 99
+ *     end
+ */
+
+static VALUE
+rb_mod_cvar_get(obj, iv)
+    VALUE obj, iv;
+{
+    ID id = rb_to_id(iv);
+
+    if (!rb_is_class_id(id)) {
+        rb_name_error(id, &quot;`%s' is not allowed as a class variable name&quot;, rb_id2name(id));
+    }
+    return rb_cvar_get(obj, id);
+}</pre>
+</body>
+</html>

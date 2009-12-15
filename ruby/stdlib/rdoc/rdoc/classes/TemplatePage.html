@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: TemplatePage</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">TemplatePage</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/rdoc/template_rb.html">
+                rdoc/template.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Cheap-n-cheerful HTML page template system. You create a template
+containing:
+</p>
+<ul>
+<li>variable names between percent signs (<tt>%fred%</tt>)
+
+</li>
+<li>blocks of repeating stuff:
+
+<pre>
+  START:key
+    ... stuff
+  END:key
+</pre>
+</li>
+</ul>
+<p>
+You feed the code a hash. For simple variables, the values are resolved
+directly from the hash. For blocks, the hash entry corresponding to
+<tt>key</tt> will be an array of hashes. The block will be generated once
+for each entry. Blocks can be nested arbitrarily deeply.
+</p>
+<p>
+The template may also contain
+</p>
+<pre>
+  IF:key
+    ... stuff
+  ENDIF:key
+</pre>
+<p>
+<em>stuff</em> will only be included in the output if the corresponding key
+is set in the value hash.
+</p>
+<p>
+Usage: Given a set of templates <tt>T1, T2,</tt> etc
+</p>
+<pre>
+           values = { &quot;name&quot; =&gt; &quot;Dave&quot;, state =&gt; &quot;TX&quot; }
+
+           t = TemplatePage.new(T1, T2, T3)
+           File.open(name, &quot;w&quot;) {|f| t.write_html_on(f, values)}
+        or
+           res = ''
+           t.write_html_on(res, values)
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001852">expand_line</a>&nbsp;&nbsp;
+      <a href="#M001849">new</a>&nbsp;&nbsp;
+      <a href="#M001851">substitute_into</a>&nbsp;&nbsp;
+      <a href="#M001850">write_html_on</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="TemplatePage/Context.html" class="link">TemplatePage::Context</a><br />
+Class <a href="TemplatePage/LineReader.html" class="link">TemplatePage::LineReader</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001849" class="m-detail">
+        <a name="M001849"></a>
+
+        <div class="method-heading">
+          <a href="#M001849" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(*templates)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+<tt>templates</tt> is an array of strings containing the templates. We
+start at the first, and substitute in subsequent ones where the string
+<tt>!INCLUDE!</tt> occurs. For example, we could have the overall page
+template containing
+</p>
+<pre>
+  &lt;html&gt;&lt;body&gt;
+    &lt;h1&gt;Master&lt;/h1&gt;
+    !INCLUDE!
+  &lt;/bost&gt;&lt;/html&gt;
+</pre>
+<p>
+and substitute subpages in to it by passing [master, sub_page]. This gives
+us a cheap way of framing pages
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001849-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001849-source">
+<pre>
+<span class="ruby-comment cmt"># File rdoc/template.rb, line 132</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">templates</span>)
+    <span class="ruby-identifier">result</span> = <span class="ruby-value str">&quot;!INCLUDE!&quot;</span>
+    <span class="ruby-identifier">templates</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">content</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">result</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/!INCLUDE!/</span>, <span class="ruby-identifier">content</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@lines</span> = <span class="ruby-constant">LineReader</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">result</span>.<span class="ruby-identifier">split</span>(<span class="ruby-identifier">$/</span>))
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001852" class="m-detail">
+        <a name="M001852"></a>
+
+        <div class="method-heading">
+          <a href="#M001852" class="method-signature">
+          <span class="method-name">expand_line</span><span class="method-args">(line)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Given an individual line, we look for %xxx% constructs and HREF:ref:name:
+constructs, substituting for each.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001852-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001852-source">
+<pre>
+<span class="ruby-comment cmt"># File rdoc/template.rb, line 201</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">expand_line</span>(<span class="ruby-identifier">line</span>)
+    <span class="ruby-comment cmt"># Generate a cross reference if a reference is given,</span>
+    <span class="ruby-comment cmt"># otherwise just fill in the name part</span>
+
+    <span class="ruby-identifier">line</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/HREF:(\w+?):(\w+?):/</span>) {
+      <span class="ruby-identifier">ref</span> = <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">lookup</span>(<span class="ruby-identifier">$1</span>)
+      <span class="ruby-identifier">name</span> = <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">find_scalar</span>(<span class="ruby-identifier">$2</span>)
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ref</span> <span class="ruby-keyword kw">and</span> <span class="ruby-operator">!</span><span class="ruby-identifier">ref</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Array</span>)
+        <span class="ruby-node">&quot;&lt;a href=\&quot;#{ref}\&quot;&gt;#{name}&lt;/a&gt;&quot;</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">name</span>
+      <span class="ruby-keyword kw">end</span>
+    }
+
+    <span class="ruby-comment cmt"># Substitute in values for %xxx% constructs.  This is made complex</span>
+    <span class="ruby-comment cmt"># because the replacement string may contain characters that are</span>
+    <span class="ruby-comment cmt"># meaningful to the regexp (like \1)</span>
+
+    <span class="ruby-identifier">line</span> = <span class="ruby-identifier">line</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/%([a-zA-Z]\w*)%/</span>) {
+      <span class="ruby-identifier">val</span> = <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">find_scalar</span>(<span class="ruby-identifier">$1</span>) 
+      <span class="ruby-identifier">val</span>.<span class="ruby-identifier">tr</span>(<span class="ruby-value str">'\\'</span>, <span class="ruby-value str">&quot;\000&quot;</span>)
+    }
+
+
+    <span class="ruby-identifier">line</span>
+  <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+    <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Error in template: #{e}&quot;</span>
+    <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Original line: #{line}&quot;</span>
+    <span class="ruby-identifier">exit</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001851" class="m-detail">
+        <a name="M001851"></a>
+
+        <div class="method-heading">
+          <a href="#M001851" class="method-signature">
+          <span class="method-name">substitute_into</span><span class="method-args">(lines, values)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Substitute a set of key/value pairs into the given template. Keys with
+scalar values have them substituted directly into the page. Those with
+array values invoke <tt>substitute_array</tt> (below), which examples a
+block of the template once for each row in the array.
+</p>
+<p>
+This routine also copes with the <tt>IF:</tt><em>key</em> directive,
+removing chunks of the template if the corresponding key does not appear in
+the hash, and the START: directive, which loops its contents for each value
+in an array
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001851-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001851-source">
+<pre>
+<span class="ruby-comment cmt"># File rdoc/template.rb, line 161</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">substitute_into</span>(<span class="ruby-identifier">lines</span>, <span class="ruby-identifier">values</span>)
+    <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">values</span>)
+    <span class="ruby-identifier">skip_to</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">result</span> = []
+
+    <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">lines</span>.<span class="ruby-identifier">read</span>
+
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">line</span>
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^IF:(\w+)/</span>
+        <span class="ruby-identifier">lines</span>.<span class="ruby-identifier">read_up_to</span>(<span class="ruby-regexp re">/^ENDIF:#$1/</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">lookup</span>(<span class="ruby-identifier">$1</span>)
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^IFNOT:(\w+)/</span>
+        <span class="ruby-identifier">lines</span>.<span class="ruby-identifier">read_up_to</span>(<span class="ruby-regexp re">/^ENDIF:#$1/</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">lookup</span>(<span class="ruby-identifier">$1</span>)
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^ENDIF:/</span>
+        ;
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^START:(\w+)/</span>
+        <span class="ruby-identifier">tag</span> = <span class="ruby-identifier">$1</span>
+        <span class="ruby-identifier">body</span> = <span class="ruby-identifier">lines</span>.<span class="ruby-identifier">read_up_to</span>(<span class="ruby-node">/^END:#{tag}/</span>)
+        <span class="ruby-identifier">inner_values</span> = <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">lookup</span>(<span class="ruby-identifier">tag</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;unknown tag: #{tag}&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">inner_values</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;not array: #{tag}&quot;</span>   <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">inner_values</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Array</span>)
+        <span class="ruby-identifier">inner_values</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">vals</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">substitute_into</span>(<span class="ruby-identifier">body</span>.<span class="ruby-identifier">dup</span>, <span class="ruby-identifier">vals</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">expand_line</span>(<span class="ruby-identifier">line</span>.<span class="ruby-identifier">dup</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">pop</span>
+
+    <span class="ruby-identifier">result</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001850" class="m-detail">
+        <a name="M001850"></a>
+
+        <div class="method-heading">
+          <a href="#M001850" class="method-signature">
+          <span class="method-name">write_html_on</span><span class="method-args">(op, value_hash)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Render the templates into HTML, storing the result on <tt>op</tt> using the
+method <tt>&lt;&lt;</tt>. The <tt>value_hash</tt> contains key/value pairs
+used to drive the substitution (as described above)
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001850-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001850-source">
+<pre>
+<span class="ruby-comment cmt"># File rdoc/template.rb, line 144</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">write_html_on</span>(<span class="ruby-identifier">op</span>, <span class="ruby-identifier">value_hash</span>)
+    <span class="ruby-ivar">@context</span> = <span class="ruby-constant">Context</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-identifier">op</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">substitute_into</span>(<span class="ruby-ivar">@lines</span>, <span class="ruby-identifier">value_hash</span>).<span class="ruby-identifier">tr</span>(<span class="ruby-value str">&quot;\000&quot;</span>, <span class="ruby-value str">'\\'</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 0 --> <p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and run  by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. Ruby-doc.org was created in 2002 to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

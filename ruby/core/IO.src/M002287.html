@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>closed? (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.closed?    =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; if &lt;em&gt;ios&lt;/em&gt; is completely closed (for
+ *  duplex streams, both reader and writer), &lt;code&gt;false&lt;/code&gt;
+ *  otherwise.
+ *     
+ *     f = File.new(&quot;testfile&quot;)
+ *     f.close         #=&gt; nil
+ *     f.closed?       #=&gt; true
+ *     f = IO.popen(&quot;/bin/sh&quot;,&quot;r+&quot;)
+ *     f.close_write   #=&gt; nil
+ *     f.closed?       #=&gt; false
+ *     f.close_read    #=&gt; nil
+ *     f.closed?       #=&gt; true
+ */
+
+static VALUE
+rb_io_closed(io)
+    VALUE io;
+{
+    OpenFile *fptr;
+
+    fptr = RFILE(io)-&gt;fptr;
+    rb_io_check_initialized(fptr);
+    return (fptr-&gt;f || fptr-&gt;f2)?Qfalse:Qtrue;
+}</pre>
+</body>
+</html>

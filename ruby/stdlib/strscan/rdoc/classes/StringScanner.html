@@ -1,0 +1,2625 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: StringScanner</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">StringScanner</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/strscan/strscan_c.html">
+                strscan/strscan.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="StringScanner.html">StringScanner</a> provides for lexical
+scanning operations on a String. Here is an example of its usage:
+</p>
+<pre>
+  s = StringScanner.new('This is an example string')
+  s.eos?               # -&gt; false
+
+  p s.scan(/\w+/)      # -&gt; &quot;This&quot;
+  p s.scan(/\w+/)      # -&gt; nil
+  p s.scan(/\s+/)      # -&gt; &quot; &quot;
+  p s.scan(/\s+/)      # -&gt; nil
+  p s.scan(/\w+/)      # -&gt; &quot;is&quot;
+  s.eos?               # -&gt; false
+
+  p s.scan(/\s+/)      # -&gt; &quot; &quot;
+  p s.scan(/\w+/)      # -&gt; &quot;an&quot;
+  p s.scan(/\s+/)      # -&gt; &quot; &quot;
+  p s.scan(/\w+/)      # -&gt; &quot;example&quot;
+  p s.scan(/\s+/)      # -&gt; &quot; &quot;
+  p s.scan(/\w+/)      # -&gt; &quot;string&quot;
+  s.eos?               # -&gt; true
+
+  p s.scan(/\s+/)      # -&gt; nil
+  p s.scan(/\w+/)      # -&gt; nil
+</pre>
+<p>
+Scanning a <a href="StringScanner.html#M004309">string</a> means
+remembering the position of a <em><a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a></em>, which is just an index.
+The point of scanning is to move forward a bit at a time, so matches are
+sought after the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>; usually immediately after
+it.
+</p>
+<p>
+Given the <a href="StringScanner.html#M004309">string</a> &quot;test <a
+href="StringScanner.html#M004309">string</a>&quot;, here are the pertinent
+<a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a> positions:
+</p>
+<pre>
+    t e s t   s t r i n g
+  0 1 2 ...             1
+                        0
+</pre>
+<p>
+When you <a href="StringScanner.html#M004317">scan</a> for a pattern (a
+regular expression), the match must occur at the character after the <a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>. If you use <a
+href="StringScanner.html#M004322">scan_until</a>, then the match can occur
+anywhere after the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>. In both cases, the <a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a> moves <em>just beyond</em>
+the last character of the match, ready to <a
+href="StringScanner.html#M004317">scan</a> again from the next character
+onwards. This is demonstrated by the example above.
+</p>
+<h2>Method Categories</h2>
+<p>
+There are other methods besides the plain scanners. You can look ahead in
+the <a href="StringScanner.html#M004309">string</a> without actually
+scanning. You can access the most recent match. You can modify the <a
+href="StringScanner.html#M004309">string</a> being scanned, <a
+href="StringScanner.html#M004306">reset</a> or <a
+href="StringScanner.html#M004307">terminate</a> the scanner, find out or
+change the position of the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>, <a
+href="StringScanner.html#M004318">skip</a> ahead, and so on.
+</p>
+<h3>Advancing the Scan Pointer</h3>
+<ul>
+<li><a href="StringScanner.html#M004327">getch</a>
+
+</li>
+<li><a href="StringScanner.html#M004328">get_byte</a>
+
+</li>
+<li><a href="StringScanner.html#M004317">scan</a>
+
+</li>
+<li><a href="StringScanner.html#M004322">scan_until</a>
+
+</li>
+<li><a href="StringScanner.html#M004318">skip</a>
+
+</li>
+<li><a href="StringScanner.html#M004323">skip_until</a>
+
+</li>
+</ul>
+<h3>Looking Ahead</h3>
+<ul>
+<li><a href="StringScanner.html#M004320">check</a>
+
+</li>
+<li><a href="StringScanner.html#M004325">check_until</a>
+
+</li>
+<li>exist?
+
+</li>
+<li>match?
+
+</li>
+<li><a href="StringScanner.html#M004330">peek</a>
+
+</li>
+</ul>
+<h3>Finding Where we Are</h3>
+<ul>
+<li>beginning_of_line? (bol?)
+
+</li>
+<li>eos?
+
+</li>
+<li><a href="StringScanner.html#M004344">rest</a>?
+
+</li>
+<li><a href="StringScanner.html#M004345">rest_size</a>
+
+</li>
+<li><a href="StringScanner.html#M004313">pos</a>
+
+</li>
+</ul>
+<h3>Setting Where we Are</h3>
+<ul>
+<li><a href="StringScanner.html#M004306">reset</a>
+
+</li>
+<li><a href="StringScanner.html#M004307">terminate</a>
+
+</li>
+<li><a href="StringScanner.html#M004313">pos</a>=
+
+</li>
+</ul>
+<h3>Match Data</h3>
+<ul>
+<li><a href="StringScanner.html#M004338">matched</a>
+
+</li>
+<li><a href="StringScanner.html#M004338">matched</a>?
+
+</li>
+<li><a href="StringScanner.html#M004339">matched_size</a>
+
+</li>
+<li>[]
+
+</li>
+<li><a href="StringScanner.html#M004342">pre_match</a>
+
+</li>
+<li><a href="StringScanner.html#M004343">post_match</a>
+
+</li>
+</ul>
+<h3>Miscellaneous</h3>
+<ul>
+<li>&lt;&lt;
+
+</li>
+<li><a href="StringScanner.html#M004311">concat</a>
+
+</li>
+<li><a href="StringScanner.html#M004309">string</a>
+
+</li>
+<li><a href="StringScanner.html#M004309">string</a>=
+
+</li>
+<li><a href="StringScanner.html#M004332">unscan</a>
+
+</li>
+</ul>
+<p>
+There are aliases to several of the methods.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004312">&lt;&lt;</a>&nbsp;&nbsp;
+      <a href="#M004341">[]</a>&nbsp;&nbsp;
+      <a href="#M004333">beginning_of_line?</a>&nbsp;&nbsp;
+      <a href="#M004320">check</a>&nbsp;&nbsp;
+      <a href="#M004325">check_until</a>&nbsp;&nbsp;
+      <a href="#M004308">clear</a>&nbsp;&nbsp;
+      <a href="#M004311">concat</a>&nbsp;&nbsp;
+      <a href="#M004335">empty?</a>&nbsp;&nbsp;
+      <a href="#M004334">eos?</a>&nbsp;&nbsp;
+      <a href="#M004324">exist?</a>&nbsp;&nbsp;
+      <a href="#M004328">get_byte</a>&nbsp;&nbsp;
+      <a href="#M004329">getbyte</a>&nbsp;&nbsp;
+      <a href="#M004327">getch</a>&nbsp;&nbsp;
+      <a href="#M004304">initialize_copy</a>&nbsp;&nbsp;
+      <a href="#M004347">inspect</a>&nbsp;&nbsp;
+      <a href="#M004319">match?</a>&nbsp;&nbsp;
+      <a href="#M004338">matched</a>&nbsp;&nbsp;
+      <a href="#M004337">matched?</a>&nbsp;&nbsp;
+      <a href="#M004339">matched_size</a>&nbsp;&nbsp;
+      <a href="#M004340">matchedsize</a>&nbsp;&nbsp;
+      <a href="#M004305">must_C_version</a>&nbsp;&nbsp;
+      <a href="#M004303">new</a>&nbsp;&nbsp;
+      <a href="#M004330">peek</a>&nbsp;&nbsp;
+      <a href="#M004331">peep</a>&nbsp;&nbsp;
+      <a href="#M004315">pointer</a>&nbsp;&nbsp;
+      <a href="#M004316">pointer=</a>&nbsp;&nbsp;
+      <a href="#M004313">pos</a>&nbsp;&nbsp;
+      <a href="#M004314">pos=</a>&nbsp;&nbsp;
+      <a href="#M004343">post_match</a>&nbsp;&nbsp;
+      <a href="#M004342">pre_match</a>&nbsp;&nbsp;
+      <a href="#M004306">reset</a>&nbsp;&nbsp;
+      <a href="#M004344">rest</a>&nbsp;&nbsp;
+      <a href="#M004336">rest?</a>&nbsp;&nbsp;
+      <a href="#M004345">rest_size</a>&nbsp;&nbsp;
+      <a href="#M004346">restsize</a>&nbsp;&nbsp;
+      <a href="#M004317">scan</a>&nbsp;&nbsp;
+      <a href="#M004321">scan_full</a>&nbsp;&nbsp;
+      <a href="#M004322">scan_until</a>&nbsp;&nbsp;
+      <a href="#M004326">search_full</a>&nbsp;&nbsp;
+      <a href="#M004318">skip</a>&nbsp;&nbsp;
+      <a href="#M004323">skip_until</a>&nbsp;&nbsp;
+      <a href="#M004309">string</a>&nbsp;&nbsp;
+      <a href="#M004310">string=</a>&nbsp;&nbsp;
+      <a href="#M004307">terminate</a>&nbsp;&nbsp;
+      <a href="#M004332">unscan</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="StringScanner/Error.html" class="link">StringScanner::Error</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M004305" class="m-detail">
+        <a name="M004305"></a>
+
+        <div class="method-heading">
+          <a href="#M004305" class="method-signature">
+          <span class="method-name"> StringScanner.must_C_version<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+This method is defined for backward compatibility.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004305-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004305-source">
+<pre>
+/*
+ * call-seq: StringScanner.must_C_version
+ *
+ * This method is defined for backward compatibility.
+ */
+static VALUE
+strscan_s_mustc(VALUE self)
+{
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004303" class="m-detail">
+        <a name="M004303"></a>
+
+        <div class="method-heading">
+          <a href="#M004303" class="method-signature">
+          <span class="method-name"> StringScanner.new(string, dup = false)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Creates a <a href="StringScanner.html#M004303">new</a> <a
+href="StringScanner.html">StringScanner</a> object to <a
+href="StringScanner.html#M004317">scan</a> over the given <tt><a
+href="StringScanner.html#M004309">string</a></tt>. <tt>dup</tt> argument is
+obsolete and not used now.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004303-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004303-source">
+<pre>
+/*
+ * call-seq: StringScanner.new(string, dup = false)
+ *
+ * Creates a new StringScanner object to scan over the given +string+.
+ * +dup+ argument is obsolete and not used now.
+ */
+static VALUE
+strscan_initialize(int argc, VALUE *argv, VALUE self)
+{
+    struct strscanner *p;
+    VALUE str, need_dup;
+
+    Data_Get_Struct(self, struct strscanner, p);
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;str, &amp;need_dup);
+    StringValue(str);
+    p-&gt;str = str;
+
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004312" class="m-detail">
+        <a name="M004312"></a>
+
+        <div class="method-heading">
+          <a href="#M004312" class="method-signature">
+          <span class="method-name">concat(str)<br />
+<<(str)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Appends <tt>str</tt> to the <a href="StringScanner.html#M004309">string</a>
+being scanned. This method does not affect <a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.scan(/Fri /)
+  s &lt;&lt; &quot; +1000 GMT&quot;
+  s.string            # -&gt; &quot;Fri Dec 12 1975 14:39 +1000 GMT&quot;
+  s.scan(/Dec/)       # -&gt; &quot;Dec&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004312-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004312-source">
+<pre>
+/*
+ * call-seq:
+ *   concat(str)
+ *   &lt;&lt;(str)
+ *
+ * Appends +str+ to the string being scanned.
+ * This method does not affect scan pointer.
+ *
+ *   s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+ *   s.scan(/Fri /)
+ *   s &lt;&lt; &quot; +1000 GMT&quot;
+ *   s.string            # -&gt; &quot;Fri Dec 12 1975 14:39 +1000 GMT&quot;
+ *   s.scan(/Dec/)       # -&gt; &quot;Dec&quot;
+ */
+static VALUE
+strscan_concat(VALUE self, VALUE str)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    StringValue(str);
+    rb_str_append(p-&gt;str, str);
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004341" class="m-detail">
+        <a name="M004341"></a>
+
+        <div class="method-heading">
+          <a href="#M004341" class="method-signature">
+          <span class="method-name"> [](n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Return the n-th subgroup in the most recent match.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.scan(/(\w+) (\w+) (\d+) /)       # -&gt; &quot;Fri Dec 12 &quot;
+  s[0]                               # -&gt; &quot;Fri Dec 12 &quot;
+  s[1]                               # -&gt; &quot;Fri&quot;
+  s[2]                               # -&gt; &quot;Dec&quot;
+  s[3]                               # -&gt; &quot;12&quot;
+  s.post_match                       # -&gt; &quot;1975 14:39&quot;
+  s.pre_match                        # -&gt; &quot;&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004341-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004341-source">
+<pre>
+/*
+ * call-seq: [](n)
+ *
+ * Return the n-th subgroup in the most recent match.
+ *
+ *   s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+ *   s.scan(/(\w+) (\w+) (\d+) /)       # -&gt; &quot;Fri Dec 12 &quot;
+ *   s[0]                               # -&gt; &quot;Fri Dec 12 &quot;
+ *   s[1]                               # -&gt; &quot;Fri&quot;
+ *   s[2]                               # -&gt; &quot;Dec&quot;
+ *   s[3]                               # -&gt; &quot;12&quot;
+ *   s.post_match                       # -&gt; &quot;1975 14:39&quot;
+ *   s.pre_match                        # -&gt; &quot;&quot;
+ */
+static VALUE
+strscan_aref(VALUE self, VALUE idx)
+{
+    struct strscanner *p;
+    long i;
+
+    GET_SCANNER(self, p);
+    if (! MATCHED_P(p))        return Qnil;
+    
+    i = NUM2LONG(idx);
+    if (i &lt; 0)
+        i += p-&gt;regs.num_regs;
+    if (i &lt; 0)                 return Qnil;
+    if (i &gt;= p-&gt;regs.num_regs) return Qnil;
+    if (p-&gt;regs.beg[i] == -1)  return Qnil;
+
+    return extract_range(p, p-&gt;prev + p-&gt;regs.beg[i],
+                            p-&gt;prev + p-&gt;regs.end[i]);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004333" class="m-detail">
+        <a name="M004333"></a>
+
+        <div class="method-heading">
+          <a href="#M004333" class="method-signature">
+          <span class="method-name">beginning_of_line?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns <tt>true</tt> iff the <a href="StringScanner.html#M004317">scan</a>
+<a href="StringScanner.html#M004315">pointer</a> is at the beginning of the
+line.
+</p>
+<pre>
+  s = StringScanner.new(&quot;test\ntest\n&quot;)
+  s.bol?           # =&gt; true
+  s.scan(/te/)
+  s.bol?           # =&gt; false
+  s.scan(/st\n/)
+  s.bol?           # =&gt; true
+  s.terminate
+  s.bol?           # =&gt; true
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004333-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004333-source">
+<pre>
+/*
+ * Returns +true+ iff the scan pointer is at the beginning of the line.
+ *
+ *   s = StringScanner.new(&quot;test\ntest\n&quot;)
+ *   s.bol?           # =&gt; true
+ *   s.scan(/te/)
+ *   s.bol?           # =&gt; false
+ *   s.scan(/st\n/)
+ *   s.bol?           # =&gt; true
+ *   s.terminate
+ *   s.bol?           # =&gt; true
+ */
+static VALUE
+strscan_bol_p(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    if (CURPTR(p) &gt; S_PEND(p)) return Qnil;
+    if (p-&gt;curr == 0) return Qtrue;
+    return (*(CURPTR(p) - 1) == '\n') ? Qtrue : Qfalse;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004320" class="m-detail">
+        <a name="M004320"></a>
+
+        <div class="method-heading">
+          <a href="#M004320" class="method-signature">
+          <span class="method-name"> check(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+This returns the value that <a href="StringScanner.html#M004317">scan</a>
+would return, without advancing the <a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>. The match register is
+affected, though.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.check /Fri/               # -&gt; &quot;Fri&quot;
+  s.pos                       # -&gt; 0
+  s.matched                   # -&gt; &quot;Fri&quot;
+  s.check /12/                # -&gt; nil
+  s.matched                   # -&gt; nil
+</pre>
+<p>
+Mnemonic: it &quot;checks&quot; to see whether a <a
+href="StringScanner.html#M004317">scan</a> will return a value.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004320-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004320-source">
+<pre>
+/*
+ * call-seq: check(pattern)
+ *
+ * This returns the value that #scan would return, without advancing the scan
+ * pointer.  The match register is affected, though.
+ *
+ *   s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+ *   s.check /Fri/               # -&gt; &quot;Fri&quot;
+ *   s.pos                       # -&gt; 0
+ *   s.matched                   # -&gt; &quot;Fri&quot;
+ *   s.check /12/                # -&gt; nil
+ *   s.matched                   # -&gt; nil
+ *
+ * Mnemonic: it &quot;checks&quot; to see whether a #scan will return a value.
+ */
+static VALUE
+strscan_check(VALUE self, VALUE re)
+{
+    return strscan_do_scan(self, re, 0, 1, 1);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004325" class="m-detail">
+        <a name="M004325"></a>
+
+        <div class="method-heading">
+          <a href="#M004325" class="method-signature">
+          <span class="method-name"> check_until(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+This returns the value that <a
+href="StringScanner.html#M004322">scan_until</a> would return, without
+advancing the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>. The match register is
+affected, though.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.check_until /12/          # -&gt; &quot;Fri Dec 12&quot;
+  s.pos                       # -&gt; 0
+  s.matched                   # -&gt; 12
+</pre>
+<p>
+Mnemonic: it &quot;checks&quot; to see whether a <a
+href="StringScanner.html#M004322">scan_until</a> will return a value.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004325-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004325-source">
+<pre>
+/*
+ * call-seq: check_until(pattern)
+ *
+ * This returns the value that #scan_until would return, without advancing the
+ * scan pointer.  The match register is affected, though.
+ *
+ *   s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+ *   s.check_until /12/          # -&gt; &quot;Fri Dec 12&quot;
+ *   s.pos                       # -&gt; 0
+ *   s.matched                   # -&gt; 12
+ *
+ * Mnemonic: it &quot;checks&quot; to see whether a #scan_until will return a value.
+ */
+static VALUE
+strscan_check_until(VALUE self, VALUE re)
+{
+    return strscan_do_scan(self, re, 0, 1, 0);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004308" class="m-detail">
+        <a name="M004308"></a>
+
+        <div class="method-heading">
+          <a href="#M004308" class="method-signature">
+          <span class="method-name">clear</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Equivalent to <a href="StringScanner.html#M004307">terminate</a>. This
+method is obsolete; use <a href="StringScanner.html#M004307">terminate</a>
+instead.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004308-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004308-source">
+<pre>
+/*
+ * Equivalent to #terminate.
+ * This method is obsolete; use #terminate instead.
+ */
+static VALUE
+strscan_clear(VALUE self)
+{
+    rb_warning(&quot;StringScanner#clear is obsolete; use #terminate instead&quot;);
+    return strscan_terminate(self);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004311" class="m-detail">
+        <a name="M004311"></a>
+
+        <div class="method-heading">
+          <a href="#M004311" class="method-signature">
+          <span class="method-name">concat(str)<br />
+<<(str)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Appends <tt>str</tt> to the <a href="StringScanner.html#M004309">string</a>
+being scanned. This method does not affect <a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.scan(/Fri /)
+  s &lt;&lt; &quot; +1000 GMT&quot;
+  s.string            # -&gt; &quot;Fri Dec 12 1975 14:39 +1000 GMT&quot;
+  s.scan(/Dec/)       # -&gt; &quot;Dec&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004311-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004311-source">
+<pre>
+/*
+ * call-seq:
+ *   concat(str)
+ *   &lt;&lt;(str)
+ *
+ * Appends +str+ to the string being scanned.
+ * This method does not affect scan pointer.
+ *
+ *   s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+ *   s.scan(/Fri /)
+ *   s &lt;&lt; &quot; +1000 GMT&quot;
+ *   s.string            # -&gt; &quot;Fri Dec 12 1975 14:39 +1000 GMT&quot;
+ *   s.scan(/Dec/)       # -&gt; &quot;Dec&quot;
+ */
+static VALUE
+strscan_concat(VALUE self, VALUE str)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    StringValue(str);
+    rb_str_append(p-&gt;str, str);
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004335" class="m-detail">
+        <a name="M004335"></a>
+
+        <div class="method-heading">
+          <a href="#M004335" class="method-signature">
+          <span class="method-name">empty?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Equivalent to eos?. This method is obsolete, use eos? instead.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004335-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004335-source">
+<pre>
+/*
+ * Equivalent to #eos?.
+ * This method is obsolete, use #eos? instead.
+ */
+static VALUE
+strscan_empty_p(VALUE self)
+{
+    rb_warning(&quot;StringScanner#empty? is obsolete; use #eos? instead&quot;);
+    return strscan_eos_p(self);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004334" class="m-detail">
+        <a name="M004334"></a>
+
+        <div class="method-heading">
+          <a href="#M004334" class="method-signature">
+          <span class="method-name">eos?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns <tt>true</tt> if the <a href="StringScanner.html#M004317">scan</a>
+<a href="StringScanner.html#M004315">pointer</a> is at the end of the <a
+href="StringScanner.html#M004309">string</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  p s.eos?          # =&gt; false
+  s.scan(/test/)
+  p s.eos?          # =&gt; false
+  s.terminate
+  p s.eos?          # =&gt; true
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004334-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004334-source">
+<pre>
+/*
+ * Returns +true+ if the scan pointer is at the end of the string.
+ *
+ *   s = StringScanner.new('test string')
+ *   p s.eos?          # =&gt; false
+ *   s.scan(/test/)
+ *   p s.eos?          # =&gt; false
+ *   s.terminate
+ *   p s.eos?          # =&gt; true
+ */
+static VALUE
+strscan_eos_p(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    return EOS_P(p) ? Qtrue : Qfalse;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004324" class="m-detail">
+        <a name="M004324"></a>
+
+        <div class="method-heading">
+          <a href="#M004324" class="method-signature">
+          <span class="method-name"> exist?(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Looks <em>ahead</em> to see if the <tt>pattern</tt> exists
+<em>anywhere</em> in the <a href="StringScanner.html#M004309">string</a>,
+without advancing the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>. This predicates whether a <a
+href="StringScanner.html#M004322">scan_until</a> will return a value.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.exist? /s/            # -&gt; 3
+  s.scan /test/           # -&gt; &quot;test&quot;
+  s.exist? /s/            # -&gt; 6
+  s.exist? /e/            # -&gt; nil
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004324-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004324-source">
+<pre>
+/*
+ * call-seq: exist?(pattern)
+ *
+ * Looks _ahead_ to see if the +pattern+ exists _anywhere_ in the string,
+ * without advancing the scan pointer.  This predicates whether a #scan_until
+ * will return a value.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.exist? /s/            # -&gt; 3
+ *   s.scan /test/           # -&gt; &quot;test&quot;
+ *   s.exist? /s/            # -&gt; 6
+ *   s.exist? /e/            # -&gt; nil
+ */
+static VALUE
+strscan_exist_p(VALUE self, VALUE re)
+{
+    return strscan_do_scan(self, re, 0, 0, 0);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004328" class="m-detail">
+        <a name="M004328"></a>
+
+        <div class="method-heading">
+          <a href="#M004328" class="method-signature">
+          <span class="method-name">get_byte</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Scans one byte and returns it. This method is NOT multi-byte character
+sensitive. See also <a href="StringScanner.html#M004327">getch</a>.
+</p>
+<pre>
+  s = StringScanner.new('ab')
+  s.get_byte         # =&gt; &quot;a&quot;
+  s.get_byte         # =&gt; &quot;b&quot;
+  s.get_byte         # =&gt; nil
+
+  s = StringScanner.new(&quot;\244\242&quot;)
+  s.get_byte         # =&gt; &quot;\244&quot;
+  s.get_byte         # =&gt; &quot;\242&quot;
+  s.get_byte         # =&gt; nil
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004328-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004328-source">
+<pre>
+/*
+ * Scans one byte and returns it.
+ * This method is NOT multi-byte character sensitive.
+ * See also #getch.
+ *
+ *   s = StringScanner.new('ab')
+ *   s.get_byte         # =&gt; &quot;a&quot;
+ *   s.get_byte         # =&gt; &quot;b&quot;
+ *   s.get_byte         # =&gt; nil
+ *
+ *   s = StringScanner.new(&quot;\244\242&quot;)
+ *   s.get_byte         # =&gt; &quot;\244&quot;
+ *   s.get_byte         # =&gt; &quot;\242&quot;
+ *   s.get_byte         # =&gt; nil
+ */
+static VALUE
+strscan_get_byte(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    CLEAR_MATCH_STATUS(p);
+    if (EOS_P(p)) {
+        return Qnil;
+    }
+    p-&gt;prev = p-&gt;curr;
+    p-&gt;curr++;
+    MATCHED(p);
+    adjust_registers_to_matched(p);
+    return extract_range(p, p-&gt;prev + p-&gt;regs.beg[0],
+                            p-&gt;prev + p-&gt;regs.end[0]);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004329" class="m-detail">
+        <a name="M004329"></a>
+
+        <div class="method-heading">
+          <a href="#M004329" class="method-signature">
+          <span class="method-name">getbyte</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Equivalent to <a href="StringScanner.html#M004328">get_byte</a>. This
+method is obsolete; use <a href="StringScanner.html#M004328">get_byte</a>
+instead.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004329-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004329-source">
+<pre>
+/*
+ * Equivalent to #get_byte.
+ * This method is obsolete; use #get_byte instead.
+ */
+static VALUE
+strscan_getbyte(VALUE self)
+{
+    rb_warning(&quot;StringScanner#getbyte is obsolete; use #get_byte instead&quot;);
+    return strscan_get_byte(self);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004327" class="m-detail">
+        <a name="M004327"></a>
+
+        <div class="method-heading">
+          <a href="#M004327" class="method-signature">
+          <span class="method-name">getch</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Scans one character and returns it. This method is multi-byte character
+sensitive. See also <a href="StringScanner.html#M004328">get_byte</a>.
+</p>
+<pre>
+  s = StringScanner.new('ab')
+  s.getch           # =&gt; &quot;a&quot;
+  s.getch           # =&gt; &quot;b&quot;
+  s.getch           # =&gt; nil
+
+  $KCODE = 'EUC'
+  s = StringScanner.new(&quot;\244\242&quot;)
+  s.getch           # =&gt; &quot;\244\242&quot;   # Japanese hira-kana &quot;A&quot; in EUC-JP
+  s.getch           # =&gt; nil
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004327-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004327-source">
+<pre>
+/*
+ * Scans one character and returns it.
+ * This method is multi-byte character sensitive.
+ * See also #get_byte.
+ *
+ *   s = StringScanner.new('ab')
+ *   s.getch           # =&gt; &quot;a&quot;
+ *   s.getch           # =&gt; &quot;b&quot;
+ *   s.getch           # =&gt; nil
+ *
+ *   $KCODE = 'EUC'
+ *   s = StringScanner.new(&quot;\244\242&quot;)
+ *   s.getch           # =&gt; &quot;\244\242&quot;   # Japanese hira-kana &quot;A&quot; in EUC-JP
+ *   s.getch           # =&gt; nil
+ */
+static VALUE
+strscan_getch(VALUE self)
+{
+    struct strscanner *p;
+    long len;
+
+    GET_SCANNER(self, p);
+    CLEAR_MATCH_STATUS(p);
+    if (EOS_P(p))
+        return Qnil;
+    len = mbclen(*CURPTR(p));
+    if (p-&gt;curr + len &gt; S_LEN(p)) {
+        len = S_LEN(p) - p-&gt;curr;
+    }
+    p-&gt;prev = p-&gt;curr;
+    p-&gt;curr += len;
+    MATCHED(p);
+    adjust_registers_to_matched(p);
+    return extract_range(p, p-&gt;prev + p-&gt;regs.beg[0],
+                            p-&gt;prev + p-&gt;regs.end[0]);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004304" class="m-detail">
+        <a name="M004304"></a>
+
+        <div class="method-heading">
+          <a href="#M004304" class="method-signature">
+          <span class="method-name">dup<br />
+clone<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Duplicates a <a href="StringScanner.html">StringScanner</a> object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004304-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004304-source">
+<pre>
+/*
+ * call-seq:
+ *   dup
+ *   clone
+ *
+ * Duplicates a StringScanner object.
+ */
+static VALUE
+strscan_init_copy(VALUE vself, VALUE vorig)
+{
+    struct strscanner *self, *orig;
+
+    Data_Get_Struct(vself, struct strscanner, self);
+    check_strscan(vorig);
+    Data_Get_Struct(vorig, struct strscanner, orig);
+    if (self != orig) {
+        self-&gt;flags = orig-&gt;flags;
+        self-&gt;str = orig-&gt;str;
+        self-&gt;prev = orig-&gt;prev;
+        self-&gt;curr = orig-&gt;curr;
+        re_copy_registers(&amp;self-&gt;regs, &amp;orig-&gt;regs);
+    }
+    return vself;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004347" class="m-detail">
+        <a name="M004347"></a>
+
+        <div class="method-heading">
+          <a href="#M004347" class="method-signature">
+          <span class="method-name">inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns a <a href="StringScanner.html#M004309">string</a> that represents
+the <a href="StringScanner.html">StringScanner</a> object, showing:
+</p>
+<ul>
+<li>the current position
+
+</li>
+<li>the size of the <a href="StringScanner.html#M004309">string</a>
+
+</li>
+<li>the characters surrounding the <a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>
+
+<p>
+s = <a href="StringScanner.html#M004303">StringScanner.new</a>(&quot;Fri
+Dec 12 1975 14:39&quot;) s.inspect # -&gt; &#8217;#&lt;<a
+href="StringScanner.html">StringScanner</a> 0/21 @ &quot;Fri
+D&#8230;&quot;&gt;&#8217; s.scan_until /12/ # -&gt; &quot;Fri Dec 12&quot;
+s.inspect # -&gt; &#8217;#&lt;<a
+href="StringScanner.html">StringScanner</a> 10/21 &quot;&#8230;ec 12&quot;
+@ &quot; 1975&#8230;&quot;&gt;&#8217;
+</p>
+</li>
+</ul>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004347-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004347-source">
+<pre>
+/*
+ * Returns a string that represents the StringScanner object, showing:
+ * - the current position
+ * - the size of the string
+ * - the characters surrounding the scan pointer
+ *
+ *   s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+ *   s.inspect            # -&gt; '#&lt;StringScanner 0/21 @ &quot;Fri D...&quot;&gt;'
+ *   s.scan_until /12/    # -&gt; &quot;Fri Dec 12&quot;
+ *   s.inspect            # -&gt; '#&lt;StringScanner 10/21 &quot;...ec 12&quot; @ &quot; 1975...&quot;&gt;'
+ */
+static VALUE
+strscan_inspect(VALUE self)
+{
+    struct strscanner *p;
+    char buf[BUFSIZE];
+    long len;
+    VALUE a, b;
+
+    Data_Get_Struct(self, struct strscanner, p);
+    if (NIL_P(p-&gt;str)) {
+        len = snprintf(buf, BUFSIZE, &quot;#&lt;%s (uninitialized)&gt;&quot;,
+                       rb_class2name(CLASS_OF(self)));
+        return infect(rb_str_new(buf, len), p);
+    }
+    if (EOS_P(p)) {
+        len = snprintf(buf, BUFSIZE, &quot;#&lt;%s fin&gt;&quot;,
+                       rb_class2name(CLASS_OF(self)));
+        return infect(rb_str_new(buf, len), p);
+    }
+    if (p-&gt;curr == 0) {
+        b = inspect2(p);
+        len = snprintf(buf, BUFSIZE, &quot;#&lt;%s %ld/%ld @ %s&gt;&quot;,
+                       rb_class2name(CLASS_OF(self)),
+                       p-&gt;curr, S_LEN(p),
+                       RSTRING(b)-&gt;ptr);
+        return infect(rb_str_new(buf, len), p);
+    }
+    a = inspect1(p);
+    b = inspect2(p);
+    len = snprintf(buf, BUFSIZE, &quot;#&lt;%s %ld/%ld %s @ %s&gt;&quot;,
+                   rb_class2name(CLASS_OF(self)),
+                   p-&gt;curr, S_LEN(p),
+                   RSTRING(a)-&gt;ptr,
+                   RSTRING(b)-&gt;ptr);
+    return infect(rb_str_new(buf, len), p);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004319" class="m-detail">
+        <a name="M004319"></a>
+
+        <div class="method-heading">
+          <a href="#M004319" class="method-signature">
+          <span class="method-name"> match?(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Tests whether the given <tt>pattern</tt> is <a
+href="StringScanner.html#M004338">matched</a> from the current <a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>. Returns the length of the
+match, or <tt>nil</tt>. The <a href="StringScanner.html#M004317">scan</a>
+<a href="StringScanner.html#M004315">pointer</a> is not advanced.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  p s.match?(/\w+/)   # -&gt; 4
+  p s.match?(/\w+/)   # -&gt; 4
+  p s.match?(/\s+/)   # -&gt; nil
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004319-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004319-source">
+<pre>
+/*
+ * call-seq: match?(pattern)
+ *
+ * Tests whether the given +pattern+ is matched from the current scan pointer.
+ * Returns the length of the match, or +nil+.  The scan pointer is not advanced.
+ *
+ *   s = StringScanner.new('test string')
+ *   p s.match?(/\w+/)   # -&gt; 4
+ *   p s.match?(/\w+/)   # -&gt; 4
+ *   p s.match?(/\s+/)   # -&gt; nil
+ */
+static VALUE
+strscan_match_p(VALUE self, VALUE re)
+{
+    return strscan_do_scan(self, re, 0, 0, 1);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004338" class="m-detail">
+        <a name="M004338"></a>
+
+        <div class="method-heading">
+          <a href="#M004338" class="method-signature">
+          <span class="method-name">matched</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the last <a href="StringScanner.html#M004338">matched</a> <a
+href="StringScanner.html#M004309">string</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.match?(/\w+/)     # -&gt; 4
+  s.matched           # -&gt; &quot;test&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004338-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004338-source">
+<pre>
+/*
+ * Returns the last matched string.
+ * 
+ *   s = StringScanner.new('test string')
+ *   s.match?(/\w+/)     # -&gt; 4
+ *   s.matched           # -&gt; &quot;test&quot;
+ */
+static VALUE
+strscan_matched(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    if (! MATCHED_P(p)) return Qnil;
+
+    return extract_range(p, p-&gt;prev + p-&gt;regs.beg[0],
+                            p-&gt;prev + p-&gt;regs.end[0]);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004337" class="m-detail">
+        <a name="M004337"></a>
+
+        <div class="method-heading">
+          <a href="#M004337" class="method-signature">
+          <span class="method-name">matched?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns <tt>true</tt> iff the last match was successful.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.match?(/\w+/)     # =&gt; 4
+  s.matched?          # =&gt; true
+  s.match?(/\d+/)     # =&gt; nil
+  s.matched?          # =&gt; false
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004337-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004337-source">
+<pre>
+/*
+ * Returns +true+ iff the last match was successful.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.match?(/\w+/)     # =&gt; 4
+ *   s.matched?          # =&gt; true
+ *   s.match?(/\d+/)     # =&gt; nil
+ *   s.matched?          # =&gt; false
+ */
+static VALUE
+strscan_matched_p(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    return MATCHED_P(p) ? Qtrue : Qfalse;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004339" class="m-detail">
+        <a name="M004339"></a>
+
+        <div class="method-heading">
+          <a href="#M004339" class="method-signature">
+          <span class="method-name">matched_size</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the size of the most recent match (see <a
+href="StringScanner.html#M004338">matched</a>), or <tt>nil</tt> if there
+was no recent match.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.check /\w+/           # -&gt; &quot;test&quot;
+  s.matched_size          # -&gt; 4
+  s.check /\d+/           # -&gt; nil
+  s.matched_size          # -&gt; nil
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004339-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004339-source">
+<pre>
+/*
+ * Returns the size of the most recent match (see #matched), or +nil+ if there
+ * was no recent match.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.check /\w+/           # -&gt; &quot;test&quot;
+ *   s.matched_size          # -&gt; 4
+ *   s.check /\d+/           # -&gt; nil
+ *   s.matched_size          # -&gt; nil
+ */
+static VALUE
+strscan_matched_size(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    if (! MATCHED_P(p)) return Qnil;
+
+    return INT2NUM(p-&gt;regs.end[0] - p-&gt;regs.beg[0]);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004340" class="m-detail">
+        <a name="M004340"></a>
+
+        <div class="method-heading">
+          <a href="#M004340" class="method-signature">
+          <span class="method-name">matchedsize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Equivalent to <a href="StringScanner.html#M004339">matched_size</a>. This
+method is obsolete; use <a
+href="StringScanner.html#M004339">matched_size</a> instead.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004340-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004340-source">
+<pre>
+/*
+ * Equivalent to #matched_size.
+ * This method is obsolete; use #matched_size instead.
+ */
+static VALUE
+strscan_matchedsize(VALUE self)
+{
+    rb_warning(&quot;StringScanner#matchedsize is obsolete; use #matched_size instead&quot;);
+    return strscan_matched_size(self);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004330" class="m-detail">
+        <a name="M004330"></a>
+
+        <div class="method-heading">
+          <a href="#M004330" class="method-signature">
+          <span class="method-name"> peek(len)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Extracts a <a href="StringScanner.html#M004309">string</a> corresponding to
+<tt><a href="StringScanner.html#M004309">string</a>[<a
+href="StringScanner.html#M004313">pos</a>,len]</tt>, without advancing the
+<a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.peek(7)          # =&gt; &quot;test st&quot;
+  s.peek(7)          # =&gt; &quot;test st&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004330-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004330-source">
+<pre>
+/*
+ * call-seq: peek(len)
+ *
+ * Extracts a string corresponding to &lt;tt&gt;string[pos,len]&lt;/tt&gt;, without
+ * advancing the scan pointer.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.peek(7)          # =&gt; &quot;test st&quot;
+ *   s.peek(7)          # =&gt; &quot;test st&quot;
+ *
+ */
+static VALUE
+strscan_peek(VALUE self, VALUE vlen)
+{
+    struct strscanner *p;
+    long len;
+
+    GET_SCANNER(self, p);
+    len = NUM2LONG(vlen);
+    if (EOS_P(p)) {
+        return infect(rb_str_new(&quot;&quot;, 0), p);
+    }
+    if (p-&gt;curr + len &gt; S_LEN(p)) {
+        len = S_LEN(p) - p-&gt;curr;
+    }
+    return extract_beg_len(p, p-&gt;curr, len);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004331" class="m-detail">
+        <a name="M004331"></a>
+
+        <div class="method-heading">
+          <a href="#M004331" class="method-signature">
+          <span class="method-name">peep</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Equivalent to <a href="StringScanner.html#M004330">peek</a>. This method is
+obsolete; use <a href="StringScanner.html#M004330">peek</a> instead.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004331-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004331-source">
+<pre>
+/*
+ * Equivalent to #peek.
+ * This method is obsolete; use #peek instead.
+ */
+static VALUE
+strscan_peep(VALUE self, VALUE vlen)
+{
+    rb_warning(&quot;StringScanner#peep is obsolete; use #peek instead&quot;);
+    return strscan_peek(self, vlen);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004315" class="m-detail">
+        <a name="M004315"></a>
+
+        <div class="method-heading">
+          <a href="#M004315" class="method-signature">
+          <span class="method-name">pointer</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the position of the <a href="StringScanner.html#M004317">scan</a>
+<a href="StringScanner.html#M004315">pointer</a>. In the &#8216;<a
+href="StringScanner.html#M004306">reset</a>&#8217; position, this value is
+zero. In the &#8216;terminated&#8217; position (i.e. the <a
+href="StringScanner.html#M004309">string</a> is exhausted), this value is
+the length of the <a href="StringScanner.html#M004309">string</a>.
+</p>
+<p>
+In short, it&#8216;s a 0-based index into the <a
+href="StringScanner.html#M004309">string</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.pos               # -&gt; 0
+  s.scan_until /str/  # -&gt; &quot;test str&quot;
+  s.pos               # -&gt; 8
+  s.terminate         # -&gt; #&lt;StringScanner fin&gt;
+  s.pos               # -&gt; 11
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004315-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004315-source">
+<pre>
+/*
+ * Returns the position of the scan pointer.  In the 'reset' position, this
+ * value is zero.  In the 'terminated' position (i.e. the string is exhausted),
+ * this value is the length of the string.
+ *
+ * In short, it's a 0-based index into the string.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.pos               # -&gt; 0
+ *   s.scan_until /str/  # -&gt; &quot;test str&quot;
+ *   s.pos               # -&gt; 8
+ *   s.terminate         # -&gt; #&lt;StringScanner fin&gt;
+ *   s.pos               # -&gt; 11
+ */
+static VALUE
+strscan_get_pos(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    return INT2FIX(p-&gt;curr);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004316" class="m-detail">
+        <a name="M004316"></a>
+
+        <div class="method-heading">
+          <a href="#M004316" class="method-signature">
+          <span class="method-name"> pos=(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Modify the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.pos = 7            # -&gt; 7
+  s.rest               # -&gt; &quot;ring&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004316-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004316-source">
+<pre>
+/*
+ * call-seq: pos=(n)
+ *
+ * Modify the scan pointer.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.pos = 7            # -&gt; 7
+ *   s.rest               # -&gt; &quot;ring&quot;
+ */
+static VALUE
+strscan_set_pos(VALUE self, VALUE v)
+{
+    struct strscanner *p;
+    long i;
+
+    GET_SCANNER(self, p);
+    i = NUM2INT(v);
+    if (i &lt; 0) i += S_LEN(p);
+    if (i &lt; 0) rb_raise(rb_eRangeError, &quot;index out of range&quot;);
+    if (i &gt; S_LEN(p)) rb_raise(rb_eRangeError, &quot;index out of range&quot;);
+    p-&gt;curr = i;
+    return INT2NUM(i);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004313" class="m-detail">
+        <a name="M004313"></a>
+
+        <div class="method-heading">
+          <a href="#M004313" class="method-signature">
+          <span class="method-name">pos</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the position of the <a href="StringScanner.html#M004317">scan</a>
+<a href="StringScanner.html#M004315">pointer</a>. In the &#8216;<a
+href="StringScanner.html#M004306">reset</a>&#8217; position, this value is
+zero. In the &#8216;terminated&#8217; position (i.e. the <a
+href="StringScanner.html#M004309">string</a> is exhausted), this value is
+the length of the <a href="StringScanner.html#M004309">string</a>.
+</p>
+<p>
+In short, it&#8216;s a 0-based index into the <a
+href="StringScanner.html#M004309">string</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.pos               # -&gt; 0
+  s.scan_until /str/  # -&gt; &quot;test str&quot;
+  s.pos               # -&gt; 8
+  s.terminate         # -&gt; #&lt;StringScanner fin&gt;
+  s.pos               # -&gt; 11
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004313-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004313-source">
+<pre>
+/*
+ * Returns the position of the scan pointer.  In the 'reset' position, this
+ * value is zero.  In the 'terminated' position (i.e. the string is exhausted),
+ * this value is the length of the string.
+ *
+ * In short, it's a 0-based index into the string.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.pos               # -&gt; 0
+ *   s.scan_until /str/  # -&gt; &quot;test str&quot;
+ *   s.pos               # -&gt; 8
+ *   s.terminate         # -&gt; #&lt;StringScanner fin&gt;
+ *   s.pos               # -&gt; 11
+ */
+static VALUE
+strscan_get_pos(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    return INT2FIX(p-&gt;curr);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004314" class="m-detail">
+        <a name="M004314"></a>
+
+        <div class="method-heading">
+          <a href="#M004314" class="method-signature">
+          <span class="method-name"> pos=(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Modify the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.pos = 7            # -&gt; 7
+  s.rest               # -&gt; &quot;ring&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004314-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004314-source">
+<pre>
+/*
+ * call-seq: pos=(n)
+ *
+ * Modify the scan pointer.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.pos = 7            # -&gt; 7
+ *   s.rest               # -&gt; &quot;ring&quot;
+ */
+static VALUE
+strscan_set_pos(VALUE self, VALUE v)
+{
+    struct strscanner *p;
+    long i;
+
+    GET_SCANNER(self, p);
+    i = NUM2INT(v);
+    if (i &lt; 0) i += S_LEN(p);
+    if (i &lt; 0) rb_raise(rb_eRangeError, &quot;index out of range&quot;);
+    if (i &gt; S_LEN(p)) rb_raise(rb_eRangeError, &quot;index out of range&quot;);
+    p-&gt;curr = i;
+    return INT2NUM(i);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004343" class="m-detail">
+        <a name="M004343"></a>
+
+        <div class="method-heading">
+          <a href="#M004343" class="method-signature">
+          <span class="method-name">post_match</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Return the <b><em>post</b>-match</em> (in the regular expression sense) of
+the last <a href="StringScanner.html#M004317">scan</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.scan(/\w+/)           # -&gt; &quot;test&quot;
+  s.scan(/\s+/)           # -&gt; &quot; &quot;
+  s.pre_match             # -&gt; &quot;test&quot;
+  s.post_match            # -&gt; &quot;string&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004343-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004343-source">
+<pre>
+/*
+ * Return the &lt;i&gt;&lt;b&gt;post&lt;/b&gt;-match&lt;/i&gt; (in the regular expression sense) of the last scan.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.scan(/\w+/)           # -&gt; &quot;test&quot;
+ *   s.scan(/\s+/)           # -&gt; &quot; &quot;
+ *   s.pre_match             # -&gt; &quot;test&quot;
+ *   s.post_match            # -&gt; &quot;string&quot;
+ */
+static VALUE
+strscan_post_match(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    if (! MATCHED_P(p)) return Qnil;
+
+    return extract_range(p, p-&gt;prev + p-&gt;regs.end[0], S_LEN(p));
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004342" class="m-detail">
+        <a name="M004342"></a>
+
+        <div class="method-heading">
+          <a href="#M004342" class="method-signature">
+          <span class="method-name">pre_match</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Return the <b><em>pre</b>-match</em> (in the regular expression sense) of
+the last <a href="StringScanner.html#M004317">scan</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.scan(/\w+/)           # -&gt; &quot;test&quot;
+  s.scan(/\s+/)           # -&gt; &quot; &quot;
+  s.pre_match             # -&gt; &quot;test&quot;
+  s.post_match            # -&gt; &quot;string&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004342-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004342-source">
+<pre>
+/*
+ * Return the &lt;i&gt;&lt;b&gt;pre&lt;/b&gt;-match&lt;/i&gt; (in the regular expression sense) of the last scan.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.scan(/\w+/)           # -&gt; &quot;test&quot;
+ *   s.scan(/\s+/)           # -&gt; &quot; &quot;
+ *   s.pre_match             # -&gt; &quot;test&quot;
+ *   s.post_match            # -&gt; &quot;string&quot;
+ */
+static VALUE
+strscan_pre_match(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    if (! MATCHED_P(p)) return Qnil;
+
+    return extract_range(p, 0, p-&gt;prev + p-&gt;regs.beg[0]);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004306" class="m-detail">
+        <a name="M004306"></a>
+
+        <div class="method-heading">
+          <a href="#M004306" class="method-signature">
+          <span class="method-name">reset</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Reset the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a> (index 0) and <a
+href="StringScanner.html#M004308">clear</a> matching data.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004306-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004306-source">
+<pre>
+/*
+ * Reset the scan pointer (index 0) and clear matching data.
+ */
+static VALUE
+strscan_reset(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    p-&gt;curr = 0;
+    CLEAR_MATCH_STATUS(p);
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004344" class="m-detail">
+        <a name="M004344"></a>
+
+        <div class="method-heading">
+          <a href="#M004344" class="method-signature">
+          <span class="method-name">rest</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the &quot;<a href="StringScanner.html#M004344">rest</a>&quot; of
+the <a href="StringScanner.html#M004309">string</a> (i.e. everything after
+the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>). If there is no more data
+(<a href="StringScanner.html#M004334">eos?</a> = true), it returns
+<tt>&quot;&quot;</tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004344-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004344-source">
+<pre>
+/*
+ * Returns the &quot;rest&quot; of the string (i.e. everything after the scan pointer).
+ * If there is no more data (eos? = true), it returns &lt;tt&gt;&quot;&quot;&lt;/tt&gt;.
+ */
+static VALUE
+strscan_rest(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    if (EOS_P(p)) {
+        return infect(rb_str_new(&quot;&quot;, 0), p);
+    }
+    return extract_range(p, p-&gt;curr, S_LEN(p));
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004336" class="m-detail">
+        <a name="M004336"></a>
+
+        <div class="method-heading">
+          <a href="#M004336" class="method-signature">
+          <span class="method-name">rest?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns true iff there is more data in the <a
+href="StringScanner.html#M004309">string</a>. See eos?. This method is
+obsolete; use eos? instead.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.eos?              # These two
+  s.rest?             # are opposites.
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004336-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004336-source">
+<pre>
+/*
+ * Returns true iff there is more data in the string.  See #eos?.
+ * This method is obsolete; use #eos? instead.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.eos?              # These two
+ *   s.rest?             # are opposites.
+ */
+static VALUE
+strscan_rest_p(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    return EOS_P(p) ? Qfalse : Qtrue;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004345" class="m-detail">
+        <a name="M004345"></a>
+
+        <div class="method-heading">
+          <a href="#M004345" class="method-signature">
+          <span class="method-name">rest_size</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+<tt>s.rest_size</tt> is equivalent to <tt>s.rest.size</tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004345-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004345-source">
+<pre>
+/*
+ * &lt;tt&gt;s.rest_size&lt;/tt&gt; is equivalent to &lt;tt&gt;s.rest.size&lt;/tt&gt;.
+ */
+static VALUE
+strscan_rest_size(VALUE self)
+{
+    struct strscanner *p;
+    long i;
+
+    GET_SCANNER(self, p);
+    if (EOS_P(p)) {
+        return INT2FIX(0);
+    }
+
+    i = S_LEN(p) - p-&gt;curr;
+    return INT2FIX(i);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004346" class="m-detail">
+        <a name="M004346"></a>
+
+        <div class="method-heading">
+          <a href="#M004346" class="method-signature">
+          <span class="method-name">restsize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+<tt>s.restsize</tt> is equivalent to <tt>s.rest_size</tt>. This method is
+obsolete; use <a href="StringScanner.html#M004345">rest_size</a> instead.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004346-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004346-source">
+<pre>
+/*
+ * &lt;tt&gt;s.restsize&lt;/tt&gt; is equivalent to &lt;tt&gt;s.rest_size&lt;/tt&gt;.
+ * This method is obsolete; use #rest_size instead.
+ */
+static VALUE
+strscan_restsize(VALUE self)
+{
+    rb_warning(&quot;StringScanner#restsize is obsolete; use #rest_size instead&quot;);
+    return strscan_rest_size(self);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004317" class="m-detail">
+        <a name="M004317"></a>
+
+        <div class="method-heading">
+          <a href="#M004317" class="method-signature">
+          <span class="method-name"> scan(pattern) => String<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Tries to match with <tt>pattern</tt> at the current position. If
+there&#8216;s a match, the scanner advances the &quot;<a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>&quot; and returns the <a
+href="StringScanner.html#M004338">matched</a> <a
+href="StringScanner.html#M004309">string</a>. Otherwise, the scanner
+returns <tt>nil</tt>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  p s.scan(/\w+/)   # -&gt; &quot;test&quot;
+  p s.scan(/\w+/)   # -&gt; nil
+  p s.scan(/\s+/)   # -&gt; &quot; &quot;
+  p s.scan(/\w+/)   # -&gt; &quot;string&quot;
+  p s.scan(/./)     # -&gt; nil
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004317-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004317-source">
+<pre>
+/*
+ * call-seq: scan(pattern) =&gt; String
+ *
+ * Tries to match with +pattern+ at the current position. If there's a match,
+ * the scanner advances the &quot;scan pointer&quot; and returns the matched string.
+ * Otherwise, the scanner returns +nil+.
+ *
+ *   s = StringScanner.new('test string')
+ *   p s.scan(/\w+/)   # -&gt; &quot;test&quot;
+ *   p s.scan(/\w+/)   # -&gt; nil
+ *   p s.scan(/\s+/)   # -&gt; &quot; &quot;
+ *   p s.scan(/\w+/)   # -&gt; &quot;string&quot;
+ *   p s.scan(/./)     # -&gt; nil
+ *
+ */
+static VALUE
+strscan_scan(VALUE self, VALUE re)
+{
+    return strscan_do_scan(self, re, 1, 1, 1);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004321" class="m-detail">
+        <a name="M004321"></a>
+
+        <div class="method-heading">
+          <a href="#M004321" class="method-signature">
+          <span class="method-name"> scan_full(pattern, return_string_p, advance_pointer_p)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Tests whether the given <tt>pattern</tt> is <a
+href="StringScanner.html#M004338">matched</a> from the current <a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>. Returns the <a
+href="StringScanner.html#M004338">matched</a> <a
+href="StringScanner.html#M004309">string</a> if <tt>return_string_p</tt> is
+true. Advances the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a> if <tt>advance_pointer_p</tt>
+is true. The match register is affected.
+</p>
+<p>
+&quot;full&quot; means &quot;<a href="StringScanner.html#M004317">scan</a>
+with full parameters&quot;.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004321-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004321-source">
+<pre>
+/*
+ * call-seq: scan_full(pattern, return_string_p, advance_pointer_p)
+ *
+ * Tests whether the given +pattern+ is matched from the current scan pointer.
+ * Returns the matched string if +return_string_p+ is true.
+ * Advances the scan pointer if +advance_pointer_p+ is true.
+ * The match register is affected.
+ *
+ * &quot;full&quot; means &quot;#scan with full parameters&quot;.
+ */
+static VALUE
+strscan_scan_full(VALUE self, VALUE re, VALUE s, VALUE f)
+{
+    return strscan_do_scan(self, re, RTEST(s), RTEST(f), 1);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004322" class="m-detail">
+        <a name="M004322"></a>
+
+        <div class="method-heading">
+          <a href="#M004322" class="method-signature">
+          <span class="method-name"> scan_until(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Scans the <a href="StringScanner.html#M004309">string</a> <em>until</em>
+the <tt>pattern</tt> is <a href="StringScanner.html#M004338">matched</a>.
+Returns the substring up to and including the end of the match, advancing
+the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a> to that location. If there is
+no match, <tt>nil</tt> is returned.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.scan_until(/1/)        # -&gt; &quot;Fri Dec 1&quot;
+  s.pre_match              # -&gt; &quot;Fri Dec &quot;
+  s.scan_until(/XYZ/)      # -&gt; nil
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004322-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004322-source">
+<pre>
+/*
+ * call-seq: scan_until(pattern)
+ *
+ * Scans the string _until_ the +pattern+ is matched.  Returns the substring up
+ * to and including the end of the match, advancing the scan pointer to that
+ * location. If there is no match, +nil+ is returned.
+ *
+ *   s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+ *   s.scan_until(/1/)        # -&gt; &quot;Fri Dec 1&quot;
+ *   s.pre_match              # -&gt; &quot;Fri Dec &quot;
+ *   s.scan_until(/XYZ/)      # -&gt; nil
+ */
+static VALUE
+strscan_scan_until(VALUE self, VALUE re)
+{
+    return strscan_do_scan(self, re, 1, 1, 0);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004326" class="m-detail">
+        <a name="M004326"></a>
+
+        <div class="method-heading">
+          <a href="#M004326" class="method-signature">
+          <span class="method-name"> search_full(pattern, return_string_p, advance_pointer_p)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Scans the <a href="StringScanner.html#M004309">string</a> <em>until</em>
+the <tt>pattern</tt> is <a href="StringScanner.html#M004338">matched</a>.
+Returns the <a href="StringScanner.html#M004338">matched</a> <a
+href="StringScanner.html#M004309">string</a> if <tt>return_string_p</tt> is
+true, otherwise returns the number of bytes advanced. Advances the <a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a> if
+<tt>advance_pointer_p</tt>, otherwise not. This method does affect the
+match register.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004326-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004326-source">
+<pre>
+/*
+ * call-seq: search_full(pattern, return_string_p, advance_pointer_p)
+ *
+ * Scans the string _until_ the +pattern+ is matched.
+ * Returns the matched string if +return_string_p+ is true, otherwise
+ * returns the number of bytes advanced.
+ * Advances the scan pointer if +advance_pointer_p+, otherwise not.
+ * This method does affect the match register.
+ */
+static VALUE
+strscan_search_full(VALUE self, VALUE re, VALUE s, VALUE f)
+{
+    return strscan_do_scan(self, re, RTEST(s), RTEST(f), 0);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004318" class="m-detail">
+        <a name="M004318"></a>
+
+        <div class="method-heading">
+          <a href="#M004318" class="method-signature">
+          <span class="method-name"> skip(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Attempts to <a href="StringScanner.html#M004318">skip</a> over the given
+<tt>pattern</tt> beginning with the <a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a>. If it matches, the <a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a> is advanced to the end of the
+match, and the length of the match is returned. Otherwise, <tt>nil</tt> is
+returned.
+</p>
+<p>
+It&#8216;s similar to <a href="StringScanner.html#M004317">scan</a>, but
+without returning the <a href="StringScanner.html#M004338">matched</a> <a
+href="StringScanner.html#M004309">string</a>.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  p s.skip(/\w+/)   # -&gt; 4
+  p s.skip(/\w+/)   # -&gt; nil
+  p s.skip(/\s+/)   # -&gt; 1
+  p s.skip(/\w+/)   # -&gt; 6
+  p s.skip(/./)     # -&gt; nil
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004318-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004318-source">
+<pre>
+/*
+ * call-seq: skip(pattern)
+ *
+ * Attempts to skip over the given +pattern+ beginning with the scan pointer.
+ * If it matches, the scan pointer is advanced to the end of the match, and the
+ * length of the match is returned.  Otherwise, +nil+ is returned.
+ *
+ * It's similar to #scan, but without returning the matched string.
+ *
+ *   s = StringScanner.new('test string')
+ *   p s.skip(/\w+/)   # -&gt; 4
+ *   p s.skip(/\w+/)   # -&gt; nil
+ *   p s.skip(/\s+/)   # -&gt; 1
+ *   p s.skip(/\w+/)   # -&gt; 6
+ *   p s.skip(/./)     # -&gt; nil
+ *
+ */
+static VALUE
+strscan_skip(VALUE self, VALUE re)
+{
+    return strscan_do_scan(self, re, 1, 0, 1);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004323" class="m-detail">
+        <a name="M004323"></a>
+
+        <div class="method-heading">
+          <a href="#M004323" class="method-signature">
+          <span class="method-name"> skip_until(pattern)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Advances the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a> until <tt>pattern</tt> is <a
+href="StringScanner.html#M004338">matched</a> and consumed. Returns the
+number of bytes advanced, or <tt>nil</tt> if no match was found.
+</p>
+<p>
+Look ahead to match <tt>pattern</tt>, and advance the <a
+href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a> to the <em>end</em> of the
+match. Return the number of characters advanced, or <tt>nil</tt> if the
+match was unsuccessful.
+</p>
+<p>
+It&#8216;s similar to <a href="StringScanner.html#M004322">scan_until</a>,
+but without returning the intervening <a
+href="StringScanner.html#M004309">string</a>.
+</p>
+<pre>
+  s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+  s.skip_until /12/           # -&gt; 10
+  s                           #
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004323-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004323-source">
+<pre>
+/*
+ * call-seq: skip_until(pattern)
+ *
+ * Advances the scan pointer until +pattern+ is matched and consumed.  Returns
+ * the number of bytes advanced, or +nil+ if no match was found.
+ *
+ * Look ahead to match +pattern+, and advance the scan pointer to the _end_
+ * of the match.  Return the number of characters advanced, or +nil+ if the
+ * match was unsuccessful.
+ *
+ * It's similar to #scan_until, but without returning the intervening string.
+ *
+ *   s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+ *   s.skip_until /12/           # -&gt; 10
+ *   s                           # 
+ */
+static VALUE
+strscan_skip_until(VALUE self, VALUE re)
+{
+    return strscan_do_scan(self, re, 1, 0, 0);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004309" class="m-detail">
+        <a name="M004309"></a>
+
+        <div class="method-heading">
+          <a href="#M004309" class="method-signature">
+          <span class="method-name">string</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the <a href="StringScanner.html#M004309">string</a> being scanned.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004309-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004309-source">
+<pre>
+/*
+ * Returns the string being scanned.
+ */
+static VALUE
+strscan_get_string(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    return p-&gt;str;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004310" class="m-detail">
+        <a name="M004310"></a>
+
+        <div class="method-heading">
+          <a href="#M004310" class="method-signature">
+          <span class="method-name"> string=(str)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Changes the <a href="StringScanner.html#M004309">string</a> being scanned
+to <tt>str</tt> and resets the scanner. Returns <tt>str</tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004310-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004310-source">
+<pre>
+/*
+ * call-seq: string=(str)
+ *
+ * Changes the string being scanned to +str+ and resets the scanner.
+ * Returns +str+.
+ */
+static VALUE
+strscan_set_string(VALUE self, VALUE str)
+{
+    struct strscanner *p;
+
+    Data_Get_Struct(self, struct strscanner, p);
+    StringValue(str);
+    p-&gt;str = rb_str_dup(str);
+    rb_obj_freeze(p-&gt;str);
+    p-&gt;curr = 0;
+    CLEAR_MATCH_STATUS(p);
+    return str;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004307" class="m-detail">
+        <a name="M004307"></a>
+
+        <div class="method-heading">
+          <a href="#M004307" class="method-signature">
+          <span class="method-name">terminate<br />
+clear<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Set the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a> to the end of the <a
+href="StringScanner.html#M004309">string</a> and <a
+href="StringScanner.html#M004308">clear</a> matching data.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004307-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004307-source">
+<pre>
+/*
+ * call-seq:
+ *   terminate
+ *   clear
+ *
+ * Set the scan pointer to the end of the string and clear matching data.
+ */
+static VALUE
+strscan_terminate(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    p-&gt;curr = S_LEN(p);
+    CLEAR_MATCH_STATUS(p);
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004332" class="m-detail">
+        <a name="M004332"></a>
+
+        <div class="method-heading">
+          <a href="#M004332" class="method-signature">
+          <span class="method-name">unscan</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Set the <a href="StringScanner.html#M004317">scan</a> <a
+href="StringScanner.html#M004315">pointer</a> to the previous position.
+Only one previous position is remembered, and it changes with each scanning
+operation.
+</p>
+<pre>
+  s = StringScanner.new('test string')
+  s.scan(/\w+/)        # =&gt; &quot;test&quot;
+  s.unscan
+  s.scan(/../)         # =&gt; &quot;te&quot;
+  s.scan(/\d/)         # =&gt; nil
+  s.unscan             # ScanError: unscan failed: previous match had failed
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004332-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004332-source">
+<pre>
+/*
+ * Set the scan pointer to the previous position.  Only one previous position is
+ * remembered, and it changes with each scanning operation.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.scan(/\w+/)        # =&gt; &quot;test&quot;
+ *   s.unscan
+ *   s.scan(/../)         # =&gt; &quot;te&quot;
+ *   s.scan(/\d/)         # =&gt; nil
+ *   s.unscan             # ScanError: unscan failed: previous match had failed
+ */
+static VALUE
+strscan_unscan(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    if (! MATCHED_P(p)) {
+        rb_raise(ScanError, &quot;unscan failed: previous match had failed&quot;);
+    }
+    p-&gt;curr = p-&gt;prev;
+    CLEAR_MATCH_STATUS(p);
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 2 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a service of <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, AZ</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

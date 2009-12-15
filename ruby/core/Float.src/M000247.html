@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>infinite? (Float)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     flt.infinite? -&gt; nil, -1, +1
+ *  
+ *  Returns &lt;code&gt;nil&lt;/code&gt;, -1, or +1 depending on whether &lt;i&gt;flt&lt;/i&gt;
+ *  is finite, -infinity, or +infinity.
+ *     
+ *     (0.0).infinite?        #=&gt; nil
+ *     (-1.0/0.0).infinite?   #=&gt; -1
+ *     (+1.0/0.0).infinite?   #=&gt; 1
+ */
+
+static VALUE
+flo_is_infinite_p(num)
+     VALUE num;
+{     
+    double value = RFLOAT(num)-&gt;value;
+
+    if (isinf(value)) {
+        return INT2FIX( value &lt; 0 ? -1 : 1 );
+    }
+
+    return Qnil;
+}</pre>
+</body>
+</html>

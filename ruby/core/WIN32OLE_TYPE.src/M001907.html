@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>ole_classes (WIN32OLE_TYPE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *   call-seq:
+ *      WIN32OLE_TYPE.ole_classes(typelib)
+ * 
+ *   Returns array of WIN32OLE_TYPE objects defined by the &lt;i&gt;typelib&lt;/i&gt; type library.
+ */
+static VALUE
+foletype_s_ole_classes(self, typelib)
+    VALUE self;
+    VALUE typelib;
+{
+    VALUE file, classes;
+    OLECHAR * pbuf;
+    ITypeLib *pTypeLib;
+    HRESULT hr;
+
+    rb_secure(4);
+    classes = rb_ary_new();
+    if(TYPE(typelib) == T_STRING) {
+        file = typelib_file(typelib);
+        if (file == Qnil) {
+            file = typelib;
+        }
+        pbuf = ole_mb2wc(StringValuePtr(file), -1);
+        hr = LoadTypeLibEx(pbuf, REGKIND_NONE, &amp;pTypeLib);
+        if (FAILED(hr))
+          ole_raise(hr, eWIN32OLE_RUNTIME_ERROR, &quot;failed to LoadTypeLibEx&quot;);
+        SysFreeString(pbuf);
+        ole_classes_from_typelib(pTypeLib, classes);
+        OLE_RELEASE(pTypeLib);
+    } else {
+        rb_raise(rb_eTypeError, &quot;1st argument should be TypeLib string&quot;);
+    }
+    return classes;
+}</pre>
+</body>
+</html>

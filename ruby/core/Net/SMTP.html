@@ -1,0 +1,894 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Net::SMTP</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Net::SMTP</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/net/smtp_rb.html">
+                lib/net/smtp.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1><a href="SMTP.html">Net::SMTP</a></h1>
+<h2>What is This Library?</h2>
+<p>
+This library provides functionality to send internet mail via <a
+href="SMTP.html">SMTP</a>, the Simple <a href="../Mail.html">Mail</a>
+Transfer Protocol. For details of <a href="SMTP.html">SMTP</a> itself, see
+[RFC2821] (<a
+href="http://www.ietf.org/rfc/rfc2821.txt">www.ietf.org/rfc/rfc2821.txt</a>).
+</p>
+<h2>What is This Library NOT?</h2>
+<p>
+This library does NOT provide functions to compose internet mails. You must
+create them by yourself. If you want better mail support, try RubyMail or
+TMail. You can get both libraries from RAA. (<a
+href="http://www.ruby-lang.org/en/raa.html">www.ruby-lang.org/en/raa.html</a>)
+</p>
+<p>
+FYI: the official documentation on internet mail is: [RFC2822] (<a
+href="http://www.ietf.org/rfc/rfc2822.txt">www.ietf.org/rfc/rfc2822.txt</a>).
+</p>
+<h2>Examples</h2>
+<h3>Sending Messages</h3>
+<p>
+You must open a connection to an <a href="SMTP.html">SMTP</a> server before
+sending messages. The first argument is the address of your <a
+href="SMTP.html">SMTP</a> server, and the second argument is the port
+number. Using <a href="SMTP.html#M004069">SMTP.start</a> with a block is
+the simplest way to do this. This way, the <a href="SMTP.html">SMTP</a>
+connection is closed automatically after the block is executed.
+</p>
+<pre>
+    require 'net/smtp'
+    Net::SMTP.start('your.smtp.server', 25) do |smtp|
+      # Use the SMTP object smtp only in this block.
+    end
+</pre>
+<p>
+Replace &#8216;your.smtp.server&#8217; with your <a
+href="SMTP.html">SMTP</a> server. Normally your system manager or internet
+provider supplies a server for you.
+</p>
+<p>
+Then you can send messages.
+</p>
+<pre>
+    msgstr = &lt;&lt;END_OF_MESSAGE
+    From: Your Name &lt;your@mail.address&gt;
+    To: Destination Address &lt;someone@example.com&gt;
+    Subject: test message
+    Date: Sat, 23 Jun 2001 16:26:43 +0900
+    Message-Id: &lt;unique.message.id.string@example.com&gt;
+
+    This is a test message.
+    END_OF_MESSAGE
+
+    require 'net/smtp'
+    Net::SMTP.start('your.smtp.server', 25) do |smtp|
+      smtp.send_message msgstr,
+                        'your@mail.address',
+                        'his_addess@example.com'
+    end
+</pre>
+<h3>Closing the Session</h3>
+<p>
+You MUST close the <a href="SMTP.html">SMTP</a> session after sending
+messages, by calling the <a href="SMTP.html#M004072">finish</a> method:
+</p>
+<pre>
+    # using SMTP#finish
+    smtp = Net::SMTP.start('your.smtp.server', 25)
+    smtp.send_message msgstr, 'from@address', 'to@address'
+    smtp.finish
+</pre>
+<p>
+You can also use the block form of <a
+href="SMTP.html#M004069">SMTP.start</a>/<a
+href="SMTP.html#M004069">SMTP#start</a>. This closes the <a
+href="SMTP.html">SMTP</a> session automatically:
+</p>
+<pre>
+    # using block form of SMTP.start
+    Net::SMTP.start('your.smtp.server', 25) do |smtp|
+      smtp.send_message msgstr, 'from@address', 'to@address'
+    end
+</pre>
+<p>
+I strongly recommend this scheme. This form is simpler and more robust.
+</p>
+<h3>HELO domain</h3>
+<p>
+In almost all situations, you must provide a third argument to <a
+href="SMTP.html#M004069">SMTP.start</a>/<a
+href="SMTP.html#M004069">SMTP#start</a>. This is the domain name which you
+are on (the host to send mail from). It is called the &quot;HELO
+domain&quot;. The <a href="SMTP.html">SMTP</a> server will judge whether it
+should send or reject the <a href="SMTP.html">SMTP</a> session by
+inspecting the HELO domain.
+</p>
+<pre>
+    Net::SMTP.start('your.smtp.server', 25,
+                    'mail.from.domain') { |smtp| ... }
+</pre>
+<h3><a href="SMTP.html">SMTP</a> Authentication</h3>
+<p>
+The <a href="SMTP.html">Net::SMTP</a> class supports three authentication
+schemes; PLAIN, LOGIN and CRAM MD5. (<a href="SMTP.html">SMTP</a>
+Authentication: [RFC2554]) To use <a href="SMTP.html">SMTP</a>
+authentication, pass extra arguments to <a
+href="SMTP.html#M004069">SMTP.start</a>/<a
+href="SMTP.html#M004069">SMTP#start</a>.
+</p>
+<pre>
+    # PLAIN
+    Net::SMTP.start('your.smtp.server', 25, 'mail.from.domain',
+                    'Your Account', 'Your Password', :plain)
+    # LOGIN
+    Net::SMTP.start('your.smtp.server', 25, 'mail.from.domain',
+                    'Your Account', 'Your Password', :login)
+
+    # CRAM MD5
+    Net::SMTP.start('your.smtp.server', 25, 'mail.from.domain',
+                    'Your Account', 'Your Password', :cram_md5)
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004061">default_port</a>&nbsp;&nbsp;
+      <a href="#M004066">esmtp</a>&nbsp;&nbsp;
+      <a href="#M004065">esmtp=</a>&nbsp;&nbsp;
+      <a href="#M004064">esmtp?</a>&nbsp;&nbsp;
+      <a href="#M004072">finish</a>&nbsp;&nbsp;
+      <a href="#M004063">inspect</a>&nbsp;&nbsp;
+      <a href="#M004062">new</a>&nbsp;&nbsp;
+      <a href="#M004076">open_message_stream</a>&nbsp;&nbsp;
+      <a href="#M004067">read_timeout=</a>&nbsp;&nbsp;
+      <a href="#M004077">ready</a>&nbsp;&nbsp;
+      <a href="#M004074">send_mail</a>&nbsp;&nbsp;
+      <a href="#M004073">send_message</a>&nbsp;&nbsp;
+      <a href="#M004075">sendmail</a>&nbsp;&nbsp;
+      <a href="#M004068">set_debug_output</a>&nbsp;&nbsp;
+      <a href="#M004071">start</a>&nbsp;&nbsp;
+      <a href="#M004069">start</a>&nbsp;&nbsp;
+      <a href="#M004070">started?</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Revision</td>
+          <td>=</td>
+          <td class="context-item-value">%q$Revision: 18116 $.split[1]</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">address</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The address of the <a href="SMTP.html">SMTP</a> server to connect to.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">open_timeout</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+Seconds to wait while attempting to open a connection. If the connection
+cannot be opened within this time, a TimeoutError is raised.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">port</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The port number of the <a href="SMTP.html">SMTP</a> server to connect to.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">read_timeout</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Seconds to wait while reading one block (by one read(2) call). If the
+read(2) call does not complete within this time, a TimeoutError is raised.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M004061" class="method-detail">
+        <a name="M004061"></a>
+
+        <div class="method-heading">
+          <a href="SMTP.src/M004061.html" target="Code" class="method-signature"
+            onclick="popupCode('SMTP.src/M004061.html');return false;">
+          <span class="method-name">default_port</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The default <a href="SMTP.html">SMTP</a> port, port 25.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004062" class="method-detail">
+        <a name="M004062"></a>
+
+        <div class="method-heading">
+          <a href="SMTP.src/M004062.html" target="Code" class="method-signature"
+            onclick="popupCode('SMTP.src/M004062.html');return false;">
+          <span class="method-name">new</span><span class="method-args">( address, port = nil )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="SMTP.html#M004062">new</a> <a
+href="SMTP.html">Net::SMTP</a> object.
+</p>
+<p>
+<tt>address</tt> is the hostname or ip address of your <a
+href="SMTP.html">SMTP</a> server. <tt>port</tt> is the port to connect to;
+it defaults to port 25.
+</p>
+<p>
+This method does not open the TCP connection. You can use <a
+href="SMTP.html#M004069">SMTP.start</a> instead of <a
+href="SMTP.html#M004062">SMTP.new</a> if you want to do everything at once.
+Otherwise, follow <a href="SMTP.html#M004062">SMTP.new</a> with <a
+href="SMTP.html#M004069">SMTP#start</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004069" class="method-detail">
+        <a name="M004069"></a>
+
+        <div class="method-heading">
+          <a href="SMTP.src/M004069.html" target="Code" class="method-signature"
+            onclick="popupCode('SMTP.src/M004069.html');return false;">
+          <span class="method-name">start</span><span class="method-args">(address, port = nil, helo = 'localhost.localdomain', user = nil, secret = nil, authtype = nil) {|smtp| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="SMTP.html#M004062">new</a> <a
+href="SMTP.html">Net::SMTP</a> object and connects to the server.
+</p>
+<p>
+This method is equivalent to:
+</p>
+<pre>
+  Net::SMTP.new(address, port).start(helo_domain, account, password, authtype)
+</pre>
+<h3>Example</h3>
+<pre>
+    Net::SMTP.start('your.smtp.server') do |smtp|
+      smtp.send_message msgstr, 'from@example.com', ['dest@example.com']
+    end
+</pre>
+<h3>Block Usage</h3>
+<p>
+If called with a block, the newly-opened <a href="SMTP.html">Net::SMTP</a>
+object is yielded to the block, and automatically closed when the block
+finishes. If called without a block, the newly-opened <a
+href="SMTP.html">Net::SMTP</a> object is returned to the caller, and it is
+the caller&#8216;s responsibility to close it when finished.
+</p>
+<h3>Parameters</h3>
+<p>
+<tt>address</tt> is the hostname or ip address of your smtp server.
+</p>
+<p>
+<tt>port</tt> is the port to connect to; it defaults to port 25.
+</p>
+<p>
+<tt>helo</tt> is the <em>HELO</em> <em>domain</em> provided by the client
+to the server (see overview comments); it defaults to
+&#8216;localhost.localdomain&#8217;.
+</p>
+<p>
+The remaining arguments are used for <a href="SMTP.html">SMTP</a>
+authentication, if required or desired. <tt>user</tt> is the account name;
+<tt>secret</tt> is your password or other authentication token; and
+<tt>authtype</tt> is the authentication type, one of :plain, :login, or
+:cram_md5. See the discussion of <a href="SMTP.html">SMTP</a>
+Authentication in the overview notes.
+</p>
+<h3>Errors</h3>
+<p>
+This method may raise:
+</p>
+<ul>
+<li><a href="SMTPAuthenticationError.html">Net::SMTPAuthenticationError</a>
+
+</li>
+<li><a href="SMTPServerBusy.html">Net::SMTPServerBusy</a>
+
+</li>
+<li><a href="SMTPSyntaxError.html">Net::SMTPSyntaxError</a>
+
+</li>
+<li><a href="SMTPFatalError.html">Net::SMTPFatalError</a>
+
+</li>
+<li><a href="SMTPUnknownError.html">Net::SMTPUnknownError</a>
+
+</li>
+<li><a href="../IOError.html">IOError</a>
+
+</li>
+<li>TimeoutError
+
+</li>
+</ul>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004066" class="method-detail">
+        <a name="M004066"></a>
+
+        <div class="method-heading">
+          <span class="method-name">esmtp</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="SMTP.html#M004066">esmtp</a>?
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004065" class="method-detail">
+        <a name="M004065"></a>
+
+        <div class="method-heading">
+          <a href="SMTP.src/M004065.html" target="Code" class="method-signature"
+            onclick="popupCode('SMTP.src/M004065.html');return false;">
+          <span class="method-name">esmtp=</span><span class="method-args">( bool )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="../Set.html">Set</a> whether to use ESMTP or not. This should be
+done before calling <a href="SMTP.html#M004069">start</a>. Note that if <a
+href="SMTP.html#M004069">start</a> is called in ESMTP mode, and the
+connection fails due to a <a href="ProtocolError.html">ProtocolError</a>,
+the <a href="SMTP.html">SMTP</a> object will automatically switch to plain
+<a href="SMTP.html">SMTP</a> mode and retry (but not vice versa).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004064" class="method-detail">
+        <a name="M004064"></a>
+
+        <div class="method-heading">
+          <a href="SMTP.src/M004064.html" target="Code" class="method-signature"
+            onclick="popupCode('SMTP.src/M004064.html');return false;">
+          <span class="method-name">esmtp?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<tt>true</tt> if the <a href="SMTP.html">SMTP</a> object uses ESMTP (which
+it does by default).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004072" class="method-detail">
+        <a name="M004072"></a>
+
+        <div class="method-heading">
+          <a href="SMTP.src/M004072.html" target="Code" class="method-signature"
+            onclick="popupCode('SMTP.src/M004072.html');return false;">
+          <span class="method-name">finish</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Finishes the <a href="SMTP.html">SMTP</a> session and closes TCP
+connection. Raises <a href="../IOError.html">IOError</a> if not started.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004063" class="method-detail">
+        <a name="M004063"></a>
+
+        <div class="method-heading">
+          <a href="SMTP.src/M004063.html" target="Code" class="method-signature"
+            onclick="popupCode('SMTP.src/M004063.html');return false;">
+          <span class="method-name">inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Provide human-readable stringification of class state.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004076" class="method-detail">
+        <a name="M004076"></a>
+
+        <div class="method-heading">
+          <a href="SMTP.src/M004076.html" target="Code" class="method-signature"
+            onclick="popupCode('SMTP.src/M004076.html');return false;">
+          <span class="method-name">open_message_stream</span><span class="method-args">( from_addr, *to_addrs ) {|stream| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Opens a message writer stream and gives it to the block. The stream is
+valid only in the block, and has these methods:
+</p>
+<table>
+<tr><td valign="top">puts(str = &#8217;&#8217;):</td><td>outputs STR and CR LF.
+
+</td></tr>
+<tr><td valign="top">print(str):</td><td>outputs STR.
+
+</td></tr>
+<tr><td valign="top">printf(fmt, *args):</td><td>outputs sprintf(fmt,*args).
+
+</td></tr>
+<tr><td valign="top">write(str):</td><td>outputs STR and returns the length of written bytes.
+
+</td></tr>
+<tr><td valign="top">&lt;&lt;(str):</td><td>outputs STR and returns self.
+
+</td></tr>
+</table>
+<p>
+If a single CR (&quot;\r&quot;) or LF (&quot;\n&quot;) is found in the
+message, it is converted to the CR LF pair. You cannot send a binary
+message with this method.
+</p>
+<h3>Parameters</h3>
+<p>
+<tt>from_addr</tt> is a <a href="../String.html">String</a> representing
+the source mail address.
+</p>
+<p>
+<tt>to_addr</tt> is a <a href="../String.html">String</a> or Strings or <a
+href="../Array.html">Array</a> of Strings, representing the destination
+mail address or addresses.
+</p>
+<h3>Example</h3>
+<pre>
+    Net::SMTP.start('smtp.example.com', 25) do |smtp|
+      smtp.open_message_stream('from@example.com', ['dest@example.com']) do |f|
+        f.puts 'From: from@example.com'
+        f.puts 'To: dest@example.com'
+        f.puts 'Subject: test message'
+        f.puts
+        f.puts 'This is a test message.'
+      end
+    end
+</pre>
+<h3>Errors</h3>
+<p>
+This method may raise:
+</p>
+<ul>
+<li><a href="SMTPServerBusy.html">Net::SMTPServerBusy</a>
+
+</li>
+<li><a href="SMTPSyntaxError.html">Net::SMTPSyntaxError</a>
+
+</li>
+<li><a href="SMTPFatalError.html">Net::SMTPFatalError</a>
+
+</li>
+<li><a href="SMTPUnknownError.html">Net::SMTPUnknownError</a>
+
+</li>
+<li><a href="../IOError.html">IOError</a>
+
+</li>
+<li>TimeoutError
+
+</li>
+</ul>
+        </div>
+      </div>
+
+      <div id="method-M004067" class="method-detail">
+        <a name="M004067"></a>
+
+        <div class="method-heading">
+          <a href="SMTP.src/M004067.html" target="Code" class="method-signature"
+            onclick="popupCode('SMTP.src/M004067.html');return false;">
+          <span class="method-name">read_timeout=</span><span class="method-args">( sec )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="../Set.html">Set</a> the number of seconds to wait until
+timing-out a read(2) call.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004077" class="method-detail">
+        <a name="M004077"></a>
+
+        <div class="method-heading">
+          <span class="method-name">ready</span><span class="method-args">( from_addr, *to_addrs )</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="SMTP.html#M004076">open_message_stream</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004074" class="method-detail">
+        <a name="M004074"></a>
+
+        <div class="method-heading">
+          <span class="method-name">send_mail</span><span class="method-args">( msgstr, from_addr, *to_addrs )</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="SMTP.html#M004073">send_message</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004073" class="method-detail">
+        <a name="M004073"></a>
+
+        <div class="method-heading">
+          <a href="SMTP.src/M004073.html" target="Code" class="method-signature"
+            onclick="popupCode('SMTP.src/M004073.html');return false;">
+          <span class="method-name">send_message</span><span class="method-args">( msgstr, from_addr, *to_addrs )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends <tt>msgstr</tt> as a message. Single CR (&quot;\r&quot;) and LF
+(&quot;\n&quot;) found in the <tt>msgstr</tt>, are converted into the CR LF
+pair. You cannot send a binary message with this method. <tt>msgstr</tt>
+should include both the message headers and body.
+</p>
+<p>
+<tt>from_addr</tt> is a <a href="../String.html">String</a> representing
+the source mail address.
+</p>
+<p>
+<tt>to_addr</tt> is a <a href="../String.html">String</a> or Strings or <a
+href="../Array.html">Array</a> of Strings, representing the destination
+mail address or addresses.
+</p>
+<h3>Example</h3>
+<pre>
+    Net::SMTP.start('smtp.example.com') do |smtp|
+      smtp.send_message msgstr,
+                        'from@example.com',
+                        ['dest@example.com', 'dest2@example.com']
+    end
+</pre>
+<h3>Errors</h3>
+<p>
+This method may raise:
+</p>
+<ul>
+<li><a href="SMTPServerBusy.html">Net::SMTPServerBusy</a>
+
+</li>
+<li><a href="SMTPSyntaxError.html">Net::SMTPSyntaxError</a>
+
+</li>
+<li><a href="SMTPFatalError.html">Net::SMTPFatalError</a>
+
+</li>
+<li><a href="SMTPUnknownError.html">Net::SMTPUnknownError</a>
+
+</li>
+<li><a href="../IOError.html">IOError</a>
+
+</li>
+<li>TimeoutError
+
+</li>
+</ul>
+        </div>
+      </div>
+
+      <div id="method-M004075" class="method-detail">
+        <a name="M004075"></a>
+
+        <div class="method-heading">
+          <span class="method-name">sendmail</span><span class="method-args">( msgstr, from_addr, *to_addrs )</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="SMTP.html#M004073">send_message</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004068" class="method-detail">
+        <a name="M004068"></a>
+
+        <div class="method-heading">
+          <a href="SMTP.src/M004068.html" target="Code" class="method-signature"
+            onclick="popupCode('SMTP.src/M004068.html');return false;">
+          <span class="method-name">set_debug_output</span><span class="method-args">( arg )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+WARNING: This method causes serious security holes. Use this method for
+only debugging.
+</p>
+<p>
+<a href="../Set.html">Set</a> an output stream for debug logging. You must
+call this before <a href="SMTP.html#M004069">start</a>.
+</p>
+<pre>
+  # example
+  smtp = Net::SMTP.new(addr, port)
+  smtp.set_debug_output $stderr
+  smtp.start do |smtp|
+    ....
+  end
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004071" class="method-detail">
+        <a name="M004071"></a>
+
+        <div class="method-heading">
+          <a href="SMTP.src/M004071.html" target="Code" class="method-signature"
+            onclick="popupCode('SMTP.src/M004071.html');return false;">
+          <span class="method-name">start</span><span class="method-args">(helo = 'localhost.localdomain', user = nil, secret = nil, authtype = nil) {|smtp| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Opens a TCP connection and starts the <a href="SMTP.html">SMTP</a> session.
+</p>
+<h3>Parameters</h3>
+<p>
+<tt>helo</tt> is the <em>HELO</em> <em>domain</em> that you&#8216;ll
+dispatch mails from; see the discussion in the overview notes.
+</p>
+<p>
+If both of <tt>user</tt> and <tt>secret</tt> are given, <a
+href="SMTP.html">SMTP</a> authentication will be attempted using the AUTH
+command. <tt>authtype</tt> specifies the type of authentication to attempt;
+it must be one of :login, :plain, and :cram_md5. See the notes on <a
+href="SMTP.html">SMTP</a> Authentication in the overview.
+</p>
+<h3>Block Usage</h3>
+<p>
+When this methods is called with a block, the newly-started <a
+href="SMTP.html">SMTP</a> object is yielded to the block, and automatically
+closed after the block call finishes. Otherwise, it is the caller&#8216;s
+responsibility to close the session when finished.
+</p>
+<h3>Example</h3>
+<p>
+This is very similar to the class method <a
+href="SMTP.html#M004069">SMTP.start</a>.
+</p>
+<pre>
+    require 'net/smtp'
+    smtp = Net::SMTP.new('smtp.mail.server', 25)
+    smtp.start(helo_domain, account, password, authtype) do |smtp|
+      smtp.send_message msgstr, 'from@example.com', ['dest@example.com']
+    end
+</pre>
+<p>
+The primary use of this method (as opposed to <a
+href="SMTP.html#M004069">SMTP.start</a>) is probably to set debugging (<a
+href="SMTP.html#M004068">set_debug_output</a>) or ESMTP (<a
+href="SMTP.html#M004066">esmtp</a>=), which must be done before the session
+is started.
+</p>
+<h3>Errors</h3>
+<p>
+If session has already been started, an <a
+href="../IOError.html">IOError</a> will be raised.
+</p>
+<p>
+This method may raise:
+</p>
+<ul>
+<li><a href="SMTPAuthenticationError.html">Net::SMTPAuthenticationError</a>
+
+</li>
+<li><a href="SMTPServerBusy.html">Net::SMTPServerBusy</a>
+
+</li>
+<li><a href="SMTPSyntaxError.html">Net::SMTPSyntaxError</a>
+
+</li>
+<li><a href="SMTPFatalError.html">Net::SMTPFatalError</a>
+
+</li>
+<li><a href="SMTPUnknownError.html">Net::SMTPUnknownError</a>
+
+</li>
+<li><a href="../IOError.html">IOError</a>
+
+</li>
+<li>TimeoutError
+
+</li>
+</ul>
+        </div>
+      </div>
+
+      <div id="method-M004070" class="method-detail">
+        <a name="M004070"></a>
+
+        <div class="method-heading">
+          <a href="SMTP.src/M004070.html" target="Code" class="method-signature"
+            onclick="popupCode('SMTP.src/M004070.html');return false;">
+          <span class="method-name">started?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<tt>true</tt> if the <a href="SMTP.html">SMTP</a> session has been started.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

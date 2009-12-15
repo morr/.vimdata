@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>inspect (Symbol)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     sym.inspect    =&gt; string
+ *  
+ *  Returns the representation of &lt;i&gt;sym&lt;/i&gt; as a symbol literal.
+ *     
+ *     :fred.inspect   #=&gt; &quot;:fred&quot;
+ */
+
+static VALUE
+sym_inspect(sym)
+    VALUE sym;
+{
+    VALUE str;
+    char *name;
+    ID id = SYM2ID(sym);
+
+    name = rb_id2name(id);
+    str = rb_str_new(0, strlen(name)+1);
+    RSTRING(str)-&gt;ptr[0] = ':';
+    strcpy(RSTRING(str)-&gt;ptr+1, name);
+    if (!rb_symname_p(name)) {
+        str = rb_str_dump(str);
+        strncpy(RSTRING(str)-&gt;ptr, &quot;:\&quot;&quot;, 2);
+    }
+    return str;
+}</pre>
+</body>
+</html>

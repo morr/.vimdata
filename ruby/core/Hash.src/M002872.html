@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>select (Hash)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     hsh.select {|key, value| block}   =&gt; array
+ *  
+ *  Returns a new array consisting of &lt;code&gt;[key,value]&lt;/code&gt;
+ *  pairs for which the block returns true.
+ *  Also see &lt;code&gt;Hash.values_at&lt;/code&gt;.
+ *     
+ *     h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200, &quot;c&quot; =&gt; 300 }
+ *     h.select {|k,v| k &gt; &quot;a&quot;}  #=&gt; [[&quot;b&quot;, 200], [&quot;c&quot;, 300]]
+ *     h.select {|k,v| v &lt; 200}  #=&gt; [[&quot;a&quot;, 100]]
+ */
+
+VALUE
+rb_hash_select(argc, argv, hash)
+    int argc;
+    VALUE *argv;
+    VALUE hash;
+{
+    VALUE result;
+
+    if (argc &gt; 0) {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments (%d for 0)&quot;, argc);
+    }
+    result = rb_ary_new();
+    rb_hash_foreach(hash, select_i, result);
+    return result;
+}</pre>
+</body>
+</html>

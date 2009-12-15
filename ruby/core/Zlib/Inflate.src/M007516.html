@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sync (Zlib::Inflate)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: sync(string)
+ *
+ * Inputs +string+ into the end of input buffer and skips data until a full
+ * flush point can be found.  If the point is found in the buffer, this method
+ * flushes the buffer and returns false.  Otherwise it returns +true+ and the
+ * following data of full flush point is preserved in the buffer.
+ */
+static VALUE
+rb_inflate_sync(obj, src)
+    VALUE obj, src;
+{
+    struct zstream *z = get_zstream(obj);
+
+    OBJ_INFECT(obj, src);
+    StringValue(src);
+    return zstream_sync(z, RSTRING(src)-&gt;ptr, RSTRING(src)-&gt;len);
+}</pre>
+</body>
+</html>

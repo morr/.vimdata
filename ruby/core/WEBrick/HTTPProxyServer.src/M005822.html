@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>proxy_service (WEBrick::HTTPProxyServer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/httpproxy.rb, line 102</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">proxy_service</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+      <span class="ruby-comment cmt"># Proxy Authentication</span>
+      <span class="ruby-identifier">proxy_auth</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)      
+
+      <span class="ruby-comment cmt"># Create Request-URI to send to the origin server</span>
+      <span class="ruby-identifier">uri</span>  = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">request_uri</span>
+      <span class="ruby-identifier">path</span> = <span class="ruby-identifier">uri</span>.<span class="ruby-identifier">path</span>.<span class="ruby-identifier">dup</span>
+      <span class="ruby-identifier">path</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;?&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">uri</span>.<span class="ruby-identifier">query</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">uri</span>.<span class="ruby-identifier">query</span>
+
+      <span class="ruby-comment cmt"># Choose header fields to transfer</span>
+      <span class="ruby-identifier">header</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-identifier">choose_header</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">header</span>)
+      <span class="ruby-identifier">set_via</span>(<span class="ruby-identifier">header</span>)
+
+      <span class="ruby-comment cmt"># select upstream proxy server</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">proxy</span> = <span class="ruby-identifier">proxy_uri</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+        <span class="ruby-identifier">proxy_host</span> = <span class="ruby-identifier">proxy</span>.<span class="ruby-identifier">host</span>
+        <span class="ruby-identifier">proxy_port</span> = <span class="ruby-identifier">proxy</span>.<span class="ruby-identifier">port</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">proxy</span>.<span class="ruby-identifier">userinfo</span>
+          <span class="ruby-identifier">credentials</span> = <span class="ruby-value str">&quot;Basic &quot;</span> <span class="ruby-operator">+</span> [<span class="ruby-identifier">proxy</span>.<span class="ruby-identifier">userinfo</span>].<span class="ruby-identifier">pack</span>(<span class="ruby-value str">&quot;m*&quot;</span>)
+          <span class="ruby-identifier">credentials</span>.<span class="ruby-identifier">chomp!</span>
+          <span class="ruby-identifier">header</span>[<span class="ruby-value str">'proxy-authorization'</span>] = <span class="ruby-identifier">credentials</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">response</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">http</span> = <span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">uri</span>.<span class="ruby-identifier">host</span>, <span class="ruby-identifier">uri</span>.<span class="ruby-identifier">port</span>, <span class="ruby-identifier">proxy_host</span>, <span class="ruby-identifier">proxy_port</span>)
+        <span class="ruby-identifier">http</span>.<span class="ruby-identifier">start</span>{
+          <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:ProxyTimeout</span>]
+            <span class="ruby-comment cmt">##################################   these issues are </span>
+            <span class="ruby-identifier">http</span>.<span class="ruby-identifier">open_timeout</span> = <span class="ruby-value">30</span>   <span class="ruby-comment cmt"># secs  #   necessary (maybe bacause</span>
+            <span class="ruby-identifier">http</span>.<span class="ruby-identifier">read_timeout</span> = <span class="ruby-value">60</span>   <span class="ruby-comment cmt"># secs  #   Ruby's bug, but why?)</span>
+            <span class="ruby-comment cmt">##################################</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">request_method</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;GET&quot;</span>  <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">response</span> = <span class="ruby-identifier">http</span>.<span class="ruby-identifier">get</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">header</span>)
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;POST&quot;</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">response</span> = <span class="ruby-identifier">http</span>.<span class="ruby-identifier">post</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">req</span>.<span class="ruby-identifier">body</span> <span class="ruby-operator">||</span> <span class="ruby-value str">&quot;&quot;</span>, <span class="ruby-identifier">header</span>)
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;HEAD&quot;</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">response</span> = <span class="ruby-identifier">http</span>.<span class="ruby-identifier">head</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">header</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">MethodNotAllowed</span>,
+              <span class="ruby-node">&quot;unsupported method `#{req.request_method}'.&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+        }
+      <span class="ruby-keyword kw">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">err</span>
+        <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-node">&quot;#{err.class}: #{err.message}&quot;</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceUnavailable</span>, <span class="ruby-identifier">err</span>.<span class="ruby-identifier">message</span>
+      <span class="ruby-keyword kw">end</span>
+  
+      <span class="ruby-comment cmt"># Persistent connction requirements are mysterious for me.</span>
+      <span class="ruby-comment cmt"># So I will close the connection in every response.</span>
+      <span class="ruby-identifier">res</span>[<span class="ruby-value str">'proxy-connection'</span>] = <span class="ruby-value str">&quot;close&quot;</span>
+      <span class="ruby-identifier">res</span>[<span class="ruby-value str">'connection'</span>] = <span class="ruby-value str">&quot;close&quot;</span>
+
+      <span class="ruby-comment cmt"># Convert Net::HTTP::HTTPResponse to WEBrick::HTTPProxy</span>
+      <span class="ruby-identifier">res</span>.<span class="ruby-identifier">status</span> = <span class="ruby-identifier">response</span>.<span class="ruby-identifier">code</span>.<span class="ruby-identifier">to_i</span>
+      <span class="ruby-identifier">choose_header</span>(<span class="ruby-identifier">response</span>, <span class="ruby-identifier">res</span>)
+      <span class="ruby-identifier">set_cookie</span>(<span class="ruby-identifier">response</span>, <span class="ruby-identifier">res</span>)
+      <span class="ruby-identifier">set_via</span>(<span class="ruby-identifier">res</span>)
+      <span class="ruby-identifier">res</span>.<span class="ruby-identifier">body</span> = <span class="ruby-identifier">response</span>.<span class="ruby-identifier">body</span>
+
+      <span class="ruby-comment cmt"># Process contents</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">handler</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:ProxyContentHandler</span>]
+        <span class="ruby-identifier">handler</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

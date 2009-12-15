@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>methods (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.methods    =&gt; array
+ *  
+ *  Returns a list of the names of methods publicly accessible in
+ *  &lt;i&gt;obj&lt;/i&gt;. This will include all the methods accessible in
+ *  &lt;i&gt;obj&lt;/i&gt;'s ancestors.
+ *     
+ *     class Klass
+ *       def kMethod()
+ *       end
+ *     end
+ *     k = Klass.new
+ *     k.methods[0..9]    #=&gt; [&quot;kMethod&quot;, &quot;freeze&quot;, &quot;nil?&quot;, &quot;is_a?&quot;, 
+ *                             &quot;class&quot;, &quot;instance_variable_set&quot;,
+ *                              &quot;methods&quot;, &quot;extend&quot;, &quot;__send__&quot;, &quot;instance_eval&quot;]
+ *     k.methods.length   #=&gt; 42
+ */
+
+static VALUE
+rb_obj_methods(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+  retry:
+    if (argc == 0) {
+        VALUE args[1];
+
+        args[0] = Qtrue;
+        return rb_class_instance_methods(1, args, CLASS_OF(obj));
+    }
+    else {
+        VALUE recur;
+
+        rb_scan_args(argc, argv, &quot;1&quot;, &amp;recur);
+        if (RTEST(recur)) {
+            argc = 0;
+            goto retry;
+        }
+        return rb_obj_singleton_methods(argc, argv, obj);
+    }
+}</pre>
+</body>
+</html>

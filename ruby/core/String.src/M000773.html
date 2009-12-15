@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>insert (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.insert(index, other_str)   =&gt; str
+ *  
+ *  Inserts &lt;i&gt;other_str&lt;/i&gt; before the character at the given
+ *  &lt;i&gt;index&lt;/i&gt;, modifying &lt;i&gt;str&lt;/i&gt;. Negative indices count from the
+ *  end of the string, and insert &lt;em&gt;after&lt;/em&gt; the given character.
+ *  The intent is insert &lt;i&gt;aString&lt;/i&gt; so that it starts at the given
+ *  &lt;i&gt;index&lt;/i&gt;.
+ *     
+ *     &quot;abcd&quot;.insert(0, 'X')    #=&gt; &quot;Xabcd&quot;
+ *     &quot;abcd&quot;.insert(3, 'X')    #=&gt; &quot;abcXd&quot;
+ *     &quot;abcd&quot;.insert(4, 'X')    #=&gt; &quot;abcdX&quot;
+ *     &quot;abcd&quot;.insert(-3, 'X')   #=&gt; &quot;abXcd&quot;
+ *     &quot;abcd&quot;.insert(-1, 'X')   #=&gt; &quot;abcdX&quot;
+ */
+
+static VALUE
+rb_str_insert(str, idx, str2)
+    VALUE str, idx, str2;
+{
+    long pos = NUM2LONG(idx);
+
+    if (pos == -1) {
+        pos = RSTRING(str)-&gt;len;
+    }
+    else if (pos &lt; 0) {
+        pos++;
+    }
+    rb_str_splice(str, pos, 0, str2);
+    return str;
+}</pre>
+</body>
+</html>

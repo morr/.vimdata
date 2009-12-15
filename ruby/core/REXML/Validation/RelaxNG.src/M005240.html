@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (REXML::Validation::RelaxNG)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/validation/relaxng.rb, line 45</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span> <span class="ruby-identifier">source</span>
+        <span class="ruby-identifier">parser</span> = <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">Parsers</span><span class="ruby-operator">::</span><span class="ruby-constant">BaseParser</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">source</span> )
+
+        <span class="ruby-ivar">@count</span> = <span class="ruby-value">0</span>
+        <span class="ruby-ivar">@references</span> = {}
+        <span class="ruby-ivar">@root</span> = <span class="ruby-ivar">@current</span> = <span class="ruby-constant">Sequence</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>)
+        <span class="ruby-ivar">@root</span>.<span class="ruby-identifier">previous</span> = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-identifier">states</span> = [ <span class="ruby-ivar">@current</span> ]
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">event</span> = <span class="ruby-identifier">parser</span>.<span class="ruby-identifier">pull</span>
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">0</span>]
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:start_element</span>
+            <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;empty&quot;</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;element&quot;</span>, <span class="ruby-value str">&quot;attribute&quot;</span>, <span class="ruby-value str">&quot;text&quot;</span>, <span class="ruby-value str">&quot;value&quot;</span>
+              <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">event</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;optional&quot;</span>
+              <span class="ruby-identifier">states</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Optional</span>.<span class="ruby-identifier">new</span>( <span class="ruby-keyword kw">self</span> )
+              <span class="ruby-identifier">states</span>[<span class="ruby-value">-2</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>]
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;choice&quot;</span>
+              <span class="ruby-identifier">states</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Choice</span>.<span class="ruby-identifier">new</span>( <span class="ruby-keyword kw">self</span> )
+              <span class="ruby-identifier">states</span>[<span class="ruby-value">-2</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>]
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;oneOrMore&quot;</span>
+              <span class="ruby-identifier">states</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">OneOrMore</span>.<span class="ruby-identifier">new</span>( <span class="ruby-keyword kw">self</span> )
+              <span class="ruby-identifier">states</span>[<span class="ruby-value">-2</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>]
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;zeroOrMore&quot;</span>
+              <span class="ruby-identifier">states</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">ZeroOrMore</span>.<span class="ruby-identifier">new</span>( <span class="ruby-keyword kw">self</span> )
+              <span class="ruby-identifier">states</span>[<span class="ruby-value">-2</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>]
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;group&quot;</span>
+              <span class="ruby-identifier">states</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Sequence</span>.<span class="ruby-identifier">new</span>( <span class="ruby-keyword kw">self</span> )
+              <span class="ruby-identifier">states</span>[<span class="ruby-value">-2</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>]
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;interleave&quot;</span>
+              <span class="ruby-identifier">states</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Interleave</span>.<span class="ruby-identifier">new</span>( <span class="ruby-keyword kw">self</span> )
+              <span class="ruby-identifier">states</span>[<span class="ruby-value">-2</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>]
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;mixed&quot;</span>
+              <span class="ruby-identifier">states</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Interleave</span>.<span class="ruby-identifier">new</span>( <span class="ruby-keyword kw">self</span> )
+              <span class="ruby-identifier">states</span>[<span class="ruby-value">-2</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>]
+              <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">TEXT</span> 
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;define&quot;</span>
+              <span class="ruby-identifier">states</span> <span class="ruby-operator">&lt;&lt;</span> [ <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>][<span class="ruby-value str">&quot;name&quot;</span>] ]
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;ref&quot;</span>
+              <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Ref</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>][<span class="ruby-value str">&quot;name&quot;</span>] )
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;anyName&quot;</span>
+              <span class="ruby-identifier">states</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">AnyName</span>.<span class="ruby-identifier">new</span>( <span class="ruby-keyword kw">self</span> )
+              <span class="ruby-identifier">states</span>[<span class="ruby-value">-2</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>]
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;nsName&quot;</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;except&quot;</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;name&quot;</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;data&quot;</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;param&quot;</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;include&quot;</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;grammar&quot;</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;start&quot;</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;externalRef&quot;</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;notAllowed&quot;</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:end_element</span>
+            <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;element&quot;</span>, <span class="ruby-value str">&quot;attribute&quot;</span>
+              <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">event</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;zeroOrMore&quot;</span>, <span class="ruby-value str">&quot;oneOrMore&quot;</span>, <span class="ruby-value str">&quot;choice&quot;</span>, <span class="ruby-value str">&quot;optional&quot;</span>, 
+              <span class="ruby-value str">&quot;interleave&quot;</span>, <span class="ruby-value str">&quot;group&quot;</span>, <span class="ruby-value str">&quot;mixed&quot;</span>
+              <span class="ruby-identifier">states</span>.<span class="ruby-identifier">pop</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;define&quot;</span>
+              <span class="ruby-identifier">ref</span> = <span class="ruby-identifier">states</span>.<span class="ruby-identifier">pop</span>
+              <span class="ruby-ivar">@references</span>[ <span class="ruby-identifier">ref</span>.<span class="ruby-identifier">shift</span> ] = <span class="ruby-identifier">ref</span>
+            <span class="ruby-comment cmt">#when &quot;empty&quot;</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:end_document</span>
+            <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">event</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:text</span>
+            <span class="ruby-identifier">states</span>[<span class="ruby-value">-1</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">event</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">!=</span> <span class="ruby-identifier">:end_document</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

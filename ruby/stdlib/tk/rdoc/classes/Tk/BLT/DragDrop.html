@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Tk::BLT::DragDrop</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Tk::BLT::DragDrop</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/tk/lib/tkextlib/blt/dragdrop_rb.html">
+                tk/lib/tkextlib/blt/dragdrop.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M007100">__validation_class_list</a>&nbsp;&nbsp;
+      <a href="#M007114">active</a>&nbsp;&nbsp;
+      <a href="#M007099">current_source_configinfo</a>&nbsp;&nbsp;
+      <a href="#M007111">drag</a>&nbsp;&nbsp;
+      <a href="#M007112">drop</a>&nbsp;&nbsp;
+      <a href="#M007113">errors</a>&nbsp;&nbsp;
+      <a href="#M007109">handle_target</a>&nbsp;&nbsp;
+      <a href="#M007103">init_source</a>&nbsp;&nbsp;
+      <a href="#M007115">location</a>&nbsp;&nbsp;
+      <a href="#M007104">source</a>&nbsp;&nbsp;
+      <a href="#M007098">source_configinfo</a>&nbsp;&nbsp;
+      <a href="#M007097">source_configure</a>&nbsp;&nbsp;
+      <a href="#M007101">source_handler</a>&nbsp;&nbsp;
+      <a href="#M007106">source_handler_info</a>&nbsp;&nbsp;
+      <a href="#M007105">source_handler_list</a>&nbsp;&nbsp;
+      <a href="#M007107">target</a>&nbsp;&nbsp;
+      <a href="#M007102">target_handler</a>&nbsp;&nbsp;
+      <a href="#M007108">target_handler_list</a>&nbsp;&nbsp;
+      <a href="#M007110">token</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="DragDrop/DnD_Handle.html" class="link">Tk::BLT::DragDrop::DnD_Handle</a><br />
+Class <a href="DragDrop/PackageCommand.html" class="link">Tk::BLT::DragDrop::PackageCommand</a><br />
+Class <a href="DragDrop/SiteCommand.html" class="link">Tk::BLT::DragDrop::SiteCommand</a><br />
+Class <a href="DragDrop/Token.html" class="link">Tk::BLT::DragDrop::Token</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">TkCommandNames</td>
+          <td>=</td>
+          <td class="context-item-value">['::blt::drag&amp;drop'.freeze].freeze</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M007100" class="m-detail">
+        <a name="M007100"></a>
+
+        <div class="method-heading">
+          <a href="#M007100" class="method-signature">
+          <span class="method-name">__validation_class_list</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007100-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007100-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 122</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">__validation_class_list</span>
+      <span class="ruby-keyword kw">super</span>() <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">PackageCommand</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">SiteCommand</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007114" class="m-detail">
+        <a name="M007114"></a>
+
+        <div class="method-heading">
+          <a href="#M007114" class="method-signature">
+          <span class="method-name">active</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007114-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007114-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 206</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">active</span>
+      <span class="ruby-identifier">bool</span>(<span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'active'</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007099" class="m-detail">
+        <a name="M007099"></a>
+
+        <div class="method-heading">
+          <a href="#M007099" class="method-signature">
+          <span class="method-name">current_source_configinfo</span><span class="method-args">(win, slot=nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007099-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007099-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 66</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">current_source_configinfo</span>(<span class="ruby-identifier">win</span>, <span class="ruby-identifier">slot</span>=<span class="ruby-keyword kw">nil</span>)
+        <span class="ruby-identifier">current_itemconfiginfo</span>([<span class="ruby-value str">'source'</span>, <span class="ruby-identifier">win</span>], <span class="ruby-identifier">slot</span>)
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007111" class="m-detail">
+        <a name="M007111"></a>
+
+        <div class="method-heading">
+          <a href="#M007111" class="method-signature">
+          <span class="method-name">drag</span><span class="method-args">(win, x, y)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007111-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007111-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 195</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">drag</span>(<span class="ruby-identifier">win</span>, <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>)
+      <span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'drag'</span>, <span class="ruby-identifier">win</span>, <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007112" class="m-detail">
+        <a name="M007112"></a>
+
+        <div class="method-heading">
+          <a href="#M007112" class="method-signature">
+          <span class="method-name">drop</span><span class="method-args">(win, x, y)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007112-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007112-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 198</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">drop</span>(<span class="ruby-identifier">win</span>, <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>)
+      <span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'drop'</span>, <span class="ruby-identifier">win</span>, <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007113" class="m-detail">
+        <a name="M007113"></a>
+
+        <div class="method-heading">
+          <a href="#M007113" class="method-signature">
+          <span class="method-name">errors</span><span class="method-args">(cmd=Proc.new)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007113-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007113-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 202</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">errors</span>(<span class="ruby-identifier">cmd</span>=<span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span>)
+      <span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'errors'</span>, <span class="ruby-identifier">cmd</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007109" class="m-detail">
+        <a name="M007109"></a>
+
+        <div class="method-heading">
+          <a href="#M007109" class="method-signature">
+          <span class="method-name">handle_target</span><span class="method-args">(win, type, val=None)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007109-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007109-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 187</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">handle_target</span>(<span class="ruby-identifier">win</span>, <span class="ruby-identifier">type</span>, <span class="ruby-identifier">val</span>=<span class="ruby-constant">None</span>)
+      <span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'target'</span>, <span class="ruby-identifier">win</span>, <span class="ruby-value str">'handle'</span>, <span class="ruby-identifier">type</span>, <span class="ruby-identifier">val</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007103" class="m-detail">
+        <a name="M007103"></a>
+
+        <div class="method-heading">
+          <a href="#M007103" class="method-signature">
+          <span class="method-name">init_source</span><span class="method-args">(win)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007103-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007103-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 165</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">init_source</span>(<span class="ruby-identifier">win</span>)
+      <span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'source'</span>, <span class="ruby-identifier">win</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007115" class="m-detail">
+        <a name="M007115"></a>
+
+        <div class="method-heading">
+          <a href="#M007115" class="method-signature">
+          <span class="method-name">location</span><span class="method-args">(x=None, y=None)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007115-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007115-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 210</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">location</span>(<span class="ruby-identifier">x</span>=<span class="ruby-constant">None</span>, <span class="ruby-identifier">y</span>=<span class="ruby-constant">None</span>)
+      <span class="ruby-identifier">list</span>(<span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'location'</span>, <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007104" class="m-detail">
+        <a name="M007104"></a>
+
+        <div class="method-heading">
+          <a href="#M007104" class="method-signature">
+          <span class="method-name">source</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007104-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007104-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 169</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">source</span>()
+      <span class="ruby-identifier">list</span>(<span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'source'</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007098" class="m-detail">
+        <a name="M007098"></a>
+
+        <div class="method-heading">
+          <a href="#M007098" class="method-signature">
+          <span class="method-name">source_configinfo</span><span class="method-args">(win, slot=nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007098-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007098-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 63</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">source_configinfo</span>(<span class="ruby-identifier">win</span>, <span class="ruby-identifier">slot</span>=<span class="ruby-keyword kw">nil</span>)
+        <span class="ruby-identifier">itemconfiginfo</span>([<span class="ruby-value str">'source'</span>, <span class="ruby-identifier">win</span>], <span class="ruby-identifier">slot</span>)
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007097" class="m-detail">
+        <a name="M007097"></a>
+
+        <div class="method-heading">
+          <a href="#M007097" class="method-signature">
+          <span class="method-name">source_configure</span><span class="method-args">(win, slot, value=None)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007097-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007097-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 60</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">source_configure</span>(<span class="ruby-identifier">win</span>, <span class="ruby-identifier">slot</span>, <span class="ruby-identifier">value</span>=<span class="ruby-constant">None</span>)
+        <span class="ruby-identifier">itemconfigure</span>([<span class="ruby-value str">'source'</span>, <span class="ruby-identifier">win</span>], <span class="ruby-identifier">slot</span>, <span class="ruby-identifier">value</span>)
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007101" class="m-detail">
+        <a name="M007101"></a>
+
+        <div class="method-heading">
+          <a href="#M007101" class="method-signature">
+          <span class="method-name">source_handler</span><span class="method-args">(win, datatype, cmd=Proc.new, *args)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007101-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007101-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 151</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">source_handler</span>(<span class="ruby-identifier">win</span>, <span class="ruby-identifier">datatype</span>, <span class="ruby-identifier">cmd</span>=<span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+      <span class="ruby-identifier">_bind_for_event_class</span>(<span class="ruby-constant">DnD_Handle</span>, 
+                            [<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'source'</span>, <span class="ruby-identifier">win</span>, <span class="ruby-value str">'handler'</span>], 
+                            <span class="ruby-identifier">cmd</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007106" class="m-detail">
+        <a name="M007106"></a>
+
+        <div class="method-heading">
+          <a href="#M007106" class="method-signature">
+          <span class="method-name">source_handler_info</span><span class="method-args">(win, type)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007106-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007106-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 176</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">source_handler_info</span>(<span class="ruby-identifier">win</span>, <span class="ruby-identifier">type</span>)
+      <span class="ruby-identifier">tk_tcl2ruby</span>(<span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'source'</span>, <span class="ruby-identifier">win</span>, <span class="ruby-value str">'handler'</span>, <span class="ruby-identifier">type</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007105" class="m-detail">
+        <a name="M007105"></a>
+
+        <div class="method-heading">
+          <a href="#M007105" class="method-signature">
+          <span class="method-name">source_handler_list</span><span class="method-args">(win)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007105-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007105-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 173</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">source_handler_list</span>(<span class="ruby-identifier">win</span>)
+      <span class="ruby-identifier">simplelist</span>(<span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'source'</span>, <span class="ruby-identifier">win</span>, <span class="ruby-value str">'handler'</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007107" class="m-detail">
+        <a name="M007107"></a>
+
+        <div class="method-heading">
+          <a href="#M007107" class="method-signature">
+          <span class="method-name">target</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007107-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007107-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 180</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">target</span>
+      <span class="ruby-identifier">list</span>(<span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'target'</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007102" class="m-detail">
+        <a name="M007102"></a>
+
+        <div class="method-heading">
+          <a href="#M007102" class="method-signature">
+          <span class="method-name">target_handler</span><span class="method-args">(win, datatype, cmd=Proc.new, *args)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007102-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007102-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 157</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">target_handler</span>(<span class="ruby-identifier">win</span>, <span class="ruby-identifier">datatype</span>, <span class="ruby-identifier">cmd</span>=<span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+      <span class="ruby-identifier">_bind_for_event_class</span>(<span class="ruby-constant">DnD_Handle</span>, 
+                            [<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'target'</span>, <span class="ruby-identifier">win</span>, <span class="ruby-value str">'handler'</span>], 
+                            <span class="ruby-identifier">cmd</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007108" class="m-detail">
+        <a name="M007108"></a>
+
+        <div class="method-heading">
+          <a href="#M007108" class="method-signature">
+          <span class="method-name">target_handler_list</span><span class="method-args">(win)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007108-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007108-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 183</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">target_handler_list</span>(<span class="ruby-identifier">win</span>)
+      <span class="ruby-identifier">simplelist</span>(<span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'target'</span>, <span class="ruby-identifier">win</span>, <span class="ruby-value str">'handler'</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M007110" class="m-detail">
+        <a name="M007110"></a>
+
+        <div class="method-heading">
+          <a href="#M007110" class="method-signature">
+          <span class="method-name">token</span><span class="method-args">(win)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M007110-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M007110-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/blt/dragdrop.rb, line 191</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">token</span>(<span class="ruby-identifier">win</span>)
+      <span class="ruby-identifier">window</span>(<span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'::blt::drag&amp;drop'</span>, <span class="ruby-value str">'token'</span>, <span class="ruby-identifier">win</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 0 --> <p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and run  by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. Ruby-doc.org was created in 2002 to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

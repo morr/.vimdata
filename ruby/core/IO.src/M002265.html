@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>lineno= (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.lineno = integer    =&gt; integer
+ *  
+ *  Manually sets the current line number to the given value.
+ *  &lt;code&gt;$.&lt;/code&gt; is updated only on the next read.
+ *     
+ *     f = File.new(&quot;testfile&quot;)
+ *     f.gets                     #=&gt; &quot;This is line one\n&quot;
+ *     $.                         #=&gt; 1
+ *     f.lineno = 1000
+ *     f.lineno                   #=&gt; 1000
+ *     $. # lineno of last read   #=&gt; 1
+ *     f.gets                     #=&gt; &quot;This is line two\n&quot;
+ *     $. # lineno of last read   #=&gt; 1001
+ */
+
+static VALUE
+rb_io_set_lineno(io, lineno)
+    VALUE io, lineno;
+{
+    OpenFile *fptr;
+
+    GetOpenFile(io, fptr);
+    rb_io_check_readable(fptr);
+    fptr-&gt;lineno = NUM2INT(lineno);
+    return lineno;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>&gt;= (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   mod &gt;= other   =&gt;  true, false, or nil
+ *
+ * Returns true if &lt;i&gt;mod&lt;/i&gt; is an ancestor of &lt;i&gt;other&lt;/i&gt;, or the
+ * two modules are the same. Returns 
+ * &lt;code&gt;nil&lt;/code&gt; if there's no relationship between the two. 
+ * (Think of the relationship in terms of the class definition: 
+ * &quot;class A&lt;B&quot; implies &quot;B&gt;A&quot;).
+ *
+ */
+
+static VALUE
+rb_mod_ge(mod, arg)
+    VALUE mod, arg;
+{
+    switch (TYPE(arg)) {
+      case T_MODULE:
+      case T_CLASS:
+        break;
+      default:
+        rb_raise(rb_eTypeError, &quot;compared with non class/module&quot;);
+    }
+
+    return rb_class_inherited_p(arg, mod);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>gets (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     gets(separator=$/)    =&gt; string or nil
+ *  
+ *  Returns (and assigns to &lt;code&gt;$_&lt;/code&gt;) the next line from the list
+ *  of files in +ARGV+ (or &lt;code&gt;$*&lt;/code&gt;), or from standard
+ *  input if no files are present on the command line. Returns
+ *  +nil+ at end of file. The optional argument specifies the
+ *  record separator. The separator is included with the contents of
+ *  each record. A separator of +nil+ reads the entire
+ *  contents, and a zero-length separator reads the input one paragraph
+ *  at a time, where paragraphs are divided by two consecutive newlines.
+ *  If multiple filenames are present in +ARGV+,
+ *  +gets(nil)+ will read the contents one file at a time.
+ *     
+ *     ARGV &lt;&lt; &quot;testfile&quot;
+ *     print while gets
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     This is line one
+ *     This is line two
+ *     This is line three
+ *     And so on...
+ *     
+ *  The style of programming using &lt;code&gt;$_&lt;/code&gt; as an implicit
+ *  parameter is gradually losing favor in the Ruby community.
+ */
+
+static VALUE
+rb_f_gets(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE line;
+
+    if (!next_argv()) return Qnil;
+    if (TYPE(current_file) != T_FILE) {
+        line = rb_funcall3(current_file, rb_intern(&quot;gets&quot;), argc, argv);
+    }
+    else {
+        line = argf_getline(argc, argv);
+    }
+    rb_lastline_set(line);
+    return line;
+}</pre>
+</body>
+</html>

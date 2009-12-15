@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>eql? (Struct)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * code-seq:
+ *   struct.eql?(other)   =&gt; true or false
+ *
+ * Two structures are equal if they are the same object, or if all their
+ * fields are equal (using &lt;code&gt;eql?&lt;/code&gt;).
+ */
+
+static VALUE
+rb_struct_eql(s, s2)
+    VALUE s, s2;
+{
+    long i;
+
+    if (s == s2) return Qtrue;
+    if (TYPE(s2) != T_STRUCT) return Qfalse;
+    if (rb_obj_class(s) != rb_obj_class(s2)) return Qfalse;
+    if (RSTRUCT(s)-&gt;len != RSTRUCT(s2)-&gt;len) {
+        rb_bug(&quot;inconsistent struct&quot;); /* should never happen */
+    }
+
+    for (i=0; i&lt;RSTRUCT(s)-&gt;len; i++) {
+        if (!rb_eql(RSTRUCT(s)-&gt;ptr[i], RSTRUCT(s2)-&gt;ptr[i])) return Qfalse;
+    }
+    return Qtrue;
+}</pre>
+</body>
+</html>

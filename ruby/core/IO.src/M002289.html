@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>close_write (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.close_write   =&gt; nil
+ *  
+ *  Closes the write end of a duplex I/O stream (i.e., one that contains
+ *  both a read and a write stream, such as a pipe). Will raise an
+ *  &lt;code&gt;IOError&lt;/code&gt; if the stream is not duplexed.
+ *     
+ *     f = IO.popen(&quot;/bin/sh&quot;,&quot;r+&quot;)
+ *     f.close_write
+ *     f.print &quot;nowhere&quot;
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     prog.rb:3:in `write': not opened for writing (IOError)
+ *      from prog.rb:3:in `print'
+ *      from prog.rb:3
+ */
+
+static VALUE
+rb_io_close_write(io)
+    VALUE io;
+{
+    OpenFile *fptr;
+    int n;
+
+    if (rb_safe_level() &gt;= 4 &amp;&amp; !OBJ_TAINTED(io)) {
+        rb_raise(rb_eSecurityError, &quot;Insecure: can't close&quot;);
+    }
+    GetOpenFile(io, fptr);
+    if (fptr-&gt;f2 == 0 &amp;&amp; (fptr-&gt;mode &amp; FMODE_READABLE)) {
+        rb_raise(rb_eIOError, &quot;closing non-duplex IO for writing&quot;);
+    }
+    if (fptr-&gt;f2 == 0) {
+        return rb_io_close(io);
+    }
+    n = fclose(fptr-&gt;f2);
+    fptr-&gt;f2 = 0;
+    fptr-&gt;mode &amp;= ~FMODE_WRITABLE;
+    if (n != 0) rb_sys_fail(fptr-&gt;path);
+
+    return Qnil;
+}</pre>
+</body>
+</html>

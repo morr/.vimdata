@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Delegator</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Delegator</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/delegate_rb.html">
+                delegate.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="Delegator.html">Delegator</a> is an abstract class used to build
+delegator pattern objects from subclasses. Subclasses should redefine
+__getobj__. For a concrete implementation, see <a
+href="SimpleDelegator.html">SimpleDelegator</a>.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000222">__getobj__</a>&nbsp;&nbsp;
+      <a href="#M000223">marshal_dump</a>&nbsp;&nbsp;
+      <a href="#M000224">marshal_load</a>&nbsp;&nbsp;
+      <a href="#M000220">method_missing</a>&nbsp;&nbsp;
+      <a href="#M000219">new</a>&nbsp;&nbsp;
+      <a href="#M000221">respond_to?</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">initialize</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">initialize_methods</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000219" class="method-detail">
+        <a name="M000219"></a>
+
+        <div class="method-heading">
+          <a href="#M000219" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(obj)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Pass in the <em>obj</em> to delegate method calls to. All methods supported
+by <em>obj</em> will be delegated to.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000219-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000219-source">
+<pre>
+<span class="ruby-comment cmt"># File delegate.rb, line 123</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">obj</span>)
+    <span class="ruby-identifier">preserved</span> = <span class="ruby-operator">::</span><span class="ruby-constant">Kernel</span>.<span class="ruby-identifier">public_instance_methods</span>(<span class="ruby-keyword kw">false</span>)
+    <span class="ruby-identifier">preserved</span> <span class="ruby-operator">-=</span> [<span class="ruby-value str">&quot;to_s&quot;</span>,<span class="ruby-value str">&quot;to_a&quot;</span>,<span class="ruby-value str">&quot;inspect&quot;</span>,<span class="ruby-value str">&quot;==&quot;</span>,<span class="ruby-value str">&quot;=~&quot;</span>,<span class="ruby-value str">&quot;===&quot;</span>]
+    <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">t</span> <span class="ruby-keyword kw">in</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">ancestors</span>
+      <span class="ruby-identifier">preserved</span> <span class="ruby-operator">|=</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">public_instance_methods</span>(<span class="ruby-keyword kw">false</span>)
+      <span class="ruby-identifier">preserved</span> <span class="ruby-operator">|=</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">private_instance_methods</span>(<span class="ruby-keyword kw">false</span>)
+      <span class="ruby-identifier">preserved</span> <span class="ruby-operator">|=</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">protected_instance_methods</span>(<span class="ruby-keyword kw">false</span>)
+      <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">t</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Delegator</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">preserved</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;singleton_method_added&quot;</span>
+    <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">method</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">methods</span>
+      <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">preserved</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">method</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">eval</span> <span class="ruby-value str">&quot;def self.\#{method}(*args, &amp;block)\nbegin\n__getobj__.__send__(:\#{method}, *args, &amp;block)\nrescue Exception\n$@.delete_if{|s| /:in `__getobj__'$/ =~ s} #`\n$@.delete_if{|s| /^\\\\(eval\\\\):/ =~ s}\nKernel::raise\nend\nend\n&quot;</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">SyntaxError</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">NameError</span>, <span class="ruby-value str">&quot;invalid identifier %s&quot;</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">method</span>, <span class="ruby-identifier">caller</span>(<span class="ruby-value">4</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000222" class="method-detail">
+        <a name="M000222"></a>
+
+        <div class="method-heading">
+          <a href="#M000222" class="method-signature">
+          <span class="method-name">__getobj__</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This method must be overridden by subclasses and should return the object
+method calls are being delegated to.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000222-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000222-source">
+<pre>
+<span class="ruby-comment cmt"># File delegate.rb, line 177</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">__getobj__</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>, <span class="ruby-value str">&quot;need to define `__getobj__'&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000223" class="method-detail">
+        <a name="M000223"></a>
+
+        <div class="method-heading">
+          <a href="#M000223" class="method-signature">
+          <span class="method-name">marshal_dump</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Serialization support for the object returned by __getobj__.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000223-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000223-source">
+<pre>
+<span class="ruby-comment cmt"># File delegate.rb, line 182</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">marshal_dump</span>
+    <span class="ruby-identifier">__getobj__</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000224" class="method-detail">
+        <a name="M000224"></a>
+
+        <div class="method-heading">
+          <a href="#M000224" class="method-signature">
+          <span class="method-name">marshal_load</span><span class="method-args">(obj)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reinitializes delegation from a serialized object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000224-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000224-source">
+<pre>
+<span class="ruby-comment cmt"># File delegate.rb, line 186</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">marshal_load</span>(<span class="ruby-identifier">obj</span>)
+    <span class="ruby-identifier">initialize_methods</span>(<span class="ruby-identifier">obj</span>)
+    <span class="ruby-identifier">__setobj__</span>(<span class="ruby-identifier">obj</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000220" class="method-detail">
+        <a name="M000220"></a>
+
+        <div class="method-heading">
+          <a href="#M000220" class="method-signature">
+          <span class="method-name">method_missing</span><span class="method-args">(m, *args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Handles the magic of delegation through __getobj__.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000220-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000220-source">
+<pre>
+<span class="ruby-comment cmt"># File delegate.rb, line 156</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">method_missing</span>(<span class="ruby-identifier">m</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-identifier">target</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">__getobj__</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">m</span>)
+      <span class="ruby-keyword kw">super</span>(<span class="ruby-identifier">m</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">target</span>.<span class="ruby-identifier">__send__</span>(<span class="ruby-identifier">m</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000221" class="method-detail">
+        <a name="M000221"></a>
+
+        <div class="method-heading">
+          <a href="#M000221" class="method-signature">
+          <span class="method-name">respond_to?</span><span class="method-args">(m, include_private = false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Checks for a method provided by this the delegate object by fowarding the
+call through __getobj__.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000221-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000221-source">
+<pre>
+<span class="ruby-comment cmt"># File delegate.rb, line 168</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">m</span>, <span class="ruby-identifier">include_private</span> = <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">super</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">__getobj__</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">m</span>, <span class="ruby-identifier">include_private</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

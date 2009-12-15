@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: REXML::Parsers::PullParser</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">REXML::Parsers::PullParser</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/rexml/parsers/pullparser_rb.html">
+                rexml/parsers/pullparser.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1>Using the Pull Parser</h1>
+<p>
+<em>This API is experimental, and subject to change.</em>
+</p>
+<pre>
+ parser = PullParser.new( &quot;&lt;a&gt;text&lt;b att='val'/&gt;txet&lt;/a&gt;&quot; )
+ while parser.has_next?
+   res = parser.next
+   puts res[1]['att'] if res.start_tag? and res[0] == 'b'
+ end
+</pre>
+<p>
+See the <a href="PullEvent.html">PullEvent</a> class for information on the
+content of the results. The data is identical to the arguments passed for
+the various events to the <a
+href="../StreamListener.html">StreamListener</a> API.
+</p>
+<p>
+Notice that:
+</p>
+<pre>
+ parser = PullParser.new( &quot;&lt;a&gt;BAD DOCUMENT&quot; )
+ while parser.has_next?
+   res = parser.next
+   raise res[1] if res.error?
+ end
+</pre>
+<p>
+Nat Price gave me some good ideas for the API.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002559">add_listener</a>&nbsp;&nbsp;
+      <a href="#M002560">each</a>&nbsp;&nbsp;
+      <a href="#M002558">new</a>&nbsp;&nbsp;
+      <a href="#M002561">peek</a>&nbsp;&nbsp;
+      <a href="#M002562">pull</a>&nbsp;&nbsp;
+      <a href="#M002563">unshift</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="../XMLTokens.html">XMLTokens</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M002558" class="m-detail">
+        <a name="M002558"></a>
+
+        <div class="method-heading">
+          <a href="#M002558" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(stream)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002558-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002558-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/parsers/pullparser.rb, line 37</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span> <span class="ruby-identifier">stream</span>
+        <span class="ruby-ivar">@entities</span> = {}
+        <span class="ruby-ivar">@listeners</span> = <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-ivar">@parser</span> = <span class="ruby-constant">BaseParser</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">stream</span> )
+        <span class="ruby-ivar">@my_stack</span> = []
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002559" class="m-detail">
+        <a name="M002559"></a>
+
+        <div class="method-heading">
+          <a href="#M002559" class="method-signature">
+          <span class="method-name">add_listener</span><span class="method-args">( listener )</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002559-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002559-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/parsers/pullparser.rb, line 44</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_listener</span>( <span class="ruby-identifier">listener</span> )
+        <span class="ruby-ivar">@listeners</span> = [] <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@listeners</span>
+        <span class="ruby-ivar">@listeners</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">listener</span>
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002560" class="m-detail">
+        <a name="M002560"></a>
+
+        <div class="method-heading">
+          <a href="#M002560" class="method-signature">
+          <span class="method-name">each</span><span class="method-args">() {|self.pull| ...}</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002560-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002560-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/parsers/pullparser.rb, line 49</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each</span>
+        <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">has_next?</span>
+          <span class="ruby-keyword kw">yield</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">pull</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002561" class="m-detail">
+        <a name="M002561"></a>
+
+        <div class="method-heading">
+          <a href="#M002561" class="method-signature">
+          <span class="method-name">peek</span><span class="method-args">(depth=0)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002561-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002561-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/parsers/pullparser.rb, line 55</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">peek</span> <span class="ruby-identifier">depth</span>=<span class="ruby-value">0</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@my_stack</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">depth</span>
+          (<span class="ruby-identifier">depth</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@my_stack</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">times</span> {
+            <span class="ruby-identifier">e</span> = <span class="ruby-constant">PullEvent</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">pull</span>)
+            <span class="ruby-ivar">@my_stack</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">e</span>)
+          }
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-ivar">@my_stack</span>[<span class="ruby-identifier">depth</span>]
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002562" class="m-detail">
+        <a name="M002562"></a>
+
+        <div class="method-heading">
+          <a href="#M002562" class="method-signature">
+          <span class="method-name">pull</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002562-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002562-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/parsers/pullparser.rb, line 65</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">pull</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@my_stack</span>.<span class="ruby-identifier">shift</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@my_stack</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+
+        <span class="ruby-identifier">event</span> = <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">pull</span>
+        <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">0</span>]
+        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:entitydecl</span>
+          <span class="ruby-ivar">@entities</span>[ <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] ] = 
+            <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>] <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/PUBLIC|SYSTEM/</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:text</span>
+          <span class="ruby-identifier">unnormalized</span> = <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">unnormalize</span>( <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>], <span class="ruby-ivar">@entities</span> )
+          <span class="ruby-identifier">event</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">unnormalized</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-constant">PullEvent</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">event</span> )
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002563" class="m-detail">
+        <a name="M002563"></a>
+
+        <div class="method-heading">
+          <a href="#M002563" class="method-signature">
+          <span class="method-name">unshift</span><span class="method-args">(token)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002563-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002563-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/parsers/pullparser.rb, line 80</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">unshift</span> <span class="ruby-identifier">token</span>
+        <span class="ruby-ivar">@my_stack</span>.<span class="ruby-identifier">unshift</span> <span class="ruby-identifier">token</span>
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 3 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

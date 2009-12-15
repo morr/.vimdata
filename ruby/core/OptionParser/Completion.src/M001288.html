@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>complete (OptionParser::Completion)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/optparse.rb, line 221</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">complete</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">icase</span> = <span class="ruby-keyword kw">false</span>, <span class="ruby-identifier">pat</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">pat</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">'\A'</span> <span class="ruby-operator">+</span> <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">quote</span>(<span class="ruby-identifier">key</span>).<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\w+\b/</span>, <span class="ruby-value str">'\&amp;\w*'</span>),
+                         <span class="ruby-identifier">icase</span>)
+      <span class="ruby-identifier">canon</span>, <span class="ruby-identifier">sw</span>, <span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>, <span class="ruby-identifier">cn</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">candidates</span> = []
+      <span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+        (<span class="ruby-keyword kw">if</span> <span class="ruby-constant">Regexp</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">k</span>
+           <span class="ruby-identifier">kn</span> = <span class="ruby-keyword kw">nil</span>
+           <span class="ruby-identifier">k</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">key</span>
+         <span class="ruby-keyword kw">else</span>
+           <span class="ruby-identifier">kn</span> = <span class="ruby-keyword kw">defined?</span>(<span class="ruby-identifier">k</span>.<span class="ruby-identifier">id2name</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">k</span>.<span class="ruby-identifier">id2name</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">k</span>
+           <span class="ruby-identifier">pat</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">kn</span>
+         <span class="ruby-keyword kw">end</span>) <span class="ruby-keyword kw">or</span> <span class="ruby-keyword kw">next</span>
+        <span class="ruby-identifier">v</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">k</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">candidates</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>, <span class="ruby-identifier">kn</span>]
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">candidates</span> = <span class="ruby-identifier">candidates</span>.<span class="ruby-identifier">sort_by</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>, <span class="ruby-identifier">kn</span><span class="ruby-operator">|</span> <span class="ruby-identifier">kn</span>.<span class="ruby-identifier">size</span>}
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">candidates</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+        <span class="ruby-identifier">canon</span>, <span class="ruby-identifier">sw</span>, <span class="ruby-operator">*</span> = <span class="ruby-identifier">candidates</span>[<span class="ruby-value">0</span>]
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">candidates</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+        <span class="ruby-identifier">canon</span>, <span class="ruby-identifier">sw</span>, <span class="ruby-identifier">cn</span> = <span class="ruby-identifier">candidates</span>.<span class="ruby-identifier">shift</span>
+        <span class="ruby-identifier">candidates</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>, <span class="ruby-identifier">kn</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">sw</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">v</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-constant">String</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">cn</span> <span class="ruby-keyword kw">and</span> <span class="ruby-constant">String</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">kn</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cn</span>.<span class="ruby-identifier">rindex</span>(<span class="ruby-identifier">kn</span>, <span class="ruby-value">0</span>)
+              <span class="ruby-identifier">canon</span>, <span class="ruby-identifier">sw</span>, <span class="ruby-identifier">cn</span> = <span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>, <span class="ruby-identifier">kn</span>
+              <span class="ruby-keyword kw">next</span>
+            <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">kn</span>.<span class="ruby-identifier">rindex</span>(<span class="ruby-identifier">cn</span>, <span class="ruby-value">0</span>)
+              <span class="ruby-keyword kw">next</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">throw</span> <span class="ruby-identifier">:ambiguous</span>, <span class="ruby-identifier">key</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">canon</span>
+        <span class="ruby-identifier">block_given?</span> <span class="ruby-keyword kw">or</span> <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">key</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">sw</span>
+        <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">key</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">sw</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

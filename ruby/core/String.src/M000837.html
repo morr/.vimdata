@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>delete! (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.delete!([other_str]+&gt;)   =&gt; str or nil
+ *  
+ *  Performs a &lt;code&gt;delete&lt;/code&gt; operation in place, returning &lt;i&gt;str&lt;/i&gt;, or
+ *  &lt;code&gt;nil&lt;/code&gt; if &lt;i&gt;str&lt;/i&gt; was not modified.
+ */
+
+static VALUE
+rb_str_delete_bang(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    char *s, *send, *t;
+    char squeez[256];
+    int modify = 0;
+    int init = 1;
+    int i;
+
+    if (argc &lt; 1) {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments&quot;);
+    }
+    for (i=0; i&lt;argc; i++) {
+        VALUE s = argv[i];
+
+        StringValue(s);
+        tr_setup_table(s, squeez, init);
+        init = 0;
+    }
+
+    rb_str_modify(str);
+    s = t = RSTRING(str)-&gt;ptr;
+    if (!s || RSTRING(str)-&gt;len == 0) return Qnil;
+    send = s + RSTRING(str)-&gt;len;
+    while (s &lt; send) {
+        if (squeez[*s &amp; 0xff])
+            modify = 1;
+        else
+            *t++ = *s;
+        s++;
+    }
+    *t = '\0';
+    RSTRING(str)-&gt;len = t - RSTRING(str)-&gt;ptr;
+
+    if (modify) return str;
+    return Qnil;
+}</pre>
+</body>
+</html>

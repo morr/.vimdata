@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>constants (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Module.constants   =&gt; array
+ *  
+ *  Returns an array of the names of all constants defined in the
+ *  system. This list includes the names of all modules and classes.
+ *     
+ *     p Module.constants.sort[1..5]
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     [&quot;ARGV&quot;, &quot;ArgumentError&quot;, &quot;Array&quot;, &quot;Bignum&quot;, &quot;Binding&quot;]
+ */
+
+static VALUE
+rb_mod_s_constants()
+{
+    NODE *cbase = ruby_cref;
+    void *data = 0;
+
+    while (cbase) {
+        if (!NIL_P(cbase-&gt;nd_clss)) {
+            data = rb_mod_const_at(cbase-&gt;nd_clss, data);
+        }
+        cbase = cbase-&gt;nd_next;
+    }
+
+    if (!NIL_P(ruby_cbase)) {
+        data = rb_mod_const_of(ruby_cbase, data);
+    }
+    return rb_const_list(data);
+}</pre>
+</body>
+</html>

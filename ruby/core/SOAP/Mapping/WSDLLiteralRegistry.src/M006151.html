@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>obj2soap (SOAP::Mapping::WSDLLiteralRegistry)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/mapping/wsdlliteralregistry.rb, line 36</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">obj2soap</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">qname</span>)
+    <span class="ruby-identifier">soap_obj</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ele</span> = <span class="ruby-ivar">@definedelements</span>[<span class="ruby-identifier">qname</span>]
+      <span class="ruby-identifier">soap_obj</span> = <span class="ruby-identifier">obj2elesoap</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">ele</span>)
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">type</span> = <span class="ruby-ivar">@definedtypes</span>[<span class="ruby-identifier">qname</span>]
+      <span class="ruby-identifier">soap_obj</span> = <span class="ruby-identifier">obj2typesoap</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">type</span>, <span class="ruby-keyword kw">true</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">soap_obj</span> = <span class="ruby-identifier">any2soap</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">qname</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">soap_obj</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">soap_obj</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@excn_handler_obj2soap</span>
+      <span class="ruby-identifier">soap_obj</span> = <span class="ruby-ivar">@excn_handler_obj2soap</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">obj</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">yield_obj</span><span class="ruby-operator">|</span>
+        <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">obj2soap</span>(<span class="ruby-identifier">yield_obj</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-constant">MAPPING_OPT</span>)
+      }
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">soap_obj</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">soap_obj</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">MappingError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;cannot map #{obj.class.name} as #{qname}&quot;</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (XMP)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb/xmp.rb, line 19</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">bind</span> = <span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">init_config</span>(<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-comment cmt">#IRB.parse_opts</span>
+    <span class="ruby-comment cmt">#IRB.load_modules</span>
+
+    <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">conf</span>[<span class="ruby-identifier">:PROMPT_MODE</span>] = <span class="ruby-identifier">:XMP</span>
+
+    <span class="ruby-identifier">bind</span> = <span class="ruby-constant">IRB</span><span class="ruby-operator">::</span><span class="ruby-constant">Frame</span>.<span class="ruby-identifier">top</span>(<span class="ruby-value">1</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">bind</span>
+    <span class="ruby-identifier">ws</span> = <span class="ruby-constant">IRB</span><span class="ruby-operator">::</span><span class="ruby-constant">WorkSpace</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">bind</span>)
+    <span class="ruby-ivar">@io</span> = <span class="ruby-constant">StringInputMethod</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-ivar">@irb</span> = <span class="ruby-constant">IRB</span><span class="ruby-operator">::</span><span class="ruby-constant">Irb</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">ws</span>, <span class="ruby-ivar">@io</span>)
+    <span class="ruby-ivar">@irb</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">ignore_sigint</span> = <span class="ruby-keyword kw">false</span>
+
+<span class="ruby-comment cmt">#    IRB.conf[:IRB_RC].call(@irb.context) if IRB.conf[:IRB_RC]</span>
+    <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">conf</span>[<span class="ruby-identifier">:MAIN_CONTEXT</span>] = <span class="ruby-ivar">@irb</span>.<span class="ruby-identifier">context</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

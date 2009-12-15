@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>expand_path (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.expand_path(file_name [, dir_string] ) -&gt; abs_file_name
+ *  
+ *  Converts a pathname to an absolute pathname. Relative paths are
+ *  referenced from the current working directory of the process unless
+ *  &lt;i&gt;dir_string&lt;/i&gt; is given, in which case it will be used as the
+ *  starting point. The given pathname may start with a
+ *  ``&lt;code&gt;~&lt;/code&gt;'', which expands to the process owner's home
+ *  directory (the environment variable &lt;code&gt;HOME&lt;/code&gt; must be set
+ *  correctly). ``&lt;code&gt;~&lt;/code&gt;&lt;i&gt;user&lt;/i&gt;'' expands to the named
+ *  user's home directory.
+ *     
+ *     File.expand_path(&quot;~oracle/bin&quot;)           #=&gt; &quot;/home/oracle/bin&quot;
+ *     File.expand_path(&quot;../../bin&quot;, &quot;/tmp/x&quot;)   #=&gt; &quot;/bin&quot;
+ */
+
+VALUE
+rb_file_s_expand_path(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE fname, dname;
+
+    if (argc == 1) {
+        return rb_file_expand_path(argv[0], Qnil);
+    }
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;fname, &amp;dname);
+
+    return rb_file_expand_path(fname, dname);
+}</pre>
+</body>
+</html>

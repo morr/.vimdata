@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>encode_cp1252 (REXML::Encoding)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/encodings/CP-1252.rb, line 14</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode_cp1252</span>(<span class="ruby-identifier">content</span>)
+      <span class="ruby-identifier">array_utf8</span> = <span class="ruby-identifier">content</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">'U*'</span>)
+      <span class="ruby-identifier">array_enc</span> = []
+      <span class="ruby-identifier">array_utf8</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">num</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">num</span>
+          <span class="ruby-comment cmt"># shortcut first bunch basic characters</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">0x</span><span class="ruby-constant">FF</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">num</span>
+          <span class="ruby-comment cmt"># characters added compared to iso-8859-1</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x20</span><span class="ruby-constant">AC</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x80</span> <span class="ruby-comment cmt"># 0xe2 0x82 0xac</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x201</span><span class="ruby-constant">A</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x82</span> <span class="ruby-comment cmt"># 0xe2 0x82 0x9a</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x0192</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x83</span> <span class="ruby-comment cmt"># 0xc6 0x92</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x201</span><span class="ruby-constant">E</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x84</span> <span class="ruby-comment cmt"># 0xe2 0x82 0x9e</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x2026</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x85</span> <span class="ruby-comment cmt"># 0xe2 0x80 0xa6</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x2020</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x86</span> <span class="ruby-comment cmt"># 0xe2 0x80 0xa0</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x2021</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x87</span> <span class="ruby-comment cmt"># 0xe2 0x80 0xa1</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x02</span><span class="ruby-constant">C6</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x88</span> <span class="ruby-comment cmt"># 0xcb 0x86</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x2030</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x89</span> <span class="ruby-comment cmt"># 0xe2 0x80 0xb0</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x0160</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x8</span><span class="ruby-constant">A</span> <span class="ruby-comment cmt"># 0xc5 0xa0</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x2039</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x8</span><span class="ruby-constant">B</span> <span class="ruby-comment cmt"># 0xe2 0x80 0xb9</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x0152</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x8</span><span class="ruby-constant">C</span> <span class="ruby-comment cmt"># 0xc5 0x92</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x017</span><span class="ruby-constant">D</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x8</span><span class="ruby-constant">E</span> <span class="ruby-comment cmt"># 0xc5 0xbd</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x2018</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x91</span> <span class="ruby-comment cmt"># 0xe2 0x80 0x98</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x2019</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x92</span> <span class="ruby-comment cmt"># 0xe2 0x80 0x99</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x201</span><span class="ruby-constant">C</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x93</span> <span class="ruby-comment cmt"># 0xe2 0x80 0x9c</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x201</span><span class="ruby-constant">D</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x94</span> <span class="ruby-comment cmt"># 0xe2 0x80 0x9d</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x2022</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x95</span> <span class="ruby-comment cmt"># 0xe2 0x80 0xa2</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x2013</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x96</span> <span class="ruby-comment cmt"># 0xe2 0x80 0x93</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x2014</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x97</span> <span class="ruby-comment cmt"># 0xe2 0x80 0x94</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x02</span><span class="ruby-constant">DC</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x98</span> <span class="ruby-comment cmt"># 0xcb 0x9c</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x2122</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x99</span> <span class="ruby-comment cmt"># 0xe2 0x84 0xa2</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x0161</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x9</span><span class="ruby-constant">A</span> <span class="ruby-comment cmt"># 0xc5 0xa1</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x203</span><span class="ruby-constant">A</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x9</span><span class="ruby-constant">B</span> <span class="ruby-comment cmt"># 0xe2 0x80 0xba</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x0152</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x9</span><span class="ruby-constant">C</span> <span class="ruby-comment cmt"># 0xc5 0x93</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x017</span><span class="ruby-constant">E</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x9</span><span class="ruby-constant">E</span> <span class="ruby-comment cmt"># 0xc5 0xbe</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0x0178</span>; <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0x9</span><span class="ruby-constant">F</span> <span class="ruby-comment cmt"># 0xc5 0xb8</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-comment cmt"># all remaining basic characters can be used directly</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">num</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">0x</span><span class="ruby-constant">FF</span>
+            <span class="ruby-identifier">array_enc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">num</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-comment cmt"># Numeric entity (&amp;#nnnn;); shard by  Stefan Scholl</span>
+            <span class="ruby-identifier">array_enc</span>.<span class="ruby-identifier">concat</span> <span class="ruby-node">&quot;&amp;\##{num};&quot;</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">'C*'</span>)
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">array_enc</span>.<span class="ruby-identifier">pack</span>(<span class="ruby-value str">'C*'</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

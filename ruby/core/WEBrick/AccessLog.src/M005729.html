@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>format (WEBrick::AccessLog)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/accesslog.rb, line 49</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">format</span>(<span class="ruby-identifier">format_string</span>, <span class="ruby-identifier">params</span>)
+      <span class="ruby-identifier">format_string</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\%(?:\{(.*?)\})?&gt;?([a-zA-Z%])/</span>){
+         <span class="ruby-identifier">param</span>, <span class="ruby-identifier">spec</span> = <span class="ruby-identifier">$1</span>, <span class="ruby-identifier">$2</span>
+         <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">spec</span>[<span class="ruby-value">0</span>]
+         <span class="ruby-keyword kw">when</span> <span class="ruby-value">?e</span>, <span class="ruby-value">?i</span>, <span class="ruby-value">?n</span>, <span class="ruby-value">?o</span>
+           <span class="ruby-identifier">raise</span> <span class="ruby-constant">AccessLogError</span>,
+             <span class="ruby-node">&quot;parameter is required for \&quot;#{spec}\&quot;&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">param</span>
+           <span class="ruby-identifier">params</span>[<span class="ruby-identifier">spec</span>][<span class="ruby-identifier">param</span>] <span class="ruby-operator">||</span> <span class="ruby-value str">&quot;-&quot;</span>
+         <span class="ruby-keyword kw">when</span> <span class="ruby-value">?t</span>
+           <span class="ruby-identifier">params</span>[<span class="ruby-identifier">spec</span>].<span class="ruby-identifier">strftime</span>(<span class="ruby-identifier">param</span> <span class="ruby-operator">||</span> <span class="ruby-constant">CLF_TIME_FORMAT</span>)
+         <span class="ruby-keyword kw">when</span> <span class="ruby-value">?%</span>
+           <span class="ruby-value str">&quot;%&quot;</span>
+         <span class="ruby-keyword kw">else</span>
+           <span class="ruby-identifier">params</span>[<span class="ruby-identifier">spec</span>]
+         <span class="ruby-keyword kw">end</span>
+      }
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

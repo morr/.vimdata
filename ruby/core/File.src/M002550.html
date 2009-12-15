@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>chmod (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     file.chmod(mode_int)   =&gt; 0
+ *  
+ *  Changes permission bits on &lt;i&gt;file&lt;/i&gt; to the bit pattern
+ *  represented by &lt;i&gt;mode_int&lt;/i&gt;. Actual effects are platform
+ *  dependent; on Unix systems, see &lt;code&gt;chmod(2)&lt;/code&gt; for details.
+ *  Follows symbolic links. Also see &lt;code&gt;File#lchmod&lt;/code&gt;.
+ *     
+ *     f = File.new(&quot;out&quot;, &quot;w&quot;);
+ *     f.chmod(0644)   #=&gt; 0
+ */
+
+static VALUE
+rb_file_chmod(obj, vmode)
+    VALUE obj, vmode;
+{
+    OpenFile *fptr;
+    int mode;
+
+    rb_secure(2);
+    mode = NUM2INT(vmode);
+
+    GetOpenFile(obj, fptr);
+#ifdef HAVE_FCHMOD
+    if (fchmod(fileno(fptr-&gt;f), mode) == -1)
+        rb_sys_fail(fptr-&gt;path);
+#else
+    if (!fptr-&gt;path) return Qnil;
+    if (chmod(fptr-&gt;path, mode) == -1)
+        rb_sys_fail(fptr-&gt;path);
+#endif
+
+    return INT2FIX(0);
+}</pre>
+</body>
+</html>

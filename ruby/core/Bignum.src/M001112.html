@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>~ (Bignum)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *     ~big  =&gt;  integer
+ *
+ * Inverts the bits in big. As Bignums are conceptually infinite
+ * length, the result acts as if it had an infinite number of one
+ * bits to the left. In hex representations, this is displayed
+ * as two periods to the left of the digits.
+ *  
+ *   sprintf(&quot;%X&quot;, ~0x1122334455)    #=&gt; &quot;..FEEDDCCBBAA&quot;
+ */
+
+static VALUE
+rb_big_neg(x)
+    VALUE x;
+{
+    VALUE z = rb_big_clone(x);
+    long i;
+    BDIGIT *ds;
+
+    if (!RBIGNUM(x)-&gt;sign) get2comp(z);
+    ds = BDIGITS(z);
+    i = RBIGNUM(x)-&gt;len;
+    if (!i) return INT2FIX(~0);
+    while (i--) ds[i] = ~ds[i];
+    RBIGNUM(z)-&gt;sign = !RBIGNUM(z)-&gt;sign;
+    if (RBIGNUM(x)-&gt;sign) get2comp(z);
+
+    return bignorm(z);
+}</pre>
+</body>
+</html>

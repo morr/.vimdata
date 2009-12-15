@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>reverse_each (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.reverse_each {|item| block } 
+ *  
+ *  Same as &lt;code&gt;Array#each&lt;/code&gt;, but traverses &lt;i&gt;self&lt;/i&gt; in reverse
+ *  order.
+ *     
+ *     a = [ &quot;a&quot;, &quot;b&quot;, &quot;c&quot; ]
+ *     a.reverse_each {|x| print x, &quot; &quot; }
+ *     
+ *  produces:
+ *     
+ *     c b a
+ */
+
+static VALUE
+rb_ary_reverse_each(ary)
+    VALUE ary;
+{
+    long len = RARRAY(ary)-&gt;len;
+
+    while (len--) {
+        rb_yield(RARRAY(ary)-&gt;ptr[len]);
+        if (RARRAY(ary)-&gt;len &lt; len) {
+            len = RARRAY(ary)-&gt;len;
+        }
+    }
+    return ary;
+}</pre>
+</body>
+</html>

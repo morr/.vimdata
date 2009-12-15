@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sysread (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.sysread(integer )    =&gt; string
+ *  
+ *  Reads &lt;i&gt;integer&lt;/i&gt; bytes from &lt;em&gt;ios&lt;/em&gt; using a low-level
+ *  read and returns them as a string. Do not mix with other methods
+ *  that read from &lt;em&gt;ios&lt;/em&gt; or you may get unpredictable results.
+ *  Raises &lt;code&gt;SystemCallError&lt;/code&gt; on error and
+ *  &lt;code&gt;EOFError&lt;/code&gt; at end of file.
+ *     
+ *     f = File.new(&quot;testfile&quot;)
+ *     f.sysread(16)   #=&gt; &quot;This is line one&quot;
+ */
+
+static VALUE
+rb_io_sysread(argc, argv, io)
+    int argc;
+    VALUE *argv;
+    VALUE io;
+{
+    VALUE len, str;
+    OpenFile *fptr;
+    long n, ilen;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;len, &amp;str);
+    ilen = NUM2LONG(len);
+
+    if (NIL_P(str)) {
+        str = rb_str_new(0, ilen);
+    }
+    else {
+        StringValue(str);
+        rb_str_modify(str);
+        rb_str_resize(str, ilen);
+    }
+    if (ilen == 0) return str;
+
+    GetOpenFile(io, fptr);
+    rb_io_check_readable(fptr);
+
+    if (READ_DATA_BUFFERED(fptr-&gt;f)) {
+        rb_raise(rb_eIOError, &quot;sysread for buffered IO&quot;);
+    }
+    rb_str_locktmp(str);
+
+    n = fileno(fptr-&gt;f);
+    rb_thread_wait_fd(fileno(fptr-&gt;f));
+    rb_io_check_closed(fptr);
+    if (RSTRING(str)-&gt;len != ilen) {
+        rb_raise(rb_eRuntimeError, &quot;buffer string modified&quot;);
+    }
+    TRAP_BEG;
+    n = read(fileno(fptr-&gt;f), RSTRING(str)-&gt;ptr, ilen);
+    TRAP_END;
+
+    rb_str_unlocktmp(str);
+    if (n == -1) {
+        rb_sys_fail(fptr-&gt;path);
+    }
+    rb_str_resize(str, n);
+    if (n == 0 &amp;&amp; ilen &gt; 0) {
+        rb_eof_error();
+    }
+    RSTRING(str)-&gt;len = n;
+    RSTRING(str)-&gt;ptr[n] = '\0';
+    OBJ_TAINT(str);
+
+    return str;
+}</pre>
+</body>
+</html>

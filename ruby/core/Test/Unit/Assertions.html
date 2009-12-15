@@ -1,0 +1,778 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Test::Unit::Assertions</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Test::Unit::Assertions</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/lib/test/unit/assertions_rb.html">
+                lib/test/unit/assertions.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="Assertions.html">Test::Unit::Assertions</a> contains the standard
+<a href="../Unit.html">Test::Unit</a> assertions. <a
+href="Assertions.html">Assertions</a> is included in <a
+href="TestCase.html">Test::Unit::TestCase</a>.
+</p>
+<p>
+To include it in your own code and use its functionality, you simply need
+to rescue <a
+href="AssertionFailedError.html">Test::Unit::AssertionFailedError</a>.
+Additionally you may override add_assertion to get notified whenever an
+assertion is made.
+</p>
+<p>
+Notes:
+</p>
+<ul>
+<li>The message to each assertion, if given, will be propagated with the
+failure.
+
+</li>
+<li>It is easy to add your own assertions based on <a
+href="Assertions.html#M006663">assert_block</a>().
+
+</li>
+</ul>
+<h1>Example Custom Assertion</h1>
+<pre>
+  def deny(boolean, message = nil)
+    message = build_message message, '&lt;?&gt; is not false or nil.', boolean
+    assert_block message do
+      not boolean
+    end
+  end
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M006664">assert</a>&nbsp;&nbsp;
+      <a href="#M006663">assert_block</a>&nbsp;&nbsp;
+      <a href="#M006665">assert_equal</a>&nbsp;&nbsp;
+      <a href="#M006683">assert_in_delta</a>&nbsp;&nbsp;
+      <a href="#M006668">assert_instance_of</a>&nbsp;&nbsp;
+      <a href="#M006670">assert_kind_of</a>&nbsp;&nbsp;
+      <a href="#M006672">assert_match</a>&nbsp;&nbsp;
+      <a href="#M006669">assert_nil</a>&nbsp;&nbsp;
+      <a href="#M006680">assert_no_match</a>&nbsp;&nbsp;
+      <a href="#M006678">assert_not_equal</a>&nbsp;&nbsp;
+      <a href="#M006679">assert_not_nil</a>&nbsp;&nbsp;
+      <a href="#M006677">assert_not_same</a>&nbsp;&nbsp;
+      <a href="#M006675">assert_nothing_raised</a>&nbsp;&nbsp;
+      <a href="#M006682">assert_nothing_thrown</a>&nbsp;&nbsp;
+      <a href="#M006674">assert_operator</a>&nbsp;&nbsp;
+      <a href="#M006666">assert_raise</a>&nbsp;&nbsp;
+      <a href="#M006667">assert_raises</a>&nbsp;&nbsp;
+      <a href="#M006671">assert_respond_to</a>&nbsp;&nbsp;
+      <a href="#M006673">assert_same</a>&nbsp;&nbsp;
+      <a href="#M006684">assert_send</a>&nbsp;&nbsp;
+      <a href="#M006681">assert_throws</a>&nbsp;&nbsp;
+      <a href="#M006685">build_message</a>&nbsp;&nbsp;
+      <a href="#M006676">flunk</a>&nbsp;&nbsp;
+      <a href="#M006686">use_pp=</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">UncaughtThrow</td>
+          <td>=</td>
+          <td class="context-item-value">{NameError =&gt; /^uncaught throw \`(.+)\'$/,                        ThreadError =&gt; /^uncaught throw \`(.+)\' in thread /}</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M006686" class="method-detail">
+        <a name="M006686"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006686.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006686.html');return false;">
+          <span class="method-name">use_pp=</span><span class="method-args">(value)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Select whether or not to use the pretty-printer. If this option is set to
+false before any assertions are made, pp.rb will not be required.
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M006664" class="method-detail">
+        <a name="M006664"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006664.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006664.html');return false;">
+          <span class="method-name">assert</span><span class="method-args">(boolean, message=nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Asserts that <tt>boolean</tt> is not false or nil.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert [1, 2].include?(5)
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006663" class="method-detail">
+        <a name="M006663"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006663.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006663.html');return false;">
+          <span class="method-name">assert_block</span><span class="method-args">(message=&quot;assert_block failed.&quot;) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The assertion upon which all other assertions are based. Passes if the
+block yields true.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_block &quot;Couldn't do the thing&quot; do
+    do_the_thing
+  end
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006665" class="method-detail">
+        <a name="M006665"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006665.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006665.html');return false;">
+          <span class="method-name">assert_equal</span><span class="method-args">(expected, actual, message=nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if <tt>expected</tt> == +actual.
+</p>
+<p>
+Note that the ordering of arguments is important, since a helpful error
+message is generated when this one fails that tells you the values of
+expected and actual.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_equal 'MY STRING', 'my string'.upcase
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006683" class="method-detail">
+        <a name="M006683"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006683.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006683.html');return false;">
+          <span class="method-name">assert_in_delta</span><span class="method-args">(expected_float, actual_float, delta, message=&quot;&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if <tt>expected_float</tt> and <tt>actual_float</tt> are equal
+within <tt>delta</tt> tolerance.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_in_delta 0.05, (50000.0 / 10**6), 0.00001
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006668" class="method-detail">
+        <a name="M006668"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006668.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006668.html');return false;">
+          <span class="method-name">assert_instance_of</span><span class="method-args">(klass, object, message=&quot;&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if <tt>object</tt> .instance_of? <tt>klass</tt>
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_instance_of String, 'foo'
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006670" class="method-detail">
+        <a name="M006670"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006670.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006670.html');return false;">
+          <span class="method-name">assert_kind_of</span><span class="method-args">(klass, object, message=&quot;&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if <tt>object</tt> .kind_of? <tt>klass</tt>
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_kind_of Object, 'foo'
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006672" class="method-detail">
+        <a name="M006672"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006672.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006672.html');return false;">
+          <span class="method-name">assert_match</span><span class="method-args">(pattern, string, message=&quot;&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if <tt>string</tt> =~ <tt>pattern</tt>.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_match(/\d+/, 'five, 6, seven')
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006669" class="method-detail">
+        <a name="M006669"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006669.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006669.html');return false;">
+          <span class="method-name">assert_nil</span><span class="method-args">(object, message=&quot;&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if <tt>object</tt> is nil.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_nil [1, 2].uniq!
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006680" class="method-detail">
+        <a name="M006680"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006680.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006680.html');return false;">
+          <span class="method-name">assert_no_match</span><span class="method-args">(regexp, string, message=&quot;&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if <tt>regexp</tt> !~ <tt>string</tt>
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_no_match(/two/, 'one 2 three')
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006678" class="method-detail">
+        <a name="M006678"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006678.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006678.html');return false;">
+          <span class="method-name">assert_not_equal</span><span class="method-args">(expected, actual, message=&quot;&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if <tt>expected</tt> != <tt>actual</tt>
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_not_equal 'some string', 5
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006679" class="method-detail">
+        <a name="M006679"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006679.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006679.html');return false;">
+          <span class="method-name">assert_not_nil</span><span class="method-args">(object, message=&quot;&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if ! <tt>object</tt> .nil?
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_not_nil '1 two 3'.sub!(/two/, '2')
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006677" class="method-detail">
+        <a name="M006677"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006677.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006677.html');return false;">
+          <span class="method-name">assert_not_same</span><span class="method-args">(expected, actual, message=&quot;&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if ! <tt>actual</tt> .equal? <tt>expected</tt>
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_not_same Object.new, Object.new
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006675" class="method-detail">
+        <a name="M006675"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006675.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006675.html');return false;">
+          <span class="method-name">assert_nothing_raised</span><span class="method-args">(*args) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if block does not raise an exception.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_nothing_raised do
+    [1, 2].uniq
+  end
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006682" class="method-detail">
+        <a name="M006682"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006682.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006682.html');return false;">
+          <span class="method-name">assert_nothing_thrown</span><span class="method-args">(message=&quot;&quot;, &amp;proc)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if block does not throw anything.
+</p>
+<p>
+Example:
+</p>
+<pre>
+ assert_nothing_thrown do
+   [1, 2].uniq
+ end
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006674" class="method-detail">
+        <a name="M006674"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006674.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006674.html');return false;">
+          <span class="method-name">assert_operator</span><span class="method-args">(object1, operator, object2, message=&quot;&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Compares the +object1+ with +object2+ using <tt>operator</tt>.
+</p>
+<p>
+Passes if object1.<em>send</em>(operator, object2) is true.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_operator 5, :&gt;=, 4
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006666" class="method-detail">
+        <a name="M006666"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006666.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006666.html');return false;">
+          <span class="method-name">assert_raise</span><span class="method-args">(*args) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if the block raises one of the given exceptions.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_raise RuntimeError, LoadError do
+    raise 'Boom!!!'
+  end
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006667" class="method-detail">
+        <a name="M006667"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006667.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006667.html');return false;">
+          <span class="method-name">assert_raises</span><span class="method-args">(*args, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias of <a href="Assertions.html#M006666">assert_raise</a>.
+</p>
+<p>
+Will be deprecated in 1.9, and removed in 2.0.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M006671" class="method-detail">
+        <a name="M006671"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006671.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006671.html');return false;">
+          <span class="method-name">assert_respond_to</span><span class="method-args">(object, method, message=&quot;&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if <tt>object</tt> .respond_to? <tt>method</tt>
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_respond_to 'bugbear', :slice
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006673" class="method-detail">
+        <a name="M006673"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006673.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006673.html');return false;">
+          <span class="method-name">assert_same</span><span class="method-args">(expected, actual, message=&quot;&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if <tt>actual</tt> .equal? <tt>expected</tt> (i.e. they are the same
+instance).
+</p>
+<p>
+Example:
+</p>
+<pre>
+  o = Object.new
+  assert_same o, o
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006684" class="method-detail">
+        <a name="M006684"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006684.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006684.html');return false;">
+          <span class="method-name">assert_send</span><span class="method-args">(send_array, message=&quot;&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if the method send returns a true value.
+</p>
+<p>
+<tt>send_array</tt> is composed of:
+</p>
+<ul>
+<li>A receiver
+
+</li>
+<li>A method
+
+</li>
+<li>Arguments to the method
+
+</li>
+</ul>
+<p>
+Example:
+</p>
+<pre>
+  assert_send [[1, 2], :include?, 4]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006681" class="method-detail">
+        <a name="M006681"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006681.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006681.html');return false;">
+          <span class="method-name">assert_throws</span><span class="method-args">(expected_symbol, message=&quot;&quot;, &amp;proc)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Passes if the block throws <tt>expected_symbol</tt>
+</p>
+<p>
+Example:
+</p>
+<pre>
+  assert_throws :done do
+    throw :done
+  end
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M006685" class="method-detail">
+        <a name="M006685"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006685.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006685.html');return false;">
+          <span class="method-name">build_message</span><span class="method-args">(head, template=nil, *arguments)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Builds a failure message. <tt>head</tt> is added before the
+<tt>template</tt> and <tt>arguments</tt> replaces the &#8217;?&#8217;s
+positionally in the template.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M006676" class="method-detail">
+        <a name="M006676"></a>
+
+        <div class="method-heading">
+          <a href="Assertions.src/M006676.html" target="Code" class="method-signature"
+            onclick="popupCode('Assertions.src/M006676.html');return false;">
+          <span class="method-name">flunk</span><span class="method-args">(message=&quot;Flunked&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Flunk always fails.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  flunk 'Not done testing yet.'
+</pre>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

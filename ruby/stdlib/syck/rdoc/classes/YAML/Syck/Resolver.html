@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: YAML::Syck::Resolver</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">YAML::Syck::Resolver</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/syck/rubyext_c.html">
+                syck/rubyext.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Define <a href="Resolver.html">YAML::Syck::Resolver</a> class
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001356">add_type</a>&nbsp;&nbsp;
+      <a href="#M001358">detect_implicit</a>&nbsp;&nbsp;
+      <a href="#M001355">new</a>&nbsp;&nbsp;
+      <a href="#M001360">node_import</a>&nbsp;&nbsp;
+      <a href="#M001361">tagurize</a>&nbsp;&nbsp;
+      <a href="#M001359">transfer</a>&nbsp;&nbsp;
+      <a href="#M001357">use_types_at</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">tags</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001355" class="method-detail">
+        <a name="M001355"></a>
+
+        <div class="method-heading">
+          <a href="#M001355" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+YAML::Syck::Resolver.initialize
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001355-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001355-source">
+<pre>
+/*
+ * YAML::Syck::Resolver.initialize
+ */
+static VALUE
+syck_resolver_initialize( self )
+    VALUE self;
+{
+    VALUE tags = rb_hash_new();
+    rb_ivar_set(self, s_tags, rb_hash_new());
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001356" class="method-detail">
+        <a name="M001356"></a>
+
+        <div class="method-heading">
+          <a href="#M001356" class="method-signature">
+          <span class="method-name">add_type</span><span class="method-args">(p1, p2)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Resolver.html#M001356">YAML::Syck::Resolver#add_type</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001356-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001356-source">
+<pre>
+/*
+ * YAML::Syck::Resolver#add_type
+ */
+VALUE
+syck_resolver_add_type( self, taguri, cls )
+    VALUE self, taguri, cls;
+{
+    VALUE tags = rb_attr_get(self, s_tags);
+    rb_hash_aset( tags, taguri, cls );
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001358" class="method-detail">
+        <a name="M001358"></a>
+
+        <div class="method-heading">
+          <a href="#M001358" class="method-signature">
+          <span class="method-name">detect_implicit</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Resolver.html#M001358">YAML::Syck::Resolver#detect_implicit</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001358-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001358-source">
+<pre>
+/*
+ * YAML::Syck::Resolver#detect_implicit 
+ */
+VALUE
+syck_resolver_detect_implicit( self, val )
+    VALUE self, val;
+{
+    char *type_id;
+    return rb_str_new2( &quot;&quot; );
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001360" class="method-detail">
+        <a name="M001360"></a>
+
+        <div class="method-heading">
+          <a href="#M001360" class="method-signature">
+          <span class="method-name">node_import</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Resolver.html#M001360">YAML::Syck::Resolver#node_import</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001360-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001360-source">
+<pre>
+/*
+ * YAML::Syck::Resolver#node_import
+ */
+VALUE
+syck_resolver_node_import( self, node )
+    VALUE self, node;
+{
+    SyckNode *n;
+    VALUE obj;
+    int i = 0;
+    Data_Get_Struct(node, SyckNode, n);
+
+    switch (n-&gt;kind)
+    {
+        case syck_str_kind:
+            obj = rb_str_new( n-&gt;data.str-&gt;ptr, n-&gt;data.str-&gt;len );
+        break;
+
+        case syck_seq_kind:
+            obj = rb_ary_new2( n-&gt;data.list-&gt;idx );
+            for ( i = 0; i &lt; n-&gt;data.list-&gt;idx; i++ )
+            {
+                rb_ary_store( obj, i, syck_seq_read( n, i ) );
+            }
+        break;
+
+        case syck_map_kind:
+            obj = rb_hash_new();
+            for ( i = 0; i &lt; n-&gt;data.pairs-&gt;idx; i++ )
+            {
+                VALUE k = syck_map_read( n, map_key, i );
+                VALUE v = syck_map_read( n, map_value, i );
+                int skip_aset = 0;
+
+                /*
+                 * Handle merge keys
+                 */
+                if ( rb_obj_is_kind_of( k, cMergeKey ) )
+                {
+                    if ( rb_obj_is_kind_of( v, rb_cHash ) )
+                    {
+                        VALUE dup = rb_funcall( v, s_dup, 0 );
+                        rb_funcall( dup, s_update, 1, obj );
+                        obj = dup;
+                        skip_aset = 1;
+                    }
+                    else if ( rb_obj_is_kind_of( v, rb_cArray ) )
+                    {
+                        VALUE end = rb_ary_pop( v );
+                        if ( rb_obj_is_kind_of( end, rb_cHash ) )
+                        {
+                            VALUE dup = rb_funcall( end, s_dup, 0 );
+                            v = rb_ary_reverse( v );
+                            rb_ary_push( v, obj );
+                            rb_iterate( rb_each, v, syck_merge_i, dup );
+                            obj = dup;
+                            skip_aset = 1;
+                        }
+                    }
+                }
+                else if ( rb_obj_is_kind_of( k, cDefaultKey ) )
+                {
+                    rb_funcall( obj, s_default_set, 1, v );
+                    skip_aset = 1;
+                }
+
+                if ( ! skip_aset )
+                {
+                    rb_hash_aset( obj, k, v );
+                }
+            }
+        break;
+    }
+
+    if ( n-&gt;type_id != NULL )
+    {
+        obj = rb_funcall( self, s_transfer, 2, rb_str_new2( n-&gt;type_id ), obj );
+    }
+    return obj;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001361" class="method-detail">
+        <a name="M001361"></a>
+
+        <div class="method-heading">
+          <a href="#M001361" class="method-signature">
+          <span class="method-name">tagurize</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Resolver.html#M001361">YAML::Syck::Resolver#tagurize</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001361-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001361-source">
+<pre>
+/*
+ * YAML::Syck::Resolver#tagurize
+ */
+VALUE
+syck_resolver_tagurize( self, val )
+    VALUE self, val;
+{
+    VALUE tmp = rb_check_string_type(val);
+
+    if ( !NIL_P(tmp) )
+    {
+        char *taguri = syck_type_id_to_uri( RSTRING(tmp)-&gt;ptr );
+        val = rb_str_new2( taguri );
+        S_FREE( taguri );
+    }
+
+    return val;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001359" class="method-detail">
+        <a name="M001359"></a>
+
+        <div class="method-heading">
+          <a href="#M001359" class="method-signature">
+          <span class="method-name">transfer</span><span class="method-args">(p1, p2)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Resolver.html#M001359">YAML::Syck::Resolver#transfer</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001359-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001359-source">
+<pre>
+/*
+ * YAML::Syck::Resolver#transfer
+ */
+VALUE
+syck_resolver_transfer( self, type, val )
+    VALUE self, type, val;
+{
+    if (NIL_P(type) || RSTRING(StringValue(type))-&gt;len == 0) 
+    {
+        type = rb_funcall( self, s_detect_implicit, 1, val );
+    }
+
+    if ( ! (NIL_P(type) || RSTRING(StringValue(type))-&gt;len == 0) )
+    {
+        VALUE str_xprivate = rb_str_new2( &quot;x-private&quot; );
+        VALUE colon = rb_str_new2( &quot;:&quot; );
+        VALUE tags = rb_attr_get(self, s_tags);
+        VALUE target_class = rb_hash_aref( tags, type );
+        VALUE subclass = target_class;
+        VALUE obj = Qnil;
+
+        /*
+         * Should no tag match exactly, check for subclass format
+         */
+        if ( NIL_P( target_class ) )
+        {
+            VALUE subclass_parts = rb_ary_new();
+            VALUE parts = rb_str_split( type, &quot;:&quot; );
+
+            while ( RARRAY(parts)-&gt;len &gt; 1 )
+            {
+                VALUE partial;
+                rb_ary_unshift( subclass_parts, rb_ary_pop( parts ) );
+                partial = rb_ary_join( parts, colon );
+                target_class = rb_hash_aref( tags, partial );
+                if ( NIL_P( target_class ) )
+                {
+                    rb_str_append( partial, colon );
+                    target_class = rb_hash_aref( tags, partial );
+                }
+
+                /*
+                 * Possible subclass found, see if it supports subclassing
+                 */
+                if ( ! NIL_P( target_class ) )
+                {
+                    subclass = target_class;
+                    if ( RARRAY(subclass_parts)-&gt;len &gt; 0 &amp;&amp; rb_respond_to( target_class, s_tag_subclasses ) &amp;&amp;
+                         RTEST( rb_funcall( target_class, s_tag_subclasses, 0 ) ) )
+                    {
+                        VALUE subclass_v;
+                        subclass = rb_ary_join( subclass_parts, colon );
+                        subclass = rb_funcall( target_class, s_tag_read_class, 1, subclass );
+                        subclass_v = syck_const_find( subclass );
+
+                        if ( subclass_v != Qnil ) 
+                        {
+                            subclass = subclass_v;
+                        }
+                        else if ( rb_cObject == target_class &amp;&amp; subclass_v == Qnil )
+                        {
+                            target_class = cYObject;
+                            type = subclass;
+                            subclass = cYObject;
+                        }
+                        else /* workaround for SEGV. real fix please */
+                        {
+                            rb_raise( rb_eTypeError, &quot;invalid subclass&quot; );
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        /* rb_raise(rb_eTypeError, &quot;invalid typing scheme: %s given&quot;,
+         *         scheme);
+         */
+
+        if ( rb_respond_to( target_class, s_call ) )
+        {
+            obj = rb_funcall( target_class, s_call, 2, type, val );
+        }
+        else
+        {
+            if ( rb_respond_to( target_class, s_yaml_new ) )
+            {
+                obj = rb_funcall( target_class, s_yaml_new, 3, subclass, type, val );
+            }
+            else if ( !NIL_P( target_class ) )
+            {
+                if ( subclass == rb_cBignum )
+                {
+                    obj = rb_str2inum( val, 10 ); /* for yaml dumped by 1.8.3 [ruby-core:6159] */
+                }
+                else
+                {
+                    obj = rb_obj_alloc( subclass );
+                }
+
+                if ( rb_respond_to( obj, s_yaml_initialize ) )
+                {
+                    rb_funcall( obj, s_yaml_initialize, 2, type, val );
+                }
+                else if ( !NIL_P( obj ) &amp;&amp; rb_obj_is_instance_of( val, rb_cHash ) )
+                {
+                    rb_iterate( rb_each, val, syck_set_ivars, obj );
+                }
+            }
+            else 
+            {
+                VALUE parts = rb_str_split( type, &quot;:&quot; );
+                VALUE scheme = rb_ary_shift( parts );
+                if ( rb_str_cmp( scheme, str_xprivate ) == 0 )
+                {
+                    VALUE name = rb_ary_join( parts, colon );
+                    obj = rb_funcall( cPrivateType, s_new, 2, name, val );
+                }
+                else
+                {
+                    VALUE domain = rb_ary_shift( parts );
+                    VALUE name = rb_ary_join( parts, colon );
+                    obj = rb_funcall( cDomainType, s_new, 3, domain, name, val );
+                }
+            }
+        }
+        val = obj;
+    }
+
+    return val;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001357" class="method-detail">
+        <a name="M001357"></a>
+
+        <div class="method-heading">
+          <a href="#M001357" class="method-signature">
+          <span class="method-name">use_types_at</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Resolver.html#M001357">YAML::Syck::Resolver#use_types_at</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001357-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001357-source">
+<pre>
+/*
+ * YAML::Syck::Resolver#use_types_at
+ */
+VALUE
+syck_resolver_use_types_at( self, hsh )
+    VALUE self, hsh;
+{
+    rb_ivar_set( self, s_tags, hsh );
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

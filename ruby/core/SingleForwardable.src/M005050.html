@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>def_singleton_delegator (SingleForwardable)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/forwardable.rb, line 200</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">def_singleton_delegator</span>(<span class="ruby-identifier">accessor</span>, <span class="ruby-identifier">method</span>, <span class="ruby-identifier">ali</span> = <span class="ruby-identifier">method</span>)
+    <span class="ruby-identifier">accessor</span> = <span class="ruby-identifier">accessor</span>.<span class="ruby-identifier">id2name</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">accessor</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+    <span class="ruby-identifier">method</span> = <span class="ruby-identifier">method</span>.<span class="ruby-identifier">id2name</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">method</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+    <span class="ruby-identifier">ali</span> = <span class="ruby-identifier">ali</span>.<span class="ruby-identifier">id2name</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ali</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+
+    <span class="ruby-identifier">instance_eval</span>(<span class="ruby-value str">&quot;def \#{ali}(*args, &amp;block)\nbegin\n\#{accessor}.__send__(:\#{method}, *args,&amp;block)\nrescue Exception\n$@.delete_if{|s| /^\\\\(__FORWARDABLE__\\\\):/ =~ s} unless Forwardable::debug\nKernel::raise\nend\nend\n&quot;</span>, <span class="ruby-value str">&quot;(__FORWARDABLE__)&quot;</span>, <span class="ruby-value">1</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

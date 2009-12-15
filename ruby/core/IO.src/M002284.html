@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>eof (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.eof     =&gt; true or false
+ *     ios.eof?    =&gt; true or false
+ *
+ *  Returns true if &lt;em&gt;ios&lt;/em&gt; is at end of file that means
+ *  there are no more data to read.
+ *  The stream must be opened for reading or an &lt;code&gt;IOError&lt;/code&gt; will be
+ *  raised.
+ *
+ *     f = File.new(&quot;testfile&quot;)
+ *     dummy = f.readlines
+ *     f.eof   #=&gt; true
+ *
+ *  If &lt;em&gt;ios&lt;/em&gt; is a stream such as pipe or socket, &lt;code&gt;IO#eof?&lt;/code&gt;
+ *  blocks until the other end sends some data or closes it.
+ *
+ *     r, w = IO.pipe
+ *     Thread.new { sleep 1; w.close }
+ *     r.eof?  #=&gt; true after 1 second blocking
+ *
+ *     r, w = IO.pipe
+ *     Thread.new { sleep 1; w.puts &quot;a&quot; }
+ *     r.eof?  #=&gt; false after 1 second blocking
+ *
+ *     r, w = IO.pipe
+ *     r.eof?  # blocks forever
+ *
+ *  Note that &lt;code&gt;IO#eof?&lt;/code&gt; reads data to a input buffer.
+ *  So &lt;code&gt;IO#sysread&lt;/code&gt; doesn't work with &lt;code&gt;IO#eof?&lt;/code&gt;.
+ */
+
+VALUE
+rb_io_eof(io)
+    VALUE io;
+{
+    OpenFile *fptr;
+    int ch;
+
+    GetOpenFile(io, fptr);
+    rb_io_check_readable(fptr);
+
+    if (feof(fptr-&gt;f)) return Qtrue;
+    if (READ_DATA_PENDING(fptr-&gt;f)) return Qfalse;
+    READ_CHECK(fptr-&gt;f);
+    clearerr(fptr-&gt;f);
+    TRAP_BEG;
+    ch = getc(fptr-&gt;f);
+    TRAP_END;
+
+    if (ch != EOF) {
+        ungetc(ch, fptr-&gt;f);
+        return Qfalse;
+    }
+    rb_io_check_closed(fptr);
+    clearerr(fptr-&gt;f);
+    return Qtrue;
+}</pre>
+</body>
+</html>

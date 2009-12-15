@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>lazy_initialize (Resolv::Hosts)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/resolv.rb, line 299</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">lazy_initialize</span>
+      <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">synchronize</span> {
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@initialized</span>
+          <span class="ruby-ivar">@name2addr</span> = {}
+          <span class="ruby-ivar">@addr2name</span> = {}
+          <span class="ruby-identifier">open</span>(<span class="ruby-ivar">@filename</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">f</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
+              <span class="ruby-identifier">line</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/#.*/</span>, <span class="ruby-value str">''</span>)
+              <span class="ruby-identifier">addr</span>, <span class="ruby-identifier">hostname</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">aliases</span> = <span class="ruby-identifier">line</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/\s+/</span>)
+              <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">addr</span>
+              <span class="ruby-identifier">addr</span>.<span class="ruby-identifier">untaint</span>
+              <span class="ruby-identifier">hostname</span>.<span class="ruby-identifier">untaint</span>
+              <span class="ruby-ivar">@addr2name</span>[<span class="ruby-identifier">addr</span>] = [] <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@addr2name</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">addr</span>
+              <span class="ruby-ivar">@addr2name</span>[<span class="ruby-identifier">addr</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">hostname</span>
+              <span class="ruby-ivar">@addr2name</span>[<span class="ruby-identifier">addr</span>] <span class="ruby-operator">+=</span> <span class="ruby-identifier">aliases</span>
+              <span class="ruby-ivar">@name2addr</span>[<span class="ruby-identifier">hostname</span>] = [] <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@name2addr</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">hostname</span>
+              <span class="ruby-ivar">@name2addr</span>[<span class="ruby-identifier">hostname</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">addr</span>
+              <span class="ruby-identifier">aliases</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">n</span>.<span class="ruby-identifier">untaint</span>
+                <span class="ruby-ivar">@name2addr</span>[<span class="ruby-identifier">n</span>] = [] <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@name2addr</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">n</span>
+                <span class="ruby-ivar">@name2addr</span>[<span class="ruby-identifier">n</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">addr</span>
+              }
+            }
+          }
+          <span class="ruby-ivar">@name2addr</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">arr</span><span class="ruby-operator">|</span> <span class="ruby-identifier">arr</span>.<span class="ruby-identifier">reverse!</span>}
+          <span class="ruby-ivar">@initialized</span> = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-keyword kw">end</span>
+      }
+      <span class="ruby-keyword kw">self</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

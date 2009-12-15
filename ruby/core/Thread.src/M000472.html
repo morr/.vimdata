@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>[] (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *      thr[sym]   =&gt; obj or nil
+ *  
+ *  Attribute Reference---Returns the value of a thread-local variable, using
+ *  either a symbol or a string name. If the specified variable does not exist,
+ *  returns &lt;code&gt;nil&lt;/code&gt;.
+ *     
+ *     a = Thread.new { Thread.current[&quot;name&quot;] = &quot;A&quot;; Thread.stop }
+ *     b = Thread.new { Thread.current[:name]  = &quot;B&quot;; Thread.stop }
+ *     c = Thread.new { Thread.current[&quot;name&quot;] = &quot;C&quot;; Thread.stop }
+ *     Thread.list.each {|x| puts &quot;#{x.inspect}: #{x[:name]}&quot; }
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     #&lt;Thread:0x401b3b3c sleep&gt;: C
+ *     #&lt;Thread:0x401b3bc8 sleep&gt;: B
+ *     #&lt;Thread:0x401b3c68 sleep&gt;: A
+ *     #&lt;Thread:0x401bdf4c run&gt;:
+ */
+
+static VALUE
+rb_thread_aref(thread, id)
+    VALUE thread, id;
+{
+    return rb_thread_local_aref(thread, rb_to_id(id));
+}</pre>
+</body>
+</html>

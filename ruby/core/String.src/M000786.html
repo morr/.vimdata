@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>replace (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.replace(other_str)   =&gt; str
+ *  
+ *  Replaces the contents and taintedness of &lt;i&gt;str&lt;/i&gt; with the corresponding
+ *  values in &lt;i&gt;other_str&lt;/i&gt;.
+ *     
+ *     s = &quot;hello&quot;         #=&gt; &quot;hello&quot;
+ *     s.replace &quot;world&quot;   #=&gt; &quot;world&quot;
+ */
+
+static VALUE
+rb_str_replace(str, str2)
+    VALUE str, str2;
+{
+    if (str == str2) return str;
+
+    StringValue(str2);
+    if (FL_TEST(str2, ELTS_SHARED)) {
+        if (str_independent(str)) {
+            free(RSTRING(str)-&gt;ptr);
+        }
+        RSTRING(str)-&gt;len = RSTRING(str2)-&gt;len;
+        RSTRING(str)-&gt;ptr = RSTRING(str2)-&gt;ptr;
+        FL_SET(str, ELTS_SHARED);
+        FL_UNSET(str, STR_ASSOC);
+        RSTRING(str)-&gt;aux.shared = RSTRING(str2)-&gt;aux.shared;
+    }
+    else {
+        if (str_independent(str)) {
+            rb_str_resize(str, RSTRING(str2)-&gt;len);
+            memcpy(RSTRING(str)-&gt;ptr, RSTRING(str2)-&gt;ptr, RSTRING(str2)-&gt;len);
+            if (!RSTRING(str)-&gt;ptr) {
+                make_null_str(str);
+            }
+        }
+        else {
+            RSTRING(str)-&gt;ptr = RSTRING(str2)-&gt;ptr;
+            RSTRING(str)-&gt;len = RSTRING(str2)-&gt;len;
+            str_make_independent(str);
+        }
+        if (FL_TEST(str2, STR_ASSOC)) {
+            FL_SET(str, STR_ASSOC);
+            RSTRING(str)-&gt;aux.shared = RSTRING(str2)-&gt;aux.shared;
+        }
+    }
+
+    OBJ_INFECT(str, str2);
+    return str;
+}</pre>
+</body>
+</html>

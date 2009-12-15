@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: TSort</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">TSort</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/tsort_rb.html">
+                tsort.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="TSort.html">TSort</a> implements topological sorting using
+Tarjan&#8216;s algorithm for strongly connected components.
+</p>
+<p>
+<a href="TSort.html">TSort</a> is designed to be able to be used with any
+object which can be interpreted as a directed graph.
+</p>
+<p>
+<a href="TSort.html">TSort</a> requires two methods to interpret an object
+as a graph, <a href="TSort.html#M009366">tsort_each_node</a> and <a
+href="TSort.html#M009367">tsort_each_child</a>.
+</p>
+<ul>
+<li><a href="TSort.html#M009366">tsort_each_node</a> is used to iterate for all
+nodes over a graph.
+
+</li>
+<li><a href="TSort.html#M009367">tsort_each_child</a> is used to iterate for
+child nodes of a given node.
+
+</li>
+</ul>
+<p>
+The equality of nodes are defined by eql? and hash since <a
+href="TSort.html">TSort</a> uses Hash internally.
+</p>
+<h2>A Simple Example</h2>
+<p>
+The following example demonstrates how to mix the <a
+href="TSort.html">TSort</a> module into an existing class (in this case,
+Hash). Here, we&#8216;re treating each key in the hash as a node in the
+graph, and so we simply alias the required <a
+href="TSort.html#M009366">tsort_each_node</a> method to Hash&#8216;s
+each_key method. For each key in the hash, the associated value is an array
+of the node&#8216;s child nodes. This choice in turn leads to our
+implementation of the required <a
+href="TSort.html#M009367">tsort_each_child</a> method, which fetches the
+array of child nodes and then iterates over that array using the
+user-supplied block.
+</p>
+<pre>
+  require 'tsort'
+
+  class Hash
+    include TSort
+    alias tsort_each_node each_key
+    def tsort_each_child(node, &amp;block)
+      fetch(node).each(&amp;block)
+    end
+  end
+
+  {1=&gt;[2, 3], 2=&gt;[3], 3=&gt;[], 4=&gt;[]}.tsort
+  #=&gt; [3, 2, 1, 4]
+
+  {1=&gt;[2], 2=&gt;[3, 4], 3=&gt;[2], 4=&gt;[]}.strongly_connected_components
+  #=&gt; [[4], [2, 3], [1]]
+</pre>
+<h2>A More Realistic Example</h2>
+<p>
+A very simple `make&#8217; like tool can be implemented as follows:
+</p>
+<pre>
+  require 'tsort'
+
+  class Make
+    def initialize
+      @dep = {}
+      @dep.default = []
+    end
+
+    def rule(outputs, inputs=[], &amp;block)
+      triple = [outputs, inputs, block]
+      outputs.each {|f| @dep[f] = [triple]}
+      @dep[triple] = inputs
+    end
+
+    def build(target)
+      each_strongly_connected_component_from(target) {|ns|
+        if ns.length != 1
+          fs = ns.delete_if {|n| Array === n}
+          raise TSort::Cyclic.new(&quot;cyclic dependencies: #{fs.join ', '}&quot;)
+        end
+        n = ns.first
+        if Array === n
+          outputs, inputs, block = n
+          inputs_time = inputs.map {|f| File.mtime f}.max
+          begin
+            outputs_time = outputs.map {|f| File.mtime f}.min
+          rescue Errno::ENOENT
+            outputs_time = nil
+          end
+          if outputs_time == nil ||
+             inputs_time != nil &amp;&amp; outputs_time &lt;= inputs_time
+            sleep 1 if inputs_time != nil &amp;&amp; inputs_time.to_i == Time.now.to_i
+            block.call
+          end
+        end
+      }
+    end
+
+    def tsort_each_child(node, &amp;block)
+      @dep[node].each(&amp;block)
+    end
+    include TSort
+  end
+
+  def command(arg)
+    print arg, &quot;\n&quot;
+    system arg
+  end
+
+  m = Make.new
+  m.rule(%w[t1]) { command 'date &gt; t1' }
+  m.rule(%w[t2]) { command 'date &gt; t2' }
+  m.rule(%w[t3]) { command 'date &gt; t3' }
+  m.rule(%w[t4], %w[t1 t3]) { command 'cat t1 t3 &gt; t4' }
+  m.rule(%w[t5], %w[t4 t2]) { command 'cat t4 t2 &gt; t5' }
+  m.build('t5')
+</pre>
+<h2>Bugs</h2>
+<ul>
+<li>&#8216;tsort.rb&#8217; is wrong name because this library uses
+Tarjan&#8216;s algorithm for strongly connected components. Although
+&#8216;strongly_connected_components.rb&#8217; is correct but too long.
+
+</li>
+</ul>
+<h2>References</h2>
+<ol>
+<li type="A">E. Tarjan, &quot;Depth First Search and Linear Graph Algorithms&quot;,
+
+</li>
+</ol>
+<p>
+<em>SIAM Journal on Computing</em>, Vol. 1, No. 2, pp. 146-160, June 1972.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M009364">each_strongly_connected_component</a>&nbsp;&nbsp;
+      <a href="#M009365">each_strongly_connected_component_from</a>&nbsp;&nbsp;
+      <a href="#M009363">strongly_connected_components</a>&nbsp;&nbsp;
+      <a href="#M009361">tsort</a>&nbsp;&nbsp;
+      <a href="#M009362">tsort_each</a>&nbsp;&nbsp;
+      <a href="#M009367">tsort_each_child</a>&nbsp;&nbsp;
+      <a href="#M009366">tsort_each_node</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="TSort/Cyclic.html" class="link">TSort::Cyclic</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M009364" class="m-detail">
+        <a name="M009364"></a>
+
+        <div class="method-heading">
+          <a href="#M009364" class="method-signature">
+          <span class="method-name">each_strongly_connected_component</span><span class="method-args">( {|nodes| ...}</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+The iterator version of the <a
+href="TSort.html#M009363">strongly_connected_components</a> method.
+<tt><em>obj</em>.<a
+href="TSort.html#M009364">each_strongly_connected_component</a></tt> is
+similar to <tt><em>obj</em>.strongly_connected_components.each</tt>, but
+modification of <em>obj</em> during the iteration may lead to unexpected
+results.
+</p>
+<p>
+<a href="TSort.html#M009364">each_strongly_connected_component</a> returns
+<tt>nil</tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009364-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009364-source">
+<pre>
+<span class="ruby-comment cmt"># File tsort.rb, line 178</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_strongly_connected_component</span> <span class="ruby-comment cmt"># :yields: nodes</span>
+    <span class="ruby-identifier">id_map</span> = {}
+    <span class="ruby-identifier">stack</span> = []
+    <span class="ruby-identifier">tsort_each_node</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">node</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">id_map</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">node</span>
+        <span class="ruby-identifier">each_strongly_connected_component_from</span>(<span class="ruby-identifier">node</span>, <span class="ruby-identifier">id_map</span>, <span class="ruby-identifier">stack</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">c</span>
+        }
+      <span class="ruby-keyword kw">end</span>
+    }
+    <span class="ruby-keyword kw">nil</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009365" class="m-detail">
+        <a name="M009365"></a>
+
+        <div class="method-heading">
+          <a href="#M009365" class="method-signature">
+          <span class="method-name">each_strongly_connected_component_from</span><span class="method-args">(node, id_map={}, stack=[]) {|nodes| ...}</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Iterates over strongly connected component in the subgraph reachable from
+<em>node</em>.
+</p>
+<p>
+Return value is unspecified.
+</p>
+<p>
+<a href="TSort.html#M009365">each_strongly_connected_component_from</a>
+doesn&#8216;t call <a href="TSort.html#M009366">tsort_each_node</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009365-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009365-source">
+<pre>
+<span class="ruby-comment cmt"># File tsort.rb, line 199</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_strongly_connected_component_from</span>(<span class="ruby-identifier">node</span>, <span class="ruby-identifier">id_map</span>={}, <span class="ruby-identifier">stack</span>=[]) <span class="ruby-comment cmt"># :yields: nodes</span>
+    <span class="ruby-identifier">minimum_id</span> = <span class="ruby-identifier">node_id</span> = <span class="ruby-identifier">id_map</span>[<span class="ruby-identifier">node</span>] = <span class="ruby-identifier">id_map</span>.<span class="ruby-identifier">size</span>
+    <span class="ruby-identifier">stack_length</span> = <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">length</span>
+    <span class="ruby-identifier">stack</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">node</span>
+
+    <span class="ruby-identifier">tsort_each_child</span>(<span class="ruby-identifier">node</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">child</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">id_map</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">child</span>
+        <span class="ruby-identifier">child_id</span> = <span class="ruby-identifier">id_map</span>[<span class="ruby-identifier">child</span>]
+        <span class="ruby-identifier">minimum_id</span> = <span class="ruby-identifier">child_id</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">child_id</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">child_id</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">minimum_id</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">sub_minimum_id</span> =
+          <span class="ruby-identifier">each_strongly_connected_component_from</span>(<span class="ruby-identifier">child</span>, <span class="ruby-identifier">id_map</span>, <span class="ruby-identifier">stack</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">c</span>
+          }
+        <span class="ruby-identifier">minimum_id</span> = <span class="ruby-identifier">sub_minimum_id</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">sub_minimum_id</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">minimum_id</span>
+      <span class="ruby-keyword kw">end</span>
+    }
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">node_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">minimum_id</span>
+      <span class="ruby-identifier">component</span> = <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">slice!</span>(<span class="ruby-identifier">stack_length</span> <span class="ruby-operator">..</span> <span class="ruby-value">-1</span>)
+      <span class="ruby-identifier">component</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-identifier">id_map</span>[<span class="ruby-identifier">n</span>] = <span class="ruby-keyword kw">nil</span>}
+      <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">component</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">minimum_id</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009363" class="m-detail">
+        <a name="M009363"></a>
+
+        <div class="method-heading">
+          <a href="#M009363" class="method-signature">
+          <span class="method-name">strongly_connected_components</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns strongly connected components as an array of arrays of nodes. The
+array is sorted from children to parents. Each elements of the array
+represents a strongly connected component.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009363-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009363-source">
+<pre>
+<span class="ruby-comment cmt"># File tsort.rb, line 163</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">strongly_connected_components</span>
+    <span class="ruby-identifier">result</span> = []
+    <span class="ruby-identifier">each_strongly_connected_component</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">component</span><span class="ruby-operator">|</span> <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">component</span>}
+    <span class="ruby-identifier">result</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009361" class="m-detail">
+        <a name="M009361"></a>
+
+        <div class="method-heading">
+          <a href="#M009361" class="method-signature">
+          <span class="method-name">tsort</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns a topologically sorted array of nodes. The array is sorted from
+children to parents, i.e. the first element has no child and the last node
+has no parent.
+</p>
+<p>
+If there is a cycle, <a href="TSort/Cyclic.html">TSort::Cyclic</a> is
+raised.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009361-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009361-source">
+<pre>
+<span class="ruby-comment cmt"># File tsort.rb, line 134</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tsort</span>
+    <span class="ruby-identifier">result</span> = []
+    <span class="ruby-identifier">tsort_each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span> <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">element</span>}
+    <span class="ruby-identifier">result</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009362" class="m-detail">
+        <a name="M009362"></a>
+
+        <div class="method-heading">
+          <a href="#M009362" class="method-signature">
+          <span class="method-name">tsort_each</span><span class="method-args">( {|node| ...}</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+The iterator version of the <a href="TSort.html#M009361">tsort</a> method.
+<tt><em>obj</em>.<a href="TSort.html#M009362">tsort_each</a></tt> is
+similar to <tt><em>obj</em>.tsort.each</tt>, but modification of
+<em>obj</em> during the iteration may lead to unexpected results.
+</p>
+<p>
+<a href="TSort.html#M009362">tsort_each</a> returns <tt>nil</tt>. If there
+is a cycle, <a href="TSort/Cyclic.html">TSort::Cyclic</a> is raised.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009362-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009362-source">
+<pre>
+<span class="ruby-comment cmt"># File tsort.rb, line 148</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tsort_each</span> <span class="ruby-comment cmt"># :yields: node</span>
+    <span class="ruby-identifier">each_strongly_connected_component</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">component</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">component</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+        <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">component</span>.<span class="ruby-identifier">first</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">Cyclic</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;topological sort failed: #{component.inspect}&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+    }
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009367" class="m-detail">
+        <a name="M009367"></a>
+
+        <div class="method-heading">
+          <a href="#M009367" class="method-signature">
+          <span class="method-name">tsort_each_child</span><span class="method-args">(node) {|child| ...}</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Should be implemented by a extended class.
+</p>
+<p>
+<a href="TSort.html#M009367">tsort_each_child</a> is used to iterate for
+child nodes of <em>node</em>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009367-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009367-source">
+<pre>
+<span class="ruby-comment cmt"># File tsort.rb, line 240</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tsort_each_child</span>(<span class="ruby-identifier">node</span>) <span class="ruby-comment cmt"># :yields: child</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009366" class="m-detail">
+        <a name="M009366"></a>
+
+        <div class="method-heading">
+          <a href="#M009366" class="method-signature">
+          <span class="method-name">tsort_each_node</span><span class="method-args">( {|node| ...}</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Should be implemented by a extended class.
+</p>
+<p>
+<a href="TSort.html#M009366">tsort_each_node</a> is used to iterate for all
+nodes over a graph.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009366-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009366-source">
+<pre>
+<span class="ruby-comment cmt"># File tsort.rb, line 231</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tsort_each_node</span> <span class="ruby-comment cmt"># :yields: node</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 0 --> <p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and run  by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. Ruby-doc.org was created in 2002 to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>gsub (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.gsub(pattern, replacement)       =&gt; new_str
+ *     str.gsub(pattern) {|match| block }   =&gt; new_str
+ *  
+ *  Returns a copy of &lt;i&gt;str&lt;/i&gt; with &lt;em&gt;all&lt;/em&gt; occurrences of &lt;i&gt;pattern&lt;/i&gt;
+ *  replaced with either &lt;i&gt;replacement&lt;/i&gt; or the value of the block. The
+ *  &lt;i&gt;pattern&lt;/i&gt; will typically be a &lt;code&gt;Regexp&lt;/code&gt;; if it is a
+ *  &lt;code&gt;String&lt;/code&gt; then no regular expression metacharacters will be
+ *  interpreted (that is &lt;code&gt;/\d/&lt;/code&gt; will match a digit, but
+ *  &lt;code&gt;'\d'&lt;/code&gt; will match a backslash followed by a 'd').
+ *     
+ *  If a string is used as the replacement, special variables from the match
+ *  (such as &lt;code&gt;$&amp;&lt;/code&gt; and &lt;code&gt;$1&lt;/code&gt;) cannot be substituted into it,
+ *  as substitution into the string occurs before the pattern match
+ *  starts. However, the sequences &lt;code&gt;\1&lt;/code&gt;, &lt;code&gt;\2&lt;/code&gt;, and so on
+ *  may be used to interpolate successive groups in the match.
+ *     
+ *  In the block form, the current match string is passed in as a parameter, and
+ *  variables such as &lt;code&gt;$1&lt;/code&gt;, &lt;code&gt;$2&lt;/code&gt;, &lt;code&gt;$`&lt;/code&gt;,
+ *  &lt;code&gt;$&amp;&lt;/code&gt;, and &lt;code&gt;$'&lt;/code&gt; will be set appropriately. The value
+ *  returned by the block will be substituted for the match on each call.
+ *     
+ *  The result inherits any tainting in the original string or any supplied
+ *  replacement string.
+ *     
+ *     &quot;hello&quot;.gsub(/[aeiou]/, '*')              #=&gt; &quot;h*ll*&quot;
+ *     &quot;hello&quot;.gsub(/([aeiou])/, '&lt;\1&gt;')         #=&gt; &quot;h&lt;e&gt;ll&lt;o&gt;&quot;
+ *     &quot;hello&quot;.gsub(/./) {|s| s[0].to_s + ' '}   #=&gt; &quot;104 101 108 108 111 &quot;
+ */
+
+static VALUE
+rb_str_gsub(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    return str_gsub(argc, argv, str, 0);
+}</pre>
+</body>
+</html>

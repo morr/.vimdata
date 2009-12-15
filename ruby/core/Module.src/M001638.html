@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>include (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     include(module, ...)    =&gt; self
+ *  
+ *  Invokes &lt;code&gt;Module.append_features&lt;/code&gt; on each parameter in turn.
+ */
+
+static VALUE
+rb_mod_include(argc, argv, module)
+    int argc;
+    VALUE *argv;
+    VALUE module;
+{
+    int i;
+
+    for (i=0; i&lt;argc; i++) Check_Type(argv[i], T_MODULE);
+    while (argc--) {
+        rb_funcall(argv[argc], rb_intern(&quot;append_features&quot;), 1, module);
+        rb_funcall(argv[argc], rb_intern(&quot;included&quot;), 1, module);
+    }
+    return module;
+}</pre>
+</body>
+</html>

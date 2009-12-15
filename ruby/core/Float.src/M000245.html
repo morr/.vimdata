@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>truncate (Float)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     flt.to_i       =&gt; integer
+ *     flt.to_int     =&gt; integer
+ *     flt.truncate   =&gt; integer
+ *  
+ *  Returns &lt;i&gt;flt&lt;/i&gt; truncated to an &lt;code&gt;Integer&lt;/code&gt;.
+ */
+
+static VALUE
+flo_truncate(num)
+    VALUE num;
+{
+    double f = RFLOAT(num)-&gt;value;
+    long val;
+
+    if (f &gt; 0.0) f = floor(f);
+    if (f &lt; 0.0) f = ceil(f);
+
+    if (!FIXABLE(f)) {
+        return rb_dbl2big(f);
+    }
+    val = f;
+    return LONG2FIX(val);
+}</pre>
+</body>
+</html>

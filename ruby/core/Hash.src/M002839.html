@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>[] (Hash)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Hash[ [key =&gt;|, value]* ]   =&gt; hash
+ *  
+ *  Creates a new hash populated with the given objects. Equivalent to
+ *  the literal &lt;code&gt;{ &lt;i&gt;key&lt;/i&gt;, &lt;i&gt;value&lt;/i&gt;, ... }&lt;/code&gt;. Keys and
+ *  values occur in pairs, so there must be an even number of arguments.
+ *     
+ *     Hash[&quot;a&quot;, 100, &quot;b&quot;, 200]       #=&gt; {&quot;a&quot;=&gt;100, &quot;b&quot;=&gt;200}
+ *     Hash[&quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200]   #=&gt; {&quot;a&quot;=&gt;100, &quot;b&quot;=&gt;200}
+ *     { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }     #=&gt; {&quot;a&quot;=&gt;100, &quot;b&quot;=&gt;200}
+ */
+
+static VALUE
+rb_hash_s_create(argc, argv, klass)
+    int argc;
+    VALUE *argv;
+    VALUE klass;
+{
+    VALUE hash;
+    int i;
+
+    if (argc == 1 &amp;&amp; TYPE(argv[0]) == T_HASH) {
+        hash = hash_alloc0(klass);
+        RHASH(hash)-&gt;tbl = st_copy(RHASH(argv[0])-&gt;tbl);
+
+        return hash;
+    }
+
+    if (argc % 2 != 0) {
+        rb_raise(rb_eArgError, &quot;odd number of arguments for Hash&quot;);
+    }
+
+    hash = hash_alloc(klass);
+    for (i=0; i&lt;argc; i+=2) {
+        rb_hash_aset(hash, argv[i], argv[i + 1]);
+    }
+
+    return hash;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>read (Dir)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     dir.read =&gt; string or nil
+ *
+ *  Reads the next entry from &lt;em&gt;dir&lt;/em&gt; and returns it as a string.
+ *  Returns &lt;code&gt;nil&lt;/code&gt; at the end of the stream.
+ *
+ *     d = Dir.new(&quot;testdir&quot;)
+ *     d.read   #=&gt; &quot;.&quot;
+ *     d.read   #=&gt; &quot;..&quot;
+ *     d.read   #=&gt; &quot;config.h&quot;
+ */
+static VALUE
+dir_read(dir)
+    VALUE dir;
+{
+    struct dir_data *dirp;
+    struct dirent *dp;
+
+    GetDIR(dir, dirp);
+    errno = 0;
+    dp = readdir(dirp-&gt;dir);
+    if (dp) {
+        return rb_tainted_str_new(dp-&gt;d_name, NAMLEN(dp));
+    }
+    else if (errno == 0) {      /* end of stream */
+        return Qnil;
+    }
+    else {
+        rb_sys_fail(0);
+    }
+    return Qnil;                /* not reached */
+}</pre>
+</body>
+</html>

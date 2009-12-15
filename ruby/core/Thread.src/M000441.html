@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>stop (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Thread.stop   =&gt; nil
+ *  
+ *  Stops execution of the current thread, putting it into a ``sleep'' state,
+ *  and schedules execution of another thread. Resets the ``critical'' condition
+ *  to &lt;code&gt;false&lt;/code&gt;.
+ *     
+ *     a = Thread.new { print &quot;a&quot;; Thread.stop; print &quot;c&quot; }
+ *     Thread.pass
+ *     print &quot;b&quot;
+ *     a.run
+ *     a.join
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     abc
+ */
+
+VALUE
+rb_thread_stop()
+{
+    enum rb_thread_status last_status = THREAD_RUNNABLE;
+
+    rb_thread_critical = 0;
+    if (curr_thread == curr_thread-&gt;next) {
+        rb_raise(rb_eThreadError, &quot;stopping only thread\n\tnote: use sleep to stop forever&quot;);
+    }
+    if (curr_thread-&gt;status == THREAD_TO_KILL)
+        last_status = THREAD_TO_KILL;
+    curr_thread-&gt;status = THREAD_STOPPED;
+    rb_thread_schedule();
+    curr_thread-&gt;status = last_status;
+
+    return Qnil;
+}</pre>
+</body>
+</html>

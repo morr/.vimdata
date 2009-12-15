@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>scanf (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/scanf.rb, line 590</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">scanf</span>(<span class="ruby-identifier">str</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">block_scanf</span>(<span class="ruby-identifier">str</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword kw">return</span> [] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+
+    <span class="ruby-identifier">start_position</span> = <span class="ruby-identifier">pos</span> <span class="ruby-keyword kw">rescue</span> <span class="ruby-value">0</span>
+    <span class="ruby-identifier">matched_so_far</span> = <span class="ruby-value">0</span>
+    <span class="ruby-identifier">source_buffer</span> = <span class="ruby-value str">&quot;&quot;</span>
+    <span class="ruby-identifier">result_buffer</span> = []
+    <span class="ruby-identifier">final_result</span> = []
+
+    <span class="ruby-identifier">fstr</span> = <span class="ruby-constant">Scanf</span><span class="ruby-operator">::</span><span class="ruby-constant">FormatString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">str</span>)
+
+    <span class="ruby-identifier">loop</span> <span class="ruby-keyword kw">do</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">eof</span> <span class="ruby-operator">||</span> (<span class="ruby-identifier">tty?</span> <span class="ruby-operator">&amp;&amp;</span><span class="ruby-operator">!</span> <span class="ruby-identifier">fstr</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">source_buffer</span>))
+        <span class="ruby-identifier">final_result</span>.<span class="ruby-identifier">concat</span>(<span class="ruby-identifier">result_buffer</span>)
+        <span class="ruby-keyword kw">break</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">source_buffer</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">gets</span>
+
+      <span class="ruby-identifier">current_match</span> = <span class="ruby-identifier">fstr</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">source_buffer</span>)
+
+      <span class="ruby-identifier">spec</span> = <span class="ruby-identifier">fstr</span>.<span class="ruby-identifier">last_spec_tried</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spec</span>.<span class="ruby-identifier">matched</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spec</span>.<span class="ruby-identifier">mid_match?</span>
+          <span class="ruby-identifier">result_buffer</span>.<span class="ruby-identifier">replace</span>(<span class="ruby-identifier">current_match</span>)
+          <span class="ruby-keyword kw">next</span>
+        <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">elsif</span> (<span class="ruby-identifier">fstr</span>.<span class="ruby-identifier">matched_count</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">fstr</span>.<span class="ruby-identifier">spec_count</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-regexp re">/\A\s*\z/</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">fstr</span>.<span class="ruby-identifier">string_left</span>)
+          <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spec</span>.<span class="ruby-identifier">count_space?</span>
+          <span class="ruby-identifier">result_buffer</span>.<span class="ruby-identifier">replace</span>(<span class="ruby-identifier">current_match</span>)
+          <span class="ruby-keyword kw">next</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">final_result</span>.<span class="ruby-identifier">concat</span>(<span class="ruby-identifier">current_match</span>)
+
+      <span class="ruby-identifier">matched_so_far</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">source_buffer</span>.<span class="ruby-identifier">size</span>
+      <span class="ruby-identifier">source_buffer</span>.<span class="ruby-identifier">replace</span>(<span class="ruby-identifier">fstr</span>.<span class="ruby-identifier">string_left</span>)
+      <span class="ruby-identifier">matched_so_far</span> <span class="ruby-operator">-=</span> <span class="ruby-identifier">source_buffer</span>.<span class="ruby-identifier">size</span>
+      <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">fstr</span>.<span class="ruby-identifier">last_spec</span>
+      <span class="ruby-identifier">fstr</span>.<span class="ruby-identifier">prune</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">seek</span>(<span class="ruby-identifier">start_position</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">matched_so_far</span>, <span class="ruby-constant">IO</span><span class="ruby-operator">::</span><span class="ruby-constant">SEEK_SET</span>) <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">ESPIPE</span>
+    <span class="ruby-identifier">soak_up_spaces</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">fstr</span>.<span class="ruby-identifier">last_spec</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">fstr</span>.<span class="ruby-identifier">space</span>
+
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">final_result</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

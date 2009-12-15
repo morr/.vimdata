@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: RI::AttributeFormatter</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">RI::AttributeFormatter</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/rdoc/ri/ri_formatter_rb.html">
+                rdoc/ri/ri_formatter.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="TextFormatter.html">
+                TextFormatter
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Handle text with attributes. We&#8216;re a base class: there are different
+presentation classes (one, for example, uses overstrikes to handle bold and
+underlining, while another using ANSI escape sequences
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001889">bold_print</a>&nbsp;&nbsp;
+      <a href="#M001887">wrap</a>&nbsp;&nbsp;
+      <a href="#M001888">write_attribute_text</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="AttributeFormatter/AttrChar.html" class="link">RI::AttributeFormatter::AttrChar</a><br />
+Class <a href="AttributeFormatter/AttributeString.html" class="link">RI::AttributeFormatter::AttributeString</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BOLD</td>
+          <td>=</td>
+          <td class="context-item-value">1</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ITALIC</td>
+          <td>=</td>
+          <td class="context-item-value">2</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CODE</td>
+          <td>=</td>
+          <td class="context-item-value">4</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ATTR_MAP</td>
+          <td>=</td>
+          <td class="context-item-value">{       &quot;b&quot;    =&gt; BOLD,       &quot;code&quot; =&gt; CODE,       &quot;em&quot;   =&gt; ITALIC,       &quot;i&quot;    =&gt; ITALIC,       &quot;tt&quot;   =&gt; CODE</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001887" class="m-detail">
+        <a name="M001887"></a>
+
+        <div class="method-heading">
+          <a href="#M001887" class="method-signature">
+          <span class="method-name">wrap</span><span class="method-args">(txt, prefix=@indent, linelen=@width)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+overrides base class. Looks for <tt>&#8230;</tt> etc sequences and
+generates an array of AttrChars. This array is then used as the basis for
+the split
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001887-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001887-source">
+<pre>
+<span class="ruby-comment cmt"># File rdoc/ri/ri_formatter.rb, line 305</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">wrap</span>(<span class="ruby-identifier">txt</span>,  <span class="ruby-identifier">prefix</span>=<span class="ruby-ivar">@indent</span>, <span class="ruby-identifier">linelen</span>=<span class="ruby-ivar">@width</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">txt</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">txt</span>.<span class="ruby-identifier">empty?</span>
+
+      <span class="ruby-identifier">txt</span> = <span class="ruby-identifier">add_attributes_to</span>(<span class="ruby-identifier">txt</span>)
+      <span class="ruby-identifier">next_prefix</span> = <span class="ruby-identifier">prefix</span>.<span class="ruby-identifier">tr</span>(<span class="ruby-value str">&quot;^ &quot;</span>, <span class="ruby-value str">&quot; &quot;</span>)
+      <span class="ruby-identifier">linelen</span> <span class="ruby-operator">-=</span> <span class="ruby-identifier">prefix</span>.<span class="ruby-identifier">size</span>
+
+      <span class="ruby-identifier">line</span> = []
+
+      <span class="ruby-keyword kw">until</span> <span class="ruby-identifier">txt</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">word</span> = <span class="ruby-identifier">txt</span>.<span class="ruby-identifier">next_word</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">word</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">line</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">linelen</span>
+          <span class="ruby-identifier">write_attribute_text</span>(<span class="ruby-identifier">prefix</span>, <span class="ruby-identifier">line</span>)
+          <span class="ruby-identifier">prefix</span> = <span class="ruby-identifier">next_prefix</span>
+          <span class="ruby-identifier">line</span> = []
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">line</span>.<span class="ruby-identifier">concat</span>(<span class="ruby-identifier">word</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">write_attribute_text</span>(<span class="ruby-identifier">prefix</span>, <span class="ruby-identifier">line</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">line</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M001889" class="m-detail">
+        <a name="M001889"></a>
+
+        <div class="method-heading">
+          <a href="#M001889" class="method-signature">
+          <span class="method-name">bold_print</span><span class="method-args">(txt)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+again, overridden
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001889-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001889-source">
+<pre>
+<span class="ruby-comment cmt"># File rdoc/ri/ri_formatter.rb, line 341</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bold_print</span>(<span class="ruby-identifier">txt</span>)
+      <span class="ruby-identifier">print</span> <span class="ruby-identifier">txt</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001888" class="m-detail">
+        <a name="M001888"></a>
+
+        <div class="method-heading">
+          <a href="#M001888" class="method-signature">
+          <span class="method-name">write_attribute_text</span><span class="method-args">(prefix, line)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+overridden in specific formatters
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001888-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001888-source">
+<pre>
+<span class="ruby-comment cmt"># File rdoc/ri/ri_formatter.rb, line 331</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">write_attribute_text</span>(<span class="ruby-identifier">prefix</span>, <span class="ruby-identifier">line</span>)
+      <span class="ruby-identifier">print</span> <span class="ruby-identifier">prefix</span>
+      <span class="ruby-identifier">line</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">achar</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">print</span> <span class="ruby-identifier">achar</span>.<span class="ruby-identifier">char</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">puts</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+<!-- 1  --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and maintained by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. The site was created in 2002 as part of the Ruby Documentation Project to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

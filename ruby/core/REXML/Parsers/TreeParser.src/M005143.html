@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>parse (REXML::Parsers::TreeParser)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/parsers/treeparser.rb, line 16</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse</span>
+        <span class="ruby-identifier">tag_stack</span> = []
+        <span class="ruby-identifier">in_doctype</span> = <span class="ruby-keyword kw">false</span>
+        <span class="ruby-identifier">entities</span> = <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+            <span class="ruby-identifier">event</span> = <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">pull</span>
+            <span class="ruby-comment cmt">#STDERR.puts &quot;TREEPARSER GOT #{event.inspect}&quot;</span>
+            <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">0</span>]
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:end_document</span>
+              <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">tag_stack</span>.<span class="ruby-identifier">empty?</span>
+                <span class="ruby-comment cmt">#raise ParseException.new(&quot;No close tag for #{tag_stack.inspect}&quot;)</span>
+                <span class="ruby-identifier">raise</span> <span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;No close tag for #{@build_context.xpath}&quot;</span>)
+              <span class="ruby-keyword kw">end</span>
+              <span class="ruby-keyword kw">return</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:start_element</span>
+              <span class="ruby-identifier">tag_stack</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>])
+              <span class="ruby-identifier">el</span> = <span class="ruby-ivar">@build_context</span> = <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">add_element</span>( <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>], <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>] )
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:end_element</span>
+              <span class="ruby-identifier">tag_stack</span>.<span class="ruby-identifier">pop</span>
+              <span class="ruby-ivar">@build_context</span> = <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">parent</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:text</span>
+              <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">not</span> <span class="ruby-identifier">in_doctype</span>
+                <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@build_context</span>[<span class="ruby-value">-1</span>].<span class="ruby-identifier">instance_of?</span> <span class="ruby-constant">Text</span>
+                  <span class="ruby-ivar">@build_context</span>[<span class="ruby-value">-1</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>]
+                <span class="ruby-keyword kw">else</span>
+                  <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">add</span>( 
+                    <span class="ruby-constant">Text</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>], <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">whitespace</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-keyword kw">true</span>) 
+                  ) <span class="ruby-keyword kw">unless</span> (
+                    <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">ignore_whitespace_nodes</span> <span class="ruby-keyword kw">and</span>
+                    <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">strip</span>.<span class="ruby-identifier">size</span><span class="ruby-operator">==</span><span class="ruby-value">0</span>
+                  )
+                <span class="ruby-keyword kw">end</span>
+              <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:comment</span>
+              <span class="ruby-identifier">c</span> = <span class="ruby-constant">Comment</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] )
+              <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">c</span> )
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:cdata</span>
+              <span class="ruby-identifier">c</span> = <span class="ruby-constant">CData</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] )
+              <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">c</span> )
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:processing_instruction</span>
+              <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">add</span>( <span class="ruby-constant">Instruction</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>], <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>] ) )
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:end_doctype</span>
+              <span class="ruby-identifier">in_doctype</span> = <span class="ruby-keyword kw">false</span>
+              <span class="ruby-identifier">entities</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">entities</span>[<span class="ruby-identifier">k</span>] = <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">entities</span>[<span class="ruby-identifier">k</span>].<span class="ruby-identifier">value</span> }
+              <span class="ruby-ivar">@build_context</span> = <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">parent</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:start_doctype</span>
+              <span class="ruby-identifier">doctype</span> = <span class="ruby-constant">DocType</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>], <span class="ruby-ivar">@build_context</span> )
+              <span class="ruby-ivar">@build_context</span> = <span class="ruby-identifier">doctype</span>
+              <span class="ruby-identifier">entities</span> = {}
+              <span class="ruby-identifier">in_doctype</span> = <span class="ruby-keyword kw">true</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:attlistdecl</span>
+              <span class="ruby-identifier">n</span> = <span class="ruby-constant">AttlistDecl</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>] )
+              <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">n</span> )
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:externalentity</span>
+              <span class="ruby-identifier">n</span> = <span class="ruby-constant">ExternalEntity</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] )
+              <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">n</span> )
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:elementdecl</span>
+              <span class="ruby-identifier">n</span> = <span class="ruby-constant">ElementDecl</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] )
+              <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">n</span>)
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:entitydecl</span>
+              <span class="ruby-identifier">entities</span>[ <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] ] = <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>] <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/PUBLIC|SYSTEM/</span>
+              <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">add</span>(<span class="ruby-constant">Entity</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">event</span>))
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:notationdecl</span>
+              <span class="ruby-identifier">n</span> = <span class="ruby-constant">NotationDecl</span>.<span class="ruby-identifier">new</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">event</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>] )
+              <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">n</span> )
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:xmldecl</span>
+              <span class="ruby-identifier">x</span> = <span class="ruby-constant">XMLDecl</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>], <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>], <span class="ruby-identifier">event</span>[<span class="ruby-value">3</span>] )
+              <span class="ruby-ivar">@build_context</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">x</span> )
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">Validation</span><span class="ruby-operator">::</span><span class="ruby-constant">ValidationException</span>
+          <span class="ruby-identifier">raise</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">UndefinedNamespaceException</span>
+          <span class="ruby-identifier">raise</span>
+        <span class="ruby-keyword kw">rescue</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">$!</span>.<span class="ruby-identifier">message</span>, <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">source</span>, <span class="ruby-ivar">@parser</span>, <span class="ruby-identifier">$!</span> )
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.new(filename, mode=&quot;r&quot;)            =&gt; file
+ *     File.new(filename [, mode [, perm]])    =&gt; file
+ *  
+
+ *  Opens the file named by _filename_ according to
+ *  _mode_ (default is ``r'') and returns a new
+ *  &lt;code&gt;File&lt;/code&gt; object. See the description of class +IO+ for
+ *  a description of _mode_. The file mode may optionally be
+ *  specified as a +Fixnum+ by _or_-ing together the
+ *  flags (O_RDONLY etc, again described under +IO+). Optional
+ *  permission bits may be given in _perm_. These mode and permission
+ *  bits are platform dependent; on Unix systems, see
+ *  &lt;code&gt;open(2)&lt;/code&gt; for details.
+ *
+ *     f = File.new(&quot;testfile&quot;, &quot;r&quot;)
+ *     f = File.new(&quot;newfile&quot;,  &quot;w+&quot;)
+ *     f = File.new(&quot;newfile&quot;, File::CREAT|File::TRUNC|File::RDWR, 0644)
+ */
+
+static VALUE
+rb_file_initialize(argc, argv, io)
+    int argc;
+    VALUE *argv;
+    VALUE io;
+{
+    if (RFILE(io)-&gt;fptr) {
+        rb_raise(rb_eRuntimeError, &quot;reinitializing File&quot;);
+    }
+    if (0 &lt; argc &amp;&amp; argc &lt; 3) {
+        VALUE fd = rb_check_convert_type(argv[0], T_FIXNUM, &quot;Fixnum&quot;, &quot;to_int&quot;);
+
+        if (!NIL_P(fd)) {
+            argv[0] = fd;
+            return rb_io_initialize(argc, argv, io);
+        }
+    }
+    rb_open_file(argc, argv, io);
+
+    return io;
+}</pre>
+</body>
+</html>

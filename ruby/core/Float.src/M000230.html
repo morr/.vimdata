@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>&lt;=&gt; (Float)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     flt &lt;=&gt; numeric   =&gt; -1, 0, +1
+ *  
+ *  Returns -1, 0, or +1 depending on whether &lt;i&gt;flt&lt;/i&gt; is less than,
+ *  equal to, or greater than &lt;i&gt;numeric&lt;/i&gt;. This is the basis for the
+ *  tests in &lt;code&gt;Comparable&lt;/code&gt;.
+ */
+
+static VALUE
+flo_cmp(x, y)
+    VALUE x, y;
+{
+    double a, b;
+
+    a = RFLOAT(x)-&gt;value;
+    switch (TYPE(y)) {
+      case T_FIXNUM:
+        b = (double)FIX2LONG(y);
+        break;
+
+      case T_BIGNUM:
+        b = rb_big2dbl(y);
+        break;
+
+      case T_FLOAT:
+        b = RFLOAT(y)-&gt;value;
+        break;
+
+      default:
+        return rb_num_coerce_cmp(x, y);
+    }
+    return rb_dbl_cmp(a, b);
+}</pre>
+</body>
+</html>

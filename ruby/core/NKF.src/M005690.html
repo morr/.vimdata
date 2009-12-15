@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>guess2 (NKF)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     NKF.guess2(str)  -&gt; integer
+ *
+ *  Returns guessed encoding of _str_ as integer by nkf routine.
+ *
+ *     case NKF.guess(input)
+ *     when NKF::ASCII
+ *       &quot;ASCII&quot;
+ *     when NKF::JIS
+ *       &quot;ISO-2022-JP&quot;
+ *     when NKF::SJIS
+ *       &quot;Shift_JIS&quot;
+ *     when NKF::EUC
+ *       &quot;EUC-JP&quot;
+ *     when NKF::UTF8
+ *       &quot;UTF-8&quot;
+ *     when NKF::UTF16
+ *       &quot;UTF-16&quot;
+ *     when NKF::UNKNOWN
+ *       &quot;UNKNOWN&quot;
+ *     when NKF::BINARY
+ *       &quot;BINARY&quot;
+ *     end
+ */
+
+static VALUE
+rb_nkf_guess2(obj, src)
+  VALUE obj, src;
+{
+  int code = _BINARY;
+
+  reinit();
+
+  input_ctr = 0;
+  StringValue(src);
+  input = (unsigned char *)RSTRING(src)-&gt;ptr;
+  i_len = RSTRING(src)-&gt;len;
+
+  if(x0201_f == WISH_TRUE)
+    x0201_f = ((!iso2022jp_f)? TRUE : NO_X0201);
+
+  guess_f = TRUE;
+  kanji_convert( NULL );
+  guess_f = FALSE;
+
+  if (!is_inputcode_mixed) {
+    if (strcmp(input_codename, &quot;&quot;) == 0) {
+      code = _ASCII;
+    } else if (strcmp(input_codename, &quot;ISO-2022-JP&quot;) == 0) {
+      code = _JIS;
+    } else if (strcmp(input_codename, &quot;EUC-JP&quot;) == 0) {
+      code = _EUC;
+    } else if (strcmp(input_codename, &quot;Shift_JIS&quot;) == 0) {
+      code = _SJIS;
+    } else if (strcmp(input_codename, &quot;UTF-8&quot;) == 0) {
+      code = _UTF8;
+    } else if (strcmp(input_codename, &quot;UTF-16&quot;) == 0) {
+      code = _UTF16;
+    } else if (strlen(input_codename) &gt; 0) {
+      code = _UNKNOWN;
+    }
+  }
+
+  return INT2FIX( code );
+}</pre>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>gmtime (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     time.gmtime    =&gt; time
+ *     time.utc       =&gt; time
+ *  
+ *  Converts &lt;i&gt;time&lt;/i&gt; to UTC (GMT), modifying the receiver.
+ *     
+ *     t = Time.now   #=&gt; Wed Apr 09 08:56:03 CDT 2003
+ *     t.gmt?         #=&gt; false
+ *     t.gmtime       #=&gt; Wed Apr 09 13:56:03 UTC 2003
+ *     t.gmt?         #=&gt; true
+ *
+ *     t = Time.now   #=&gt; Wed Apr 09 08:56:04 CDT 2003
+ *     t.utc?         #=&gt; false
+ *     t.utc          #=&gt; Wed Apr 09 13:56:04 UTC 2003
+ *     t.utc?         #=&gt; true
+ */
+
+static VALUE
+time_gmtime(time)
+    VALUE time;
+{
+    struct time_object *tobj;
+    struct tm *tm_tmp;
+    time_t t;
+
+    GetTimeval(time, tobj);
+    if (tobj-&gt;gmt) {
+        if (tobj-&gt;tm_got)
+            return time;
+    }
+    else {
+        time_modify(time);
+    }
+    t = tobj-&gt;tv.tv_sec;
+    tm_tmp = gmtime(&amp;t);
+    if (!tm_tmp)
+        rb_raise(rb_eArgError, &quot;gmtime error&quot;);
+    tobj-&gt;tm = *tm_tmp;
+    tobj-&gt;tm_got = 1;
+    tobj-&gt;gmt = 1;
+    return time;
+}</pre>
+</body>
+</html>

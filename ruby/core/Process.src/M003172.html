@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>gid= (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.gid= fixnum   =&gt; fixnum
+ *
+ *  Sets the group ID for this process.
+ */
+
+static VALUE
+proc_setgid(obj, id)
+    VALUE obj, id;
+{
+    int gid = NUM2INT(id);
+
+    check_gid_switch();
+#if defined(HAVE_SETRESGID) &amp;&amp; !defined(__CHECKER__)
+    if (setresgid(gid, -1, -1) &lt; 0) rb_sys_fail(0);
+#elif defined HAVE_SETREGID
+    if (setregid(gid, -1) &lt; 0) rb_sys_fail(0);
+#elif defined HAVE_SETRGID
+    if (setrgid(gid) &lt; 0) rb_sys_fail(0);
+#elif defined HAVE_SETGID
+    {
+        if (getegid() == gid) {
+            if (setgid(gid) &lt; 0) rb_sys_fail(0);
+        }
+        else {
+            rb_notimplement();
+        }
+    }
+#else
+    rb_notimplement();
+#endif
+    return INT2FIX(gid);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>&lt;=&gt; (File::Stat)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     stat &lt;=&gt; other_stat    =&gt; -1, 0, 1
+ *  
+ *  Compares &lt;code&gt;File::Stat&lt;/code&gt; objects by comparing their
+ *  respective modification times.
+ *     
+ *     f1 = File.new(&quot;f1&quot;, &quot;w&quot;)
+ *     sleep 1
+ *     f2 = File.new(&quot;f2&quot;, &quot;w&quot;)
+ *     f1.stat &lt;=&gt; f2.stat   #=&gt; -1
+ */
+
+static VALUE
+rb_stat_cmp(self, other)
+    VALUE self, other;
+{
+    if (rb_obj_is_kind_of(other, rb_obj_class(self))) {
+        time_t t1 = get_stat(self)-&gt;st_mtime;
+        time_t t2 = get_stat(other)-&gt;st_mtime;
+        if (t1 == t2)
+            return INT2FIX(0);
+        else if (t1 &lt; t2)
+            return INT2FIX(-1);
+        else
+            return INT2FIX(1);
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

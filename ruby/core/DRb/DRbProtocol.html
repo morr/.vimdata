@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: DRb::DRbProtocol</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">DRb::DRbProtocol</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/drb/drb_rb.html">
+                lib/drb/drb.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="../Module.html">Module</a> managing the underlying network
+protocol(s) used by drb.
+</p>
+<p>
+By default, drb uses the <a href="DRbTCPSocket.html">DRbTCPSocket</a>
+protocol. Other protocols can be defined. A protocol must define the
+following class methods:
+</p>
+<pre>
+  [open(uri, config)] Open a client connection to the server at +uri+,
+                      using configuration +config+.  Return a protocol
+                      instance for this connection.
+  [open_server(uri, config)] Open a server listening at +uri+,
+                             using configuration +config+.  Return a
+                             protocol instance for this listener.
+  [uri_option(uri, config)] Take a URI, possibly containing an option
+                            component (e.g. a trailing '?param=val'),
+                            and return a [uri, option] tuple.
+</pre>
+<p>
+All of these methods should raise a <a
+href="DRbBadScheme.html">DRbBadScheme</a> error if the <a
+href="../URI.html">URI</a> does not identify the protocol they support
+(e.g. &quot;druby:&quot; for the standard Ruby protocol). This is how the
+<a href="DRbProtocol.html">DRbProtocol</a> module, given a <a
+href="../URI.html">URI</a>, determines which protocol implementation serves
+that protocol.
+</p>
+<p>
+The protocol instance returned by <a
+href="DRbProtocol.html#M007212">open_server</a> must have the following
+methods:
+</p>
+<dl>
+<dt>accept</dt><dd>Accept a new connection to the server. Returns a protocol instance capable
+of communicating with the client.
+
+</dd>
+<dt>close</dt><dd>Close the server connection.
+
+</dd>
+<dt>uri</dt><dd>Get the <a href="../URI.html">URI</a> for this server.
+
+</dd>
+</dl>
+<p>
+The protocol instance returned by <a
+href="DRbProtocol.html#M007211">open</a> must have the following methods:
+</p>
+<dl>
+<dt>send_request (ref, msg_id, arg, b)</dt><dd>Send a request to <tt>ref</tt> with the given message id and arguments.
+This is most easily implemented by calling DRbMessage.send_request,
+providing a stream that sits on top of the current protocol.
+
+</dd>
+<dt>recv_reply</dt><dd>Receive a reply from the server and return it as a [success-boolean,
+reply-value] pair. This is most easily implemented by calling
+DRb.recv_reply, providing a stream that sits on top of the current
+protocol.
+
+</dd>
+<dt>alive?</dt><dd>Is this connection still alive?
+
+</dd>
+<dt>close</dt><dd>Close this connection.
+
+</dd>
+</dl>
+<p>
+The protocol instance returned by <a
+href="DRbProtocol.html#M007212">open_server</a>().accept() must have the
+following methods:
+</p>
+<dl>
+<dt>recv_request</dt><dd>Receive a request from the client and return a [object, message, args,
+block] tuple. This is most easily implemented by calling
+DRbMessage.recv_request, providing a stream that sits on top of the current
+protocol.
+
+</dd>
+<dt>send_reply(succ, result)</dt><dd>Send a reply to the client. This is most easily implemented by calling
+DRbMessage.send_reply, providing a stream that sits on top of the current
+protocol.
+
+</dd>
+<dt>close</dt><dd>Close this connection.
+
+</dd>
+</dl>
+<p>
+A new protocol is registered with the <a
+href="DRbProtocol.html">DRbProtocol</a> module using the <a
+href="DRbProtocol.html#M007210">add_protocol</a> method.
+</p>
+<p>
+For examples of other protocols, see <a
+href="DRbUNIXSocket.html">DRbUNIXSocket</a> in drb/unix.rb, and HTTP0 in
+sample/http0.rb and sample/http0serv.rb in the full drb distribution.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M007210">add_protocol</a>&nbsp;&nbsp;
+      <a href="#M007211">open</a>&nbsp;&nbsp;
+      <a href="#M007212">open_server</a>&nbsp;&nbsp;
+      <a href="#M007213">uri_option</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M007210" class="method-detail">
+        <a name="M007210"></a>
+
+        <div class="method-heading">
+          <a href="DRbProtocol.src/M007210.html" target="Code" class="method-signature"
+            onclick="popupCode('DRbProtocol.src/M007210.html');return false;">
+          <span class="method-name">add_protocol</span><span class="method-args">(prot)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add a new protocol to the <a href="DRbProtocol.html">DRbProtocol</a>
+module.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007211" class="method-detail">
+        <a name="M007211"></a>
+
+        <div class="method-heading">
+          <a href="DRbProtocol.src/M007211.html" target="Code" class="method-signature"
+            onclick="popupCode('DRbProtocol.src/M007211.html');return false;">
+          <span class="method-name">open</span><span class="method-args">(uri, config, first=true)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Open a client connection to <tt>uri</tt> with the configuration
+<tt>config</tt>.
+</p>
+<p>
+The <a href="DRbProtocol.html">DRbProtocol</a> module asks each registered
+protocol in turn to try to <a href="DRbProtocol.html#M007211">open</a> the
+<a href="../URI.html">URI</a>. Each protocol signals that it does not
+handle that <a href="../URI.html">URI</a> by raising a <a
+href="DRbBadScheme.html">DRbBadScheme</a> error. If no protocol recognises
+the <a href="../URI.html">URI</a>, then a <a
+href="DRbBadURI.html">DRbBadURI</a> error is raised. If a protocol accepts
+the <a href="../URI.html">URI</a>, but an error occurs in opening it, a <a
+href="DRbConnError.html">DRbConnError</a> is raised.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007212" class="method-detail">
+        <a name="M007212"></a>
+
+        <div class="method-heading">
+          <a href="DRbProtocol.src/M007212.html" target="Code" class="method-signature"
+            onclick="popupCode('DRbProtocol.src/M007212.html');return false;">
+          <span class="method-name">open_server</span><span class="method-args">(uri, config, first=true)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Open a server listening for connections at <tt>uri</tt> with configuration
+<tt>config</tt>.
+</p>
+<p>
+The <a href="DRbProtocol.html">DRbProtocol</a> module asks each registered
+protocol in turn to try to <a href="DRbProtocol.html#M007211">open</a> a
+server at the <a href="../URI.html">URI</a>. Each protocol signals that it
+does not handle that <a href="../URI.html">URI</a> by raising a <a
+href="DRbBadScheme.html">DRbBadScheme</a> error. If no protocol recognises
+the <a href="../URI.html">URI</a>, then a <a
+href="DRbBadURI.html">DRbBadURI</a> error is raised. If a protocol accepts
+the <a href="../URI.html">URI</a>, but an error occurs in opening it, the
+underlying error is passed on to the caller.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007213" class="method-detail">
+        <a name="M007213"></a>
+
+        <div class="method-heading">
+          <a href="DRbProtocol.src/M007213.html" target="Code" class="method-signature"
+            onclick="popupCode('DRbProtocol.src/M007213.html');return false;">
+          <span class="method-name">uri_option</span><span class="method-args">(uri, config, first=true)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Parse <tt>uri</tt> into a [uri, option] pair.
+</p>
+<p>
+The <a href="DRbProtocol.html">DRbProtocol</a> module asks each registered
+protocol in turn to try to parse the <a href="../URI.html">URI</a>. Each
+protocol signals that it does not handle that <a href="../URI.html">URI</a>
+by raising a <a href="DRbBadScheme.html">DRbBadScheme</a> error. If no
+protocol recognises the <a href="../URI.html">URI</a>, then a <a
+href="DRbBadURI.html">DRbBadURI</a> error is raised.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Net::HTTPResponse</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Net::HTTPResponse</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/net/http_rb.html">
+                net/http.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="HTTP.html">HTTP</a> response class. This class wraps response
+header and <a href="HTTPResponse.html#M000708">entity</a>. Mixes in the <a
+href="HTTPHeader.html">HTTPHeader</a> module, which provides access to
+response header values both via hash-like methods and individual readers.
+Note that each possible <a href="HTTP.html">HTTP</a> response code defines
+its own <a href="HTTPResponse.html">HTTPResponse</a> subclass. These are
+listed below. All classes are defined under the <a
+href="../Net.html">Net</a> module. Indentation indicates inheritance.
+</p>
+<pre>
+  xxx        HTTPResponse
+
+    1xx        HTTPInformation
+      100        HTTPContinue
+      101        HTTPSwitchProtocol
+
+    2xx        HTTPSuccess
+      200        HTTPOK
+      201        HTTPCreated
+      202        HTTPAccepted
+      203        HTTPNonAuthoritativeInformation
+      204        HTTPNoContent
+      205        HTTPResetContent
+      206        HTTPPartialContent
+
+    3xx        HTTPRedirection
+      300        HTTPMultipleChoice
+      301        HTTPMovedPermanently
+      302        HTTPFound
+      303        HTTPSeeOther
+      304        HTTPNotModified
+      305        HTTPUseProxy
+      307        HTTPTemporaryRedirect
+
+    4xx        HTTPClientError
+      400        HTTPBadRequest
+      401        HTTPUnauthorized
+      402        HTTPPaymentRequired
+      403        HTTPForbidden
+      404        HTTPNotFound
+      405        HTTPMethodNotAllowed
+      406        HTTPNotAcceptable
+      407        HTTPProxyAuthenticationRequired
+      408        HTTPRequestTimeOut
+      409        HTTPConflict
+      410        HTTPGone
+      411        HTTPLengthRequired
+      412        HTTPPreconditionFailed
+      413        HTTPRequestEntityTooLarge
+      414        HTTPRequestURITooLong
+      415        HTTPUnsupportedMediaType
+      416        HTTPRequestedRangeNotSatisfiable
+      417        HTTPExpectationFailed
+
+    5xx        HTTPServerError
+      500        HTTPInternalServerError
+      501        HTTPNotImplemented
+      502        HTTPBadGateway
+      503        HTTPServiceUnavailable
+      504        HTTPGatewayTimeOut
+      505        HTTPVersionNotSupported
+
+    xxx        HTTPUnknownResponse
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000707">body</a>&nbsp;&nbsp;
+      <a href="#M000702">body_permitted?</a>&nbsp;&nbsp;
+      <a href="#M000708">entity</a>&nbsp;&nbsp;
+      <a href="#M000703">inspect</a>&nbsp;&nbsp;
+      <a href="#M000706">read_body</a>&nbsp;&nbsp;
+      <a href="#M000704">to_ary</a>&nbsp;&nbsp;
+      <a href="#M000705">value</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="HTTPHeader.html">HTTPHeader</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CODE_CLASS_TO_OBJ</td>
+          <td>=</td>
+          <td class="context-item-value">{       '1' =&gt; HTTPInformation,       '2' =&gt; HTTPSuccess,       '3' =&gt; HTTPRedirection,       '4' =&gt; HTTPClientError,       '5' =&gt; HTTPServerError</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CODE_TO_OBJ</td>
+          <td>=</td>
+          <td class="context-item-value">{       '100' =&gt; HTTPContinue,       '101' =&gt; HTTPSwitchProtocol,        '200' =&gt; HTTPOK,       '201' =&gt; HTTPCreated,       '202' =&gt; HTTPAccepted,       '203' =&gt; HTTPNonAuthoritativeInformation,       '204' =&gt; HTTPNoContent,       '205' =&gt; HTTPResetContent,       '206' =&gt; HTTPPartialContent,        '300' =&gt; HTTPMultipleChoice,       '301' =&gt; HTTPMovedPermanently,       '302' =&gt; HTTPFound,       '303' =&gt; HTTPSeeOther,       '304' =&gt; HTTPNotModified,       '305' =&gt; HTTPUseProxy,       '307' =&gt; HTTPTemporaryRedirect,        '400' =&gt; HTTPBadRequest,       '401' =&gt; HTTPUnauthorized,       '402' =&gt; HTTPPaymentRequired,       '403' =&gt; HTTPForbidden,       '404' =&gt; HTTPNotFound,       '405' =&gt; HTTPMethodNotAllowed,       '406' =&gt; HTTPNotAcceptable,       '407' =&gt; HTTPProxyAuthenticationRequired,       '408' =&gt; HTTPRequestTimeOut,       '409' =&gt; HTTPConflict,       '410' =&gt; HTTPGone,       '411' =&gt; HTTPLengthRequired,       '412' =&gt; HTTPPreconditionFailed,       '413' =&gt; HTTPRequestEntityTooLarge,       '414' =&gt; HTTPRequestURITooLong,       '415' =&gt; HTTPUnsupportedMediaType,       '416' =&gt; HTTPRequestedRangeNotSatisfiable,       '417' =&gt; HTTPExpectationFailed,        '500' =&gt; HTTPInternalServerError,       '501' =&gt; HTTPNotImplemented,       '502' =&gt; HTTPBadGateway,       '503' =&gt; HTTPServiceUnavailable,       '504' =&gt; HTTPGatewayTimeOut,       '505' =&gt; HTTPVersionNotSupported</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">message</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">msg</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">code</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+<a href="HTTP.html">HTTP</a> result code string. For example,
+&#8216;302&#8217;. You can also determine the response type by which
+response subclass the response object is an instance of.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">http_version</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The <a href="HTTP.html">HTTP</a> version supported by the server.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">message</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+<a href="HTTP.html">HTTP</a> result message. For example, &#8216;Not
+Found&#8217;.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000702" class="method-detail">
+        <a name="M000702"></a>
+
+        <div class="method-heading">
+          <a href="#M000702" class="method-signature">
+          <span class="method-name">body_permitted?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+true if the response has <a href="HTTPResponse.html#M000707">body</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000702-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000702-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1784</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTPResponse</span>.<span class="ruby-identifier">body_permitted?</span>
+      <span class="ruby-keyword kw">self</span><span class="ruby-operator">::</span><span class="ruby-constant">HAS_BODY</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000707" class="method-detail">
+        <a name="M000707"></a>
+
+        <div class="method-heading">
+          <a href="#M000707" class="method-signature">
+          <span class="method-name">body</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="HTTPResponse.html#M000708">entity</a> <a
+href="HTTPResponse.html#M000707">body</a>.
+</p>
+<p>
+Calling this method a second or subsequent time will return the already
+read string.
+</p>
+<pre>
+  http.request_get('/index.html') {|res|
+    puts res.body
+  }
+
+  http.request_get('/index.html') {|res|
+    p res.body.object_id   # 538149362
+    p res.body.object_id   # 538149362
+  }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000707-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000707-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 2197</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">body</span>
+      <span class="ruby-identifier">read_body</span>()
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000708" class="method-detail">
+        <a name="M000708"></a>
+
+        <div class="method-heading">
+          <span class="method-name">entity</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTPResponse.html#M000707">body</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000703" class="method-detail">
+        <a name="M000703"></a>
+
+        <div class="method-heading">
+          <a href="#M000703" class="method-signature">
+          <span class="method-name">inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000703-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000703-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 2070</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">inspect</span>
+      <span class="ruby-node">&quot;#&lt;#{self.class} #{@code} #{@message} readbody=#{@read}&gt;&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000706" class="method-detail">
+        <a name="M000706"></a>
+
+        <div class="method-heading">
+          <a href="#M000706" class="method-signature">
+          <span class="method-name">read_body</span><span class="method-args">(dest = nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Gets <a href="HTTPResponse.html#M000708">entity</a> <a
+href="HTTPResponse.html#M000707">body</a>. If the block given, yields it to
+<tt>block</tt>. The <a href="HTTPResponse.html#M000707">body</a> is
+provided in fragments, as it is read in from the socket.
+</p>
+<p>
+Calling this method a second or subsequent time will return the already
+read string.
+</p>
+<pre>
+  http.request_get('/index.html') {|res|
+    puts res.read_body
+  }
+
+  http.request_get('/index.html') {|res|
+    p res.read_body.object_id   # 538149362
+    p res.read_body.object_id   # 538149362
+  }
+
+  # using iterator
+  http.request_get('/index.html') {|res|
+    res.read_body do |segment|
+      print segment
+    end
+  }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000706-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000706-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 2165</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">read_body</span>(<span class="ruby-identifier">dest</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@read</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">IOError</span>, <span class="ruby-node">&quot;#{self.class}\#read_body called twice&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">dest</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">block</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@body</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">to</span> = <span class="ruby-identifier">procdest</span>(<span class="ruby-identifier">dest</span>, <span class="ruby-identifier">block</span>)
+      <span class="ruby-identifier">stream_check</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@body_exist</span>
+        <span class="ruby-identifier">read_body_0</span> <span class="ruby-identifier">to</span>
+        <span class="ruby-ivar">@body</span> = <span class="ruby-identifier">to</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@body</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@read</span> = <span class="ruby-keyword kw">true</span>
+
+      <span class="ruby-ivar">@body</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000704" class="method-detail">
+        <a name="M000704"></a>
+
+        <div class="method-heading">
+          <a href="#M000704" class="method-signature">
+          <span class="method-name">to_ary</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+For backward compatibility. To allow <a href="HTTP.html">Net::HTTP</a> 1.1
+style assignment e.g.
+</p>
+<pre>
+   response, body = Net::HTTP.get(....)
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000704-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000704-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 2079</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_ary</span>
+      <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;net/http.rb: warning: Net::HTTP v1.1 style assignment found at #{caller(1)[0]}; use `response = http.get(...)' instead.&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$VERBOSE</span>
+      <span class="ruby-identifier">res</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">dup</span>
+      <span class="ruby-keyword kw">class</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">res</span>
+        <span class="ruby-keyword kw">undef</span> <span class="ruby-identifier">to_ary</span>
+      <span class="ruby-keyword kw">end</span>
+      [<span class="ruby-identifier">res</span>, <span class="ruby-identifier">res</span>.<span class="ruby-identifier">body</span>]
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000705" class="method-detail">
+        <a name="M000705"></a>
+
+        <div class="method-heading">
+          <a href="#M000705" class="method-signature">
+          <span class="method-name">value</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Raises <a href="HTTP.html">HTTP</a> error if the response is not 2xx.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000705-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000705-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 2105</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">value</span>
+      <span class="ruby-identifier">error!</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">HTTPSuccess</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

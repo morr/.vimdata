@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>divmod (Bignum)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     big.divmod(numeric)   =&gt; array
+ *  
+ *  See &lt;code&gt;Numeric#divmod&lt;/code&gt;.
+ *     
+ */
+VALUE
+rb_big_divmod(x, y)
+    VALUE x, y;
+{
+    VALUE div, mod;
+
+    switch (TYPE(y)) {
+      case T_FIXNUM:
+        y = rb_int2big(FIX2LONG(y));
+        break;
+
+      case T_BIGNUM:
+        break;
+
+      default:
+        return rb_num_coerce_bin(x, y);
+    }
+    bigdivmod(x, y, &amp;div, &amp;mod);
+
+    return rb_assoc_new(bignorm(div), bignorm(mod));
+}</pre>
+</body>
+</html>

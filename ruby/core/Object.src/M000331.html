@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>respond_to? (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.respond_to?(symbol, include_private=false) =&gt; true or false
+ *  
+ *  Returns +true+&gt; if _obj_ responds to the given
+ *  method. Private methods are included in the search only if the
+ *  optional second parameter evaluates to +true+.
+ */
+
+static VALUE
+obj_respond_to(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    VALUE mid, priv;
+    ID id;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;mid, &amp;priv);
+    id = rb_to_id(mid);
+    if (rb_method_boundp(CLASS_OF(obj), id, !RTEST(priv))) {
+        return Qtrue;
+    }
+    return Qfalse;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (SystemExit)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   SystemExit.new(status=0)   =&gt; system_exit
+ *
+ * Create a new +SystemExit+ exception with the given status.
+ */
+
+static VALUE
+exit_initialize(argc, argv, exc)
+    int argc;
+    VALUE *argv;
+    VALUE exc;
+{
+    VALUE status = INT2FIX(EXIT_SUCCESS);
+    if (argc &gt; 0 &amp;&amp; FIXNUM_P(argv[0])) {
+        status = *argv++;
+        --argc;
+    }
+    rb_call_super(argc, argv);
+    rb_iv_set(exc, &quot;status&quot;, status);
+    return exc;
+}</pre>
+</body>
+</html>

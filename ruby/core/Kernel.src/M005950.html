@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>open (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     open(path [, mode [, perm]] )                =&gt; io or nil
+ *     open(path [, mode [, perm]] ) {|io| block }  =&gt; obj
+ *  
+ *  Creates an &lt;code&gt;IO&lt;/code&gt; object connected to the given stream,
+ *  file, or subprocess.
+ *     
+ *  If &lt;i&gt;path&lt;/i&gt; does not start with a pipe character
+ *  (``&lt;code&gt;|&lt;/code&gt;''), treat it as the name of a file to open using
+ *  the specified mode (defaulting to ``&lt;code&gt;r&lt;/code&gt;''). (See the table
+ *  of valid modes on page 331.) If a file is being created, its initial
+ *  permissions may be set using the integer third parameter.
+ *     
+ *  If a block is specified, it will be invoked with the
+ *  &lt;code&gt;File&lt;/code&gt; object as a parameter, and the file will be
+ *  automatically closed when the block terminates. The call
+ *  returns the value of the block.
+ *     
+ *  If &lt;i&gt;path&lt;/i&gt; starts with a pipe character, a subprocess is
+ *  created, connected to the caller by a pair of pipes. The returned
+ *  &lt;code&gt;IO&lt;/code&gt; object may be used to write to the standard input
+ *  and read from the standard output of this subprocess. If the command
+ *  following the ``&lt;code&gt;|&lt;/code&gt;'' is a single minus sign, Ruby forks,
+ *  and this subprocess is connected to the parent. In the subprocess,
+ *  the &lt;code&gt;open&lt;/code&gt; call returns &lt;code&gt;nil&lt;/code&gt;. If the command
+ *  is not ``&lt;code&gt;-&lt;/code&gt;'', the subprocess runs the command. If a
+ *  block is associated with an &lt;code&gt;open(&quot;|-&quot;)&lt;/code&gt; call, that block
+ *  will be run twice---once in the parent and once in the child. The
+ *  block parameter will be an &lt;code&gt;IO&lt;/code&gt; object in the parent and
+ *  &lt;code&gt;nil&lt;/code&gt; in the child. The parent's &lt;code&gt;IO&lt;/code&gt; object
+ *  will be connected to the child's &lt;code&gt;$stdin&lt;/code&gt; and
+ *  &lt;code&gt;$stdout&lt;/code&gt;. The subprocess will be terminated at the end
+ *  of the block.
+ *     
+ *     open(&quot;testfile&quot;) do |f|
+ *       print f.gets
+ *     end
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     This is line one
+ *     
+ *  Open a subprocess and read its output:
+ *     
+ *     cmd = open(&quot;|date&quot;)
+ *     print cmd.gets
+ *     cmd.close
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     Wed Apr  9 08:56:31 CDT 2003
+ *     
+ *  Open a subprocess running the same Ruby program:
+ *     
+ *     f = open(&quot;|-&quot;, &quot;w+&quot;)
+ *     if f == nil
+ *       puts &quot;in Child&quot;
+ *       exit
+ *     else
+ *       puts &quot;Got: #{f.gets}&quot;
+ *     end
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     Got: in Child
+ *     
+ *  Open a subprocess using a block to receive the I/O object:
+ *     
+ *     open(&quot;|-&quot;) do |f|
+ *       if f == nil
+ *         puts &quot;in Child&quot;
+ *       else
+ *         puts &quot;Got: #{f.gets}&quot;
+ *       end
+ *     end
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     Got: in Child
+ */
+
+static VALUE
+rb_f_open(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    if (argc &gt;= 1) {
+        char *str = StringValuePtr(argv[0]);
+
+        if (str[0] == '|') {
+            VALUE tmp = rb_str_new(str+1, RSTRING(argv[0])-&gt;len-1);
+            OBJ_INFECT(tmp, argv[0]);
+            argv[0] = tmp;
+            return rb_io_s_popen(argc, argv, rb_cIO);
+        }
+    }
+    return rb_io_s_open(argc, argv, rb_cFile);
+}</pre>
+</body>
+</html>

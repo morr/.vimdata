@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>enum_for (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *    obj.to_enum(method = :each, *args)
+ *    obj.enum_for(method = :each, *args)
+ *
+ *  Returns Enumerable::Enumerator.new(self, method, *args).
+ *
+ *  e.g.:
+ *     str = &quot;xyz&quot;
+ *
+ *     enum = str.enum_for(:each_byte)
+ *     a = enum.map {|b| '%02x' % b } #=&gt; [&quot;78&quot;, &quot;79&quot;, &quot;7a&quot;]
+ *
+ *     # protects an array from being modified
+ *     a = [1, 2, 3]
+ *     some_method(a.to_enum)
+ *
+ */
+static VALUE
+obj_to_enum(obj, enum_args)
+    VALUE obj, enum_args;
+{
+    rb_ary_unshift(enum_args, obj);
+
+    return rb_apply(rb_cEnumerator, id_new, enum_args);
+}</pre>
+</body>
+</html>

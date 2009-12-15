@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>* (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str * integer   =&gt; new_str
+ *  
+ *  Copy---Returns a new &lt;code&gt;String&lt;/code&gt; containing &lt;i&gt;integer&lt;/i&gt; copies of
+ *  the receiver.
+ *     
+ *     &quot;Ho! &quot; * 3   #=&gt; &quot;Ho! Ho! Ho! &quot;
+ */
+
+VALUE
+rb_str_times(str, times)
+    VALUE str;
+    VALUE times;
+{
+    VALUE str2;
+    long i, len;
+
+    len = NUM2LONG(times);
+    if (len &lt; 0) {
+        rb_raise(rb_eArgError, &quot;negative argument&quot;);
+    }
+    if (len &amp;&amp; LONG_MAX/len &lt;  RSTRING(str)-&gt;len) {
+        rb_raise(rb_eArgError, &quot;argument too big&quot;);
+    }
+
+    str2 = rb_str_new5(str,0, len *= RSTRING(str)-&gt;len);
+    for (i = 0; i &lt; len; i += RSTRING(str)-&gt;len) {
+        memcpy(RSTRING(str2)-&gt;ptr + i,
+               RSTRING(str)-&gt;ptr, RSTRING(str)-&gt;len);
+    }
+    RSTRING(str2)-&gt;ptr[RSTRING(str2)-&gt;len] = '\0';
+
+    OBJ_INFECT(str2, str);
+
+    return str2;
+}</pre>
+</body>
+</html>

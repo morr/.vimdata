@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>instance_variables (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.instance_variables    =&gt; array
+ *  
+ *  Returns an array of instance variable names for the receiver. Note
+ *  that simply defining an accessor does not create the corresponding
+ *  instance variable.
+ *     
+ *     class Fred
+ *       attr_accessor :a1
+ *       def initialize
+ *         @iv = 3
+ *       end
+ *     end
+ *     Fred.new.instance_variables   #=&gt; [&quot;@iv&quot;]
+ */
+
+VALUE
+rb_obj_instance_variables(obj)
+    VALUE obj;
+{
+    VALUE ary;
+
+    ary = rb_ary_new();
+    switch (TYPE(obj)) {
+      case T_OBJECT:
+      case T_CLASS:
+      case T_MODULE:
+	if (ROBJECT(obj)-&gt;iv_tbl) {
+	    st_foreach_safe(ROBJECT(obj)-&gt;iv_tbl, ivar_i, ary);
+	}
+	break;
+      default:
+	if (!generic_iv_tbl) break;
+	if (FL_TEST(obj, FL_EXIVAR) || rb_special_const_p(obj)) {
+	    st_table *tbl;
+
+	    if (st_lookup(generic_iv_tbl, obj, (st_data_t *)&amp;tbl)) {
+		st_foreach_safe(tbl, ivar_i, ary);
+	    }
+	}
+	break;
+    }
+    return ary;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>out (CGI)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/cgi.rb, line 703</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">out</span>(<span class="ruby-identifier">options</span> = <span class="ruby-value str">&quot;text/html&quot;</span>) <span class="ruby-comment cmt"># :yield:</span>
+
+    <span class="ruby-identifier">options</span> = { <span class="ruby-value str">&quot;type&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">options</span> } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">String</span>)
+    <span class="ruby-identifier">content</span> = <span class="ruby-keyword kw">yield</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;charset&quot;</span>)
+      <span class="ruby-identifier">require</span> <span class="ruby-value str">&quot;nkf&quot;</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;charset&quot;</span>]
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/iso-2022-jp/n</span><span class="ruby-identifier">i</span>
+        <span class="ruby-identifier">content</span> = <span class="ruby-constant">NKF</span><span class="ruby-operator">::</span><span class="ruby-identifier">nkf</span>(<span class="ruby-value str">'-m0 -x -j'</span>, <span class="ruby-identifier">content</span>)
+        <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;language&quot;</span>] = <span class="ruby-value str">&quot;ja&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;language&quot;</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/euc-jp/n</span><span class="ruby-identifier">i</span>
+        <span class="ruby-identifier">content</span> = <span class="ruby-constant">NKF</span><span class="ruby-operator">::</span><span class="ruby-identifier">nkf</span>(<span class="ruby-value str">'-m0 -x -e'</span>, <span class="ruby-identifier">content</span>)
+        <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;language&quot;</span>] = <span class="ruby-value str">&quot;ja&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;language&quot;</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/shift_jis/n</span><span class="ruby-identifier">i</span>
+        <span class="ruby-identifier">content</span> = <span class="ruby-constant">NKF</span><span class="ruby-operator">::</span><span class="ruby-identifier">nkf</span>(<span class="ruby-value str">'-m0 -x -s'</span>, <span class="ruby-identifier">content</span>)
+        <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;language&quot;</span>] = <span class="ruby-value str">&quot;ja&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;language&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;length&quot;</span>] = <span class="ruby-identifier">content</span>.<span class="ruby-identifier">length</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-identifier">output</span> = <span class="ruby-identifier">stdoutput</span>
+    <span class="ruby-identifier">output</span>.<span class="ruby-identifier">binmode</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-identifier">output</span>.<span class="ruby-identifier">binmode</span>
+    <span class="ruby-identifier">output</span>.<span class="ruby-identifier">print</span> <span class="ruby-identifier">header</span>(<span class="ruby-identifier">options</span>)
+    <span class="ruby-identifier">output</span>.<span class="ruby-identifier">print</span> <span class="ruby-identifier">content</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-value str">&quot;HEAD&quot;</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">env_table</span>[<span class="ruby-value str">'REQUEST_METHOD'</span>]
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

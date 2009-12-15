@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>attr_accessor (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     attr_accessor(symbol, ...)    =&gt; nil
+ *  
+ *  Equivalent to calling ``&lt;code&gt;attr&lt;/code&gt;&lt;i&gt;symbol&lt;/i&gt;&lt;code&gt;,
+ *  true&lt;/code&gt;'' on each &lt;i&gt;symbol&lt;/i&gt; in turn.
+ *     
+ *     module Mod
+ *       attr_accessor(:one, :two)
+ *     end
+ *     Mod.instance_methods.sort   #=&gt; [&quot;one&quot;, &quot;one=&quot;, &quot;two&quot;, &quot;two=&quot;]
+ */
+
+static VALUE
+rb_mod_attr_accessor(argc, argv, klass)
+    int argc;
+    VALUE *argv;
+    VALUE klass;
+{
+    int i;
+
+    for (i=0; i&lt;argc; i++) {
+        rb_attr(klass, rb_to_id(argv[i]), 1, 1, Qtrue);
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

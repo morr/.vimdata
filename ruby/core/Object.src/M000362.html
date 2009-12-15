@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>singleton_methods (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.singleton_methods(all=true)    =&gt; array
+ *  
+ *  Returns an array of the names of singleton methods for &lt;i&gt;obj&lt;/i&gt;.
+ *  If the optional &lt;i&gt;all&lt;/i&gt; parameter is true, the list will include
+ *  methods in modules included in &lt;i&gt;obj&lt;/i&gt;.
+ *     
+ *     module Other
+ *       def three() end
+ *     end
+ *     
+ *     class Single
+ *       def Single.four() end
+ *     end
+ *     
+ *     a = Single.new
+ *     
+ *     def a.one()
+ *     end
+ *     
+ *     class &lt;&lt; a
+ *       include Other
+ *       def two()
+ *       end
+ *     end
+ *     
+ *     Single.singleton_methods    #=&gt; [&quot;four&quot;]
+ *     a.singleton_methods(false)  #=&gt; [&quot;two&quot;, &quot;one&quot;]
+ *     a.singleton_methods         #=&gt; [&quot;two&quot;, &quot;one&quot;, &quot;three&quot;]
+ */
+
+VALUE
+rb_obj_singleton_methods(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    VALUE recur, ary, klass;
+    st_table *list;
+
+    rb_scan_args(argc, argv, &quot;01&quot;, &amp;recur);
+    if (argc == 0) {
+	recur = Qtrue;
+    }
+    klass = CLASS_OF(obj);
+    list = st_init_numtable();
+    if (klass &amp;&amp; FL_TEST(klass, FL_SINGLETON)) {
+	st_foreach(RCLASS(klass)-&gt;m_tbl, method_entry, (st_data_t)list);
+	klass = RCLASS(klass)-&gt;super;
+    }
+    if (RTEST(recur)) {
+	while (klass &amp;&amp; (FL_TEST(klass, FL_SINGLETON) || TYPE(klass) == T_ICLASS)) {
+	    st_foreach(RCLASS(klass)-&gt;m_tbl, method_entry, (st_data_t)list);
+	    klass = RCLASS(klass)-&gt;super;
+	}
+    }
+    ary = rb_ary_new();
+    st_foreach(list, ins_methods_i, ary);
+    st_free_table(list);
+
+    return ary;
+}</pre>
+</body>
+</html>

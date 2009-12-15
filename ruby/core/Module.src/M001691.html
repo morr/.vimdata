@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>const_defined? (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mod.const_defined?(sym)   =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; if a constant with the given name is
+ *  defined by &lt;i&gt;mod&lt;/i&gt;.
+ *     
+ *     Math.const_defined? &quot;PI&quot;   #=&gt; true
+ */
+
+static VALUE
+rb_mod_const_defined(mod, name)
+    VALUE mod, name;
+{
+    ID id = rb_to_id(name);
+
+    if (!rb_is_const_id(id)) {
+        rb_name_error(id, &quot;wrong constant name %s&quot;, rb_id2name(id));
+    }
+    return rb_const_defined_at(mod, id);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>const_missing (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *    mod.const_missing(sym)    =&gt; obj
+ *
+ *  Invoked when a reference is made to an undefined constant in
+ *  &lt;i&gt;mod&lt;/i&gt;. It is passed a symbol for the undefined constant, and
+ *  returns a value to be used for that constant. The
+ *  following code is a (very bad) example: if reference is made to
+ *  an undefined constant, it attempts to load a file whose name is
+ *  the lowercase version of the constant (thus class &lt;code&gt;Fred&lt;/code&gt; is
+ *  assumed to be in file &lt;code&gt;fred.rb&lt;/code&gt;). If found, it returns the
+ *  value of the loaded class. It therefore implements a perverse
+ *  kind of autoload facility.
+ *  
+ *    def Object.const_missing(name)
+ *      @looked_for ||= {}
+ *      str_name = name.to_s
+ *      raise &quot;Class not found: #{name}&quot; if @looked_for[str_name]
+ *      @looked_for[str_name] = 1
+ *      file = str_name.downcase
+ *      require file
+ *      klass = const_get(name)
+ *      return klass if klass
+ *      raise &quot;Class not found: #{name}&quot;
+ *    end
+ *  
+ */
+
+VALUE
+rb_mod_const_missing(klass, name)
+    VALUE klass, name;
+{
+    ruby_frame = ruby_frame-&gt;prev; /* pop frame for &quot;const_missing&quot; */
+    uninitialized_constant(klass, rb_to_id(name));
+    return Qnil;		/* not reached */
+}</pre>
+</body>
+</html>

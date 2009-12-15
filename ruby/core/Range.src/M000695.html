@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>step (Range)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     rng.step(n=1) {| obj | block }    =&gt; rng
+ *  
+ *  Iterates over &lt;i&gt;rng&lt;/i&gt;, passing each &lt;i&gt;n&lt;/i&gt;th element to the block. If
+ *  the range contains numbers or strings, natural ordering is used.  Otherwise
+ *  &lt;code&gt;step&lt;/code&gt; invokes &lt;code&gt;succ&lt;/code&gt; to iterate through range
+ *  elements. The following code uses class &lt;code&gt;Xs&lt;/code&gt;, which is defined
+ *  in the class-level documentation.
+ *     
+ *     range = Xs.new(1)..Xs.new(10)
+ *     range.step(2) {|x| puts x}
+ *     range.step(3) {|x| puts x}
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *      1 x
+ *      3 xxx
+ *      5 xxxxx
+ *      7 xxxxxxx
+ *      9 xxxxxxxxx
+ *      1 x
+ *      4 xxxx
+ *      7 xxxxxxx
+ *     10 xxxxxxxxxx
+ */
+
+
+static VALUE
+range_step(argc, argv, range)
+    int argc;
+    VALUE *argv;
+    VALUE range;
+{
+    VALUE b, e, step;
+    long unit;
+
+    b = rb_ivar_get(range, id_beg);
+    e = rb_ivar_get(range, id_end);
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;step) == 0) {
+        step = INT2FIX(1);
+    }
+
+    unit = NUM2LONG(step);
+    if (unit &lt; 0) {
+        rb_raise(rb_eArgError, &quot;step can't be negative&quot;);
+    } 
+    if (FIXNUM_P(b) &amp;&amp; FIXNUM_P(e)) { /* fixnums are special */
+        long end = FIX2LONG(e);
+        long i;
+
+        if (unit == 0) rb_raise(rb_eArgError, &quot;step can't be 0&quot;);
+        if (!EXCL(range)) end += 1;
+        i = FIX2LONG(b);       
+        while (i &lt; end) {
+            rb_yield(LONG2NUM(i));
+            if (i + unit &lt; i) break;
+            i += unit;
+        }
+    }
+    else {
+        VALUE tmp = rb_check_string_type(b);
+
+        if (!NIL_P(tmp)) {
+            VALUE args[5];
+            long iter[2];
+
+            b = tmp;
+            if (unit == 0) rb_raise(rb_eArgError, &quot;step can't be 0&quot;);
+            args[0] = b; args[1] = e; args[2] = range;
+            iter[0] = 1; iter[1] = unit;
+            rb_iterate((VALUE(*)_((VALUE)))str_step, (VALUE)args, step_i,
+                        (VALUE)iter);
+        }
+        else if (rb_obj_is_kind_of(b, rb_cNumeric)) {
+            ID c = rb_intern(EXCL(range) ? &quot;&lt;&quot; : &quot;&lt;=&quot;);
+
+            if (rb_equal(step, INT2FIX(0))) rb_raise(rb_eArgError, &quot;step can't be 0&quot;);
+            while (RTEST(rb_funcall(b, c, 1, e))) {
+                rb_yield(b);
+                b = rb_funcall(b, '+', 1, step);
+            }
+        }
+        else {
+            long args[2];
+
+            if (unit == 0) rb_raise(rb_eArgError, &quot;step can't be 0&quot;);
+            if (!rb_respond_to(b, id_succ)) {
+                rb_raise(rb_eTypeError, &quot;can't iterate from %s&quot;,
+                         rb_obj_classname(b));
+            }
+        
+            args[0] = 1;
+            args[1] = unit;
+            range_each_func(range, step_i, b, e, args);
+        }
+    }
+    return range;
+}</pre>
+</body>
+</html>

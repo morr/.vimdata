@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>attr (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     attr(symbol, writable=false)    =&gt; nil
+ *  
+ *  Defines a named attribute for this module, where the name is
+ *  &lt;i&gt;symbol.&lt;/i&gt;&lt;code&gt;id2name&lt;/code&gt;, creating an instance variable
+ *  (&lt;code&gt;@name&lt;/code&gt;) and a corresponding access method to read it.
+ *  If the optional &lt;i&gt;writable&lt;/i&gt; argument is &lt;code&gt;true&lt;/code&gt;, also
+ *  creates a method called &lt;code&gt;name=&lt;/code&gt; to set the attribute.
+ *     
+ *     module Mod
+ *       attr  :size, true
+ *     end
+ *     
+ *  &lt;em&gt;is equivalent to:&lt;/em&gt;
+ *     
+ *     module Mod
+ *       def size
+ *         @size
+ *       end
+ *       def size=(val)
+ *         @size = val
+ *       end
+ *     end
+ */
+
+static VALUE
+rb_mod_attr(argc, argv, klass)
+    int argc;
+    VALUE *argv;
+    VALUE klass;
+{
+    VALUE name, pub;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;name, &amp;pub);
+    rb_attr(klass, rb_to_id(name), 1, RTEST(pub), Qtrue);
+    return Qnil;
+}</pre>
+</body>
+</html>

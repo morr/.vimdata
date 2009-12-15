@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>read_with_substitution (REXML::Text)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/text.rb, line 262</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Text</span><span class="ruby-operator">::</span><span class="ruby-identifier">read_with_substitution</span>( <span class="ruby-identifier">input</span>, <span class="ruby-identifier">illegal</span>=<span class="ruby-keyword kw">nil</span> )
+      <span class="ruby-identifier">copy</span> = <span class="ruby-identifier">input</span>.<span class="ruby-identifier">clone</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">copy</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">illegal</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ParseException</span>.<span class="ruby-identifier">new</span>( <span class="ruby-node">&quot;malformed text: Illegal character #$&amp; in \&quot;#{copy}\&quot;&quot;</span> )
+      <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">illegal</span>
+      
+      <span class="ruby-identifier">copy</span>.<span class="ruby-identifier">gsub!</span>( <span class="ruby-regexp re">/\r\n?/</span>, <span class="ruby-value str">&quot;\n&quot;</span> )
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">copy</span>.<span class="ruby-identifier">include?</span> <span class="ruby-operator">?</span><span class="ruby-operator">&amp;</span>
+        <span class="ruby-identifier">copy</span>.<span class="ruby-identifier">gsub!</span>( <span class="ruby-constant">SETUTITSBUS</span>[<span class="ruby-value">0</span>], <span class="ruby-constant">SLAICEPS</span>[<span class="ruby-value">0</span>] )
+        <span class="ruby-identifier">copy</span>.<span class="ruby-identifier">gsub!</span>( <span class="ruby-constant">SETUTITSBUS</span>[<span class="ruby-value">1</span>], <span class="ruby-constant">SLAICEPS</span>[<span class="ruby-value">1</span>] )
+        <span class="ruby-identifier">copy</span>.<span class="ruby-identifier">gsub!</span>( <span class="ruby-constant">SETUTITSBUS</span>[<span class="ruby-value">2</span>], <span class="ruby-constant">SLAICEPS</span>[<span class="ruby-value">2</span>] )
+        <span class="ruby-identifier">copy</span>.<span class="ruby-identifier">gsub!</span>( <span class="ruby-constant">SETUTITSBUS</span>[<span class="ruby-value">3</span>], <span class="ruby-constant">SLAICEPS</span>[<span class="ruby-value">3</span>] )
+        <span class="ruby-identifier">copy</span>.<span class="ruby-identifier">gsub!</span>( <span class="ruby-constant">SETUTITSBUS</span>[<span class="ruby-value">4</span>], <span class="ruby-constant">SLAICEPS</span>[<span class="ruby-value">4</span>] )
+        <span class="ruby-identifier">copy</span>.<span class="ruby-identifier">gsub!</span>( <span class="ruby-regexp re">/&amp;#0*((?:\d+)|(?:x[a-f0-9]+));/</span> ) {<span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">m</span>=<span class="ruby-identifier">$1</span>
+          <span class="ruby-comment cmt">#m='0' if m==''</span>
+          <span class="ruby-identifier">m</span> = <span class="ruby-node">&quot;0#{m}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">m</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?x</span>
+          [<span class="ruby-constant">Integer</span>(<span class="ruby-identifier">m</span>)].<span class="ruby-identifier">pack</span>(<span class="ruby-value str">'U*'</span>)
+        }
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">copy</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

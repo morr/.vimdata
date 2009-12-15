@@ -1,0 +1,3095 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Date</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Date</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/date_rb.html">
+                date.rb
+                </a>
+        <br />
+                <a href="../files/date/format_rb.html">
+                date/format.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Class representing a date.
+</p>
+<p>
+See the documentation to the file date.rb for an overview.
+</p>
+<p>
+Internally, the date is represented as an Astronomical Julian Day Number,
+<tt><a href="Date.html#M000162">ajd</a></tt>. The Day of Calendar Reform,
+<tt>sg</tt>, is also stored, for conversions to other date formats. (There
+is also an <tt>of</tt> field for a time zone offset, but this is only for
+the use of the <a href="DateTime.html">DateTime</a> subclass.)
+</p>
+<p>
+A <a href="Date.html#M000161">new</a> <a href="Date.html">Date</a> object
+is created using one of the object creation class methods named after the
+corresponding date format, and the arguments appropriate to that date
+format; for instance, Date::civil() (aliased to Date::new()) with <a
+href="Date.html#M000168">year</a>, <a href="Date.html#M000172">month</a>,
+and <a href="Date.html#M000173">day</a>-of-<a
+href="Date.html#M000172">month</a>, or Date::ordinal() with <a
+href="Date.html#M000168">year</a> and <a
+href="Date.html#M000173">day</a>-of-<a href="Date.html#M000168">year</a>.
+All of these object creation class methods also take the Day of Calendar
+Reform as an optional argument.
+</p>
+<p>
+<a href="Date.html">Date</a> objects are immutable once created.
+</p>
+<p>
+Once a <a href="Date.html">Date</a> has been created, date values can be
+retrieved for the different date formats supported using instance methods.
+For instance, <a href="Date.html#M000170">mon</a>() gives the Civil <a
+href="Date.html#M000172">month</a>, <a href="Date.html#M000176">cwday</a>()
+gives the Commercial <a href="Date.html#M000173">day</a> of the week, and
+<a href="Date.html#M000169">yday</a>() gives the Ordinal <a
+href="Date.html#M000173">day</a> of the <a
+href="Date.html#M000168">year</a>. <a href="Date.html">Date</a> values can
+be retrieved in any format, regardless of what format was used to create
+the <a href="Date.html">Date</a> instance.
+</p>
+<p>
+The <a href="Date.html">Date</a> class includes the Comparable module,
+allowing date objects to be compared and sorted, ranges of dates to be
+created, and so forth.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000187">+</a>&nbsp;&nbsp;
+      <a href="#M000188">-</a>&nbsp;&nbsp;
+      <a href="#M000194">&lt;&lt;</a>&nbsp;&nbsp;
+      <a href="#M000189">&lt;=&gt;</a>&nbsp;&nbsp;
+      <a href="#M000190">===</a>&nbsp;&nbsp;
+      <a href="#M000193">&gt;&gt;</a>&nbsp;&nbsp;
+      <a href="#M000202">_dump</a>&nbsp;&nbsp;
+      <a href="#M000203">_load</a>&nbsp;&nbsp;
+      <a href="#M000209">_parse</a>&nbsp;&nbsp;
+      <a href="#M000208">_strptime</a>&nbsp;&nbsp;
+      <a href="#M000162">ajd</a>&nbsp;&nbsp;
+      <a href="#M000142">ajd_to_amjd</a>&nbsp;&nbsp;
+      <a href="#M000137">ajd_to_jd</a>&nbsp;&nbsp;
+      <a href="#M000163">amjd</a>&nbsp;&nbsp;
+      <a href="#M000141">amjd_to_ajd</a>&nbsp;&nbsp;
+      <a href="#M000206">asctime</a>&nbsp;&nbsp;
+      <a href="#M000157">civil</a>&nbsp;&nbsp;
+      <a href="#M000133">civil_to_jd</a>&nbsp;&nbsp;
+      <a href="#M000158">commercial</a>&nbsp;&nbsp;
+      <a href="#M000135">commercial_to_jd</a>&nbsp;&nbsp;
+      <a href="#M000207">ctime</a>&nbsp;&nbsp;
+      <a href="#M000176">cwday</a>&nbsp;&nbsp;
+      <a href="#M000175">cweek</a>&nbsp;&nbsp;
+      <a href="#M000174">cwyear</a>&nbsp;&nbsp;
+      <a href="#M000173">day</a>&nbsp;&nbsp;
+      <a href="#M000165">day_fraction</a>&nbsp;&nbsp;
+      <a href="#M000139">day_fraction_to_time</a>&nbsp;&nbsp;
+      <a href="#M000197">downto</a>&nbsp;&nbsp;
+      <a href="#M000184">england</a>&nbsp;&nbsp;
+      <a href="#M000198">eql?</a>&nbsp;&nbsp;
+      <a href="#M000186">gregorian</a>&nbsp;&nbsp;
+      <a href="#M000179">gregorian?</a>&nbsp;&nbsp;
+      <a href="#M000130">gregorian?</a>&nbsp;&nbsp;
+      <a href="#M000149">gregorian_leap?</a>&nbsp;&nbsp;
+      <a href="#M000199">hash</a>&nbsp;&nbsp;
+      <a href="#M000200">inspect</a>&nbsp;&nbsp;
+      <a href="#M000183">italy</a>&nbsp;&nbsp;
+      <a href="#M000164">jd</a>&nbsp;&nbsp;
+      <a href="#M000155">jd</a>&nbsp;&nbsp;
+      <a href="#M000138">jd_to_ajd</a>&nbsp;&nbsp;
+      <a href="#M000134">jd_to_civil</a>&nbsp;&nbsp;
+      <a href="#M000136">jd_to_commercial</a>&nbsp;&nbsp;
+      <a href="#M000146">jd_to_ld</a>&nbsp;&nbsp;
+      <a href="#M000144">jd_to_mjd</a>&nbsp;&nbsp;
+      <a href="#M000132">jd_to_ordinal</a>&nbsp;&nbsp;
+      <a href="#M000147">jd_to_wday</a>&nbsp;&nbsp;
+      <a href="#M000185">julian</a>&nbsp;&nbsp;
+      <a href="#M000129">julian?</a>&nbsp;&nbsp;
+      <a href="#M000178">julian?</a>&nbsp;&nbsp;
+      <a href="#M000148">julian_leap?</a>&nbsp;&nbsp;
+      <a href="#M000167">ld</a>&nbsp;&nbsp;
+      <a href="#M000145">ld_to_jd</a>&nbsp;&nbsp;
+      <a href="#M000180">leap?</a>&nbsp;&nbsp;
+      <a href="#M000171">mday</a>&nbsp;&nbsp;
+      <a href="#M000166">mjd</a>&nbsp;&nbsp;
+      <a href="#M000143">mjd_to_jd</a>&nbsp;&nbsp;
+      <a href="#M000170">mon</a>&nbsp;&nbsp;
+      <a href="#M000172">month</a>&nbsp;&nbsp;
+      <a href="#M000161">new</a>&nbsp;&nbsp;
+      <a href="#M000182">new_start</a>&nbsp;&nbsp;
+      <a href="#M000191">next</a>&nbsp;&nbsp;
+      <a href="#M000156">ordinal</a>&nbsp;&nbsp;
+      <a href="#M000131">ordinal_to_jd</a>&nbsp;&nbsp;
+      <a href="#M000160">parse</a>&nbsp;&nbsp;
+      <a href="#M000181">start</a>&nbsp;&nbsp;
+      <a href="#M000195">step</a>&nbsp;&nbsp;
+      <a href="#M000205">strftime</a>&nbsp;&nbsp;
+      <a href="#M000159">strptime</a>&nbsp;&nbsp;
+      <a href="#M000192">succ</a>&nbsp;&nbsp;
+      <a href="#M000140">time_to_day_fraction</a>&nbsp;&nbsp;
+      <a href="#M000201">to_s</a>&nbsp;&nbsp;
+      <a href="#M000204">today</a>&nbsp;&nbsp;
+      <a href="#M000196">upto</a>&nbsp;&nbsp;
+      <a href="#M000152">valid_civil?</a>&nbsp;&nbsp;
+      <a href="#M000153">valid_commercial?</a>&nbsp;&nbsp;
+      <a href="#M000150">valid_jd?</a>&nbsp;&nbsp;
+      <a href="#M000151">valid_ordinal?</a>&nbsp;&nbsp;
+      <a href="#M000154">valid_time?</a>&nbsp;&nbsp;
+      <a href="#M000177">wday</a>&nbsp;&nbsp;
+      <a href="#M000169">yday</a>&nbsp;&nbsp;
+      <a href="#M000168">year</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name">Comparable</span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">MONTHNAMES</td>
+          <td>=</td>
+          <td class="context-item-value">[nil] + %w(January February March April May June July                           August September October November December)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Full <a href="Date.html#M000172">month</a> names, in English. Months count
+from 1 to 12; a <a href="Date.html#M000172">month</a>&#8216;s numerical
+representation indexed into this array gives the name of that <a
+href="Date.html#M000172">month</a> (hence the first element is nil).
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DAYNAMES</td>
+          <td>=</td>
+          <td class="context-item-value">%w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Full names of days of the week, in English. Days of the week count from 0
+to 6 (except in the <a href="Date.html#M000158">commercial</a> week); a <a
+href="Date.html#M000173">day</a>&#8216;s numerical representation indexed
+into this array gives the name of that <a href="Date.html#M000173">day</a>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ABBR_MONTHNAMES</td>
+          <td>=</td>
+          <td class="context-item-value">[nil] + %w(Jan Feb Mar Apr May Jun                                Jul Aug Sep Oct Nov Dec)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Abbreviated <a href="Date.html#M000172">month</a> names, in English.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ABBR_DAYNAMES</td>
+          <td>=</td>
+          <td class="context-item-value">%w(Sun Mon Tue Wed Thu Fri Sat)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Abbreviated <a href="Date.html#M000173">day</a> names, in English.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ITALY</td>
+          <td>=</td>
+          <td class="context-item-value">2299161</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+The Julian Day Number of the Day of Calendar Reform for Italy and the
+Catholic countries.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ENGLAND</td>
+          <td>=</td>
+          <td class="context-item-value">2361222</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+The Julian Day Number of the Day of Calendar Reform for England and her
+Colonies.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">JULIAN</td>
+          <td>=</td>
+          <td class="context-item-value">Infinity.new</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+A constant used to indicate that a <a href="Date.html">Date</a> should
+always use the Julian calendar.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">GREGORIAN</td>
+          <td>=</td>
+          <td class="context-item-value">-Infinity.new</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+A constant used to indicate that a <a href="Date.html">Date</a> should
+always use the Gregorian calendar.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">gregorian_leap?</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">leap?</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">new</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">new!</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">valid_civil?</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">valid_date?</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">civil</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">new</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000203" class="method-detail">
+        <a name="M000203"></a>
+
+        <div class="method-heading">
+          <a href="#M000203" class="method-signature">
+          <span class="method-name">_load</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Load from Marshall format.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000203-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000203-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1352</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">_load</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-identifier">a</span> = <span class="ruby-constant">Marshal</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">2</span>
+      <span class="ruby-identifier">ajd</span>,     <span class="ruby-identifier">sg</span> = <span class="ruby-identifier">a</span>
+           <span class="ruby-identifier">of</span> = <span class="ruby-value">0</span>
+      <span class="ruby-identifier">ajd</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">2</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">ajd</span>, <span class="ruby-identifier">of</span>, <span class="ruby-identifier">sg</span> = <span class="ruby-identifier">a</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">new!</span>(<span class="ruby-identifier">ajd</span>, <span class="ruby-identifier">of</span>, <span class="ruby-identifier">sg</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000209" class="method-detail">
+        <a name="M000209"></a>
+
+        <div class="method-heading">
+          <a href="#M000209" class="method-signature">
+          <span class="method-name">_parse</span><span class="method-args">(str, comp=false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000209-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000209-source">
+<pre>
+<span class="ruby-comment cmt"># File date/format.rb, line 958</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">_parse</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">comp</span>=<span class="ruby-keyword kw">false</span>)
+    <span class="ruby-identifier">str</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">dup</span>
+
+    <span class="ruby-identifier">e</span> = <span class="ruby-constant">Format</span><span class="ruby-operator">::</span><span class="ruby-constant">Bag</span>.<span class="ruby-identifier">new</span>
+
+    <span class="ruby-identifier">e</span>.<span class="ruby-identifier">_comp</span> = <span class="ruby-identifier">comp</span>
+
+    <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/[^-+',.\/:0-9@a-z\x80-\xff]+/i</span><span class="ruby-identifier">n</span>, <span class="ruby-value str">' '</span>)
+
+    <span class="ruby-identifier">_parse_time</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>) <span class="ruby-comment cmt"># || _parse_beat(str, e)</span>
+    <span class="ruby-identifier">_parse_day</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)
+
+    <span class="ruby-identifier">_parse_eu</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)     <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_us</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)     <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_iso</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)    <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_jis</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)    <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_vms</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)    <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_sla_us</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>) <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_iso2</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)   <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_year</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)   <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_mon</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)    <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_mday</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)   <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_ddd</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/\b(bc\b|bce\b|b\.c\.|b\.c\.e\.)/i</span><span class="ruby-identifier">n</span>, <span class="ruby-value str">' '</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span>
+        <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> = <span class="ruby-operator">-</span><span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/\A\s*(\d{1,2})\s*\z/n</span>, <span class="ruby-value str">' '</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">hour</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">e</span>.<span class="ruby-identifier">mday</span>
+        <span class="ruby-identifier">v</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+        <span class="ruby-keyword kw">if</span> (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">31</span>) <span class="ruby-operator">===</span> <span class="ruby-identifier">v</span>
+          <span class="ruby-identifier">e</span>.<span class="ruby-identifier">mday</span> = <span class="ruby-identifier">v</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">mday</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">e</span>.<span class="ruby-identifier">hour</span>
+        <span class="ruby-identifier">v</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+        <span class="ruby-keyword kw">if</span> (<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">24</span>) <span class="ruby-operator">===</span> <span class="ruby-identifier">v</span>
+          <span class="ruby-identifier">e</span>.<span class="ruby-identifier">hour</span> = <span class="ruby-identifier">v</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">_comp</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">99</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">69</span>
+          <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1900</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">+=</span> <span class="ruby-value">2000</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">e</span>.<span class="ruby-identifier">offset</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">zone_to_diff</span>(<span class="ruby-identifier">e</span>.<span class="ruby-identifier">zone</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">zone</span>
+
+    <span class="ruby-identifier">e</span>.<span class="ruby-identifier">to_hash</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000208" class="method-detail">
+        <a name="M000208"></a>
+
+        <div class="method-heading">
+          <a href="#M000208" class="method-signature">
+          <span class="method-name">_strptime</span><span class="method-args">(str, fmt='%F')</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000208-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000208-source">
+<pre>
+<span class="ruby-comment cmt"># File date/format.rb, line 581</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">_strptime</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">fmt</span>=<span class="ruby-value str">'%F'</span>)
+    <span class="ruby-identifier">e</span> = <span class="ruby-constant">Format</span><span class="ruby-operator">::</span><span class="ruby-constant">Bag</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">_strptime_i</span>(<span class="ruby-identifier">str</span>.<span class="ruby-identifier">dup</span>, <span class="ruby-identifier">fmt</span>, <span class="ruby-identifier">e</span>)
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">_cent</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">cwyear</span>
+        <span class="ruby-identifier">e</span>.<span class="ruby-identifier">cwyear</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">_cent</span> <span class="ruby-operator">*</span> <span class="ruby-value">100</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span>
+        <span class="ruby-identifier">e</span>.  <span class="ruby-identifier">year</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">_cent</span> <span class="ruby-operator">*</span> <span class="ruby-value">100</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">_merid</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">hour</span>
+        <span class="ruby-identifier">e</span>.<span class="ruby-identifier">hour</span> <span class="ruby-operator">%=</span> <span class="ruby-value">12</span>
+        <span class="ruby-identifier">e</span>.<span class="ruby-identifier">hour</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">_merid</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">e</span>.<span class="ruby-identifier">to_hash</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000142" class="method-detail">
+        <a name="M000142"></a>
+
+        <div class="method-heading">
+          <a href="#M000142" class="method-signature">
+          <span class="method-name">ajd_to_amjd</span><span class="method-args">(ajd)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert an Astronomical Julian Day Number to an Astronomical Modified
+Julian Day Number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000142-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000142-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 513</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ajd_to_amjd</span>(<span class="ruby-identifier">ajd</span>) <span class="ruby-identifier">ajd</span> <span class="ruby-operator">-</span> <span class="ruby-value">4800001</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">2</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000137" class="method-detail">
+        <a name="M000137"></a>
+
+        <div class="method-heading">
+          <a href="#M000137" class="method-signature">
+          <span class="method-name">ajd_to_jd</span><span class="method-args">(ajd, of=0)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert an Astronomical Julian Day Number to a (<a
+href="Date.html#M000157">civil</a>) Julian Day Number.
+</p>
+<p>
+<tt><a href="Date.html#M000162">ajd</a></tt> is the Astronomical Julian Day
+Number to convert. <tt>of</tt> is the offset from UTC as a fraction of a <a
+href="Date.html#M000173">day</a> (defaults to 0).
+</p>
+<p>
+Returns the (<a href="Date.html#M000157">civil</a>) Julian Day Number as
+[day_number, fraction] where <tt>fraction</tt> is always 1/2.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000137-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000137-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 479</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ajd_to_jd</span>(<span class="ruby-identifier">ajd</span>, <span class="ruby-identifier">of</span>=<span class="ruby-value">0</span>) (<span class="ruby-identifier">ajd</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">of</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">2</span>).<span class="ruby-identifier">divmod</span>(<span class="ruby-value">1</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000141" class="method-detail">
+        <a name="M000141"></a>
+
+        <div class="method-heading">
+          <a href="#M000141" class="method-signature">
+          <span class="method-name">amjd_to_ajd</span><span class="method-args">(amjd)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert an Astronomical Modified Julian Day Number to an Astronomical
+Julian Day Number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000141-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000141-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 509</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">amjd_to_ajd</span>(<span class="ruby-identifier">amjd</span>) <span class="ruby-identifier">amjd</span> <span class="ruby-operator">+</span> <span class="ruby-value">4800001</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">2</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000157" class="method-detail">
+        <a name="M000157"></a>
+
+        <div class="method-heading">
+          <a href="#M000157" class="method-signature">
+          <span class="method-name">civil</span><span class="method-args">(y=-4712, m=1, d=1, sg=ITALY)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="Date.html#M000161">new</a> <a href="Date.html">Date</a>
+object for the Civil <a href="Date.html">Date</a> specified by <a
+href="Date.html#M000168">year</a> <tt>y</tt>, <a
+href="Date.html#M000172">month</a> <tt>m</tt>, and <a
+href="Date.html#M000173">day</a>-of-<a href="Date.html#M000172">month</a>
+<tt>d</tt>.
+</p>
+<p>
+<tt>m</tt> and <tt>d</tt> can be negative, in which case they count
+backwards from the end of the <a href="Date.html#M000168">year</a> and the
+end of the <a href="Date.html#M000172">month</a> respectively. No
+wraparound is performed, however, and invalid values cause an ArgumentError
+to be raised. can be negative
+</p>
+<p>
+<tt>y</tt> defaults to -4712, <tt>m</tt> to 1, and <tt>d</tt> to 1; this is
+Julian Day Number <a href="Date.html#M000173">day</a> 0.
+</p>
+<p>
+<tt>sg</tt> specifies the Day of Calendar Reform.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000157-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000157-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 725</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">civil</span>(<span class="ruby-identifier">y</span>=<span class="ruby-value">-4712</span>, <span class="ruby-identifier">m</span>=<span class="ruby-value">1</span>, <span class="ruby-identifier">d</span>=<span class="ruby-value">1</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">ITALY</span>)
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">jd</span> = <span class="ruby-identifier">valid_civil?</span>(<span class="ruby-identifier">y</span>, <span class="ruby-identifier">m</span>, <span class="ruby-identifier">d</span>, <span class="ruby-identifier">sg</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'invalid date'</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">new!</span>(<span class="ruby-identifier">jd_to_ajd</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-value">0</span>, <span class="ruby-value">0</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">sg</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000133" class="method-detail">
+        <a name="M000133"></a>
+
+        <div class="method-heading">
+          <a href="#M000133" class="method-signature">
+          <span class="method-name">civil_to_jd</span><span class="method-args">(y, m, d, sg=GREGORIAN)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a Civil <a href="Date.html">Date</a> to a Julian Day Number.
+<tt>y</tt>, <tt>m</tt>, and <tt>d</tt> are the <a
+href="Date.html#M000168">year</a>, <a href="Date.html#M000172">month</a>,
+and <a href="Date.html#M000173">day</a> of the <a
+href="Date.html#M000172">month</a>. <tt>sg</tt> specifies the Day of
+Calendar Reform.
+</p>
+<p>
+Returns the corresponding Julian Day Number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000133-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000133-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 383</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">civil_to_jd</span>(<span class="ruby-identifier">y</span>, <span class="ruby-identifier">m</span>, <span class="ruby-identifier">d</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">GREGORIAN</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">m</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">2</span>
+      <span class="ruby-identifier">y</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span>
+      <span class="ruby-identifier">m</span> <span class="ruby-operator">+=</span> <span class="ruby-value">12</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">a</span> = (<span class="ruby-identifier">y</span> <span class="ruby-operator">/</span> <span class="ruby-value">100.0</span>).<span class="ruby-identifier">floor</span>
+    <span class="ruby-identifier">b</span> = <span class="ruby-value">2</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">+</span> (<span class="ruby-identifier">a</span> <span class="ruby-operator">/</span> <span class="ruby-value">4.0</span>).<span class="ruby-identifier">floor</span>
+    <span class="ruby-identifier">jd</span> = (<span class="ruby-value">365.25</span> <span class="ruby-operator">*</span> (<span class="ruby-identifier">y</span> <span class="ruby-operator">+</span> <span class="ruby-value">4716</span>)).<span class="ruby-identifier">floor</span> <span class="ruby-operator">+</span>
+      (<span class="ruby-value">30.6001</span> <span class="ruby-operator">*</span> (<span class="ruby-identifier">m</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>)).<span class="ruby-identifier">floor</span> <span class="ruby-operator">+</span>
+      <span class="ruby-identifier">d</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">b</span> <span class="ruby-operator">-</span> <span class="ruby-value">1524</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">julian?</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>)
+      <span class="ruby-identifier">jd</span> <span class="ruby-operator">-=</span> <span class="ruby-identifier">b</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">jd</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000158" class="method-detail">
+        <a name="M000158"></a>
+
+        <div class="method-heading">
+          <a href="#M000158" class="method-signature">
+          <span class="method-name">commercial</span><span class="method-args">(y=1582, w=41, d=5, sg=ITALY)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="Date.html#M000161">new</a> <a href="Date.html">Date</a>
+object for the Commercial <a href="Date.html">Date</a> specified by <a
+href="Date.html#M000168">year</a> <tt>y</tt>, week-of-<a
+href="Date.html#M000168">year</a> <tt>w</tt>, and <a
+href="Date.html#M000173">day</a>-of-week <tt>d</tt>.
+</p>
+<p>
+Monday is <a href="Date.html#M000173">day</a>-of-week 1; Sunday is <a
+href="Date.html#M000173">day</a>-of-week 7.
+</p>
+<p>
+<tt>w</tt> and <tt>d</tt> can be negative, in which case they count
+backwards from the end of the <a href="Date.html#M000168">year</a> and the
+end of the week respectively. No wraparound is performed, however, and
+invalid values cause an ArgumentError to be raised.
+</p>
+<p>
+<tt>y</tt> defaults to 1582, <tt>w</tt> to 41, and <tt>d</tt> to 5, the Day
+of Calendar Reform for Italy and the Catholic countries.
+</p>
+<p>
+<tt>sg</tt> specifies the Day of Calendar Reform.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000158-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000158-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 748</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">commercial</span>(<span class="ruby-identifier">y</span>=<span class="ruby-value">1582</span>, <span class="ruby-identifier">w</span>=<span class="ruby-value">41</span>, <span class="ruby-identifier">d</span>=<span class="ruby-value">5</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">ITALY</span>)
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">jd</span> = <span class="ruby-identifier">valid_commercial?</span>(<span class="ruby-identifier">y</span>, <span class="ruby-identifier">w</span>, <span class="ruby-identifier">d</span>, <span class="ruby-identifier">sg</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'invalid date'</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">new!</span>(<span class="ruby-identifier">jd_to_ajd</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-value">0</span>, <span class="ruby-value">0</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">sg</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000135" class="method-detail">
+        <a name="M000135"></a>
+
+        <div class="method-heading">
+          <a href="#M000135" class="method-signature">
+          <span class="method-name">commercial_to_jd</span><span class="method-args">(y, w, d, ns=GREGORIAN)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a Commercial <a href="Date.html">Date</a> to a Julian Day Number.
+</p>
+<p>
+<tt>y</tt>, <tt>w</tt>, and <tt>d</tt> are the (<a
+href="Date.html#M000158">commercial</a>) <a
+href="Date.html#M000168">year</a>, week of the <a
+href="Date.html#M000168">year</a>, and <a href="Date.html#M000173">day</a>
+of the week of the Commercial <a href="Date.html">Date</a> to convert.
+<tt>sg</tt> specifies the Day of Calendar Reform.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000135-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000135-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 432</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">commercial_to_jd</span>(<span class="ruby-identifier">y</span>, <span class="ruby-identifier">w</span>, <span class="ruby-identifier">d</span>, <span class="ruby-identifier">ns</span>=<span class="ruby-constant">GREGORIAN</span>)
+    <span class="ruby-identifier">jd</span> = <span class="ruby-identifier">civil_to_jd</span>(<span class="ruby-identifier">y</span>, <span class="ruby-value">1</span>, <span class="ruby-value">4</span>, <span class="ruby-identifier">ns</span>)
+    (<span class="ruby-identifier">jd</span> <span class="ruby-operator">-</span> (((<span class="ruby-identifier">jd</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>) <span class="ruby-operator">+</span> <span class="ruby-value">1</span>) <span class="ruby-operator">%</span> <span class="ruby-value">7</span>)) <span class="ruby-operator">+</span>
+      <span class="ruby-value">7</span> <span class="ruby-operator">*</span> (<span class="ruby-identifier">w</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>) <span class="ruby-operator">+</span>
+      (<span class="ruby-identifier">d</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000139" class="method-detail">
+        <a name="M000139"></a>
+
+        <div class="method-heading">
+          <a href="#M000139" class="method-signature">
+          <span class="method-name">day_fraction_to_time</span><span class="method-args">(fr)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a fractional <a href="Date.html#M000173">day</a> <tt>fr</tt> to
+[hours, minutes, seconds, fraction_of_a_second]
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000139-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000139-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 494</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">day_fraction_to_time</span>(<span class="ruby-identifier">fr</span>)
+    <span class="ruby-identifier">h</span>,   <span class="ruby-identifier">fr</span> = <span class="ruby-identifier">fr</span>.<span class="ruby-identifier">divmod</span>(<span class="ruby-value">1</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">24</span>)
+    <span class="ruby-identifier">min</span>, <span class="ruby-identifier">fr</span> = <span class="ruby-identifier">fr</span>.<span class="ruby-identifier">divmod</span>(<span class="ruby-value">1</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">1440</span>)
+    <span class="ruby-identifier">s</span>,   <span class="ruby-identifier">fr</span> = <span class="ruby-identifier">fr</span>.<span class="ruby-identifier">divmod</span>(<span class="ruby-value">1</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">86400</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">h</span>, <span class="ruby-identifier">min</span>, <span class="ruby-identifier">s</span>, <span class="ruby-identifier">fr</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000130" class="method-detail">
+        <a name="M000130"></a>
+
+        <div class="method-heading">
+          <a href="#M000130" class="method-signature">
+          <span class="method-name">gregorian?</span><span class="method-args">(jd, sg)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Does a given Julian Day Number fall inside the <a
+href="Date.html#M000161">new</a>-style (Gregorian) calendar?
+</p>
+<p>
+The reverse of self.os? See the documentation for that method for more
+details.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000130-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000130-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 345</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">gregorian?</span> (<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>) <span class="ruby-operator">!</span><span class="ruby-identifier">julian?</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000149" class="method-detail">
+        <a name="M000149"></a>
+
+        <div class="method-heading">
+          <a href="#M000149" class="method-signature">
+          <span class="method-name">gregorian_leap?</span><span class="method-args">(y)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Is a <a href="Date.html#M000168">year</a> a leap <a
+href="Date.html#M000168">year</a> in the Gregorian calendar?
+</p>
+<p>
+All years divisible by 4 are leap years in the Gregorian calendar, except
+for years divisible by 100 and not by 400.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000149-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000149-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 545</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">gregorian_leap?</span> (<span class="ruby-identifier">y</span>) <span class="ruby-identifier">y</span> <span class="ruby-operator">%</span> <span class="ruby-value">4</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">y</span> <span class="ruby-operator">%</span> <span class="ruby-value">100</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">y</span> <span class="ruby-operator">%</span> <span class="ruby-value">400</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000155" class="method-detail">
+        <a name="M000155"></a>
+
+        <div class="method-heading">
+          <a href="#M000155" class="method-signature">
+          <span class="method-name">jd</span><span class="method-args">(jd=0, sg=ITALY)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="Date.html#M000161">new</a> <a href="Date.html">Date</a>
+object from a Julian Day Number.
+</p>
+<p>
+<tt><a href="Date.html#M000155">jd</a></tt> is the Julian Day Number; if
+not specified, it defaults to 0. <tt>sg</tt> specifies the Day of Calendar
+Reform.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000155-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000155-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 690</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">jd</span>(<span class="ruby-identifier">jd</span>=<span class="ruby-value">0</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">ITALY</span>)
+    <span class="ruby-identifier">jd</span> = <span class="ruby-identifier">valid_jd?</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>)
+    <span class="ruby-identifier">new!</span>(<span class="ruby-identifier">jd_to_ajd</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-value">0</span>, <span class="ruby-value">0</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">sg</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000138" class="method-detail">
+        <a name="M000138"></a>
+
+        <div class="method-heading">
+          <a href="#M000138" class="method-signature">
+          <span class="method-name">jd_to_ajd</span><span class="method-args">(jd, fr, of=0)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a (<a href="Date.html#M000157">civil</a>) Julian Day Number to an
+Astronomical Julian Day Number.
+</p>
+<p>
+<tt><a href="Date.html#M000155">jd</a></tt> is the Julian Day Number to
+convert, and <tt>fr</tt> is a fractional <a
+href="Date.html#M000173">day</a>. <tt>of</tt> is the offset from UTC as a
+fraction of a <a href="Date.html#M000173">day</a> (defaults to 0).
+</p>
+<p>
+Returns the Astronomical Julian Day Number as a single numeric value.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000138-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000138-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 490</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">jd_to_ajd</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">fr</span>, <span class="ruby-identifier">of</span>=<span class="ruby-value">0</span>) <span class="ruby-identifier">jd</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">fr</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">of</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">2</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000134" class="method-detail">
+        <a name="M000134"></a>
+
+        <div class="method-heading">
+          <a href="#M000134" class="method-signature">
+          <span class="method-name">jd_to_civil</span><span class="method-args">(jd, sg=GREGORIAN)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a Julian Day Number to a Civil <a href="Date.html">Date</a>. <tt><a
+href="Date.html#M000155">jd</a></tt> is the Julian Day Number. <tt>sg</tt>
+specifies the Day of Calendar Reform.
+</p>
+<p>
+Returns the corresponding [<a href="Date.html#M000168">year</a>, <a
+href="Date.html#M000172">month</a>, day_of_month] as a three-element array.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000134-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000134-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 405</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">jd_to_civil</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">GREGORIAN</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">julian?</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>)
+      <span class="ruby-identifier">a</span> = <span class="ruby-identifier">jd</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">x</span> = ((<span class="ruby-identifier">jd</span> <span class="ruby-operator">-</span> <span class="ruby-value">1867216.25</span>) <span class="ruby-operator">/</span> <span class="ruby-value">36524.25</span>).<span class="ruby-identifier">floor</span>
+      <span class="ruby-identifier">a</span> = <span class="ruby-identifier">jd</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">x</span> <span class="ruby-operator">-</span> (<span class="ruby-identifier">x</span> <span class="ruby-operator">/</span> <span class="ruby-value">4.0</span>).<span class="ruby-identifier">floor</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">b</span> = <span class="ruby-identifier">a</span> <span class="ruby-operator">+</span> <span class="ruby-value">1524</span>
+    <span class="ruby-identifier">c</span> = ((<span class="ruby-identifier">b</span> <span class="ruby-operator">-</span> <span class="ruby-value">122.1</span>) <span class="ruby-operator">/</span> <span class="ruby-value">365.25</span>).<span class="ruby-identifier">floor</span>
+    <span class="ruby-identifier">d</span> = (<span class="ruby-value">365.25</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">c</span>).<span class="ruby-identifier">floor</span>
+    <span class="ruby-identifier">e</span> = ((<span class="ruby-identifier">b</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">d</span>) <span class="ruby-operator">/</span> <span class="ruby-value">30.6001</span>).<span class="ruby-identifier">floor</span>
+    <span class="ruby-identifier">dom</span> = <span class="ruby-identifier">b</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">d</span> <span class="ruby-operator">-</span> (<span class="ruby-value">30.6001</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">e</span>).<span class="ruby-identifier">floor</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">13</span>
+      <span class="ruby-identifier">m</span> = <span class="ruby-identifier">e</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+      <span class="ruby-identifier">y</span> = <span class="ruby-identifier">c</span> <span class="ruby-operator">-</span> <span class="ruby-value">4716</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">m</span> = <span class="ruby-identifier">e</span> <span class="ruby-operator">-</span> <span class="ruby-value">13</span>
+      <span class="ruby-identifier">y</span> = <span class="ruby-identifier">c</span> <span class="ruby-operator">-</span> <span class="ruby-value">4715</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">y</span>, <span class="ruby-identifier">m</span>, <span class="ruby-identifier">dom</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000136" class="method-detail">
+        <a name="M000136"></a>
+
+        <div class="method-heading">
+          <a href="#M000136" class="method-signature">
+          <span class="method-name">jd_to_commercial</span><span class="method-args">(jd, sg=GREGORIAN)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a Julian Day Number to a Commercial <a href="Date.html">Date</a>
+</p>
+<p>
+<tt><a href="Date.html#M000155">jd</a></tt> is the Julian Day Number to
+convert. <tt>sg</tt> specifies the Day of Calendar Reform.
+</p>
+<p>
+Returns the corresponding Commercial <a href="Date.html">Date</a> as
+[commercial_year, week_of_year, day_of_week]
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000136-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000136-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 446</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">jd_to_commercial</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">GREGORIAN</span>)
+    <span class="ruby-identifier">ns</span> = <span class="ruby-identifier">fix_style</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>)
+    <span class="ruby-identifier">a</span> = <span class="ruby-identifier">jd_to_civil</span>(<span class="ruby-identifier">jd</span> <span class="ruby-operator">-</span> <span class="ruby-value">3</span>, <span class="ruby-identifier">ns</span>)[<span class="ruby-value">0</span>]
+    <span class="ruby-identifier">y</span> = <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">jd</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">commercial_to_jd</span>(<span class="ruby-identifier">a</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>, <span class="ruby-identifier">ns</span>) <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">a</span> <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">w</span> = <span class="ruby-value">1</span> <span class="ruby-operator">+</span> ((<span class="ruby-identifier">jd</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">commercial_to_jd</span>(<span class="ruby-identifier">y</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>, <span class="ruby-identifier">ns</span>)) <span class="ruby-operator">/</span> <span class="ruby-value">7</span>).<span class="ruby-identifier">floor</span>
+    <span class="ruby-identifier">d</span> = (<span class="ruby-identifier">jd</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>) <span class="ruby-operator">%</span> <span class="ruby-value">7</span>
+    <span class="ruby-identifier">d</span> = <span class="ruby-value">7</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">d</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">y</span>, <span class="ruby-identifier">w</span>, <span class="ruby-identifier">d</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000146" class="method-detail">
+        <a name="M000146"></a>
+
+        <div class="method-heading">
+          <a href="#M000146" class="method-signature">
+          <span class="method-name">jd_to_ld</span><span class="method-args">(jd)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a Julian Day Number to the number of days since the adoption of the
+Gregorian Calendar (in Italy).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000146-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000146-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 529</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">jd_to_ld</span>(<span class="ruby-identifier">jd</span>) <span class="ruby-identifier">jd</span> <span class="ruby-operator">-</span> <span class="ruby-value">2299160</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000144" class="method-detail">
+        <a name="M000144"></a>
+
+        <div class="method-heading">
+          <a href="#M000144" class="method-signature">
+          <span class="method-name">jd_to_mjd</span><span class="method-args">(jd)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a Julian Day Number to a Modified Julian Day Number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000144-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000144-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 521</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">jd_to_mjd</span>(<span class="ruby-identifier">jd</span>) <span class="ruby-identifier">jd</span> <span class="ruby-operator">-</span> <span class="ruby-value">2400001</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000132" class="method-detail">
+        <a name="M000132"></a>
+
+        <div class="method-heading">
+          <a href="#M000132" class="method-signature">
+          <span class="method-name">jd_to_ordinal</span><span class="method-args">(jd, sg=GREGORIAN)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a Julian Day Number to an Ordinal <a href="Date.html">Date</a>.
+</p>
+<p>
+<tt><a href="Date.html#M000155">jd</a></tt> is the Julian Day Number to
+convert. <tt>sg</tt> specifies the Day of Calendar Reform.
+</p>
+<p>
+Returns the corresponding Ordinal <a href="Date.html">Date</a> as [<a
+href="Date.html#M000168">year</a>, day_of_year]
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000132-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000132-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 372</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">jd_to_ordinal</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">GREGORIAN</span>)
+    <span class="ruby-identifier">y</span> = <span class="ruby-identifier">jd_to_civil</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>)[<span class="ruby-value">0</span>]
+    <span class="ruby-identifier">doy</span> = <span class="ruby-identifier">jd</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">civil_to_jd</span>(<span class="ruby-identifier">y</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>, <span class="ruby-value">12</span>, <span class="ruby-value">31</span>, <span class="ruby-identifier">fix_style</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>))
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">y</span>, <span class="ruby-identifier">doy</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000147" class="method-detail">
+        <a name="M000147"></a>
+
+        <div class="method-heading">
+          <a href="#M000147" class="method-signature">
+          <span class="method-name">jd_to_wday</span><span class="method-args">(jd)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a Julian Day Number to the <a href="Date.html#M000173">day</a> of
+the week.
+</p>
+<p>
+Sunday is <a href="Date.html#M000173">day</a>-of-week 0; Saturday is <a
+href="Date.html#M000173">day</a>-of-week 6.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000147-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000147-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 534</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">jd_to_wday</span>(<span class="ruby-identifier">jd</span>) (<span class="ruby-identifier">jd</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>) <span class="ruby-operator">%</span> <span class="ruby-value">7</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000129" class="method-detail">
+        <a name="M000129"></a>
+
+        <div class="method-heading">
+          <a href="#M000129" class="method-signature">
+          <span class="method-name">julian?</span><span class="method-args">(jd, sg)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Does a given Julian Day Number fall inside the old-style (Julian) calendar?
+</p>
+<p>
+<tt><a href="Date.html#M000155">jd</a></tt> is the Julian Day Number in
+question. <tt>sg</tt> may be Date::GREGORIAN, in which case the answer is
+false; it may be Date::JULIAN, in which case the answer is true; or it may
+a number representing the Day of Calendar Reform. Date::ENGLAND and
+Date::ITALY are two possible such days.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000129-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000129-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 327</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">julian?</span> (<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">sg</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Numeric</span>
+      <span class="ruby-identifier">jd</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">sg</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$VERBOSE</span>
+        <span class="ruby-identifier">warn</span>(<span class="ruby-node">&quot;#{caller.shift.sub(/:in .*/, '')}: &quot;</span> \
+<span class="ruby-value str">&quot;warning: do not use non-numerical object as julian day number anymore&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">not</span> <span class="ruby-identifier">sg</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000148" class="method-detail">
+        <a name="M000148"></a>
+
+        <div class="method-heading">
+          <a href="#M000148" class="method-signature">
+          <span class="method-name">julian_leap?</span><span class="method-args">(y)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Is a <a href="Date.html#M000168">year</a> a leap <a
+href="Date.html#M000168">year</a> in the Julian calendar?
+</p>
+<p>
+All years divisible by 4 are leap years in the Julian calendar.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000148-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000148-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 539</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">julian_leap?</span> (<span class="ruby-identifier">y</span>) <span class="ruby-identifier">y</span> <span class="ruby-operator">%</span> <span class="ruby-value">4</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000145" class="method-detail">
+        <a name="M000145"></a>
+
+        <div class="method-heading">
+          <a href="#M000145" class="method-signature">
+          <span class="method-name">ld_to_jd</span><span class="method-args">(ld)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a count of the number of days since the adoption of the Gregorian
+Calendar (in Italy) to a Julian Day Number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000145-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000145-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 525</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ld_to_jd</span>(<span class="ruby-identifier">ld</span>) <span class="ruby-identifier">ld</span> <span class="ruby-operator">+</span> <span class="ruby-value">2299160</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000143" class="method-detail">
+        <a name="M000143"></a>
+
+        <div class="method-heading">
+          <a href="#M000143" class="method-signature">
+          <span class="method-name">mjd_to_jd</span><span class="method-args">(mjd)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a Modified Julian Day Number to a Julian Day Number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000143-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000143-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 517</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">mjd_to_jd</span>(<span class="ruby-identifier">mjd</span>) <span class="ruby-identifier">mjd</span> <span class="ruby-operator">+</span> <span class="ruby-value">2400001</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000161" class="method-detail">
+        <a name="M000161"></a>
+
+        <div class="method-heading">
+          <a href="#M000161" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(ajd=0, of=0, sg=ITALY)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<b>NOTE</b> this is the documentation for the method new!(). If you are
+reading this as the documentation for <a
+href="Date.html#M000161">new</a>(), that is because rdoc doesn&#8216;t
+fully support the aliasing of the initialize() method. <a
+href="Date.html#M000161">new</a>() is in fact an alias for <a
+href="Date.html#M000157">civil</a>(): read the documentation for that
+method instead.
+</p>
+<p>
+Create a <a href="Date.html#M000161">new</a> <a href="Date.html">Date</a>
+object.
+</p>
+<p>
+<tt><a href="Date.html#M000162">ajd</a></tt> is the Astronomical Julian Day
+Number. <tt>of</tt> is the offset from UTC as a fraction of a <a
+href="Date.html#M000173">day</a>. Both default to 0.
+</p>
+<p>
+<tt>sg</tt> specifies the Day of Calendar Reform to use for this <a
+href="Date.html">Date</a> object.
+</p>
+<p>
+Using one of the factory methods such as Date::civil is generally easier
+and safer.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000161-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000161-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1016</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">ajd</span>=<span class="ruby-value">0</span>, <span class="ruby-identifier">of</span>=<span class="ruby-value">0</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">ITALY</span>) <span class="ruby-ivar">@ajd</span>, <span class="ruby-ivar">@of</span>, <span class="ruby-ivar">@sg</span> = <span class="ruby-identifier">ajd</span>, <span class="ruby-identifier">of</span>, <span class="ruby-identifier">sg</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000156" class="method-detail">
+        <a name="M000156"></a>
+
+        <div class="method-heading">
+          <a href="#M000156" class="method-signature">
+          <span class="method-name">ordinal</span><span class="method-args">(y=-4712, d=1, sg=ITALY)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="Date.html#M000161">new</a> <a href="Date.html">Date</a>
+object from an Ordinal <a href="Date.html">Date</a>, specified by <a
+href="Date.html#M000168">year</a> <tt>y</tt> and <a
+href="Date.html#M000173">day</a>-of-<a href="Date.html#M000168">year</a>
+<tt>d</tt>. <tt>d</tt> can be negative, in which it counts backwards from
+the end of the <a href="Date.html#M000168">year</a>. No <a
+href="Date.html#M000168">year</a> wraparound is performed, however. An
+invalid value for <tt>d</tt> results in an ArgumentError being raised.
+</p>
+<p>
+<tt>y</tt> defaults to -4712, and <tt>d</tt> to 1; this is Julian Day
+Number <a href="Date.html#M000173">day</a> 0.
+</p>
+<p>
+<tt>sg</tt> specifies the Day of Calendar Reform.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000156-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000156-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 705</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ordinal</span>(<span class="ruby-identifier">y</span>=<span class="ruby-value">-4712</span>, <span class="ruby-identifier">d</span>=<span class="ruby-value">1</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">ITALY</span>)
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">jd</span> = <span class="ruby-identifier">valid_ordinal?</span>(<span class="ruby-identifier">y</span>, <span class="ruby-identifier">d</span>, <span class="ruby-identifier">sg</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'invalid date'</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">new!</span>(<span class="ruby-identifier">jd_to_ajd</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-value">0</span>, <span class="ruby-value">0</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">sg</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000131" class="method-detail">
+        <a name="M000131"></a>
+
+        <div class="method-heading">
+          <a href="#M000131" class="method-signature">
+          <span class="method-name">ordinal_to_jd</span><span class="method-args">(y, d, sg=GREGORIAN)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert an Ordinal <a href="Date.html">Date</a> to a Julian Day Number.
+</p>
+<p>
+<tt>y</tt> and <tt>d</tt> are the <a href="Date.html#M000168">year</a> and
+<a href="Date.html#M000173">day</a>-of-<a href="Date.html#M000168">year</a>
+to convert. <tt>sg</tt> specifies the Day of Calendar Reform.
+</p>
+<p>
+Returns the corresponding Julian Day Number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000131-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000131-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 361</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ordinal_to_jd</span>(<span class="ruby-identifier">y</span>, <span class="ruby-identifier">d</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">GREGORIAN</span>)
+    <span class="ruby-identifier">civil_to_jd</span>(<span class="ruby-identifier">y</span>, <span class="ruby-value">1</span>, <span class="ruby-identifier">d</span>, <span class="ruby-identifier">sg</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000160" class="method-detail">
+        <a name="M000160"></a>
+
+        <div class="method-heading">
+          <a href="#M000160" class="method-signature">
+          <span class="method-name">parse</span><span class="method-args">(str='-4712-01-01', comp=false, sg=ITALY)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="Date.html#M000161">new</a> <a href="Date.html">Date</a>
+object by parsing from a String, without specifying the format.
+</p>
+<p>
+<tt>str</tt> is a String holding a date representation. <tt>comp</tt>
+specifies whether to interpret 2-digit years as 19XX (&gt;= 69) or 20XX
+(&lt; 69); the default is not to. The method will attempt to <a
+href="Date.html#M000160">parse</a> a date from the String using various
+heuristics; see <a href="Date.html#M000209">_parse</a> in date/format.rb
+for more details. If parsing fails, an ArgumentError will be raised.
+</p>
+<p>
+The default <tt>str</tt> is &#8217;-4712-01-01&#8217;; this is Julian Day
+Number <a href="Date.html#M000173">day</a> 0.
+</p>
+<p>
+<tt>sg</tt> specifies the Day of Calendar Reform.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000160-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000160-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 973</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">str</span>=<span class="ruby-value str">'-4712-01-01'</span>, <span class="ruby-identifier">comp</span>=<span class="ruby-keyword kw">false</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">ITALY</span>)
+    <span class="ruby-identifier">elem</span> = <span class="ruby-identifier">_parse</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">comp</span>)
+    <span class="ruby-identifier">new_by_frags</span>(<span class="ruby-identifier">elem</span>, <span class="ruby-identifier">sg</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000159" class="method-detail">
+        <a name="M000159"></a>
+
+        <div class="method-heading">
+          <a href="#M000159" class="method-signature">
+          <span class="method-name">strptime</span><span class="method-args">(str='-4712-01-01', fmt='%F', sg=ITALY)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="Date.html#M000161">new</a> <a href="Date.html">Date</a>
+object by parsing from a String according to a specified format.
+</p>
+<p>
+<tt>str</tt> is a String holding a date representation. <tt>fmt</tt> is the
+format that the date is in. See date/format.rb for details on supported
+formats.
+</p>
+<p>
+The default <tt>str</tt> is &#8217;-4712-01-01&#8217;, and the default
+<tt>fmt</tt> is &#8217;%F&#8217;, which means Year-Month-Day_of_Month. This
+gives Julian Day Number <a href="Date.html#M000173">day</a> 0.
+</p>
+<p>
+<tt>sg</tt> specifies the Day of Calendar Reform.
+</p>
+<p>
+An ArgumentError will be raised if <tt>str</tt> cannot be parsed.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000159-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000159-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 953</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">strptime</span>(<span class="ruby-identifier">str</span>=<span class="ruby-value str">'-4712-01-01'</span>, <span class="ruby-identifier">fmt</span>=<span class="ruby-value str">'%F'</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">ITALY</span>)
+    <span class="ruby-identifier">elem</span> = <span class="ruby-identifier">_strptime</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">fmt</span>)
+    <span class="ruby-identifier">new_by_frags</span>(<span class="ruby-identifier">elem</span>, <span class="ruby-identifier">sg</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000140" class="method-detail">
+        <a name="M000140"></a>
+
+        <div class="method-heading">
+          <a href="#M000140" class="method-signature">
+          <span class="method-name">time_to_day_fraction</span><span class="method-args">(h, min, s)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert an <tt>h</tt> hour, <tt>min</tt> minutes, <tt>s</tt> seconds period
+to a fractional <a href="Date.html#M000173">day</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000140-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000140-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 503</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">time_to_day_fraction</span>(<span class="ruby-identifier">h</span>, <span class="ruby-identifier">min</span>, <span class="ruby-identifier">s</span>)
+    <span class="ruby-identifier">h</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">24</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">min</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">1440</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">s</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">86400</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000204" class="method-detail">
+        <a name="M000204"></a>
+
+        <div class="method-heading">
+          <a href="#M000204" class="method-signature">
+          <span class="method-name">today</span><span class="method-args">(sg=ITALY)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="Date.html#M000161">new</a> <a href="Date.html">Date</a>
+object representing <a href="Date.html#M000204">today</a>.
+</p>
+<p>
+<tt>sg</tt> specifies the Day of Calendar Reform.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000204-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000204-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1623</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">today</span>(<span class="ruby-identifier">sg</span>=<span class="ruby-constant">ITALY</span>)
+    <span class="ruby-identifier">t</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
+    <span class="ruby-identifier">jd</span> = <span class="ruby-identifier">civil_to_jd</span>(<span class="ruby-identifier">t</span>.<span class="ruby-identifier">year</span>, <span class="ruby-identifier">t</span>.<span class="ruby-identifier">mon</span>, <span class="ruby-identifier">t</span>.<span class="ruby-identifier">mday</span>, <span class="ruby-identifier">sg</span>)
+    <span class="ruby-identifier">new!</span>(<span class="ruby-identifier">jd_to_ajd</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-value">0</span>, <span class="ruby-value">0</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">sg</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000152" class="method-detail">
+        <a name="M000152"></a>
+
+        <div class="method-heading">
+          <a href="#M000152" class="method-signature">
+          <span class="method-name">valid_civil?</span><span class="method-args">(y, m, d, sg=ITALY)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Do <a href="Date.html#M000168">year</a> <tt>y</tt>, <a
+href="Date.html#M000172">month</a> <tt>m</tt>, and <a
+href="Date.html#M000173">day</a>-of-<a href="Date.html#M000172">month</a>
+<tt>d</tt> make a valid Civil <a href="Date.html">Date</a>? Returns the
+corresponding Julian Day Number if they do, nil if they don&#8216;t.
+</p>
+<p>
+<tt>m</tt> and <tt>d</tt> can be negative, in which case they count
+backwards from the end of the <a href="Date.html#M000168">year</a> and the
+end of the <a href="Date.html#M000172">month</a> respectively. No
+wraparound is performed, however, and invalid values cause an ArgumentError
+to be raised. A date falling in the period skipped in the Day of Calendar
+Reform adjustment is not valid.
+</p>
+<p>
+<tt>sg</tt> specifies the Day of Calendar Reform.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000152-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000152-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 595</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">valid_civil?</span> (<span class="ruby-identifier">y</span>, <span class="ruby-identifier">m</span>, <span class="ruby-identifier">d</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">ITALY</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">m</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">m</span> <span class="ruby-operator">+=</span> <span class="ruby-value">13</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">d</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">ny</span>, <span class="ruby-identifier">nm</span> = (<span class="ruby-identifier">y</span> <span class="ruby-operator">*</span> <span class="ruby-value">12</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">m</span>).<span class="ruby-identifier">divmod</span>(<span class="ruby-value">12</span>)
+      <span class="ruby-identifier">nm</span>,    = (<span class="ruby-identifier">nm</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">divmod</span>(<span class="ruby-value">1</span>)
+      <span class="ruby-identifier">jd</span> = <span class="ruby-identifier">civil_to_jd</span>(<span class="ruby-identifier">ny</span>, <span class="ruby-identifier">nm</span>, <span class="ruby-identifier">d</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>, <span class="ruby-identifier">sg</span>)
+      <span class="ruby-identifier">ns</span> = <span class="ruby-identifier">fix_style</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> [<span class="ruby-identifier">y</span>, <span class="ruby-identifier">m</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">jd_to_civil</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>)[<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">1</span>]
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> [<span class="ruby-identifier">ny</span>, <span class="ruby-identifier">nm</span>, <span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">jd_to_civil</span>(<span class="ruby-identifier">jd</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">d</span>, <span class="ruby-identifier">ns</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">jd</span> = <span class="ruby-identifier">civil_to_jd</span>(<span class="ruby-identifier">y</span>, <span class="ruby-identifier">m</span>, <span class="ruby-identifier">d</span>, <span class="ruby-identifier">sg</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> [<span class="ruby-identifier">y</span>, <span class="ruby-identifier">m</span>, <span class="ruby-identifier">d</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">jd_to_civil</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">jd</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000153" class="method-detail">
+        <a name="M000153"></a>
+
+        <div class="method-heading">
+          <a href="#M000153" class="method-signature">
+          <span class="method-name">valid_commercial?</span><span class="method-args">(y, w, d, sg=ITALY)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Do <a href="Date.html#M000168">year</a> <tt>y</tt>, week-of-<a
+href="Date.html#M000168">year</a> <tt>w</tt>, and <a
+href="Date.html#M000173">day</a>-of-week <tt>d</tt> make a valid Commercial
+<a href="Date.html">Date</a>? Returns the corresponding Julian Day Number
+if they do, nil if they don&#8216;t.
+</p>
+<p>
+Monday is <a href="Date.html#M000173">day</a>-of-week 1; Sunday is <a
+href="Date.html#M000173">day</a>-of-week 7.
+</p>
+<p>
+<tt>w</tt> and <tt>d</tt> can be negative, in which case they count
+backwards from the end of the <a href="Date.html#M000168">year</a> and the
+end of the week respectively. No wraparound is performed, however, and
+invalid values cause an ArgumentError to be raised. A date falling in the
+period skipped in the Day of Calendar Reform adjustment is not valid.
+</p>
+<p>
+<tt>sg</tt> specifies the Day of Calendar Reform.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000153-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000153-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 629</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">valid_commercial?</span> (<span class="ruby-identifier">y</span>, <span class="ruby-identifier">w</span>, <span class="ruby-identifier">d</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">ITALY</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">d</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">d</span> <span class="ruby-operator">+=</span> <span class="ruby-value">8</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">w</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">ny</span>, <span class="ruby-identifier">nw</span>, <span class="ruby-identifier">nd</span> =
+        <span class="ruby-identifier">jd_to_commercial</span>(<span class="ruby-identifier">commercial_to_jd</span>(<span class="ruby-identifier">y</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">w</span> <span class="ruby-operator">*</span> <span class="ruby-value">7</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">ny</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">y</span>
+      <span class="ruby-identifier">w</span> = <span class="ruby-identifier">nw</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">jd</span> = <span class="ruby-identifier">commercial_to_jd</span>(<span class="ruby-identifier">y</span>, <span class="ruby-identifier">w</span>, <span class="ruby-identifier">d</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">gregorian?</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> [<span class="ruby-identifier">y</span>, <span class="ruby-identifier">w</span>, <span class="ruby-identifier">d</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">jd_to_commercial</span>(<span class="ruby-identifier">jd</span>)
+    <span class="ruby-identifier">jd</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000150" class="method-detail">
+        <a name="M000150"></a>
+
+        <div class="method-heading">
+          <a href="#M000150" class="method-signature">
+          <span class="method-name">valid_jd?</span><span class="method-args">(jd, sg=ITALY)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Is <tt><a href="Date.html#M000155">jd</a></tt> a valid Julian Day Number?
+</p>
+<p>
+If it is, returns it. In fact, any value is treated as a valid Julian Day
+Number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000150-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000150-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 554</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">valid_jd?</span> (<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">ITALY</span>) <span class="ruby-identifier">jd</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000151" class="method-detail">
+        <a name="M000151"></a>
+
+        <div class="method-heading">
+          <a href="#M000151" class="method-signature">
+          <span class="method-name">valid_ordinal?</span><span class="method-args">(y, d, sg=ITALY)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Do the <a href="Date.html#M000168">year</a> <tt>y</tt> and <a
+href="Date.html#M000173">day</a>-of-<a href="Date.html#M000168">year</a>
+<tt>d</tt> make a valid Ordinal <a href="Date.html">Date</a>? Returns the
+corresponding Julian Day Number if they do, or nil if they don&#8216;t.
+</p>
+<p>
+<tt>d</tt> can be a negative number, in which case it counts backwards from
+the end of the <a href="Date.html#M000168">year</a> (-1 being the last <a
+href="Date.html#M000173">day</a> of the <a
+href="Date.html#M000168">year</a>). No <a href="Date.html#M000168">year</a>
+wraparound is performed, however, so valid values of <tt>d</tt> are -365 ..
+-1, 1 .. 365 on a non-leap-<a href="Date.html#M000168">year</a>, -366 ..
+-1, 1 .. 366 on a leap <a href="Date.html#M000168">year</a>. A date falling
+in the period skipped in the Day of Calendar Reform adjustment is not
+valid.
+</p>
+<p>
+<tt>sg</tt> specifies the Day of Calendar Reform.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000151-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000151-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 569</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">valid_ordinal?</span> (<span class="ruby-identifier">y</span>, <span class="ruby-identifier">d</span>, <span class="ruby-identifier">sg</span>=<span class="ruby-constant">ITALY</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">d</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">ny</span>, = (<span class="ruby-identifier">y</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">divmod</span>(<span class="ruby-value">1</span>)
+      <span class="ruby-identifier">jd</span> = <span class="ruby-identifier">ordinal_to_jd</span>(<span class="ruby-identifier">ny</span>, <span class="ruby-identifier">d</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>, <span class="ruby-identifier">sg</span>)
+      <span class="ruby-identifier">ns</span> = <span class="ruby-identifier">fix_style</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> [<span class="ruby-identifier">y</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">jd_to_ordinal</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>)[<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">0</span>]
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> [<span class="ruby-identifier">ny</span>, <span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">jd_to_ordinal</span>(<span class="ruby-identifier">jd</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">d</span>, <span class="ruby-identifier">ns</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">jd</span> = <span class="ruby-identifier">ordinal_to_jd</span>(<span class="ruby-identifier">y</span>, <span class="ruby-identifier">d</span>, <span class="ruby-identifier">sg</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> [<span class="ruby-identifier">y</span>, <span class="ruby-identifier">d</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">jd_to_ordinal</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">sg</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">jd</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000154" class="method-detail">
+        <a name="M000154"></a>
+
+        <div class="method-heading">
+          <a href="#M000154" class="method-signature">
+          <span class="method-name">valid_time?</span><span class="method-args">(h, min, s)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Do hour <tt>h</tt>, minute <tt>min</tt>, and second <tt>s</tt> constitute a
+valid time?
+</p>
+<p>
+If they do, returns their value as a fraction of a <a
+href="Date.html#M000173">day</a>. If not, returns nil.
+</p>
+<p>
+The 24-hour clock is used. Negative values of <tt>h</tt>, <tt>min</tt>, and
+<tt>sec</tt> are treating as counting backwards from the end of the <a
+href="Date.html#M000191">next</a> larger unit (e.g. a <tt>min</tt> of -2 is
+treated as 58). No wraparound is performed.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000154-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000154-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 672</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">valid_time?</span> (<span class="ruby-identifier">h</span>, <span class="ruby-identifier">min</span>, <span class="ruby-identifier">s</span>)
+    <span class="ruby-identifier">h</span>   <span class="ruby-operator">+=</span> <span class="ruby-value">24</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">h</span>   <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+    <span class="ruby-identifier">min</span> <span class="ruby-operator">+=</span> <span class="ruby-value">60</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">min</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+    <span class="ruby-identifier">s</span>   <span class="ruby-operator">+=</span> <span class="ruby-value">60</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">s</span>   <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> ((<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">23</span>) <span class="ruby-operator">===</span> <span class="ruby-identifier">h</span> <span class="ruby-operator">&amp;&amp;</span>
+                   (<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">59</span>) <span class="ruby-operator">===</span> <span class="ruby-identifier">min</span> <span class="ruby-operator">&amp;&amp;</span>
+                   (<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">59</span>) <span class="ruby-operator">===</span> <span class="ruby-identifier">s</span>) <span class="ruby-operator">||</span>
+                  (<span class="ruby-value">24</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">h</span> <span class="ruby-operator">&amp;&amp;</span>
+                    <span class="ruby-value">0</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">min</span> <span class="ruby-operator">&amp;&amp;</span>
+                    <span class="ruby-value">0</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">s</span>)
+    <span class="ruby-identifier">time_to_day_fraction</span>(<span class="ruby-identifier">h</span>, <span class="ruby-identifier">min</span>, <span class="ruby-identifier">s</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000187" class="method-detail">
+        <a name="M000187"></a>
+
+        <div class="method-heading">
+          <a href="#M000187" class="method-signature">
+          <span class="method-name">+</span><span class="method-args">(n)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a <a href="Date.html#M000161">new</a> <a href="Date.html">Date</a>
+object that is <tt>n</tt> days later than the current one.
+</p>
+<p>
+<tt>n</tt> may be a negative value, in which case the <a
+href="Date.html#M000161">new</a> <a href="Date.html">Date</a> is earlier
+than the current one; however, #-() might be more intuitive.
+</p>
+<p>
+If <tt>n</tt> is not a Numeric, a TypeError will be thrown. In particular,
+two Dates cannot be added to each other.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000187-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000187-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1201</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">+</span> (<span class="ruby-identifier">n</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">n</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Numeric</span>; <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new!</span>(<span class="ruby-ivar">@ajd</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">n</span>, <span class="ruby-ivar">@of</span>, <span class="ruby-ivar">@sg</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-value str">'expected numeric'</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000188" class="method-detail">
+        <a name="M000188"></a>
+
+        <div class="method-heading">
+          <a href="#M000188" class="method-signature">
+          <span class="method-name">-</span><span class="method-args">(x)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+If <tt>x</tt> is a Numeric value, create a <a
+href="Date.html#M000161">new</a> <a href="Date.html">Date</a> object that
+is <tt>x</tt> days earlier than the current one.
+</p>
+<p>
+If <tt>x</tt> is a <a href="Date.html">Date</a>, return the number of days
+between the two dates; or, more precisely, how many days later the current
+date is than <tt>x</tt>.
+</p>
+<p>
+If <tt>x</tt> is neither Numeric nor a <a href="Date.html">Date</a>, a
+TypeError is raised.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000188-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000188-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1216</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">-</span> (<span class="ruby-identifier">x</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">x</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Numeric</span>; <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new!</span>(<span class="ruby-ivar">@ajd</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">x</span>, <span class="ruby-ivar">@of</span>, <span class="ruby-ivar">@sg</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Date</span>;    <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@ajd</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">ajd</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-value str">'expected numeric or date'</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000194" class="method-detail">
+        <a name="M000194"></a>
+
+        <div class="method-heading">
+          <a href="#M000194" class="method-signature">
+          <span class="method-name">&lt;&lt;</span><span class="method-args">(n)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a <a href="Date.html#M000161">new</a> <a href="Date.html">Date</a>
+object that is <tt>n</tt> months earlier than the current one.
+</p>
+<p>
+If the <a href="Date.html#M000173">day</a>-of-the-<a
+href="Date.html#M000172">month</a> of the current <a
+href="Date.html">Date</a> is greater than the last <a
+href="Date.html#M000173">day</a> of the target <a
+href="Date.html#M000172">month</a>, the <a
+href="Date.html#M000173">day</a>-of-the-<a
+href="Date.html#M000172">month</a> of the returned <a
+href="Date.html">Date</a> will be the last <a
+href="Date.html#M000173">day</a> of the target <a
+href="Date.html#M000172">month</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000194-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000194-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1287</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">&lt;&lt;</span> (<span class="ruby-identifier">n</span>) <span class="ruby-keyword kw">self</span> <span class="ruby-operator">&gt;&gt;</span> <span class="ruby-operator">-</span><span class="ruby-identifier">n</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000189" class="method-detail">
+        <a name="M000189"></a>
+
+        <div class="method-heading">
+          <a href="#M000189" class="method-signature">
+          <span class="method-name">&lt;=&gt;</span><span class="method-args">(other)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Compare this date with another date.
+</p>
+<p>
+<tt>other</tt> can also be a Numeric value, in which case it is interpreted
+as an Astronomical Julian Day Number.
+</p>
+<p>
+Comparison is by Astronomical Julian Day Number, including fractional days.
+This means that both the time and the timezone offset are taken into
+account when comparing two <a href="DateTime.html">DateTime</a> instances.
+When comparing a <a href="DateTime.html">DateTime</a> instance with a <a
+href="Date.html">Date</a> instance, the time of the latter will be
+considered as falling on midnight UTC.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000189-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000189-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1235</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">&lt;=&gt;</span> (<span class="ruby-identifier">other</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">other</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Numeric</span>; <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@ajd</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">other</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Date</span>;    <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@ajd</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">ajd</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">nil</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000190" class="method-detail">
+        <a name="M000190"></a>
+
+        <div class="method-heading">
+          <a href="#M000190" class="method-signature">
+          <span class="method-name">===</span><span class="method-args">(other)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The relationship operator for <a href="Date.html">Date</a>.
+</p>
+<p>
+Compares dates by Julian Day Number. When comparing two <a
+href="DateTime.html">DateTime</a> instances, or a <a
+href="DateTime.html">DateTime</a> with a <a href="Date.html">Date</a>, the
+instances will be regarded as equivalent if they fall on the same date in
+local time.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000190-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000190-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1249</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">===</span> (<span class="ruby-identifier">other</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">other</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Numeric</span>; <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">jd</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">other</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Date</span>;    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">jd</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">jd</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">false</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000193" class="method-detail">
+        <a name="M000193"></a>
+
+        <div class="method-heading">
+          <a href="#M000193" class="method-signature">
+          <span class="method-name">&gt;&gt;</span><span class="method-args">(n)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a <a href="Date.html#M000161">new</a> <a href="Date.html">Date</a>
+object that is <tt>n</tt> months later than the current one.
+</p>
+<p>
+If the <a href="Date.html#M000173">day</a>-of-the-<a
+href="Date.html#M000172">month</a> of the current <a
+href="Date.html">Date</a> is greater than the last <a
+href="Date.html#M000173">day</a> of the target <a
+href="Date.html#M000172">month</a>, the <a
+href="Date.html#M000173">day</a>-of-the-<a
+href="Date.html#M000172">month</a> of the returned <a
+href="Date.html">Date</a> will be the last <a
+href="Date.html#M000173">day</a> of the target <a
+href="Date.html#M000172">month</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000193-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000193-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1273</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">&gt;&gt;</span> (<span class="ruby-identifier">n</span>)
+    <span class="ruby-identifier">y</span>, <span class="ruby-identifier">m</span> = (<span class="ruby-identifier">year</span> <span class="ruby-operator">*</span> <span class="ruby-value">12</span> <span class="ruby-operator">+</span> (<span class="ruby-identifier">mon</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">n</span>).<span class="ruby-identifier">divmod</span>(<span class="ruby-value">12</span>)
+    <span class="ruby-identifier">m</span>,   = (<span class="ruby-identifier">m</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>)                    .<span class="ruby-identifier">divmod</span>(<span class="ruby-value">1</span>)
+    <span class="ruby-identifier">d</span> = <span class="ruby-identifier">mday</span>
+    <span class="ruby-identifier">d</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">until</span> <span class="ruby-identifier">jd2</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">valid_civil?</span>(<span class="ruby-identifier">y</span>, <span class="ruby-identifier">m</span>, <span class="ruby-identifier">d</span>, <span class="ruby-identifier">fix_style</span>)
+    <span class="ruby-keyword kw">self</span> <span class="ruby-operator">+</span> (<span class="ruby-identifier">jd2</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">jd</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000202" class="method-detail">
+        <a name="M000202"></a>
+
+        <div class="method-heading">
+          <a href="#M000202" class="method-signature">
+          <span class="method-name">_dump</span><span class="method-args">(limit)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Dump to Marshal format.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000202-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000202-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1347</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">_dump</span>(<span class="ruby-identifier">limit</span>) <span class="ruby-constant">Marshal</span>.<span class="ruby-identifier">dump</span>([<span class="ruby-ivar">@ajd</span>, <span class="ruby-ivar">@of</span>, <span class="ruby-ivar">@sg</span>], <span class="ruby-value">-1</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000162" class="method-detail">
+        <a name="M000162"></a>
+
+        <div class="method-heading">
+          <a href="#M000162" class="method-signature">
+          <span class="method-name">ajd</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the date as an Astronomical Julian Day Number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000162-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000162-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1019</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ajd</span>() <span class="ruby-ivar">@ajd</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000163" class="method-detail">
+        <a name="M000163"></a>
+
+        <div class="method-heading">
+          <a href="#M000163" class="method-signature">
+          <span class="method-name">amjd</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the date as an Astronomical Modified Julian Day Number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000163-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000163-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1022</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">amjd</span>() <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">ajd_to_amjd</span>(<span class="ruby-ivar">@ajd</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000206" class="method-detail">
+        <a name="M000206"></a>
+
+        <div class="method-heading">
+          <a href="#M000206" class="method-signature">
+          <span class="method-name">asctime</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+alias_method :format, :<a href="Date.html#M000205">strftime</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000206-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000206-source">
+<pre>
+<span class="ruby-comment cmt"># File date/format.rb, line 336</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">asctime</span>() <span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%c'</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000207" class="method-detail">
+        <a name="M000207"></a>
+
+        <div class="method-heading">
+          <span class="method-name">ctime</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Date.html#M000206">asctime</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000176" class="method-detail">
+        <a name="M000176"></a>
+
+        <div class="method-heading">
+          <a href="#M000176" class="method-signature">
+          <span class="method-name">cwday</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the <a href="Date.html#M000158">commercial</a> <a
+href="Date.html#M000173">day</a> of the week of this date. Monday is <a
+href="Date.html#M000158">commercial</a> <a
+href="Date.html#M000173">day</a>-of-week 1; Sunday is <a
+href="Date.html#M000158">commercial</a> <a
+href="Date.html#M000173">day</a>-of-week 7.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000176-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000176-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1115</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">cwday</span>() <span class="ruby-identifier">commercial</span>[<span class="ruby-value">2</span>] <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000175" class="method-detail">
+        <a name="M000175"></a>
+
+        <div class="method-heading">
+          <a href="#M000175" class="method-signature">
+          <span class="method-name">cweek</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the <a href="Date.html#M000158">commercial</a> week of the <a
+href="Date.html#M000168">year</a> of this date.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000175-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000175-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1111</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">cweek</span>() <span class="ruby-identifier">commercial</span>[<span class="ruby-value">1</span>] <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000174" class="method-detail">
+        <a name="M000174"></a>
+
+        <div class="method-heading">
+          <a href="#M000174" class="method-signature">
+          <span class="method-name">cwyear</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the <a href="Date.html#M000158">commercial</a> <a
+href="Date.html#M000168">year</a> of this date. See <b>Commercial</b> <b><a
+href="Date.html">Date</a></b> in the introduction for how this differs from
+the normal <a href="Date.html#M000168">year</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000174-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000174-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1108</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">cwyear</span>() <span class="ruby-identifier">commercial</span>[<span class="ruby-value">0</span>] <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000173" class="method-detail">
+        <a name="M000173"></a>
+
+        <div class="method-heading">
+          <span class="method-name">day</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Date.html#M000171">mday</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000165" class="method-detail">
+        <a name="M000165"></a>
+
+        <div class="method-heading">
+          <a href="#M000165" class="method-signature">
+          <span class="method-name">day_fraction</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get any fractional <a href="Date.html#M000173">day</a> part of the date.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000165-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000165-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1030</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">day_fraction</span>() <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">ajd_to_jd</span>(<span class="ruby-ivar">@ajd</span>, <span class="ruby-ivar">@of</span>)[<span class="ruby-value">1</span>] <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000197" class="method-detail">
+        <a name="M000197"></a>
+
+        <div class="method-heading">
+          <a href="#M000197" class="method-signature">
+          <span class="method-name">downto</span><span class="method-args">(min) {|date| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Step backward one <a href="Date.html#M000173">day</a> at a time until we
+reach <tt>min</tt> (inclusive), yielding each date as we go.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000197-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000197-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1326</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">downto</span>(<span class="ruby-identifier">min</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-comment cmt"># :yield: date</span>
+    <span class="ruby-identifier">step</span>(<span class="ruby-identifier">min</span>, <span class="ruby-value">-1</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000184" class="method-detail">
+        <a name="M000184"></a>
+
+        <div class="method-heading">
+          <a href="#M000184" class="method-signature">
+          <span class="method-name">england</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a copy of this <a href="Date.html">Date</a> object that uses the
+English/Colonial Day of Calendar Reform.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000184-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000184-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1171</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">england</span>() <span class="ruby-identifier">new_start</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ENGLAND</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000198" class="method-detail">
+        <a name="M000198"></a>
+
+        <div class="method-heading">
+          <a href="#M000198" class="method-signature">
+          <span class="method-name">eql?</span><span class="method-args">(other)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Is this <a href="Date.html">Date</a> equal to <tt>other</tt>?
+</p>
+<p>
+<tt>other</tt> must both be a <a href="Date.html">Date</a> object, and
+represent the same date.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000198-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000198-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1333</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">eql?</span> (<span class="ruby-identifier">other</span>) <span class="ruby-constant">Date</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">other</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-keyword kw">self</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">other</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000186" class="method-detail">
+        <a name="M000186"></a>
+
+        <div class="method-heading">
+          <a href="#M000186" class="method-signature">
+          <span class="method-name">gregorian</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a copy of this <a href="Date.html">Date</a> object that always uses
+the Gregorian Calendar.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000186-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000186-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1179</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">gregorian</span>() <span class="ruby-identifier">new_start</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">GREGORIAN</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000179" class="method-detail">
+        <a name="M000179"></a>
+
+        <div class="method-heading">
+          <a href="#M000179" class="method-signature">
+          <span class="method-name">gregorian?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Is the current date <a href="Date.html#M000161">new</a>-style (Gregorian
+Calendar)?
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000179-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000179-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1139</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">gregorian?</span> () <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">gregorian?</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-ivar">@sg</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000199" class="method-detail">
+        <a name="M000199"></a>
+
+        <div class="method-heading">
+          <a href="#M000199" class="method-signature">
+          <span class="method-name">hash</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Calculate a <a href="Date.html#M000199">hash</a> value for this date.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000199-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000199-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1336</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">hash</span>() <span class="ruby-ivar">@ajd</span>.<span class="ruby-identifier">hash</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000200" class="method-detail">
+        <a name="M000200"></a>
+
+        <div class="method-heading">
+          <a href="#M000200" class="method-signature">
+          <span class="method-name">inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return internal object state as a programmer-readable string.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000200-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000200-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1339</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">inspect</span>() <span class="ruby-identifier">format</span>(<span class="ruby-value str">'#&lt;%s: %s,%s,%s&gt;'</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>, <span class="ruby-ivar">@ajd</span>, <span class="ruby-ivar">@of</span>, <span class="ruby-ivar">@sg</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000183" class="method-detail">
+        <a name="M000183"></a>
+
+        <div class="method-heading">
+          <a href="#M000183" class="method-signature">
+          <span class="method-name">italy</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a copy of this <a href="Date.html">Date</a> object that uses the
+Italian/Catholic Day of Calendar Reform.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000183-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000183-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1167</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">italy</span>() <span class="ruby-identifier">new_start</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ITALY</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000164" class="method-detail">
+        <a name="M000164"></a>
+
+        <div class="method-heading">
+          <a href="#M000164" class="method-signature">
+          <span class="method-name">jd</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the date as a Julian Day Number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000164-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000164-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1027</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">jd</span>() <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">ajd_to_jd</span>(<span class="ruby-ivar">@ajd</span>, <span class="ruby-ivar">@of</span>)[<span class="ruby-value">0</span>] <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000185" class="method-detail">
+        <a name="M000185"></a>
+
+        <div class="method-heading">
+          <a href="#M000185" class="method-signature">
+          <span class="method-name">julian</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a copy of this <a href="Date.html">Date</a> object that always uses
+the Julian Calendar.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000185-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000185-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1175</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">julian</span>() <span class="ruby-identifier">new_start</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">JULIAN</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000178" class="method-detail">
+        <a name="M000178"></a>
+
+        <div class="method-heading">
+          <a href="#M000178" class="method-signature">
+          <span class="method-name">julian?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Is the current date old-style (Julian Calendar)?
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000178-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000178-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1136</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">julian?</span> () <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">julian?</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-ivar">@sg</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000167" class="method-detail">
+        <a name="M000167"></a>
+
+        <div class="method-heading">
+          <a href="#M000167" class="method-signature">
+          <span class="method-name">ld</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the date as the number of days since the Day of Calendar Reform (in
+Italy and the Catholic countries).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000167-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000167-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1037</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ld</span>() <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">jd_to_ld</span>(<span class="ruby-identifier">jd</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000180" class="method-detail">
+        <a name="M000180"></a>
+
+        <div class="method-heading">
+          <a href="#M000180" class="method-signature">
+          <span class="method-name">leap?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Is this a leap year?
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000180-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000180-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1152</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">leap?</span>
+    <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">jd_to_civil</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">civil_to_jd</span>(<span class="ruby-identifier">year</span>, <span class="ruby-value">3</span>, <span class="ruby-value">1</span>, <span class="ruby-identifier">fix_style</span>) <span class="ruby-operator">-</span> <span class="ruby-value">1</span>,
+                     <span class="ruby-identifier">fix_style</span>)[<span class="ruby-value">-1</span>] <span class="ruby-operator">==</span> <span class="ruby-value">29</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000171" class="method-detail">
+        <a name="M000171"></a>
+
+        <div class="method-heading">
+          <a href="#M000171" class="method-signature">
+          <span class="method-name">mday</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the <a href="Date.html#M000173">day</a>-of-the-<a
+href="Date.html#M000172">month</a> of this date.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000171-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000171-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1070</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mday</span>() <span class="ruby-identifier">civil</span>[<span class="ruby-value">2</span>] <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000166" class="method-detail">
+        <a name="M000166"></a>
+
+        <div class="method-heading">
+          <a href="#M000166" class="method-signature">
+          <span class="method-name">mjd</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the date as a Modified Julian Day Number.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000166-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000166-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1033</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mjd</span>() <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">jd_to_mjd</span>(<span class="ruby-identifier">jd</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000170" class="method-detail">
+        <a name="M000170"></a>
+
+        <div class="method-heading">
+          <a href="#M000170" class="method-signature">
+          <span class="method-name">mon</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the <a href="Date.html#M000172">month</a> of this date.
+</p>
+<p>
+January is <a href="Date.html#M000172">month</a> 1.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000170-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000170-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1067</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mon</span>() <span class="ruby-identifier">civil</span>[<span class="ruby-value">1</span>] <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000172" class="method-detail">
+        <a name="M000172"></a>
+
+        <div class="method-heading">
+          <span class="method-name">month</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Date.html#M000170">mon</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000182" class="method-detail">
+        <a name="M000182"></a>
+
+        <div class="method-heading">
+          <a href="#M000182" class="method-signature">
+          <span class="method-name">new_start</span><span class="method-args">(sg=self.class::ITALY)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a copy of this <a href="Date.html">Date</a> object using a <a
+href="Date.html#M000161">new</a> Day of Calendar Reform.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000182-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000182-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1163</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">new_start</span>(<span class="ruby-identifier">sg</span>=<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ITALY</span>) <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new!</span>(<span class="ruby-ivar">@ajd</span>, <span class="ruby-ivar">@of</span>, <span class="ruby-identifier">sg</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000191" class="method-detail">
+        <a name="M000191"></a>
+
+        <div class="method-heading">
+          <a href="#M000191" class="method-signature">
+          <span class="method-name">next</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a <a href="Date.html#M000161">new</a> <a href="Date.html">Date</a>
+one <a href="Date.html#M000173">day</a> after this one.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000191-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000191-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1263</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">next</span>() <span class="ruby-identifier">next_day</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000181" class="method-detail">
+        <a name="M000181"></a>
+
+        <div class="method-heading">
+          <a href="#M000181" class="method-signature">
+          <span class="method-name">start</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+When is the Day of Calendar Reform for this <a href="Date.html">Date</a>
+object?
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000181-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000181-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1160</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">start</span>() <span class="ruby-ivar">@sg</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000195" class="method-detail">
+        <a name="M000195"></a>
+
+        <div class="method-heading">
+          <a href="#M000195" class="method-signature">
+          <span class="method-name">step</span><span class="method-args">(limit, step=1) {|date| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Step the current date forward <tt><a href="Date.html#M000195">step</a></tt>
+days at a time (or backward, if <tt><a
+href="Date.html#M000195">step</a></tt> is negative) until we reach
+<tt>limit</tt> (inclusive), yielding the resultant date at each <a
+href="Date.html#M000195">step</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000195-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000195-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1303</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">step</span>(<span class="ruby-identifier">limit</span>, <span class="ruby-identifier">step</span>=<span class="ruby-value">1</span>) <span class="ruby-comment cmt"># :yield: date</span>
+??
+    <span class="ruby-identifier">da</span> = <span class="ruby-keyword kw">self</span>
+    <span class="ruby-identifier">op</span> = <span class="ruby-node">%w(- &lt;= &gt;=)</span>[<span class="ruby-identifier">step</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-value">0</span>]
+    <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">da</span>.<span class="ruby-identifier">__send__</span>(<span class="ruby-identifier">op</span>, <span class="ruby-identifier">limit</span>)
+      <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">da</span>
+      <span class="ruby-identifier">da</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">step</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000205" class="method-detail">
+        <a name="M000205"></a>
+
+        <div class="method-heading">
+          <a href="#M000205" class="method-signature">
+          <span class="method-name">strftime</span><span class="method-args">(fmt='%F')</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000205-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000205-source">
+<pre>
+<span class="ruby-comment cmt"># File date/format.rb, line 200</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">strftime</span>(<span class="ruby-identifier">fmt</span>=<span class="ruby-value str">'%F'</span>)
+    <span class="ruby-identifier">fmt</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/%([-_0^#]+)?(\d+)?[EO]?(:{1,3}z|.)/</span><span class="ruby-identifier">m</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">f</span> = {}
+      <span class="ruby-identifier">s</span>, <span class="ruby-identifier">w</span>, <span class="ruby-identifier">c</span> = <span class="ruby-identifier">$1</span>, <span class="ruby-identifier">$2</span>, <span class="ruby-identifier">$3</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">s</span>
+        <span class="ruby-identifier">s</span>.<span class="ruby-identifier">scan</span>(<span class="ruby-regexp re">/./</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">k</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'-'</span>; <span class="ruby-identifier">f</span>[<span class="ruby-identifier">:p</span>] = <span class="ruby-value str">'-'</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'_'</span>; <span class="ruby-identifier">f</span>[<span class="ruby-identifier">:p</span>] = <span class="ruby-value str">&quot;\s&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'0'</span>; <span class="ruby-identifier">f</span>[<span class="ruby-identifier">:p</span>] = <span class="ruby-value str">'0'</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'^'</span>; <span class="ruby-identifier">f</span>[<span class="ruby-identifier">:u</span>] = <span class="ruby-keyword kw">true</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'#'</span>; <span class="ruby-identifier">f</span>[<span class="ruby-identifier">:x</span>] = <span class="ruby-keyword kw">true</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">w</span>
+        <span class="ruby-identifier">f</span>[<span class="ruby-identifier">:w</span>] = <span class="ruby-identifier">w</span>.<span class="ruby-identifier">to_i</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">c</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'A'</span>; <span class="ruby-identifier">emit_ad</span>(<span class="ruby-constant">DAYNAMES</span>[<span class="ruby-identifier">wday</span>], <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'a'</span>; <span class="ruby-identifier">emit_ad</span>(<span class="ruby-constant">ABBR_DAYNAMES</span>[<span class="ruby-identifier">wday</span>], <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'B'</span>; <span class="ruby-identifier">emit_ad</span>(<span class="ruby-constant">MONTHNAMES</span>[<span class="ruby-identifier">mon</span>], <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'b'</span>; <span class="ruby-identifier">emit_ad</span>(<span class="ruby-constant">ABBR_MONTHNAMES</span>[<span class="ruby-identifier">mon</span>], <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'C'</span>; <span class="ruby-identifier">emit_sn</span>((<span class="ruby-identifier">year</span> <span class="ruby-operator">/</span> <span class="ruby-value">100</span>).<span class="ruby-identifier">floor</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'c'</span>; <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%a %b %e %H:%M:%S %Y'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'D'</span>; <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%m/%d/%y'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'d'</span>; <span class="ruby-identifier">emit_n</span>(<span class="ruby-identifier">mday</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'e'</span>; <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">mday</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'F'</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">m</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'%F'</span>
+          <span class="ruby-identifier">format</span>(<span class="ruby-value str">'%.4d-%02d-%02d'</span>, <span class="ruby-identifier">year</span>, <span class="ruby-identifier">mon</span>, <span class="ruby-identifier">mday</span>) <span class="ruby-comment cmt"># 4p</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%Y-%m-%d'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'G'</span>; <span class="ruby-identifier">emit_sn</span>(<span class="ruby-identifier">cwyear</span>, <span class="ruby-value">4</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'g'</span>; <span class="ruby-identifier">emit_n</span>(<span class="ruby-identifier">cwyear</span> <span class="ruby-operator">%</span> <span class="ruby-value">100</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'H'</span>; <span class="ruby-identifier">emit_n</span>(<span class="ruby-identifier">hour</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'h'</span>; <span class="ruby-identifier">emit_ad</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%b'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'I'</span>; <span class="ruby-identifier">emit_n</span>((<span class="ruby-identifier">hour</span> <span class="ruby-operator">%</span> <span class="ruby-value">12</span>).<span class="ruby-identifier">nonzero?</span> <span class="ruby-operator">||</span> <span class="ruby-value">12</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'j'</span>; <span class="ruby-identifier">emit_n</span>(<span class="ruby-identifier">yday</span>, <span class="ruby-value">3</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'k'</span>; <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">hour</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'L'</span>
+        <span class="ruby-identifier">emit_n</span>((<span class="ruby-identifier">sec_fraction</span> <span class="ruby-operator">/</span> (<span class="ruby-value">1</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">86400</span><span class="ruby-operator">/</span>(<span class="ruby-value">10</span><span class="ruby-operator">**</span><span class="ruby-value">3</span>))).<span class="ruby-identifier">floor</span>, <span class="ruby-value">3</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'l'</span>; <span class="ruby-identifier">emit_a</span>((<span class="ruby-identifier">hour</span> <span class="ruby-operator">%</span> <span class="ruby-value">12</span>).<span class="ruby-identifier">nonzero?</span> <span class="ruby-operator">||</span> <span class="ruby-value">12</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'M'</span>; <span class="ruby-identifier">emit_n</span>(<span class="ruby-identifier">min</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'m'</span>; <span class="ruby-identifier">emit_n</span>(<span class="ruby-identifier">mon</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'N'</span>
+        <span class="ruby-identifier">emit_n</span>((<span class="ruby-identifier">sec_fraction</span> <span class="ruby-operator">/</span> (<span class="ruby-value">1</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">86400</span><span class="ruby-operator">/</span>(<span class="ruby-value">10</span><span class="ruby-operator">**</span><span class="ruby-value">9</span>))).<span class="ruby-identifier">floor</span>, <span class="ruby-value">9</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'n'</span>; <span class="ruby-value str">&quot;\n&quot;</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'P'</span>; <span class="ruby-identifier">emit_ad</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%p'</span>).<span class="ruby-identifier">downcase</span>, <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'p'</span>; <span class="ruby-identifier">emit_au</span>(<span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hour</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">12</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'AM'</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value str">'PM'</span> <span class="ruby-keyword kw">end</span>, <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'Q'</span>
+        <span class="ruby-identifier">d</span> = <span class="ruby-identifier">ajd</span> <span class="ruby-operator">-</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">jd_to_ajd</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">UNIXEPOCH</span>, <span class="ruby-value">0</span>)
+        <span class="ruby-identifier">s</span> = (<span class="ruby-identifier">d</span> <span class="ruby-operator">*</span> <span class="ruby-value">86400</span><span class="ruby-operator">*</span><span class="ruby-value">10</span><span class="ruby-operator">**</span><span class="ruby-value">3</span>).<span class="ruby-identifier">to_i</span>
+        <span class="ruby-identifier">emit_sn</span>(<span class="ruby-identifier">s</span>, <span class="ruby-value">1</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'R'</span>; <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%H:%M'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'r'</span>; <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%I:%M:%S %p'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'S'</span>; <span class="ruby-identifier">emit_n</span>(<span class="ruby-identifier">sec</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'s'</span>
+        <span class="ruby-identifier">d</span> = <span class="ruby-identifier">ajd</span> <span class="ruby-operator">-</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">jd_to_ajd</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">UNIXEPOCH</span>, <span class="ruby-value">0</span>)
+        <span class="ruby-identifier">s</span> = (<span class="ruby-identifier">d</span> <span class="ruby-operator">*</span> <span class="ruby-value">86400</span>).<span class="ruby-identifier">to_i</span>
+        <span class="ruby-identifier">emit_sn</span>(<span class="ruby-identifier">s</span>, <span class="ruby-value">1</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'T'</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">m</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'%T'</span>
+          <span class="ruby-identifier">format</span>(<span class="ruby-value str">'%02d:%02d:%02d'</span>, <span class="ruby-identifier">hour</span>, <span class="ruby-identifier">min</span>, <span class="ruby-identifier">sec</span>) <span class="ruby-comment cmt"># 4p</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%H:%M:%S'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'t'</span>; <span class="ruby-value str">&quot;\t&quot;</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'U'</span>, <span class="ruby-value str">'W'</span>
+        <span class="ruby-identifier">emit_n</span>(<span class="ruby-keyword kw">if</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'U'</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">wnum0</span> <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">wnum1</span> <span class="ruby-keyword kw">end</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'u'</span>; <span class="ruby-identifier">emit_n</span>(<span class="ruby-identifier">cwday</span>, <span class="ruby-value">1</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'V'</span>; <span class="ruby-identifier">emit_n</span>(<span class="ruby-identifier">cweek</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'v'</span>; <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%e-%b-%Y'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'w'</span>; <span class="ruby-identifier">emit_n</span>(<span class="ruby-identifier">wday</span>, <span class="ruby-value">1</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'X'</span>; <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%H:%M:%S'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'x'</span>; <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%m/%d/%y'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'Y'</span>; <span class="ruby-identifier">emit_sn</span>(<span class="ruby-identifier">year</span>, <span class="ruby-value">4</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'y'</span>; <span class="ruby-identifier">emit_n</span>(<span class="ruby-identifier">year</span> <span class="ruby-operator">%</span> <span class="ruby-value">100</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'Z'</span>; <span class="ruby-identifier">emit_au</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%:z'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\A(:{0,3})z/</span>
+        <span class="ruby-identifier">t</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">size</span>
+        <span class="ruby-identifier">sign</span> = <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">offset</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value">-1</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value">+1</span> <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">fr</span> = <span class="ruby-identifier">offset</span>.<span class="ruby-identifier">abs</span>
+        <span class="ruby-identifier">hh</span>, <span class="ruby-identifier">fr</span> = <span class="ruby-identifier">fr</span>.<span class="ruby-identifier">divmod</span>(<span class="ruby-value">1</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">24</span>)
+        <span class="ruby-identifier">mm</span>, <span class="ruby-identifier">fr</span> = <span class="ruby-identifier">fr</span>.<span class="ruby-identifier">divmod</span>(<span class="ruby-value">1</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">1440</span>)
+        <span class="ruby-identifier">ss</span>, <span class="ruby-identifier">fr</span> = <span class="ruby-identifier">fr</span>.<span class="ruby-identifier">divmod</span>(<span class="ruby-value">1</span>.<span class="ruby-identifier">to_r</span><span class="ruby-operator">/</span><span class="ruby-value">86400</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">t</span> <span class="ruby-operator">==</span> <span class="ruby-value">3</span>
+          <span class="ruby-keyword kw">if</span>    <span class="ruby-identifier">ss</span>.<span class="ruby-identifier">nonzero?</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">t</span> =  <span class="ruby-value">2</span>
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">mm</span>.<span class="ruby-identifier">nonzero?</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">t</span> =  <span class="ruby-value">1</span>
+          <span class="ruby-keyword kw">else</span>                   <span class="ruby-identifier">t</span> = <span class="ruby-value">-1</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">t</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">-1</span>
+          <span class="ruby-identifier">tail</span> = []
+          <span class="ruby-identifier">sep</span> = <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span>
+          <span class="ruby-identifier">f</span>[<span class="ruby-identifier">:w</span>] <span class="ruby-operator">-=</span> <span class="ruby-value">2</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">f</span>[<span class="ruby-identifier">:w</span>]
+          <span class="ruby-identifier">tail</span> = [<span class="ruby-value str">'%02d'</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">mm</span>]
+          <span class="ruby-identifier">sep</span> = <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span>
+          <span class="ruby-identifier">f</span>[<span class="ruby-identifier">:w</span>] <span class="ruby-operator">-=</span> <span class="ruby-value">3</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">f</span>[<span class="ruby-identifier">:w</span>]
+          <span class="ruby-identifier">tail</span> = [<span class="ruby-value str">'%02d'</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">mm</span>]
+          <span class="ruby-identifier">sep</span> = <span class="ruby-value str">':'</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">2</span>
+          <span class="ruby-identifier">f</span>[<span class="ruby-identifier">:w</span>] <span class="ruby-operator">-=</span> <span class="ruby-value">6</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">f</span>[<span class="ruby-identifier">:w</span>]
+          <span class="ruby-identifier">tail</span> = [<span class="ruby-value str">'%02d'</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">mm</span>, <span class="ruby-value str">'%02d'</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">ss</span>]
+          <span class="ruby-identifier">sep</span> = <span class="ruby-value str">':'</span>
+        <span class="ruby-keyword kw">end</span>
+        ([<span class="ruby-identifier">emit_z</span>(<span class="ruby-identifier">sign</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">hh</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">f</span>)] <span class="ruby-operator">+</span> <span class="ruby-identifier">tail</span>).<span class="ruby-identifier">join</span>(<span class="ruby-identifier">sep</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'%'</span>; <span class="ruby-identifier">emit_a</span>(<span class="ruby-value str">'%'</span>, <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'+'</span>; <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%a %b %e %H:%M:%S %Z %Y'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'1'</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$VERBOSE</span>
+          <span class="ruby-identifier">warn</span>(<span class="ruby-value str">&quot;warning: strftime: %1 is deprecated; forget this&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">emit_n</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-value">1</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'2'</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$VERBOSE</span>
+          <span class="ruby-identifier">warn</span>(<span class="ruby-value str">&quot;warning: strftime: %2 is deprecated; use '%Y-%j'&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%Y-%j'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'3'</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$VERBOSE</span>
+          <span class="ruby-identifier">warn</span>(<span class="ruby-value str">&quot;warning: strftime: %3 is deprecated; use '%F'&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">emit_a</span>(<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">'%F'</span>), <span class="ruby-value">0</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">c</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000192" class="method-detail">
+        <a name="M000192"></a>
+
+        <div class="method-heading">
+          <span class="method-name">succ</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Date.html#M000191">next</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000201" class="method-detail">
+        <a name="M000201"></a>
+
+        <div class="method-heading">
+          <a href="#M000201" class="method-signature">
+          <span class="method-name">to_s</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the date as a human-readable string.
+</p>
+<p>
+The format used is YYYY-MM-DD.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000201-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000201-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1344</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s</span>() <span class="ruby-identifier">strftime</span> <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000196" class="method-detail">
+        <a name="M000196"></a>
+
+        <div class="method-heading">
+          <a href="#M000196" class="method-signature">
+          <span class="method-name">upto</span><span class="method-args">(max) {|date| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Step forward one <a href="Date.html#M000173">day</a> at a time until we
+reach <tt>max</tt> (inclusive), yielding each date as we go.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000196-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000196-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1320</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">upto</span>(<span class="ruby-identifier">max</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-comment cmt"># :yield: date</span>
+    <span class="ruby-identifier">step</span>(<span class="ruby-identifier">max</span>, <span class="ruby-value">+1</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000177" class="method-detail">
+        <a name="M000177"></a>
+
+        <div class="method-heading">
+          <a href="#M000177" class="method-signature">
+          <span class="method-name">wday</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the week <a href="Date.html#M000173">day</a> of this date. Sunday is <a
+href="Date.html#M000173">day</a>-of-week 0; Saturday is <a
+href="Date.html#M000173">day</a>-of-week 6.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000177-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000177-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1119</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">wday</span>() <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">jd_to_wday</span>(<span class="ruby-identifier">jd</span>) <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000169" class="method-detail">
+        <a name="M000169"></a>
+
+        <div class="method-heading">
+          <a href="#M000169" class="method-signature">
+          <span class="method-name">yday</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the <a href="Date.html#M000173">day</a>-of-the-<a
+href="Date.html#M000168">year</a> of this date.
+</p>
+<p>
+January 1 is <a href="Date.html#M000173">day</a>-of-the-<a
+href="Date.html#M000168">year</a> 1
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000169-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000169-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1062</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">yday</span>() <span class="ruby-identifier">ordinal</span>[<span class="ruby-value">1</span>] <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000168" class="method-detail">
+        <a name="M000168"></a>
+
+        <div class="method-heading">
+          <a href="#M000168" class="method-signature">
+          <span class="method-name">year</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the <a href="Date.html#M000168">year</a> of this date.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000168-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000168-source">
+<pre>
+<span class="ruby-comment cmt"># File date.rb, line 1057</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">year</span>() <span class="ruby-identifier">civil</span>[<span class="ruby-value">0</span>] <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

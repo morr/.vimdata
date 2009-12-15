@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>ino (File::Stat)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     stat.ino   =&gt; fixnum
+ *  
+ *  Returns the inode number for &lt;i&gt;stat&lt;/i&gt;.
+ *     
+ *     File.stat(&quot;testfile&quot;).ino   #=&gt; 1083669
+ *     
+ */
+
+static VALUE
+rb_stat_ino(self)
+    VALUE self;
+{
+#ifdef HUGE_ST_INO
+    return ULL2NUM(get_stat(self)-&gt;st_ino);
+#else
+    return ULONG2NUM(get_stat(self)-&gt;st_ino);
+#endif
+}</pre>
+</body>
+</html>

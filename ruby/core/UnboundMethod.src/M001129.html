@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>== (UnboundMethod)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   meth == other_meth  =&gt; true or false
+ *
+ * Two method objects are equal if that are bound to the same
+ * object and contain the same body.
+ */
+
+
+static VALUE
+method_eq(method, other)
+    VALUE method, other;
+{
+    struct METHOD *m1, *m2;
+
+    if (TYPE(other) != T_DATA || RDATA(other)-&gt;dmark != (RUBY_DATA_FUNC)bm_mark)
+        return Qfalse;
+    if (CLASS_OF(method) != CLASS_OF(other))
+        return Qfalse;
+
+    Data_Get_Struct(method, struct METHOD, m1);
+    Data_Get_Struct(other, struct METHOD, m2);
+
+    if (m1-&gt;klass != m2-&gt;klass || m1-&gt;rklass != m2-&gt;rklass ||
+        m1-&gt;recv != m2-&gt;recv || m1-&gt;body != m2-&gt;body)
+        return Qfalse;
+
+    return Qtrue;
+}</pre>
+</body>
+</html>

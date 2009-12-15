@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>inspect (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.inspect   =&gt; string
+ *  
+ *  Returns a string containing a human-readable representation of
+ *  &lt;i&gt;obj&lt;/i&gt;. If not overridden, uses the &lt;code&gt;to_s&lt;/code&gt; method to
+ *  generate the string.
+ *     
+ *     [ 1, 2, 3..4, 'five' ].inspect   #=&gt; &quot;[1, 2, 3..4, \&quot;five\&quot;]&quot;
+ *     Time.new.inspect                 #=&gt; &quot;Wed Apr 09 08:54:39 CDT 2003&quot;
+ */
+
+
+static VALUE
+rb_obj_inspect(obj)
+    VALUE obj;
+{
+    if (TYPE(obj) == T_OBJECT
+        &amp;&amp; ROBJECT(obj)-&gt;iv_tbl
+        &amp;&amp; ROBJECT(obj)-&gt;iv_tbl-&gt;num_entries &gt; 0) {
+        VALUE str;
+        size_t len;
+        char *c;
+
+        c = rb_obj_classname(obj);
+        if (rb_inspecting_p(obj)) {
+            len = strlen(c)+10+16+1;
+            str = rb_str_new(0, len); /* 10:tags 16:addr 1:nul */
+            snprintf(RSTRING(str)-&gt;ptr, len, &quot;#&lt;%s:0x%lx ...&gt;&quot;, c, obj);
+            RSTRING(str)-&gt;len = strlen(RSTRING(str)-&gt;ptr);
+            return str;
+        }
+        len = strlen(c)+6+16+1;
+        str = rb_str_new(0, len);     /* 6:tags 16:addr 1:nul */
+        snprintf(RSTRING(str)-&gt;ptr, len, &quot;-&lt;%s:0x%lx&quot;, c, obj);
+        RSTRING(str)-&gt;len = strlen(RSTRING(str)-&gt;ptr);
+        return rb_protect_inspect(inspect_obj, obj, str);
+    }
+    return rb_funcall(obj, rb_intern(&quot;to_s&quot;), 0, 0);
+}</pre>
+</body>
+</html>

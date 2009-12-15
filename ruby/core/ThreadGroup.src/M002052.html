@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>add (ThreadGroup)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     thgrp.add(thread)   =&gt; thgrp
+ *  
+ *  Adds the given &lt;em&gt;thread&lt;/em&gt; to this group, removing it from any other
+ *  group to which it may have previously belonged.
+ *     
+ *     puts &quot;Initial group is #{ThreadGroup::Default.list}&quot;
+ *     tg = ThreadGroup.new
+ *     t1 = Thread.new { sleep }
+ *     t2 = Thread.new { sleep }
+ *     puts &quot;t1 is #{t1}&quot;
+ *     puts &quot;t2 is #{t2}&quot;
+ *     tg.add(t1)
+ *     puts &quot;Initial group now #{ThreadGroup::Default.list}&quot;
+ *     puts &quot;tg group now #{tg.list}&quot;
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     Initial group is #&lt;Thread:0x401bdf4c&gt;
+ *     t1 is #&lt;Thread:0x401b3c90&gt;
+ *     t2 is #&lt;Thread:0x401b3c18&gt;
+ *     Initial group now #&lt;Thread:0x401b3c18&gt;#&lt;Thread:0x401bdf4c&gt;
+ *     tg group now #&lt;Thread:0x401b3c90&gt;
+ */
+
+static VALUE
+thgroup_add(group, thread)
+    VALUE group, thread;
+{
+    rb_thread_t th;
+    struct thgroup *data;
+
+    rb_secure(4);
+    th = rb_thread_check(thread);
+
+    if (OBJ_FROZEN(group)) {
+      rb_raise(rb_eThreadError, &quot;can't move to the frozen thread group&quot;);
+    }
+    Data_Get_Struct(group, struct thgroup, data);
+    if (data-&gt;enclosed) {
+        rb_raise(rb_eThreadError, &quot;can't move to the enclosed thread group&quot;);
+    }
+
+    if (!th-&gt;thgroup) {
+        return Qnil;
+    }
+    if (OBJ_FROZEN(th-&gt;thgroup)) {
+        rb_raise(rb_eThreadError, &quot;can't move from the frozen thread group&quot;);
+    }
+    Data_Get_Struct(th-&gt;thgroup, struct thgroup, data);
+    if (data-&gt;enclosed) {
+        rb_raise(rb_eThreadError, &quot;can't move from the enclosed thread group&quot;);
+    }
+
+    th-&gt;thgroup = group;
+    return group;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sysseek (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.sysseek(offset, whence=SEEK_SET)   =&gt; integer
+ *  
+ *  Seeks to a given &lt;i&gt;offset&lt;/i&gt; in the stream according to the value
+ *  of &lt;i&gt;whence&lt;/i&gt; (see &lt;code&gt;IO#seek&lt;/code&gt; for values of
+ *  &lt;i&gt;whence&lt;/i&gt;). Returns the new offset into the file.
+ *     
+ *     f = File.new(&quot;testfile&quot;)
+ *     f.sysseek(-13, IO::SEEK_END)   #=&gt; 53
+ *     f.sysread(10)                  #=&gt; &quot;And so on.&quot;
+ */
+
+static VALUE
+rb_io_sysseek(argc, argv, io)
+    int argc;
+    VALUE *argv;
+    VALUE io;
+{
+    VALUE offset, ptrname;
+    int whence = SEEK_SET;
+    OpenFile *fptr;
+    off_t pos;
+
+    if (rb_scan_args(argc, argv, &quot;11&quot;, &amp;offset, &amp;ptrname) == 2) {
+        whence = NUM2INT(ptrname);
+    }
+    pos = NUM2OFFT(offset);
+    GetOpenFile(io, fptr);
+    if ((fptr-&gt;mode &amp; FMODE_READABLE) &amp;&amp; READ_DATA_BUFFERED(fptr-&gt;f)) {
+        rb_raise(rb_eIOError, &quot;sysseek for buffered IO&quot;);
+    }
+    if ((fptr-&gt;mode &amp; FMODE_WRITABLE) &amp;&amp; (fptr-&gt;mode &amp; FMODE_WBUF)) {
+        rb_warn(&quot;sysseek for buffered IO&quot;);
+    }
+    pos = lseek(fileno(fptr-&gt;f), pos, whence);
+    if (pos == -1) rb_sys_fail(fptr-&gt;path);
+    clearerr(fptr-&gt;f);
+
+    return OFFT2NUM(pos);
+}</pre>
+</body>
+</html>

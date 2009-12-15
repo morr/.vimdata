@@ -1,0 +1,2585 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Kernel</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Kernel</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/object_c.html">
+                object.c
+                </a>
+        <br />
+                <a href="../files/lib/open-uri_rb.html">
+                lib/open-uri.rb
+                </a>
+        <br />
+                <a href="../files/lib/pathname_rb.html">
+                lib/pathname.rb
+                </a>
+        <br />
+                <a href="../files/lib/pp_rb.html">
+                lib/pp.rb
+                </a>
+        <br />
+                <a href="../files/lib/scanf_rb.html">
+                lib/scanf.rb
+                </a>
+        <br />
+                <a href="../files/lib/soap/soap_rb.html">
+                lib/soap/soap.rb
+                </a>
+        <br />
+                <a href="../files/lib/uri/common_rb.html">
+                lib/uri/common.rb
+                </a>
+        <br />
+                <a href="../files/lib/yaml_rb.html">
+                lib/yaml.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<tt><a href="Object.html">Object</a></tt> is the parent class of all
+classes in Ruby. Its methods are therefore available to all objects unless
+explicitly overridden.
+</p>
+<p>
+<tt><a href="Object.html">Object</a></tt> mixes in the <tt><a
+href="Kernel.html">Kernel</a></tt> module, making the built-in kernel
+functions globally accessible. Although the instance methods of <tt><a
+href="Object.html">Object</a></tt> are defined by the <tt><a
+href="Kernel.html">Kernel</a></tt> module, we have chosen to document them
+here for clarity.
+</p>
+<p>
+In the descriptions of <a href="Object.html">Object</a>&#8216;s methods,
+the parameter <em>symbol</em> refers to a symbol, which is either a quoted
+string or a <tt><a href="Symbol.html">Symbol</a></tt> (such as
+<tt>:name</tt>).
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M005967">Array</a>&nbsp;&nbsp;
+      <a href="#M005965">Float</a>&nbsp;&nbsp;
+      <a href="#M005964">Integer</a>&nbsp;&nbsp;
+      <a href="#M005987">Pathname</a>&nbsp;&nbsp;
+      <a href="#M005966">String</a>&nbsp;&nbsp;
+      <a href="#M005991">URI</a>&nbsp;&nbsp;
+      <a href="#M005960">`</a>&nbsp;&nbsp;
+      <a href="#M005931">abort</a>&nbsp;&nbsp;
+      <a href="#M005932">at_exit</a>&nbsp;&nbsp;
+      <a href="#M005942">autoload</a>&nbsp;&nbsp;
+      <a href="#M005943">autoload?</a>&nbsp;&nbsp;
+      <a href="#M005946">binding</a>&nbsp;&nbsp;
+      <a href="#M005924">block_given?</a>&nbsp;&nbsp;
+      <a href="#M005947">callcc</a>&nbsp;&nbsp;
+      <a href="#M005929">caller</a>&nbsp;&nbsp;
+      <a href="#M005933">catch</a>&nbsp;&nbsp;
+      <a href="#M005982">chomp</a>&nbsp;&nbsp;
+      <a href="#M005983">chomp!</a>&nbsp;&nbsp;
+      <a href="#M005980">chop</a>&nbsp;&nbsp;
+      <a href="#M005981">chop!</a>&nbsp;&nbsp;
+      <a href="#M005922">eval</a>&nbsp;&nbsp;
+      <a href="#M005968">exec</a>&nbsp;&nbsp;
+      <a href="#M005930">exit</a>&nbsp;&nbsp;
+      <a href="#M005970">exit!</a>&nbsp;&nbsp;
+      <a href="#M005928">fail</a>&nbsp;&nbsp;
+      <a href="#M005969">fork</a>&nbsp;&nbsp;
+      <a href="#M005963">format</a>&nbsp;&nbsp;
+      <a href="#M005957">getc</a>&nbsp;&nbsp;
+      <a href="#M005955">gets</a>&nbsp;&nbsp;
+      <a href="#M005935">global_variables</a>&nbsp;&nbsp;
+      <a href="#M005977">gsub</a>&nbsp;&nbsp;
+      <a href="#M005979">gsub!</a>&nbsp;&nbsp;
+      <a href="#M005923">iterator?</a>&nbsp;&nbsp;
+      <a href="#M005945">lambda</a>&nbsp;&nbsp;
+      <a href="#M005940">load</a>&nbsp;&nbsp;
+      <a href="#M005936">local_variables</a>&nbsp;&nbsp;
+      <a href="#M005926">loop</a>&nbsp;&nbsp;
+      <a href="#M005925">method_missing</a>&nbsp;&nbsp;
+      <a href="#M005950">open</a>&nbsp;&nbsp;
+      <a href="#M005986">open</a>&nbsp;&nbsp;
+      <a href="#M005961">p</a>&nbsp;&nbsp;
+      <a href="#M005989">pp</a>&nbsp;&nbsp;
+      <a href="#M005988">pretty_inspect</a>&nbsp;&nbsp;
+      <a href="#M005952">print</a>&nbsp;&nbsp;
+      <a href="#M005951">printf</a>&nbsp;&nbsp;
+      <a href="#M005944">proc</a>&nbsp;&nbsp;
+      <a href="#M005953">putc</a>&nbsp;&nbsp;
+      <a href="#M005954">puts</a>&nbsp;&nbsp;
+      <a href="#M005927">raise</a>&nbsp;&nbsp;
+      <a href="#M005974">rand</a>&nbsp;&nbsp;
+      <a href="#M005956">readline</a>&nbsp;&nbsp;
+      <a href="#M005959">readlines</a>&nbsp;&nbsp;
+      <a href="#M005941">require</a>&nbsp;&nbsp;
+      <a href="#M005985">scan</a>&nbsp;&nbsp;
+      <a href="#M005958">select</a>&nbsp;&nbsp;
+      <a href="#M005939">set_trace_func</a>&nbsp;&nbsp;
+      <a href="#M005972">sleep</a>&nbsp;&nbsp;
+      <a href="#M005984">split</a>&nbsp;&nbsp;
+      <a href="#M005962">sprintf</a>&nbsp;&nbsp;
+      <a href="#M005973">srand</a>&nbsp;&nbsp;
+      <a href="#M005976">sub</a>&nbsp;&nbsp;
+      <a href="#M005978">sub!</a>&nbsp;&nbsp;
+      <a href="#M005949">syscall</a>&nbsp;&nbsp;
+      <a href="#M005971">system</a>&nbsp;&nbsp;
+      <a href="#M005948">test</a>&nbsp;&nbsp;
+      <a href="#M005934">throw</a>&nbsp;&nbsp;
+      <a href="#M005937">trace_var</a>&nbsp;&nbsp;
+      <a href="#M005975">trap</a>&nbsp;&nbsp;
+      <a href="#M005938">untrace_var</a>&nbsp;&nbsp;
+      <a href="#M005990">warn</a>&nbsp;&nbsp;
+      <a href="#M005921">warn</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M005967" class="method-detail">
+        <a name="M005967"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005967.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005967.html');return false;">
+          <span class="method-name">Array(arg)    => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <em>arg</em> as an <tt><a
+href="Kernel.html#M005967">Array</a></tt>. First tries to call
+<em>arg</em><tt>.to_ary</tt>, then <em>arg</em><tt>.to_a</tt>. If both <a
+href="Kernel.html#M005928">fail</a>, creates a single element array
+containing <em>arg</em> (unless <em>arg</em> is <tt>nil</tt>).
+</p>
+<pre>
+   Array(1..5)   #=&gt; [1, 2, 3, 4, 5]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005965" class="method-detail">
+        <a name="M005965"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005965.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005965.html');return false;">
+          <span class="method-name">Float(arg)    => float<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <em>arg</em> converted to a float. <a
+href="Numeric.html">Numeric</a> types are converted directly, the rest are
+converted using <em>arg</em>.to_f. As of Ruby 1.8, converting <tt>nil</tt>
+generates a <tt><a href="TypeError.html">TypeError</a></tt>.
+</p>
+<pre>
+   Float(1)           #=&gt; 1.0
+   Float(&quot;123.456&quot;)   #=&gt; 123.456
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005964" class="method-detail">
+        <a name="M005964"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005964.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005964.html');return false;">
+          <span class="method-name">Integer(arg)    => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts <em>arg</em> to a <tt><a href="Fixnum.html">Fixnum</a></tt> or
+<tt><a href="Bignum.html">Bignum</a></tt>. <a
+href="Numeric.html">Numeric</a> types are converted directly (with floating
+point numbers being truncated). If <em>arg</em> is a <tt><a
+href="Kernel.html#M005966">String</a></tt>, leading radix indicators
+(<tt>0</tt>, <tt>0b</tt>, and <tt>0x</tt>) are honored. Others are
+converted using <tt>to_int</tt> and <tt>to_i</tt>. This behavior is
+different from that of <tt><a
+href="String.html#M000787">String#to_i</a></tt>.
+</p>
+<pre>
+   Integer(123.999)    #=&gt; 123
+   Integer(&quot;0x1a&quot;)     #=&gt; 26
+   Integer(Time.new)   #=&gt; 1049896590
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005966" class="method-detail">
+        <a name="M005966"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005966.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005966.html');return false;">
+          <span class="method-name">String(arg)   => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts <em>arg</em> to a <tt><a
+href="Kernel.html#M005966">String</a></tt> by calling its <tt>to_s</tt>
+method.
+</p>
+<pre>
+   String(self)        #=&gt; &quot;main&quot;
+   String(self.class   #=&gt; &quot;Object&quot;
+   String(123456)      #=&gt; &quot;123456&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005991" class="method-detail">
+        <a name="M005991"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005991.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005991.html');return false;">
+          <span class="method-name">URI</span><span class="method-args">(uri_str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+alias for <a href="URI.html#M004807">URI.parse</a>.
+</p>
+<p>
+This method is introduced at 1.8.2.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005960" class="method-detail">
+        <a name="M005960"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005960.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005960.html');return false;">
+          <span class="method-name">`cmd`    => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the standard output of running <em>cmd</em> in a subshell. The
+built-in syntax <tt>%x{&#8230;}</tt> uses this method. Sets <tt>$?</tt> to
+the process status.
+</p>
+<pre>
+   `date`                   #=&gt; &quot;Wed Apr  9 08:56:30 CDT 2003\n&quot;
+   `ls testdir`.split[1]    #=&gt; &quot;main.rb&quot;
+   `echo oops &amp;&amp; exit 99`   #=&gt; &quot;oops\n&quot;
+   $?.exitstatus            #=&gt; 99
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005931" class="method-detail">
+        <a name="M005931"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005931.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005931.html');return false;">
+          <span class="method-name">abort<br />
+Kernel::abort<br />
+Process::abort<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Terminate execution immediately, effectively by calling <tt><a
+href="Kernel.html#M005930">Kernel.exit(1)</a></tt>. If <em>msg</em> is
+given, it is written to STDERR prior to terminating.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005932" class="method-detail">
+        <a name="M005932"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005932.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005932.html');return false;">
+          <span class="method-name">at_exit { block } &rarr; proc<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts <em>block</em> to a <tt><a href="Proc.html">Proc</a></tt> object
+(and therefore binds it at the point of call) and registers it for
+execution when the program exits. If multiple handlers are registered, they
+are executed in reverse order of registration.
+</p>
+<pre>
+   def do_at_exit(str1)
+     at_exit { print str1 }
+   end
+   at_exit { puts &quot;cruel world&quot; }
+   do_at_exit(&quot;goodbye &quot;)
+   exit
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   goodbye cruel world
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005942" class="method-detail">
+        <a name="M005942"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005942.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005942.html');return false;">
+          <span class="method-name">autoload(module, filename)   => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Registers <em>filename</em> to be loaded (using <tt>Kernel::require</tt>)
+the first time that <em>module</em> (which may be a <tt><a
+href="Kernel.html#M005966">String</a></tt> or a symbol) is accessed.
+</p>
+<pre>
+   autoload(:MyModule, &quot;/usr/local/lib/modules/my_module.rb&quot;)
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005943" class="method-detail">
+        <a name="M005943"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005943.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005943.html');return false;">
+          <span class="method-name">autoload(module, filename)   => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Registers <em>filename</em> to be loaded (using <tt>Kernel::require</tt>)
+the first time that <em>module</em> (which may be a <tt><a
+href="Kernel.html#M005966">String</a></tt> or a symbol) is accessed.
+</p>
+<pre>
+   autoload(:MyModule, &quot;/usr/local/lib/modules/my_module.rb&quot;)
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005946" class="method-detail">
+        <a name="M005946"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005946.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005946.html');return false;">
+          <span class="method-name">binding &rarr; a_binding<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <tt><a href="Binding.html">Binding</a></tt> object, describing
+the variable and method bindings at the point of call. This object can be
+used when calling <tt><a href="Kernel.html#M005922">eval</a></tt> to
+execute the evaluated command in this environment. Also see the description
+of class <tt><a href="Binding.html">Binding</a></tt>.
+</p>
+<pre>
+   def getBinding(param)
+     return binding
+   end
+   b = getBinding(&quot;hello&quot;)
+   eval(&quot;param&quot;, b)   #=&gt; &quot;hello&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005924" class="method-detail">
+        <a name="M005924"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005924.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005924.html');return false;">
+          <span class="method-name">block_given?   => true or false<br />
+iterator?      => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if <tt>yield</tt> would execute a block in the
+current context. The <tt><a href="Kernel.html#M005923">iterator?</a></tt>
+form is mildly deprecated.
+</p>
+<pre>
+   def try
+     if block_given?
+       yield
+     else
+       &quot;no block&quot;
+     end
+   end
+   try                  #=&gt; &quot;no block&quot;
+   try { &quot;hello&quot; }      #=&gt; &quot;hello&quot;
+   try do &quot;hello&quot; end   #=&gt; &quot;hello&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005947" class="method-detail">
+        <a name="M005947"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005947.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005947.html');return false;">
+          <span class="method-name">callcc {|cont| block }   =>  obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Generates a <tt><a href="Continuation.html">Continuation</a></tt> object,
+which it passes to the associated block. Performing a
+<em>cont</em><tt>.call</tt> will cause the <tt><a
+href="Kernel.html#M005947">callcc</a></tt> to return (as will falling
+through the end of the block). The value returned by the <tt><a
+href="Kernel.html#M005947">callcc</a></tt> is the value of the block, or
+the value passed to <em>cont</em><tt>.call</tt>. See class <tt><a
+href="Continuation.html">Continuation</a></tt> for more details. Also see
+<tt>Kernel::throw</tt> for an alternative mechanism for unwinding a call
+stack.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005929" class="method-detail">
+        <a name="M005929"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005929.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005929.html');return false;">
+          <span class="method-name">caller(start=1)    => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the current execution stack&#8212;an array containing strings in
+the form ``<em>file:line</em>&#8217;&#8217; or ``<em>file:line: in
+`method&#8216;</em>&#8217;&#8217;. The optional <em>start</em> parameter
+determines the number of initial stack entries to omit from the result.
+</p>
+<pre>
+   def a(skip)
+     caller(skip)
+   end
+   def b(skip)
+     a(skip)
+   end
+   def c(skip)
+     b(skip)
+   end
+   c(0)   #=&gt; [&quot;prog:2:in `a'&quot;, &quot;prog:5:in `b'&quot;, &quot;prog:8:in `c'&quot;, &quot;prog:10&quot;]
+   c(1)   #=&gt; [&quot;prog:5:in `b'&quot;, &quot;prog:8:in `c'&quot;, &quot;prog:11&quot;]
+   c(2)   #=&gt; [&quot;prog:8:in `c'&quot;, &quot;prog:12&quot;]
+   c(3)   #=&gt; [&quot;prog:13&quot;]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005933" class="method-detail">
+        <a name="M005933"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005933.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005933.html');return false;">
+          <span class="method-name">catch(symbol) {| | block }  > obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<tt><a href="Kernel.html#M005933">catch</a></tt> executes its block. If a
+<tt><a href="Kernel.html#M005934">throw</a></tt> is executed, Ruby searches
+up its stack for a <tt><a href="Kernel.html#M005933">catch</a></tt> block
+with a tag corresponding to the <tt><a
+href="Kernel.html#M005934">throw</a></tt>&#8216;s <em>symbol</em>. If
+found, that block is terminated, and <tt><a
+href="Kernel.html#M005933">catch</a></tt> returns the value given to <tt><a
+href="Kernel.html#M005934">throw</a></tt>. If <tt><a
+href="Kernel.html#M005934">throw</a></tt> is not called, the block
+terminates normally, and the value of <tt><a
+href="Kernel.html#M005933">catch</a></tt> is the value of the last
+expression evaluated. <tt><a href="Kernel.html#M005933">catch</a></tt>
+expressions may be nested, and the <tt><a
+href="Kernel.html#M005934">throw</a></tt> call need not be in lexical
+scope.
+</p>
+<pre>
+   def routine(n)
+     puts n
+     throw :done if n &lt;= 0
+     routine(n-1)
+   end
+
+   catch(:done) { routine(3) }
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   3
+   2
+   1
+   0
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005982" class="method-detail">
+        <a name="M005982"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005982.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005982.html');return false;">
+          <span class="method-name">chomp            => $_<br />
+chomp(string)    => $_<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt>$_ = $_.chomp(<em>string</em>)</tt>. See <tt><a
+href="String.html#M000819">String#chomp</a></tt>.
+</p>
+<pre>
+   $_ = &quot;now\n&quot;
+   chomp         #=&gt; &quot;now&quot;
+   $_            #=&gt; &quot;now&quot;
+   chomp &quot;ow&quot;    #=&gt; &quot;n&quot;
+   $_            #=&gt; &quot;n&quot;
+   chomp &quot;xxx&quot;   #=&gt; &quot;n&quot;
+   $_            #=&gt; &quot;n&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005983" class="method-detail">
+        <a name="M005983"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005983.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005983.html');return false;">
+          <span class="method-name">chomp!             => $_ or nil<br />
+chomp!(string)     => $_ or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt>$_.chomp!(<em>string</em>)</tt>. See <tt><a
+href="String.html#M000819">String#chomp</a>!</tt>
+</p>
+<pre>
+   $_ = &quot;now\n&quot;
+   chomp!       #=&gt; &quot;now&quot;
+   $_           #=&gt; &quot;now&quot;
+   chomp! &quot;x&quot;   #=&gt; nil
+   $_           #=&gt; &quot;now&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005980" class="method-detail">
+        <a name="M005980"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005980.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005980.html');return false;">
+          <span class="method-name">chop   => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt>($_.dup).<a href="Kernel.html#M005981">chop!</a></tt>,
+except <tt>nil</tt> is never returned. See <tt><a
+href="String.html#M000818">String#chop</a>!</tt>.
+</p>
+<pre>
+   a  =  &quot;now\r\n&quot;
+   $_ = a
+   chop   #=&gt; &quot;now&quot;
+   $_     #=&gt; &quot;now&quot;
+   chop   #=&gt; &quot;no&quot;
+   chop   #=&gt; &quot;n&quot;
+   chop   #=&gt; &quot;&quot;
+   chop   #=&gt; &quot;&quot;
+   a      #=&gt; &quot;now\r\n&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005981" class="method-detail">
+        <a name="M005981"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005981.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005981.html');return false;">
+          <span class="method-name">chop!    => $_ or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt>$_.chop!</tt>.
+</p>
+<pre>
+   a  = &quot;now\r\n&quot;
+   $_ = a
+   chop!   #=&gt; &quot;now&quot;
+   chop!   #=&gt; &quot;no&quot;
+   chop!   #=&gt; &quot;n&quot;
+   chop!   #=&gt; &quot;&quot;
+   chop!   #=&gt; nil
+   $_      #=&gt; &quot;&quot;
+   a       #=&gt; &quot;&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005922" class="method-detail">
+        <a name="M005922"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005922.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005922.html');return false;">
+          <span class="method-name">eval(string [, binding [, filename [,lineno]]])  => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Evaluates the Ruby expression(s) in <em>string</em>. If <em><a
+href="Kernel.html#M005946">binding</a></em> is given, the evaluation is
+performed in its context. The <a href="Kernel.html#M005946">binding</a> may
+be a <tt><a href="Binding.html">Binding</a></tt> object or a <tt><a
+href="Proc.html">Proc</a></tt> object. If the optional <em>filename</em>
+and <em>lineno</em> parameters are present, they will be used when
+reporting syntax errors.
+</p>
+<pre>
+   def getBinding(str)
+     return binding
+   end
+   str = &quot;hello&quot;
+   eval &quot;str + ' Fred'&quot;                      #=&gt; &quot;hello Fred&quot;
+   eval &quot;str + ' Fred'&quot;, getBinding(&quot;bye&quot;)   #=&gt; &quot;bye Fred&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005968" class="method-detail">
+        <a name="M005968"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005968.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005968.html');return false;">
+          <span class="method-name">exec(command [, arg, ...])<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Replaces the current process by running the given external
+<em>command</em>. If <tt><a href="Kernel.html#M005968">exec</a></tt> is
+given a single argument, that argument is taken as a line that is subject
+to shell expansion before being executed. If multiple arguments are given,
+the second and subsequent arguments are passed as parameters to
+<em>command</em> with no shell expansion. If the first argument is a
+two-element array, the first element is the command to be executed, and the
+second argument is used as the <tt>argv[0]</tt> value, which may show up in
+process listings. In MSDOS environments, the command is executed in a
+subshell; otherwise, one of the <tt><a
+href="Kernel.html#M005968">exec</a>(2)</tt> <a
+href="Kernel.html#M005971">system</a> calls is used, so the running command
+may inherit some of the environment of the original program (including <a
+href="Kernel.html#M005950">open</a> file descriptors).
+</p>
+<pre>
+   exec &quot;echo *&quot;       # echoes list of files in current directory
+   # never get here
+
+   exec &quot;echo&quot;, &quot;*&quot;    # echoes an asterisk
+   # never get here
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005930" class="method-detail">
+        <a name="M005930"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005930.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005930.html');return false;">
+          <span class="method-name">exit(integer=0)<br />
+Kernel::exit(integer=0)<br />
+Process::exit(integer=0)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Initiates the termination of the Ruby script by raising the <tt><a
+href="SystemExit.html">SystemExit</a></tt> exception. This exception may be
+caught. The optional parameter is used to return a status code to the
+invoking environment.
+</p>
+<pre>
+   begin
+     exit
+     puts &quot;never get here&quot;
+   rescue SystemExit
+     puts &quot;rescued a SystemExit exception&quot;
+   end
+   puts &quot;after begin block&quot;
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   rescued a SystemExit exception
+   after begin block
+</pre>
+<p>
+Just prior to termination, Ruby executes any <tt><a
+href="Kernel.html#M005932">at_exit</a></tt> functions (see Kernel::at_exit)
+and runs any object finalizers (see ObjectSpace::define_finalizer).
+</p>
+<pre>
+   at_exit { puts &quot;at_exit function&quot; }
+   ObjectSpace.define_finalizer(&quot;string&quot;,  proc { puts &quot;in finalizer&quot; })
+   exit
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   at_exit function
+   in finalizer
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005970" class="method-detail">
+        <a name="M005970"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005970.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005970.html');return false;">
+          <span class="method-name">Process.exit!(fixnum=-1)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Exits the process immediately. No <a href="Kernel.html#M005930">exit</a>
+handlers are run. <em>fixnum</em> is returned to the underlying <a
+href="Kernel.html#M005971">system</a> as the <a
+href="Kernel.html#M005930">exit</a> status.
+</p>
+<pre>
+   Process.exit!(0)
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005928" class="method-detail">
+        <a name="M005928"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005928.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005928.html');return false;">
+          <span class="method-name">raise<br />
+raise(string)<br />
+raise(exception [, string [, array]])<br />
+fail<br />
+fail(string)<br />
+fail(exception [, string [, array]])<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+With no arguments, raises the exception in <tt>$!</tt> or raises a <tt><a
+href="RuntimeError.html">RuntimeError</a></tt> if <tt>$!</tt> is
+<tt>nil</tt>. With a single <tt><a
+href="Kernel.html#M005966">String</a></tt> argument, raises a <tt><a
+href="RuntimeError.html">RuntimeError</a></tt> with the string as a
+message. Otherwise, the first parameter should be the name of an <tt><a
+href="Exception.html">Exception</a></tt> class (or an object that returns
+an <tt><a href="Exception.html">Exception</a></tt> object when sent an
+<tt>exception</tt> message). The optional second parameter sets the message
+associated with the exception, and the third parameter is an array of
+callback information. Exceptions are caught by the <tt>rescue</tt> clause
+of <tt>begin...end</tt> blocks.
+</p>
+<pre>
+   raise &quot;Failed to create socket&quot;
+   raise ArgumentError, &quot;No parameters&quot;, caller
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005969" class="method-detail">
+        <a name="M005969"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005969.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005969.html');return false;">
+          <span class="method-name">Kernel.fork  [{ block }]   => fixnum or nil<br />
+Process.fork [{ block }]   => fixnum or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a subprocess. If a block is specified, that block is run in the
+subprocess, and the subprocess terminates with a status of zero. Otherwise,
+the <tt><a href="Kernel.html#M005969">fork</a></tt> call returns twice,
+once in the parent, returning the process ID of the child, and once in the
+child, returning <em>nil</em>. The child process can <a
+href="Kernel.html#M005930">exit</a> using <tt><a
+href="Kernel.html#M005930">Kernel.exit</a>!</tt> to avoid running any
+<tt><a href="Kernel.html#M005932">at_exit</a></tt> functions. The parent
+process should use <tt><a href="Process.html#M003153">Process.wait</a></tt>
+to collect the termination statuses of its children or use <tt><a
+href="Process.html#M003158">Process.detach</a></tt> to register disinterest
+in their status; otherwise, the operating <a
+href="Kernel.html#M005971">system</a> may accumulate zombie processes.
+</p>
+<p>
+The thread calling <a href="Kernel.html#M005969">fork</a> is the only
+thread in the created child process. <a href="Kernel.html#M005969">fork</a>
+doesn&#8216;t copy other threads.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005963" class="method-detail">
+        <a name="M005963"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005963.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005963.html');return false;">
+          <span class="method-name">format(format_string [, arguments...] )   => string<br />
+sprintf(format_string [, arguments...] )  => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the string resulting from applying <em>format_string</em> to any
+additional arguments. Within the <a href="Kernel.html#M005963">format</a>
+string, any characters other than <a href="Kernel.html#M005963">format</a>
+sequences are copied to the result. A <a
+href="Kernel.html#M005963">format</a> sequence consists of a percent sign,
+followed by optional flags, width, and precision indicators, then
+terminated with a field type character. The field type controls how the
+corresponding <tt><a href="Kernel.html#M005962">sprintf</a></tt> argument
+is to be interpreted, while the flags modify that interpretation. The field
+type characters are listed in the table at the end of this section. The
+flag characters are:
+</p>
+<pre>
+  Flag     | Applies to   | Meaning
+  ---------+--------------+-----------------------------------------
+  space    | bdeEfgGiouxX | Leave a space at the start of
+           |              | positive numbers.
+  ---------+--------------+-----------------------------------------
+  (digit)$ | all          | Specifies the absolute argument number
+           |              | for this field. Absolute and relative
+           |              | argument numbers cannot be mixed in a
+           |              | sprintf string.
+  ---------+--------------+-----------------------------------------
+   #       | beEfgGoxX    | Use an alternative format. For the
+           |              | conversions `o', `x', `X', and `b',
+           |              | prefix the result with ``0'', ``0x'', ``0X'',
+           |              |  and ``0b'', respectively. For `e',
+           |              | `E', `f', `g', and 'G', force a decimal
+           |              | point to be added, even if no digits follow.
+           |              | For `g' and 'G', do not remove trailing zeros.
+  ---------+--------------+-----------------------------------------
+  +        | bdeEfgGiouxX | Add a leading plus sign to positive numbers.
+  ---------+--------------+-----------------------------------------
+  -        | all          | Left-justify the result of this conversion.
+  ---------+--------------+-----------------------------------------
+  0 (zero) | bdeEfgGiouxX | Pad with zeros, not spaces.
+  ---------+--------------+-----------------------------------------
+  *        | all          | Use the next argument as the field width.
+           |              | If negative, left-justify the result. If the
+           |              | asterisk is followed by a number and a dollar
+           |              | sign, use the indicated argument as the width.
+</pre>
+<p>
+The field width is an optional integer, followed optionally by a period and
+a precision. The width specifies the minimum number of characters that will
+be written to the result for this field. For numeric fields, the precision
+controls the number of decimal places displayed. For string fields, the
+precision determines the maximum number of characters to be copied from the
+string. (Thus, the <a href="Kernel.html#M005963">format</a> sequence
+<tt>%10.10s</tt> will always contribute exactly ten characters to the
+result.)
+</p>
+<p>
+The field types are:
+</p>
+<pre>
+    Field |  Conversion
+    ------+--------------------------------------------------------------
+      b   | Convert argument as a binary number.
+      c   | Argument is the numeric code for a single character.
+      d   | Convert argument as a decimal number.
+      E   | Equivalent to `e', but uses an uppercase E to indicate
+          | the exponent.
+      e   | Convert floating point argument into exponential notation
+          | with one digit before the decimal point. The precision
+          | determines the number of fractional digits (defaulting to six).
+      f   | Convert floating point argument as [-]ddd.ddd,
+          |  where the precision determines the number of digits after
+          | the decimal point.
+      G   | Equivalent to `g', but use an uppercase `E' in exponent form.
+      g   | Convert a floating point number using exponential form
+          | if the exponent is less than -4 or greater than or
+          | equal to the precision, or in d.dddd form otherwise.
+      i   | Identical to `d'.
+      o   | Convert argument as an octal number.
+      p   | The valuing of argument.inspect.
+      s   | Argument is a string to be substituted. If the format
+          | sequence contains a precision, at most that many characters
+          | will be copied.
+      u   | Treat argument as an unsigned decimal number. Negative integers
+          | are displayed as a 32 bit two's complement plus one for the
+          | underlying architecture; that is, 2 ** 32 + n.  However, since
+          | Ruby has no inherent limit on bits used to represent the
+          | integer, this value is preceded by two dots (..) in order to
+          | indicate a infinite number of leading sign bits.
+      X   | Convert argument as a hexadecimal number using uppercase
+          | letters. Negative numbers will be displayed with two
+          | leading periods (representing an infinite string of
+          | leading 'FF's.
+      x   | Convert argument as a hexadecimal number.
+          | Negative numbers will be displayed with two
+          | leading periods (representing an infinite string of
+          | leading 'ff's.
+</pre>
+<p>
+Examples:
+</p>
+<pre>
+   sprintf(&quot;%d %04x&quot;, 123, 123)               #=&gt; &quot;123 007b&quot;
+   sprintf(&quot;%08b '%4s'&quot;, 123, 123)            #=&gt; &quot;01111011 ' 123'&quot;
+   sprintf(&quot;%1$*2$s %2$d %1$s&quot;, &quot;hello&quot;, 8)   #=&gt; &quot;   hello 8 hello&quot;
+   sprintf(&quot;%1$*2$s %2$d&quot;, &quot;hello&quot;, -8)       #=&gt; &quot;hello    -8&quot;
+   sprintf(&quot;%+g:% g:%-g&quot;, 1.23, 1.23, 1.23)   #=&gt; &quot;+1.23: 1.23:1.23&quot;
+   sprintf(&quot;%u&quot;, -123)                        #=&gt; &quot;..4294967173&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005957" class="method-detail">
+        <a name="M005957"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005957.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005957.html');return false;">
+          <span class="method-name">getc</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+obsolete
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005955" class="method-detail">
+        <a name="M005955"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005955.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005955.html');return false;">
+          <span class="method-name">gets(separator=$/)    => string or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns (and assigns to <tt>$_</tt>) the next line from the list of files
+in <tt>ARGV</tt> (or <tt>$*</tt>), or from standard input if no files are
+present on the command line. Returns <tt>nil</tt> at end of file. The
+optional argument specifies the record separator. The separator is included
+with the contents of each record. A separator of <tt>nil</tt> reads the
+entire contents, and a zero-length separator reads the input one paragraph
+at a time, where paragraphs are divided by two consecutive newlines. If
+multiple filenames are present in <tt>ARGV</tt>, +<a
+href="Kernel.html#M005955">gets</a>(nil)+ will read the contents one file
+at a time.
+</p>
+<pre>
+   ARGV &lt;&lt; &quot;testfile&quot;
+   print while gets
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   This is line one
+   This is line two
+   This is line three
+   And so on...
+</pre>
+<p>
+The style of programming using <tt>$_</tt> as an implicit parameter is
+gradually losing favor in the Ruby community.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005935" class="method-detail">
+        <a name="M005935"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005935.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005935.html');return false;">
+          <span class="method-name">global_variables    => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array of the names of global variables.
+</p>
+<pre>
+   global_variables.grep /std/   #=&gt; [&quot;$stderr&quot;, &quot;$stdout&quot;, &quot;$stdin&quot;]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005977" class="method-detail">
+        <a name="M005977"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005977.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005977.html');return false;">
+          <span class="method-name">gsub(pattern, replacement)    => string<br />
+gsub(pattern) {|...| block }  => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt>$_.gsub&#8230;</tt>, except that <tt>$_</tt> receives the
+modified result.
+</p>
+<pre>
+   $_ = &quot;quick brown fox&quot;
+   gsub /[aeiou]/, '*'   #=&gt; &quot;q**ck br*wn f*x&quot;
+   $_                    #=&gt; &quot;q**ck br*wn f*x&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005979" class="method-detail">
+        <a name="M005979"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005979.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005979.html');return false;">
+          <span class="method-name">gsub!(pattern, replacement)    => string or nil<br />
+gsub!(pattern) {|...| block }  => string or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt>Kernel::gsub</tt>, except <tt>nil</tt> is returned if
+<tt>$_</tt> is not modified.
+</p>
+<pre>
+   $_ = &quot;quick brown fox&quot;
+   gsub! /cat/, '*'   #=&gt; nil
+   $_                 #=&gt; &quot;quick brown fox&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005923" class="method-detail">
+        <a name="M005923"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005923.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005923.html');return false;">
+          <span class="method-name">block_given?   => true or false<br />
+iterator?      => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if <tt>yield</tt> would execute a block in the
+current context. The <tt><a href="Kernel.html#M005923">iterator?</a></tt>
+form is mildly deprecated.
+</p>
+<pre>
+   def try
+     if block_given?
+       yield
+     else
+       &quot;no block&quot;
+     end
+   end
+   try                  #=&gt; &quot;no block&quot;
+   try { &quot;hello&quot; }      #=&gt; &quot;hello&quot;
+   try do &quot;hello&quot; end   #=&gt; &quot;hello&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005945" class="method-detail">
+        <a name="M005945"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005945.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005945.html');return false;">
+          <span class="method-name">proc   { |...| block }  => a_proc<br />
+lambda { |...| block }  => a_proc<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt><a href="Proc.html#M001551">Proc.new</a></tt>, except the
+resulting <a href="Proc.html">Proc</a> objects check the number of
+parameters passed when called.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005940" class="method-detail">
+        <a name="M005940"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005940.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005940.html');return false;">
+          <span class="method-name">load(filename, wrap=false)   => true<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Loads and executes the Ruby program in the file <em>filename</em>. If the
+filename does not resolve to an absolute path, the file is searched for in
+the library directories listed in <tt>$:</tt>. If the optional
+<em>wrap</em> parameter is <tt>true</tt>, the loaded script will be
+executed under an anonymous module, protecting the calling program&#8216;s
+global namespace. In no circumstance will any local variables in the loaded
+file be propagated to the loading environment.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005936" class="method-detail">
+        <a name="M005936"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005936.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005936.html');return false;">
+          <span class="method-name">local_variables    => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the names of the current local variables.
+</p>
+<pre>
+   fred = 1
+   for i in 1..10
+      # ...
+   end
+   local_variables   #=&gt; [&quot;fred&quot;, &quot;i&quot;]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005926" class="method-detail">
+        <a name="M005926"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005926.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005926.html');return false;">
+          <span class="method-name">loop {|| block } <br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Repeatedly executes the block.
+</p>
+<pre>
+   loop do
+     print &quot;Input: &quot;
+     line = gets
+     break if !line or line =~ /^qQ/
+     # ...
+   end
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005925" class="method-detail">
+        <a name="M005925"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005925.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005925.html');return false;">
+          <span class="method-name">obj.method_missing(symbol [, *args] )   => result<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Invoked by Ruby when <em>obj</em> is sent a message it cannot handle.
+<em>symbol</em> is the symbol for the method called, and <em>args</em> are
+any arguments that were passed to it. By default, the interpreter raises an
+error when this method is called. However, it is possible to override the
+method to provide more dynamic behavior. The example below creates a class
+<tt>Roman</tt>, which responds to methods with names consisting of roman
+numerals, returning the corresponding integer values.
+</p>
+<pre>
+   class Roman
+     def romanToInt(str)
+       # ...
+     end
+     def method_missing(methId)
+       str = methId.id2name
+       romanToInt(str)
+     end
+   end
+
+   r = Roman.new
+   r.iv      #=&gt; 4
+   r.xxiii   #=&gt; 23
+   r.mm      #=&gt; 2000
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005950" class="method-detail">
+        <a name="M005950"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005950.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005950.html');return false;">
+          <span class="method-name">open(path [, mode [, perm]] )                => io or nil<br />
+open(path [, mode [, perm]] ) {|io| block }  => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates an <tt><a href="IO.html">IO</a></tt> object connected to the given
+stream, file, or subprocess.
+</p>
+<p>
+If <em>path</em> does not start with a pipe character
+(``<tt>|</tt>&#8217;&#8217;), treat it as the name of a file to <a
+href="Kernel.html#M005950">open</a> using the specified mode (defaulting to
+``<tt>r</tt>&#8217;&#8217;). (See the table of valid modes on page 331.) If
+a file is being created, its initial permissions may be set using the
+integer third parameter.
+</p>
+<p>
+If a block is specified, it will be invoked with the <tt><a
+href="File.html">File</a></tt> object as a parameter, and the file will be
+automatically closed when the block terminates. The call returns the value
+of the block.
+</p>
+<p>
+If <em>path</em> starts with a pipe character, a subprocess is created,
+connected to the <a href="Kernel.html#M005929">caller</a> by a pair of
+pipes. The returned <tt><a href="IO.html">IO</a></tt> object may be used to
+write to the standard input and read from the standard output of this
+subprocess. If the command following the ``<tt>|</tt>&#8217;&#8217; is a
+single minus sign, Ruby forks, and this subprocess is connected to the
+parent. In the subprocess, the <tt><a
+href="Kernel.html#M005950">open</a></tt> call returns <tt>nil</tt>. If the
+command is not ``<tt>-</tt>&#8217;&#8217;, the subprocess runs the command.
+If a block is associated with an <tt><a
+href="Kernel.html#M005950">open</a>(&quot;|-&quot;)</tt> call, that block
+will be run twice&#8212;once in the parent and once in the child. The block
+parameter will be an <tt><a href="IO.html">IO</a></tt> object in the parent
+and <tt>nil</tt> in the child. The parent&#8216;s <tt><a
+href="IO.html">IO</a></tt> object will be connected to the child&#8216;s
+<tt>$stdin</tt> and <tt>$stdout</tt>. The subprocess will be terminated at
+the end of the block.
+</p>
+<pre>
+   open(&quot;testfile&quot;) do |f|
+     print f.gets
+   end
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   This is line one
+</pre>
+<p>
+Open a subprocess and read its output:
+</p>
+<pre>
+   cmd = open(&quot;|date&quot;)
+   print cmd.gets
+   cmd.close
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   Wed Apr  9 08:56:31 CDT 2003
+</pre>
+<p>
+Open a subprocess running the same Ruby program:
+</p>
+<pre>
+   f = open(&quot;|-&quot;, &quot;w+&quot;)
+   if f == nil
+     puts &quot;in Child&quot;
+     exit
+   else
+     puts &quot;Got: #{f.gets}&quot;
+   end
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   Got: in Child
+</pre>
+<p>
+Open a subprocess using a block to receive the I/O object:
+</p>
+<pre>
+   open(&quot;|-&quot;) do |f|
+     if f == nil
+       puts &quot;in Child&quot;
+     else
+       puts &quot;Got: #{f.gets}&quot;
+     end
+   end
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   Got: in Child
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005961" class="method-detail">
+        <a name="M005961"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005961.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005961.html');return false;">
+          <span class="method-name">p(obj, ...)    => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+For each object, directly writes <em>obj</em>.<tt>inspect</tt> followed by
+the current output record separator to the program&#8216;s standard output.
+</p>
+<pre>
+   S = Struct.new(:name, :state)
+   s = S['dave', 'TX']
+   p s
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   #&lt;S name=&quot;dave&quot;, state=&quot;TX&quot;&gt;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005988" class="method-detail">
+        <a name="M005988"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005988.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005988.html');return false;">
+          <span class="method-name">pretty_inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+returns a pretty printed object as a string.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005952" class="method-detail">
+        <a name="M005952"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005952.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005952.html');return false;">
+          <span class="method-name">print(obj, ...)    => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Prints each object in turn to <tt>$stdout</tt>. If the output field
+separator (<tt>$,</tt>) is not <tt>nil</tt>, its contents will appear
+between each field. If the output record separator (<tt>$\</tt>) is not
+<tt>nil</tt>, it will be appended to the output. If no arguments are given,
+prints <tt>$_</tt>. Objects that aren&#8216;t strings will be converted by
+calling their <tt>to_s</tt> method.
+</p>
+<pre>
+   print &quot;cat&quot;, [1,2,3], 99, &quot;\n&quot;
+   $, = &quot;, &quot;
+   $\ = &quot;\n&quot;
+   print &quot;cat&quot;, [1,2,3], 99
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   cat12399
+   cat, 1, 2, 3, 99
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005951" class="method-detail">
+        <a name="M005951"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005951.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005951.html');return false;">
+          <span class="method-name">printf(io, string [, obj ... ] )    => nil<br />
+printf(string [, obj ... ] )        => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to:
+</p>
+<pre>
+   io.write(sprintf(string, obj, ...)
+</pre>
+<p>
+or
+</p>
+<pre>
+   $stdout.write(sprintf(string, obj, ...)
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005944" class="method-detail">
+        <a name="M005944"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005944.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005944.html');return false;">
+          <span class="method-name">proc   { |...| block }  => a_proc<br />
+lambda { |...| block }  => a_proc<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt><a href="Proc.html#M001551">Proc.new</a></tt>, except the
+resulting <a href="Proc.html">Proc</a> objects check the number of
+parameters passed when called.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005953" class="method-detail">
+        <a name="M005953"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005953.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005953.html');return false;">
+          <span class="method-name">putc(int)   => int<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to:
+</p>
+<pre>
+  $stdout.putc(int)
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005954" class="method-detail">
+        <a name="M005954"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005954.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005954.html');return false;">
+          <span class="method-name">puts(obj, ...)    => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to
+</p>
+<pre>
+    $stdout.puts(obj, ...)
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005927" class="method-detail">
+        <a name="M005927"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005927.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005927.html');return false;">
+          <span class="method-name">raise<br />
+raise(string)<br />
+raise(exception [, string [, array]])<br />
+fail<br />
+fail(string)<br />
+fail(exception [, string [, array]])<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+With no arguments, raises the exception in <tt>$!</tt> or raises a <tt><a
+href="RuntimeError.html">RuntimeError</a></tt> if <tt>$!</tt> is
+<tt>nil</tt>. With a single <tt><a
+href="Kernel.html#M005966">String</a></tt> argument, raises a <tt><a
+href="RuntimeError.html">RuntimeError</a></tt> with the string as a
+message. Otherwise, the first parameter should be the name of an <tt><a
+href="Exception.html">Exception</a></tt> class (or an object that returns
+an <tt><a href="Exception.html">Exception</a></tt> object when sent an
+<tt>exception</tt> message). The optional second parameter sets the message
+associated with the exception, and the third parameter is an array of
+callback information. Exceptions are caught by the <tt>rescue</tt> clause
+of <tt>begin...end</tt> blocks.
+</p>
+<pre>
+   raise &quot;Failed to create socket&quot;
+   raise ArgumentError, &quot;No parameters&quot;, caller
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005974" class="method-detail">
+        <a name="M005974"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005974.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005974.html');return false;">
+          <span class="method-name">rand(max=0)    => number<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts <em>max</em> to an integer using max1 = max<tt>.to_i.abs</tt>. If
+the result is zero, returns a pseudorandom floating point number greater
+than or equal to 0.0 and less than 1.0. Otherwise, returns a pseudorandom
+integer greater than or equal to zero and less than max1.
+<tt>Kernel::srand</tt> may be used to ensure repeatable sequences of random
+numbers between different runs of the program. Ruby currently uses a
+modified Mersenne Twister with a period of 2**19937-1.
+</p>
+<pre>
+   srand 1234                 #=&gt; 0
+   [ rand,  rand ]            #=&gt; [0.191519450163469, 0.49766366626136]
+   [ rand(10), rand(1000) ]   #=&gt; [6, 817]
+   srand 1234                 #=&gt; 1234
+   [ rand,  rand ]            #=&gt; [0.191519450163469, 0.49766366626136]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005956" class="method-detail">
+        <a name="M005956"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005956.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005956.html');return false;">
+          <span class="method-name">readline(separator=$/)   => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt>Kernel::gets</tt>, except <tt><a
+href="Kernel.html#M005956">readline</a></tt> raises <tt><a
+href="EOFError.html">EOFError</a></tt> at end of file.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005959" class="method-detail">
+        <a name="M005959"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005959.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005959.html');return false;">
+          <span class="method-name">readlines(separator=$/)    => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array containing the lines returned by calling <tt><a
+href="Kernel.html#M005955">Kernel.gets</a>(<em>separator</em>)</tt> until
+the end of file.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005941" class="method-detail">
+        <a name="M005941"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005941.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005941.html');return false;">
+          <span class="method-name">require(string)    => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Ruby tries to <a href="Kernel.html#M005940">load</a> the library named
+<em>string</em>, returning <tt>true</tt> if successful. If the filename
+does not resolve to an absolute path, it will be searched for in the
+directories listed in <tt>$:</tt>. If the file has the extension
+``.rb&#8217;&#8217;, it is loaded as a source file; if the extension is
+``.so&#8217;&#8217;, ``.o&#8217;&#8217;, or ``.dll&#8217;&#8217;, or
+whatever the default shared library extension is on the current platform,
+Ruby loads the shared library as a Ruby extension. Otherwise, Ruby tries
+adding ``.rb&#8217;&#8217;, ``.so&#8217;&#8217;, and so on to the name. The
+name of the loaded feature is added to the array in <tt>$&quot;</tt>. A
+feature will not be loaded if it&#8216;s name already appears in
+<tt>$&quot;</tt>. However, the file name is not converted to an absolute
+path, so that ``<tt><a href="Kernel.html#M005941">require</a>
+&#8216;a&#8217;;<a href="Kernel.html#M005941">require</a>
+&#8217;./a&#8216;</tt>&#8217;&#8217; will <a
+href="Kernel.html#M005940">load</a> <tt>a.rb</tt> twice.
+</p>
+<pre>
+   require &quot;my-library.rb&quot;
+   require &quot;db-driver&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005985" class="method-detail">
+        <a name="M005985"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005985.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005985.html');return false;">
+          <span class="method-name">scan(pattern)                   => array<br />
+scan(pattern) {|///| block }    => $_<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to calling <tt>$_.scan</tt>. See <tt><a
+href="String.html#M000812">String#scan</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005958" class="method-detail">
+        <a name="M005958"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005958.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005958.html');return false;">
+          <span class="method-name">IO.select(read_array <br />
+[, write_array <br />
+[, error_array <br />
+[, timeout]]] ) =>  array  or  nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="Kernel.html#M005958">Kernel#select</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005939" class="method-detail">
+        <a name="M005939"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005939.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005939.html');return false;">
+          <span class="method-name">set_trace_func(proc)    => proc<br />
+set_trace_func(nil)     => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Establishes <em><a href="Kernel.html#M005944">proc</a></em> as the handler
+for tracing, or disables tracing if the parameter is <tt>nil</tt>. <em><a
+href="Kernel.html#M005944">proc</a></em> takes up to six parameters: an
+event name, a filename, a line number, an object id, a <a
+href="Kernel.html#M005946">binding</a>, and the name of a class. <em><a
+href="Kernel.html#M005944">proc</a></em> is invoked whenever an event
+occurs. Events are: <tt>c-call</tt> (call a C-language routine),
+<tt>c-return</tt> (return from a C-language routine), <tt>call</tt> (call a
+Ruby method), <tt>class</tt> (start a class or module definition),
+<tt>end</tt> (finish a class or module definition), <tt>line</tt> (execute
+code on a new line), <tt><a href="Kernel.html#M005927">raise</a></tt> (<a
+href="Kernel.html#M005927">raise</a> an exception), and <tt>return</tt>
+(return from a Ruby method). Tracing is disabled within the context of
+<em><a href="Kernel.html#M005944">proc</a></em>.
+</p>
+<pre>
+    class Test
+    def test
+      a = 1
+      b = 2
+    end
+    end
+
+    set_trace_func proc { |event, file, line, id, binding, classname|
+       printf &quot;%8s %s:%-2d %10s %8s\n&quot;, event, file, line, id, classname
+    }
+    t = Test.new
+    t.test
+
+      line prog.rb:11               false
+    c-call prog.rb:11        new    Class
+    c-call prog.rb:11 initialize   Object
+  c-return prog.rb:11 initialize   Object
+  c-return prog.rb:11        new    Class
+      line prog.rb:12               false
+      call prog.rb:2        test     Test
+      line prog.rb:3        test     Test
+      line prog.rb:4        test     Test
+    return prog.rb:4        test     Test
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005972" class="method-detail">
+        <a name="M005972"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005972.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005972.html');return false;">
+          <span class="method-name">sleep([duration])    => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Suspends the current thread for <em>duration</em> seconds (which may be any
+number, including a <tt><a href="Kernel.html#M005965">Float</a></tt> with
+fractional seconds). Returns the actual number of seconds slept (rounded),
+which may be less than that asked for if another thread calls <tt><a
+href="Thread.html#M000452">Thread#run</a></tt>. Zero arguments causes
+<tt><a href="Kernel.html#M005972">sleep</a></tt> to <a
+href="Kernel.html#M005972">sleep</a> forever.
+</p>
+<pre>
+   Time.new    #=&gt; Wed Apr 09 08:56:32 CDT 2003
+   sleep 1.2   #=&gt; 1
+   Time.new    #=&gt; Wed Apr 09 08:56:33 CDT 2003
+   sleep 1.9   #=&gt; 2
+   Time.new    #=&gt; Wed Apr 09 08:56:35 CDT 2003
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005984" class="method-detail">
+        <a name="M005984"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005984.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005984.html');return false;">
+          <span class="method-name">split([pattern [, limit]])    => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt>$_.split(<em>pattern</em>, <em>limit</em>)</tt>. See
+<tt><a href="String.html#M000803">String#split</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005962" class="method-detail">
+        <a name="M005962"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005962.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005962.html');return false;">
+          <span class="method-name">format(format_string [, arguments...] )   => string<br />
+sprintf(format_string [, arguments...] )  => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the string resulting from applying <em>format_string</em> to any
+additional arguments. Within the <a href="Kernel.html#M005963">format</a>
+string, any characters other than <a href="Kernel.html#M005963">format</a>
+sequences are copied to the result. A <a
+href="Kernel.html#M005963">format</a> sequence consists of a percent sign,
+followed by optional flags, width, and precision indicators, then
+terminated with a field type character. The field type controls how the
+corresponding <tt><a href="Kernel.html#M005962">sprintf</a></tt> argument
+is to be interpreted, while the flags modify that interpretation. The field
+type characters are listed in the table at the end of this section. The
+flag characters are:
+</p>
+<pre>
+  Flag     | Applies to   | Meaning
+  ---------+--------------+-----------------------------------------
+  space    | bdeEfgGiouxX | Leave a space at the start of
+           |              | positive numbers.
+  ---------+--------------+-----------------------------------------
+  (digit)$ | all          | Specifies the absolute argument number
+           |              | for this field. Absolute and relative
+           |              | argument numbers cannot be mixed in a
+           |              | sprintf string.
+  ---------+--------------+-----------------------------------------
+   #       | beEfgGoxX    | Use an alternative format. For the
+           |              | conversions `o', `x', `X', and `b',
+           |              | prefix the result with ``0'', ``0x'', ``0X'',
+           |              |  and ``0b'', respectively. For `e',
+           |              | `E', `f', `g', and 'G', force a decimal
+           |              | point to be added, even if no digits follow.
+           |              | For `g' and 'G', do not remove trailing zeros.
+  ---------+--------------+-----------------------------------------
+  +        | bdeEfgGiouxX | Add a leading plus sign to positive numbers.
+  ---------+--------------+-----------------------------------------
+  -        | all          | Left-justify the result of this conversion.
+  ---------+--------------+-----------------------------------------
+  0 (zero) | bdeEfgGiouxX | Pad with zeros, not spaces.
+  ---------+--------------+-----------------------------------------
+  *        | all          | Use the next argument as the field width.
+           |              | If negative, left-justify the result. If the
+           |              | asterisk is followed by a number and a dollar
+           |              | sign, use the indicated argument as the width.
+</pre>
+<p>
+The field width is an optional integer, followed optionally by a period and
+a precision. The width specifies the minimum number of characters that will
+be written to the result for this field. For numeric fields, the precision
+controls the number of decimal places displayed. For string fields, the
+precision determines the maximum number of characters to be copied from the
+string. (Thus, the <a href="Kernel.html#M005963">format</a> sequence
+<tt>%10.10s</tt> will always contribute exactly ten characters to the
+result.)
+</p>
+<p>
+The field types are:
+</p>
+<pre>
+    Field |  Conversion
+    ------+--------------------------------------------------------------
+      b   | Convert argument as a binary number.
+      c   | Argument is the numeric code for a single character.
+      d   | Convert argument as a decimal number.
+      E   | Equivalent to `e', but uses an uppercase E to indicate
+          | the exponent.
+      e   | Convert floating point argument into exponential notation
+          | with one digit before the decimal point. The precision
+          | determines the number of fractional digits (defaulting to six).
+      f   | Convert floating point argument as [-]ddd.ddd,
+          |  where the precision determines the number of digits after
+          | the decimal point.
+      G   | Equivalent to `g', but use an uppercase `E' in exponent form.
+      g   | Convert a floating point number using exponential form
+          | if the exponent is less than -4 or greater than or
+          | equal to the precision, or in d.dddd form otherwise.
+      i   | Identical to `d'.
+      o   | Convert argument as an octal number.
+      p   | The valuing of argument.inspect.
+      s   | Argument is a string to be substituted. If the format
+          | sequence contains a precision, at most that many characters
+          | will be copied.
+      u   | Treat argument as an unsigned decimal number. Negative integers
+          | are displayed as a 32 bit two's complement plus one for the
+          | underlying architecture; that is, 2 ** 32 + n.  However, since
+          | Ruby has no inherent limit on bits used to represent the
+          | integer, this value is preceded by two dots (..) in order to
+          | indicate a infinite number of leading sign bits.
+      X   | Convert argument as a hexadecimal number using uppercase
+          | letters. Negative numbers will be displayed with two
+          | leading periods (representing an infinite string of
+          | leading 'FF's.
+      x   | Convert argument as a hexadecimal number.
+          | Negative numbers will be displayed with two
+          | leading periods (representing an infinite string of
+          | leading 'ff's.
+</pre>
+<p>
+Examples:
+</p>
+<pre>
+   sprintf(&quot;%d %04x&quot;, 123, 123)               #=&gt; &quot;123 007b&quot;
+   sprintf(&quot;%08b '%4s'&quot;, 123, 123)            #=&gt; &quot;01111011 ' 123'&quot;
+   sprintf(&quot;%1$*2$s %2$d %1$s&quot;, &quot;hello&quot;, 8)   #=&gt; &quot;   hello 8 hello&quot;
+   sprintf(&quot;%1$*2$s %2$d&quot;, &quot;hello&quot;, -8)       #=&gt; &quot;hello    -8&quot;
+   sprintf(&quot;%+g:% g:%-g&quot;, 1.23, 1.23, 1.23)   #=&gt; &quot;+1.23: 1.23:1.23&quot;
+   sprintf(&quot;%u&quot;, -123)                        #=&gt; &quot;..4294967173&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005973" class="method-detail">
+        <a name="M005973"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005973.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005973.html');return false;">
+          <span class="method-name">srand(number=0)    => old_seed<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Seeds the pseudorandom number generator to the value of
+<em>number</em>.<tt>to_i.abs</tt>. If <em>number</em> is omitted, seeds the
+generator using a combination of the time, the process id, and a sequence
+number. (This is also the behavior if <tt>Kernel::rand</tt> is called
+without previously calling <tt><a
+href="Kernel.html#M005973">srand</a></tt>, but without the sequence.) By
+setting the seed to a known value, scripts can be made deterministic during
+testing. The previous seed value is returned. Also see
+<tt>Kernel::rand</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005976" class="method-detail">
+        <a name="M005976"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005976.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005976.html');return false;">
+          <span class="method-name">sub(pattern, replacement)   => $_<br />
+sub(pattern) { block }      => $_<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt>$_.sub(<em>args</em>)</tt>, except that <tt>$_</tt> will
+be updated if substitution occurs.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005978" class="method-detail">
+        <a name="M005978"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005978.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005978.html');return false;">
+          <span class="method-name">sub!(pattern, replacement)    => $_ or nil<br />
+sub!(pattern) {|...| block }  => $_ or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt>$_.sub!(<em>args</em>)</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005949" class="method-detail">
+        <a name="M005949"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005949.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005949.html');return false;">
+          <span class="method-name">syscall(fixnum [, args...])   => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Calls the operating <a href="Kernel.html#M005971">system</a> function
+identified by <em>fixnum</em>, passing in the arguments, which must be
+either <tt><a href="Kernel.html#M005966">String</a></tt> objects, or <tt><a
+href="Kernel.html#M005964">Integer</a></tt> objects that ultimately fit
+within a native <tt>long</tt>. Up to nine parameters may be passed (14 on
+the Atari-ST). The function identified by <em>fixnum</em> is <a
+href="Kernel.html#M005971">system</a> dependent. On some Unix systems, the
+numbers may be obtained from a header file called <tt>syscall.h</tt>.
+</p>
+<pre>
+   syscall 4, 1, &quot;hello\n&quot;, 6   # '4' is write(2) on our box
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   hello
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005971" class="method-detail">
+        <a name="M005971"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005971.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005971.html');return false;">
+          <span class="method-name">system(cmd [, arg, ...])    => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Executes <em>cmd</em> in a subshell, returning <tt>true</tt> if the command
+was found and ran successfully, <tt>false</tt> otherwise. An error status
+is available in <tt>$?</tt>. The arguments are processed in the same way as
+for <tt>Kernel::exec</tt>.
+</p>
+<pre>
+   system(&quot;echo *&quot;)
+   system(&quot;echo&quot;, &quot;*&quot;)
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   config.h main.rb
+   *
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005948" class="method-detail">
+        <a name="M005948"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005948.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005948.html');return false;">
+          <span class="method-name">test(int_cmd, file1 [, file2] ) => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <pre>
+ Uses the integer &lt;i&gt;aCmd&lt;/i&gt; to perform various tests on
+ &lt;i&gt;file1&lt;/i&gt; (first table below) or on &lt;i&gt;file1&lt;/i&gt; and
+ &lt;i&gt;file2&lt;/i&gt; (second table).
+
+ File tests on a single file:
+
+   Test   Returns   Meaning
+    ?A  | Time    | Last access time for file1
+    ?b  | boolean | True if file1 is a block device
+    ?c  | boolean | True if file1 is a character device
+    ?C  | Time    | Last change time for file1
+    ?d  | boolean | True if file1 exists and is a directory
+    ?e  | boolean | True if file1 exists
+    ?f  | boolean | True if file1 exists and is a regular file
+    ?g  | boolean | True if file1 has the \CF{setgid} bit
+        |         | set (false under NT)
+    ?G  | boolean | True if file1 exists and has a group
+        |         | ownership equal to the caller's group
+    ?k  | boolean | True if file1 exists and has the sticky bit set
+    ?l  | boolean | True if file1 exists and is a symbolic link
+    ?M  | Time    | Last modification time for file1
+    ?o  | boolean | True if file1 exists and is owned by
+        |         | the caller's effective uid
+    ?O  | boolean | True if file1 exists and is owned by
+        |         | the caller's real uid
+    ?p  | boolean | True if file1 exists and is a fifo
+    ?r  | boolean | True if file1 is readable by the effective
+        |         | uid/gid of the caller
+    ?R  | boolean | True if file is readable by the real
+        |         | uid/gid of the caller
+    ?s  | int/nil | If file1 has nonzero size, return the size,
+        |         | otherwise return nil
+    ?S  | boolean | True if file1 exists and is a socket
+    ?u  | boolean | True if file1 has the setuid bit set
+    ?w  | boolean | True if file1 exists and is writable by
+        |         | the effective uid/gid
+    ?W  | boolean | True if file1 exists and is writable by
+        |         | the real uid/gid
+    ?x  | boolean | True if file1 exists and is executable by
+        |         | the effective uid/gid
+    ?X  | boolean | True if file1 exists and is executable by
+        |         | the real uid/gid
+    ?z  | boolean | True if file1 exists and has a zero length
+</pre>
+<p>
+Tests that take two files:
+</p>
+<pre>
+    ?-  | boolean | True if file1 and file2 are identical
+    ?=  | boolean | True if the modification times of file1
+        |         | and file2 are equal
+    ?&lt;  | boolean | True if the modification time of file1
+        |         | is prior to that of file2
+    ?&gt;  | boolean | True if the modification time of file1
+        |         | is after that of file2
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005934" class="method-detail">
+        <a name="M005934"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005934.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005934.html');return false;">
+          <span class="method-name">throw(symbol [, obj])<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Transfers control to the end of the active <tt><a
+href="Kernel.html#M005933">catch</a></tt> block waiting for
+<em>symbol</em>. Raises <tt><a href="NameError.html">NameError</a></tt> if
+there is no <tt><a href="Kernel.html#M005933">catch</a></tt> block for the
+symbol. The optional second parameter supplies a return value for the
+<tt><a href="Kernel.html#M005933">catch</a></tt> block, which otherwise
+defaults to <tt>nil</tt>. For examples, see <tt>Kernel::catch</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005937" class="method-detail">
+        <a name="M005937"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005937.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005937.html');return false;">
+          <span class="method-name">trace_var(symbol, cmd )             => nil<br />
+trace_var(symbol) {|val| block }    => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Controls tracing of assignments to global variables. The parameter +symbol_
+identifies the variable (as either a string name or a symbol identifier).
+<em>cmd</em> (which may be a string or a <tt><a
+href="Proc.html">Proc</a></tt> object) or block is executed whenever the
+variable is assigned. The block or <tt><a href="Proc.html">Proc</a></tt>
+object receives the variable&#8216;s new value as a parameter. Also see
+<tt>Kernel::untrace_var</tt>.
+</p>
+<pre>
+   trace_var :$_, proc {|v| puts &quot;$_ is now '#{v}'&quot; }
+   $_ = &quot;hello&quot;
+   $_ = ' there'
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   $_ is now 'hello'
+   $_ is now ' there'
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005975" class="method-detail">
+        <a name="M005975"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005975.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005975.html');return false;">
+          <span class="method-name">Signal.trap( signal, proc ) => obj<br />
+Signal.trap( signal ) {| | block } => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Specifies the handling of signals. The first parameter is a signal name (a
+string such as ``SIGALRM&#8217;&#8217;, ``SIGUSR1&#8217;&#8217;, and so on)
+or a signal number. The characters ``SIG&#8217;&#8217; may be omitted from
+the signal name. The command or block specifies code to be run when the
+signal is raised. If the command is the string ``IGNORE&#8217;&#8217; or
+``SIG_IGN&#8217;&#8217;, the signal will be ignored. If the command is
+``DEFAULT&#8217;&#8217; or ``SIG_DFL&#8217;&#8217;, the operating <a
+href="Kernel.html#M005971">system</a>&#8216;s default handler will be
+invoked. If the command is ``EXIT&#8217;&#8217;, the script will be
+terminated by the signal. Otherwise, the given command or block will be
+run. The special signal name ``EXIT&#8217;&#8217; or signal number zero
+will be invoked just prior to program termination. <a
+href="Kernel.html#M005975">trap</a> returns the previous handler for the
+given signal.
+</p>
+<pre>
+    Signal.trap(0, proc { puts &quot;Terminating: #{$$}&quot; })
+    Signal.trap(&quot;CLD&quot;)  { puts &quot;Child died&quot; }
+    fork &amp;&amp; Process.wait
+</pre>
+<p>
+produces:
+</p>
+<pre>
+    Terminating: 27461
+    Child died
+    Terminating: 27460
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M005938" class="method-detail">
+        <a name="M005938"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005938.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005938.html');return false;">
+          <span class="method-name">untrace_var(symbol [, cmd] )   => array or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Removes tracing for the specified command on the given global variable and
+returns <tt>nil</tt>. If no command is specified, removes all tracing for
+that variable and returns an array containing the commands actually
+removed.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005990" class="method-detail">
+        <a name="M005990"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005990.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005990.html');return false;">
+          <span class="method-name">warn</span><span class="method-args">(msg)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M005921" class="method-detail">
+        <a name="M005921"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005921.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005921.html');return false;">
+          <span class="method-name">warn(msg)   => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Display the given message (followed by a newline) on STDERR unless warnings
+are disabled (for example with the <tt>-W0</tt> flag).
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Private Instance methods</h3>
+
+      <div id="method-M005987" class="method-detail">
+        <a name="M005987"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005987.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005987.html');return false;">
+          <span class="method-name">Pathname</span><span class="method-args">(path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+create a pathname object.
+</p>
+<p>
+This method is available since 1.8.5.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005986" class="method-detail">
+        <a name="M005986"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005986.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005986.html');return false;">
+          <span class="method-name">open</span><span class="method-args">(name, *rest, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+makes possible to <a href="Kernel.html#M005950">open</a> various resources
+including URIs. If the first argument respond to `<a
+href="Kernel.html#M005950">open</a>&#8217; method, the method is called
+with the rest arguments.
+</p>
+<p>
+If the first argument is a string which begins with xxx://, it is parsed by
+<a href="URI.html#M004807">URI.parse</a>. If the parsed object respond to
+`<a href="Kernel.html#M005950">open</a>&#8217; method, the method is called
+with the rest arguments.
+</p>
+<p>
+Otherwise original <a href="Kernel.html#M005950">open</a> is called.
+</p>
+<p>
+Since <a href="Kernel.html#M005950">open</a>-uri.rb provides
+URI::HTTP#open, URI::HTTPS#open and URI::FTP#open, <a
+href="Kernel.html">Kernel</a>[#.]<a href="Kernel.html#M005950">open</a> can
+accepts such URIs and strings which begins with http://, https:// and
+ftp://. In these case, the opened file object is extended by <a
+href="OpenURI/Meta.html">OpenURI::Meta</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005989" class="method-detail">
+        <a name="M005989"></a>
+
+        <div class="method-heading">
+          <a href="Kernel.src/M005989.html" target="Code" class="method-signature"
+            onclick="popupCode('Kernel.src/M005989.html');return false;">
+          <span class="method-name">pp</span><span class="method-args">(*objs)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+prints arguments in pretty form.
+</p>
+<p>
+<a href="Kernel.html#M005989">pp</a> returns nil.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

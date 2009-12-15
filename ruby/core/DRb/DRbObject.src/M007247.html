@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>method_missing (DRb::DRbObject)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/drb/drb.rb, line 1077</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">method_missing</span>(<span class="ruby-identifier">msg_id</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">a</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">here?</span>(<span class="ruby-ivar">@uri</span>)
+        <span class="ruby-identifier">obj</span> = <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">to_obj</span>(<span class="ruby-ivar">@ref</span>)
+        <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">current_server</span>.<span class="ruby-identifier">check_insecure_method</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">msg_id</span>)
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">__send__</span>(<span class="ruby-identifier">msg_id</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">a</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>) 
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">succ</span>, <span class="ruby-identifier">result</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">with_friend</span>(<span class="ruby-ivar">@uri</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-constant">DRbConn</span>.<span class="ruby-identifier">open</span>(<span class="ruby-ivar">@uri</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">conn</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">conn</span>.<span class="ruby-identifier">send_message</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">msg_id</span>, <span class="ruby-identifier">a</span>, <span class="ruby-identifier">b</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">succ</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">result</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">DRbUnknown</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">result</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-identifier">result</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">bt</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">prepare_backtrace</span>(<span class="ruby-ivar">@uri</span>, <span class="ruby-identifier">result</span>)
+        <span class="ruby-identifier">result</span>.<span class="ruby-identifier">set_backtrace</span>(<span class="ruby-identifier">bt</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">caller</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-identifier">result</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

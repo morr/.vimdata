@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: tkclass.rb</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>tkclass.rb</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>tk/lib/tkclass.rb
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Tue Mar 13 02:04:53 -0500 2007</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+tkclass.rb - <a href="../../../classes/Tk.html">Tk</a> classes
+</p>
+<pre>
+        Date: 2000/11/27 09:23:36
+        by Yukihiro Matsumoto &lt;matz@caelum.co.jp&gt;
+
+        $Id: tkclass.rb 11708 2007-02-12 23:01:19Z shyouhei $
+</pre>
+
+    </div>
+
+    <div id="requires-list">
+      <h3 class="section-bar">Required files</h3>
+
+      <div class="name-list">
+      tk&nbsp;&nbsp;
+      </div>
+    </div>
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004635">Mainloop</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">TopLevel</td>
+          <td>=</td>
+          <td class="context-item-value">TkToplevel</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Frame</td>
+          <td>=</td>
+          <td class="context-item-value">TkFrame</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Label</td>
+          <td>=</td>
+          <td class="context-item-value">TkLabel</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Button</td>
+          <td>=</td>
+          <td class="context-item-value">TkButton</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Radiobutton</td>
+          <td>=</td>
+          <td class="context-item-value">TkRadioButton</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Checkbutton</td>
+          <td>=</td>
+          <td class="context-item-value">TkCheckButton</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Message</td>
+          <td>=</td>
+          <td class="context-item-value">TkMessage</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Entry</td>
+          <td>=</td>
+          <td class="context-item-value">TkEntry</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Spinbox</td>
+          <td>=</td>
+          <td class="context-item-value">TkSpinbox</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Text</td>
+          <td>=</td>
+          <td class="context-item-value">TkText</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Scale</td>
+          <td>=</td>
+          <td class="context-item-value">TkScale</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Scrollbar</td>
+          <td>=</td>
+          <td class="context-item-value">TkScrollbar</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Listbox</td>
+          <td>=</td>
+          <td class="context-item-value">TkListbox</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Menu</td>
+          <td>=</td>
+          <td class="context-item-value">TkMenu</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Menubutton</td>
+          <td>=</td>
+          <td class="context-item-value">TkMenubutton</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Canvas</td>
+          <td>=</td>
+          <td class="context-item-value">TkCanvas</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Arc</td>
+          <td>=</td>
+          <td class="context-item-value">TkcArc</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Bitmap</td>
+          <td>=</td>
+          <td class="context-item-value">TkcBitmap</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Line</td>
+          <td>=</td>
+          <td class="context-item-value">TkcLine</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Oval</td>
+          <td>=</td>
+          <td class="context-item-value">TkcOval</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Polygon</td>
+          <td>=</td>
+          <td class="context-item-value">TkcPolygon</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Rectangle</td>
+          <td>=</td>
+          <td class="context-item-value">TkcRectangle</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">TextItem</td>
+          <td>=</td>
+          <td class="context-item-value">TkcText</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">WindowItem</td>
+          <td>=</td>
+          <td class="context-item-value">TkcWindow</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BitmapImage</td>
+          <td>=</td>
+          <td class="context-item-value">TkBitmapImage</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PhotoImage</td>
+          <td>=</td>
+          <td class="context-item-value">TkPhotoImage</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Selection</td>
+          <td>=</td>
+          <td class="context-item-value">TkSelection</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Winfo</td>
+          <td>=</td>
+          <td class="context-item-value">TkWinfo</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Pack</td>
+          <td>=</td>
+          <td class="context-item-value">TkPack</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Grid</td>
+          <td>=</td>
+          <td class="context-item-value">TkGrid</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Place</td>
+          <td>=</td>
+          <td class="context-item-value">TkPlace</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Variable</td>
+          <td>=</td>
+          <td class="context-item-value">TkVariable</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Font</td>
+          <td>=</td>
+          <td class="context-item-value">TkFont</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">VirtualEvent</td>
+          <td>=</td>
+          <td class="context-item-value">TkVirtualEvent</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004635" class="m-detail">
+        <a name="M004635"></a>
+
+        <div class="method-heading">
+          <a href="#M004635" class="method-signature">
+          <span class="method-name">Mainloop</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004635-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004635-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkclass.rb, line 45</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-constant">Mainloop</span>
+  <span class="ruby-constant">Tk</span>.<span class="ruby-identifier">mainloop</span>
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 3 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

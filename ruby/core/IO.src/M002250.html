@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>print (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.print()             =&gt; nil
+ *     ios.print(obj, ...)     =&gt; nil
+ *  
+ *  Writes the given object(s) to &lt;em&gt;ios&lt;/em&gt;. The stream must be
+ *  opened for writing. If the output record separator (&lt;code&gt;$\\&lt;/code&gt;)
+ *  is not &lt;code&gt;nil&lt;/code&gt;, it will be appended to the output. If no
+ *  arguments are given, prints &lt;code&gt;$_&lt;/code&gt;. Objects that aren't
+ *  strings will be converted by calling their &lt;code&gt;to_s&lt;/code&gt; method.
+ *  With no argument, prints the contents of the variable &lt;code&gt;$_&lt;/code&gt;.
+ *  Returns &lt;code&gt;nil&lt;/code&gt;.
+ *     
+ *     $stdout.print(&quot;This is &quot;, 100, &quot; percent.\n&quot;)
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     This is 100 percent.
+ */
+
+VALUE
+rb_io_print(argc, argv, out)
+    int argc;
+    VALUE *argv;
+    VALUE out;
+{
+    int i;
+    VALUE line;
+
+    /* if no argument given, print `$_' */
+    if (argc == 0) {
+        argc = 1;
+        line = rb_lastline_get();
+        argv = &amp;line;
+    }
+    for (i=0; i&lt;argc; i++) {
+        if (!NIL_P(rb_output_fs) &amp;&amp; i&gt;0) {
+            rb_io_write(out, rb_output_fs);
+        }
+        switch (TYPE(argv[i])) {
+          case T_NIL:
+            rb_io_write(out, rb_str_new2(&quot;nil&quot;));
+            break;
+          default:
+            rb_io_write(out, argv[i]);
+            break;
+        }
+    }
+    if (!NIL_P(rb_output_rs)) {
+        rb_io_write(out, rb_output_rs);
+    }
+
+    return Qnil;
+}</pre>
+</body>
+</html>

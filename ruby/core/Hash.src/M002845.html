@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_s (Hash)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     hsh.to_s   =&gt; string
+ *  
+ *  Converts &lt;i&gt;hsh&lt;/i&gt; to a string by converting the hash to an array
+ *  of &lt;code&gt;[&lt;/code&gt; &lt;i&gt;key, value&lt;/i&gt; &lt;code&gt;]&lt;/code&gt; pairs and then
+ *  converting that array to a string using &lt;code&gt;Array#join&lt;/code&gt; with
+ *  the default separator.
+ *     
+ *     h = { &quot;c&quot; =&gt; 300, &quot;a&quot; =&gt; 100, &quot;d&quot; =&gt; 400, &quot;c&quot; =&gt; 300  }
+ *     h.to_s   #=&gt; &quot;a100c300d400&quot;
+ */
+
+static VALUE
+rb_hash_to_s(hash)
+    VALUE hash;
+{
+    if (rb_inspecting_p(hash)) return rb_str_new2(&quot;{...}&quot;);
+    return rb_protect_inspect(to_s_hash, hash, 0);
+}</pre>
+</body>
+</html>

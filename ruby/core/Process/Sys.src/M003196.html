@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>setresgid (Process::Sys)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process::Sys.setresgid(rid, eid, sid)   =&gt; nil
+ *
+ *  Sets the (integer) real, effective, and saved user IDs of the
+ *  current process to &lt;em&gt;rid&lt;/em&gt;, &lt;em&gt;eid&lt;/em&gt;, and &lt;em&gt;sid&lt;/em&gt;
+ *  respectively. A value of &lt;code&gt;-1&lt;/code&gt; for any value means to
+ *  leave that ID unchanged. Not available on all platforms.
+ *
+ */
+
+static VALUE
+p_sys_setresgid(obj, rid, eid, sid)
+    VALUE obj, rid, eid, sid;
+{
+#if defined HAVE_SETRESGID
+    check_gid_switch();
+    if (setresgid(NUM2INT(rid),NUM2INT(eid),NUM2INT(sid)) != 0) rb_sys_fail(0);
+#else
+    rb_notimplement();
+#endif
+    return Qnil;
+}</pre>
+</body>
+</html>

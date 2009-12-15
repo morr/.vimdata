@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>finalize_dependency (Finalizer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/finalize.rb, line 113</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">finalize_dependency</span>(<span class="ruby-identifier">id</span>, <span class="ruby-identifier">dependant</span>, <span class="ruby-identifier">method</span> = <span class="ruby-identifier">:finalize</span>)
+      <span class="ruby-identifier">id</span> = <span class="ruby-identifier">id</span>.<span class="ruby-identifier">object_id</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">id</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+      <span class="ruby-identifier">method</span> = <span class="ruby-identifier">method</span>.<span class="ruby-identifier">intern</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">method</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">assocs</span> <span class="ruby-keyword kw">in</span> <span class="ruby-ivar">@dependency</span>[<span class="ruby-identifier">id</span>]
+        <span class="ruby-identifier">assocs</span>.<span class="ruby-identifier">delete_if</span> <span class="ruby-keyword kw">do</span>
+          <span class="ruby-operator">|</span><span class="ruby-identifier">d</span>, <span class="ruby-identifier">m</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">o</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">d</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">m</span>, <span class="ruby-identifier">id</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">o</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ret</span> = <span class="ruby-identifier">d</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">dependant</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">m</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
+          <span class="ruby-identifier">ret</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-ivar">@dependency</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">id</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">assoc</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

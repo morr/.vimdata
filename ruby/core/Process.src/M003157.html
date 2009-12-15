@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>waitall (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.waitall   =&gt; [ [pid1,status1], ...]
+ *
+ *  Waits for all children, returning an array of
+ *  _pid_/_status_ pairs (where _status_ is a
+ *  &lt;code&gt;Process::Status&lt;/code&gt; object).
+ *
+ *     fork { sleep 0.2; exit 2 }   #=&gt; 27432
+ *     fork { sleep 0.1; exit 1 }   #=&gt; 27433
+ *     fork {            exit 0 }   #=&gt; 27434
+ *     p Process.waitall
+ *
+ *  &lt;em&gt;produces&lt;/em&gt;:
+ *
+ *     [[27434, #&lt;Process::Status: pid=27434,exited(0)&gt;],
+ *      [27433, #&lt;Process::Status: pid=27433,exited(1)&gt;],
+ *      [27432, #&lt;Process::Status: pid=27432,exited(2)&gt;]]
+ */
+
+static VALUE
+proc_waitall()
+{
+    VALUE result;
+    int pid, status;
+
+    rb_secure(2);
+    result = rb_ary_new();
+#ifdef NO_WAITPID
+    if (pid_tbl) {
+        st_foreach(pid_tbl, waitall_each, result);
+    }
+
+    for (pid = -1;;) {
+        pid = wait(&amp;status);
+        if (pid == -1) {
+            if (errno == ECHILD)
+                break;
+            if (errno == EINTR) {
+                rb_thread_schedule();
+                continue;
+            }
+            rb_sys_fail(0);
+        }
+        last_status_set(status, pid);
+        rb_ary_push(result, rb_assoc_new(INT2NUM(pid), rb_last_status));
+    }
+#else
+    rb_last_status = Qnil;
+    for (pid = -1;;) {
+        pid = rb_waitpid(-1, &amp;status, 0);
+        if (pid == -1) {
+            if (errno == ECHILD)
+                break;
+            rb_sys_fail(0);
+        }
+        rb_ary_push(result, rb_assoc_new(INT2NUM(pid), rb_last_status));
+    }
+#endif
+    return result;
+}</pre>
+</body>
+</html>

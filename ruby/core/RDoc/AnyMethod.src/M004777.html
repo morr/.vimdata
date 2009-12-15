@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>param_seq (RDoc::AnyMethod)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/code_objects.rb, line 660</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">param_seq</span>
+      <span class="ruby-identifier">p</span> = <span class="ruby-identifier">params</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\s*\#.*/</span>, <span class="ruby-value str">''</span>)
+      <span class="ruby-identifier">p</span> = <span class="ruby-identifier">p</span>.<span class="ruby-identifier">tr</span>(<span class="ruby-value str">&quot;\n&quot;</span>, <span class="ruby-value str">&quot; &quot;</span>).<span class="ruby-identifier">squeeze</span>(<span class="ruby-value str">&quot; &quot;</span>)
+      <span class="ruby-identifier">p</span> = <span class="ruby-value str">&quot;(&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">p</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;)&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">p</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?(</span>
+
+      <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">block</span> = <span class="ruby-identifier">block_params</span>)
+        <span class="ruby-comment cmt"># If this method has explicit block parameters, remove any</span>
+        <span class="ruby-comment cmt"># explicit &amp;block</span>
+<span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-identifier">p</span>
+        <span class="ruby-identifier">p</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/,?\s*&amp;\w+/</span>)
+<span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-identifier">p</span>
+
+        <span class="ruby-identifier">block</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/\s*\#.*/</span>, <span class="ruby-value str">''</span>)
+        <span class="ruby-identifier">block</span> = <span class="ruby-identifier">block</span>.<span class="ruby-identifier">tr</span>(<span class="ruby-value str">&quot;\n&quot;</span>, <span class="ruby-value str">&quot; &quot;</span>).<span class="ruby-identifier">squeeze</span>(<span class="ruby-value str">&quot; &quot;</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?(</span>
+          <span class="ruby-identifier">block</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^\(/</span>, <span class="ruby-value str">''</span>).<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/\)/</span>, <span class="ruby-value str">''</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">p</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot; {|#{block}| ...}&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">p</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

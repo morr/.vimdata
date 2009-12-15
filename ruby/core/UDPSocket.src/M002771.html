@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>recvfrom_nonblock (UDPSocket)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *      udpsocket.recvfrom_nonblock(maxlen) =&gt; [mesg, sender_inet_addr]
+ *      udpsocket.recvfrom_nonblock(maxlen, flags) =&gt; [mesg, sender_inet_addr]
+ * 
+ * Receives up to _maxlen_ bytes from +udpsocket+ using recvfrom(2) after
+ * O_NONBLOCK is set for the underlying file descriptor.
+ * _flags_ is zero or more of the +MSG_+ options.
+ * The first element of the results, _mesg_, is the data received.
+ * The second element, _sender_inet_addr_, is an array to represent the sender address.
+ *
+ * When recvfrom(2) returns 0,
+ * Socket#recvfrom_nonblock returns an empty string as data.
+ * It means an empty packet.
+ * 
+ * === Parameters
+ * * +maxlen+ - the number of bytes to receive from the socket
+ * * +flags+ - zero or more of the +MSG_+ options 
+ * 
+ * === Example
+ *      require 'socket'
+ *      s1 = UDPSocket.new
+ *      s1.bind(&quot;127.0.0.1&quot;, 0)
+ *      s2 = UDPSocket.new
+ *      s2.bind(&quot;127.0.0.1&quot;, 0)
+ *      s2.connect(*s1.addr.values_at(3,1))
+ *      s1.connect(*s2.addr.values_at(3,1))
+ *      s1.send &quot;aaa&quot;, 0
+ *      IO.select([s2])
+ *      p s2.recvfrom_nonblock(10)  #=&gt; [&quot;aaa&quot;, [&quot;AF_INET&quot;, 33302, &quot;localhost.localdomain&quot;, &quot;127.0.0.1&quot;]]
+ *
+ * Refer to Socket#recvfrom for the exceptions that may be thrown if the call
+ * to _recvfrom_nonblock_ fails. 
+ *
+ * UDPSocket#recvfrom_nonblock may raise any error corresponding to recvfrom(2) failure,
+ * including Errno::EAGAIN.
+ *
+ * === See
+ * * Socket#recvfrom
+ */
+static VALUE
+udp_recvfrom_nonblock(int argc, VALUE *argv, VALUE sock)
+{
+    return s_recvfrom_nonblock(sock, argc, argv, RECV_IP);
+}</pre>
+</body>
+</html>

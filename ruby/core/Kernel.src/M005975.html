@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>trap (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   Signal.trap( signal, proc ) =&gt; obj
+ *   Signal.trap( signal ) {| | block } =&gt; obj
+ *
+ * Specifies the handling of signals. The first parameter is a signal
+ * name (a string such as ``SIGALRM'', ``SIGUSR1'', and so on) or a
+ * signal number. The characters ``SIG'' may be omitted from the
+ * signal name. The command or block specifies code to be run when the
+ * signal is raised. If the command is the string ``IGNORE'' or
+ * ``SIG_IGN'', the signal will be ignored. If the command is
+ * ``DEFAULT'' or ``SIG_DFL'', the operating system's default handler
+ * will be invoked. If the command is ``EXIT'', the script will be
+ * terminated by the signal. Otherwise, the given command or block
+ * will be run.
+ * The special signal name ``EXIT'' or signal number zero will be
+ * invoked just prior to program termination.
+ * trap returns the previous handler for the given signal.
+ *
+ *     Signal.trap(0, proc { puts &quot;Terminating: #{$$}&quot; })
+ *     Signal.trap(&quot;CLD&quot;)  { puts &quot;Child died&quot; }
+ *     fork &amp;&amp; Process.wait
+ *
+ * produces:
+ *     Terminating: 27461
+ *     Child died
+ *     Terminating: 27460
+ */
+static VALUE
+sig_trap(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    struct trap_arg arg;
+
+    rb_secure(2);
+    if (argc == 0 || argc &gt; 2) {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments -- trap(sig, cmd)/trap(sig){...}&quot;);
+    }
+
+    arg.sig = argv[0];
+    if (argc == 1) {
+        arg.cmd = rb_block_proc();
+    }
+    else if (argc == 2) {
+        arg.cmd = argv[1];
+    }
+
+    if (OBJ_TAINTED(arg.cmd)) {
+        rb_raise(rb_eSecurityError, &quot;Insecure: tainted signal trap&quot;);
+    }
+#if USE_TRAP_MASK
+    /* disable interrupt */
+# ifdef HAVE_SIGPROCMASK
+    sigfillset(&amp;arg.mask);
+    sigprocmask(SIG_BLOCK, &amp;arg.mask, &amp;arg.mask);
+# else
+    arg.mask = sigblock(~0);
+# endif
+
+    return rb_ensure(trap, (VALUE)&amp;arg, trap_ensure, (VALUE)&amp;arg);
+#else
+    return trap(&amp;arg);
+#endif
+}</pre>
+</body>
+</html>

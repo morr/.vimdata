@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>setup_certificate (DRb::DRbSSLSocket::SSLConfig)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/drb/ssl.rb, line 52</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">setup_certificate</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@cert</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@pkey</span>
+          <span class="ruby-keyword kw">return</span>
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-identifier">rsa</span> = <span class="ruby-constant">OpenSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">PKey</span><span class="ruby-operator">::</span><span class="ruby-constant">RSA</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">512</span>){<span class="ruby-operator">|</span><span class="ruby-identifier">p</span>, <span class="ruby-identifier">n</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">:verbose</span>]
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">p</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span>; <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">putc</span> <span class="ruby-value str">&quot;.&quot;</span>  <span class="ruby-comment cmt"># BN_generate_prime</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span>; <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">putc</span> <span class="ruby-value str">&quot;+&quot;</span>  <span class="ruby-comment cmt"># BN_generate_prime</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value">2</span>; <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">putc</span> <span class="ruby-value str">&quot;*&quot;</span>  <span class="ruby-comment cmt"># searching good prime,</span>
+                                    <span class="ruby-comment cmt"># n = #of try,</span>
+                                    <span class="ruby-comment cmt"># but also data from BN_generate_prime</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value">3</span>; <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">putc</span> <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-comment cmt"># found good prime, n==0 - p, n==1 - q,</span>
+                                    <span class="ruby-comment cmt"># but also data from BN_generate_prime</span>
+          <span class="ruby-keyword kw">else</span>;   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">putc</span> <span class="ruby-value str">&quot;*&quot;</span>  <span class="ruby-comment cmt"># BN_generate_prime</span>
+          <span class="ruby-keyword kw">end</span>
+        }
+
+        <span class="ruby-identifier">cert</span> = <span class="ruby-constant">OpenSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">X509</span><span class="ruby-operator">::</span><span class="ruby-constant">Certificate</span>.<span class="ruby-identifier">new</span>
+        <span class="ruby-identifier">cert</span>.<span class="ruby-identifier">version</span> = <span class="ruby-value">3</span>
+        <span class="ruby-identifier">cert</span>.<span class="ruby-identifier">serial</span> = <span class="ruby-value">0</span>
+        <span class="ruby-identifier">name</span> = <span class="ruby-constant">OpenSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">X509</span><span class="ruby-operator">::</span><span class="ruby-constant">Name</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">:SSLCertName</span>])
+        <span class="ruby-identifier">cert</span>.<span class="ruby-identifier">subject</span> = <span class="ruby-identifier">name</span>
+        <span class="ruby-identifier">cert</span>.<span class="ruby-identifier">issuer</span> = <span class="ruby-identifier">name</span>
+        <span class="ruby-identifier">cert</span>.<span class="ruby-identifier">not_before</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
+        <span class="ruby-identifier">cert</span>.<span class="ruby-identifier">not_after</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> <span class="ruby-operator">+</span> (<span class="ruby-value">365</span><span class="ruby-operator">*</span><span class="ruby-value">24</span><span class="ruby-operator">*</span><span class="ruby-value">60</span><span class="ruby-operator">*</span><span class="ruby-value">60</span>)
+        <span class="ruby-identifier">cert</span>.<span class="ruby-identifier">public_key</span> = <span class="ruby-identifier">rsa</span>.<span class="ruby-identifier">public_key</span>
+        
+        <span class="ruby-identifier">ef</span> = <span class="ruby-constant">OpenSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">X509</span><span class="ruby-operator">::</span><span class="ruby-constant">ExtensionFactory</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">nil</span>,<span class="ruby-identifier">cert</span>)
+        <span class="ruby-identifier">cert</span>.<span class="ruby-identifier">extensions</span> = [
+          <span class="ruby-identifier">ef</span>.<span class="ruby-identifier">create_extension</span>(<span class="ruby-value str">&quot;basicConstraints&quot;</span>,<span class="ruby-value str">&quot;CA:FALSE&quot;</span>),
+          <span class="ruby-identifier">ef</span>.<span class="ruby-identifier">create_extension</span>(<span class="ruby-value str">&quot;subjectKeyIdentifier&quot;</span>, <span class="ruby-value str">&quot;hash&quot;</span>) ]
+        <span class="ruby-identifier">ef</span>.<span class="ruby-identifier">issuer_certificate</span> = <span class="ruby-identifier">cert</span>
+        <span class="ruby-identifier">cert</span>.<span class="ruby-identifier">add_extension</span>(<span class="ruby-identifier">ef</span>.<span class="ruby-identifier">create_extension</span>(<span class="ruby-value str">&quot;authorityKeyIdentifier&quot;</span>,
+                                               <span class="ruby-value str">&quot;keyid:always,issuer:always&quot;</span>))
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">comment</span> = <span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">:SSLCertComment</span>]
+          <span class="ruby-identifier">cert</span>.<span class="ruby-identifier">add_extension</span>(<span class="ruby-identifier">ef</span>.<span class="ruby-identifier">create_extension</span>(<span class="ruby-value str">&quot;nsComment&quot;</span>, <span class="ruby-identifier">comment</span>))
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">cert</span>.<span class="ruby-identifier">sign</span>(<span class="ruby-identifier">rsa</span>, <span class="ruby-constant">OpenSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">Digest</span><span class="ruby-operator">::</span><span class="ruby-constant">SHA1</span>.<span class="ruby-identifier">new</span>)
+        
+        <span class="ruby-ivar">@cert</span> = <span class="ruby-identifier">cert</span>
+        <span class="ruby-ivar">@pkey</span> = <span class="ruby-identifier">rsa</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

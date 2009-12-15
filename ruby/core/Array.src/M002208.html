@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>rassoc (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.rassoc(key) -&gt; an_array or nil
+ *  
+ *  Searches through the array whose elements are also arrays. Compares
+ *  &lt;em&gt;key&lt;/em&gt; with the second element of each contained array using
+ *  &lt;code&gt;==&lt;/code&gt;. Returns the first contained array that matches. See
+ *  also &lt;code&gt;Array#assoc&lt;/code&gt;.
+ *     
+ *     a = [ [ 1, &quot;one&quot;], [2, &quot;two&quot;], [3, &quot;three&quot;], [&quot;ii&quot;, &quot;two&quot;] ]
+ *     a.rassoc(&quot;two&quot;)    #=&gt; [2, &quot;two&quot;]
+ *     a.rassoc(&quot;four&quot;)   #=&gt; nil
+ */
+
+VALUE
+rb_ary_rassoc(ary, value)
+    VALUE ary, value;
+{
+    long i;
+    VALUE v;
+
+    for (i = 0; i &lt; RARRAY(ary)-&gt;len; ++i) {
+        v = RARRAY(ary)-&gt;ptr[i];
+        if (TYPE(v) == T_ARRAY &amp;&amp;
+            RARRAY(v)-&gt;len &gt; 1 &amp;&amp;
+            rb_equal(RARRAY(v)-&gt;ptr[1], value))
+            return v;
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

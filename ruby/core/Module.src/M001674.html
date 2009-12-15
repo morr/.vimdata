@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>included_modules (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mod.included_modules -&gt; array
+ *  
+ *  Returns the list of modules included in &lt;i&gt;mod&lt;/i&gt;.
+ *     
+ *     module Mixin
+ *     end
+ *     
+ *     module Outer
+ *       include Mixin
+ *     end
+ *     
+ *     Mixin.included_modules   #=&gt; []
+ *     Outer.included_modules   #=&gt; [Mixin]
+ */
+
+VALUE
+rb_mod_included_modules(mod)
+    VALUE mod;
+{
+    VALUE ary = rb_ary_new();
+    VALUE p;
+
+    for (p = RCLASS(mod)-&gt;super; p; p = RCLASS(p)-&gt;super) {
+	if (BUILTIN_TYPE(p) == T_ICLASS) {
+	    rb_ary_push(ary, RBASIC(p)-&gt;klass);
+	}
+    }
+    return ary;
+}</pre>
+</body>
+</html>

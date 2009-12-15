@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>bmbm (Benchmark)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/benchmark.rb, line 248</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bmbm</span>(<span class="ruby-identifier">width</span> = <span class="ruby-value">0</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>) <span class="ruby-comment cmt"># :yield: job</span>
+    <span class="ruby-identifier">job</span> = <span class="ruby-constant">Job</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">width</span>)
+    <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">job</span>)
+    <span class="ruby-identifier">width</span> = <span class="ruby-identifier">job</span>.<span class="ruby-identifier">width</span>
+    <span class="ruby-identifier">sync</span> = <span class="ruby-constant">STDOUT</span>.<span class="ruby-identifier">sync</span>
+    <span class="ruby-constant">STDOUT</span>.<span class="ruby-identifier">sync</span> = <span class="ruby-keyword kw">true</span>
+
+    <span class="ruby-comment cmt"># rehearsal</span>
+    <span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;Rehearsal &quot;</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-value str">'-'</span><span class="ruby-operator">*</span>(<span class="ruby-identifier">width</span><span class="ruby-operator">+</span><span class="ruby-constant">CAPTION</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">-</span> <span class="ruby-value str">&quot;Rehearsal &quot;</span>.<span class="ruby-identifier">length</span>)
+    <span class="ruby-identifier">list</span> = []
+    <span class="ruby-identifier">job</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">label</span>,<span class="ruby-identifier">item</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">print</span>(<span class="ruby-identifier">label</span>.<span class="ruby-identifier">ljust</span>(<span class="ruby-identifier">width</span>))
+      <span class="ruby-identifier">res</span> = <span class="ruby-constant">Benchmark</span><span class="ruby-operator">::</span><span class="ruby-identifier">measure</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">item</span>)
+      <span class="ruby-identifier">print</span> <span class="ruby-identifier">res</span>.<span class="ruby-identifier">format</span>()
+      <span class="ruby-identifier">list</span>.<span class="ruby-identifier">push</span> <span class="ruby-identifier">res</span>
+    }
+    <span class="ruby-identifier">sum</span> = <span class="ruby-constant">Tms</span>.<span class="ruby-identifier">new</span>; <span class="ruby-identifier">list</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span> <span class="ruby-identifier">sum</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">i</span>}
+    <span class="ruby-identifier">ets</span> = <span class="ruby-identifier">sum</span>.<span class="ruby-identifier">format</span>(<span class="ruby-value str">&quot;total: %tsec&quot;</span>)
+    <span class="ruby-identifier">printf</span>(<span class="ruby-value str">&quot;%s %s\n\n&quot;</span>,
+           <span class="ruby-value str">&quot;-&quot;</span><span class="ruby-operator">*</span>(<span class="ruby-identifier">width</span><span class="ruby-operator">+</span><span class="ruby-constant">CAPTION</span>.<span class="ruby-identifier">length</span><span class="ruby-operator">-</span><span class="ruby-identifier">ets</span>.<span class="ruby-identifier">length</span><span class="ruby-operator">-</span><span class="ruby-value">1</span>), <span class="ruby-identifier">ets</span>)
+    
+    <span class="ruby-comment cmt"># take</span>
+    <span class="ruby-identifier">print</span> <span class="ruby-value str">' '</span><span class="ruby-operator">*</span><span class="ruby-identifier">width</span>, <span class="ruby-constant">CAPTION</span>
+    <span class="ruby-identifier">list</span> = []
+    <span class="ruby-identifier">ary</span> = []
+    <span class="ruby-identifier">job</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">label</span>,<span class="ruby-identifier">item</span><span class="ruby-operator">|</span>
+      <span class="ruby-constant">GC</span><span class="ruby-operator">::</span><span class="ruby-identifier">start</span>
+      <span class="ruby-identifier">print</span> <span class="ruby-identifier">label</span>.<span class="ruby-identifier">ljust</span>(<span class="ruby-identifier">width</span>)
+      <span class="ruby-identifier">res</span> = <span class="ruby-constant">Benchmark</span><span class="ruby-operator">::</span><span class="ruby-identifier">measure</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">item</span>)
+      <span class="ruby-identifier">print</span> <span class="ruby-identifier">res</span>.<span class="ruby-identifier">format</span>()
+      <span class="ruby-identifier">ary</span>.<span class="ruby-identifier">push</span> <span class="ruby-identifier">res</span>
+      <span class="ruby-identifier">list</span>.<span class="ruby-identifier">push</span> [<span class="ruby-identifier">label</span>, <span class="ruby-identifier">res</span>]
+    }
+
+    <span class="ruby-constant">STDOUT</span>.<span class="ruby-identifier">sync</span> = <span class="ruby-identifier">sync</span>
+    <span class="ruby-identifier">ary</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

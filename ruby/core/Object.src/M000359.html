@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_s (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.to_s    =&gt; string
+ *  
+ *  Returns a string representing &lt;i&gt;obj&lt;/i&gt;. The default
+ *  &lt;code&gt;to_s&lt;/code&gt; prints the object's class and an encoding of the
+ *  object id. As a special case, the top-level object that is the
+ *  initial execution context of Ruby programs returns ``main.''
+ */
+
+VALUE
+rb_any_to_s(obj)
+    VALUE obj;
+{
+    char *cname = rb_obj_classname(obj);
+    size_t len;
+    VALUE str;
+
+    len = strlen(cname)+6+16;
+    str = rb_str_new(0, len); /* 6:tags 16:addr */
+    snprintf(RSTRING(str)-&gt;ptr, len+1, &quot;#&lt;%s:0x%lx&gt;&quot;, cname, obj);
+    RSTRING(str)-&gt;len = strlen(RSTRING(str)-&gt;ptr);
+    if (OBJ_TAINTED(obj)) OBJ_TAINT(str);
+
+    return str;
+}</pre>
+</body>
+</html>

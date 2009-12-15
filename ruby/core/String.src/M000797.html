@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>upcase! (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.upcase!   =&gt; str or nil
+ *  
+ *  Upcases the contents of &lt;i&gt;str&lt;/i&gt;, returning &lt;code&gt;nil&lt;/code&gt; if no changes
+ *  were made.
+ */
+
+static VALUE
+rb_str_upcase_bang(str)
+    VALUE str;
+{
+    char *s, *send;
+    int modify = 0;
+
+    rb_str_modify(str);
+    s = RSTRING(str)-&gt;ptr; send = s + RSTRING(str)-&gt;len;
+    while (s &lt; send) {
+        if (ismbchar(*s)) {
+            s+=mbclen(*s) - 1;
+        }
+        else if (ISLOWER(*s)) {
+            *s = toupper(*s);
+            modify = 1;
+        }
+        s++;
+    }
+
+    if (modify) return str;
+    return Qnil;
+}</pre>
+</body>
+</html>

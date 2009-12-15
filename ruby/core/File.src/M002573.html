@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>blockdev? (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   File.blockdev?(file_name)   =&gt;  true or false
+ *
+ * Returns &lt;code&gt;true&lt;/code&gt; if the named file is a block device.
+ */
+
+static VALUE
+test_b(obj, fname)
+    VALUE obj, fname;
+{
+#ifndef S_ISBLK
+#   ifdef S_IFBLK
+#       define S_ISBLK(m) ((m &amp; S_IFMT) == S_IFBLK)
+#   else
+#       define S_ISBLK(m) (0)  /* anytime false */
+#   endif
+#endif
+
+#ifdef S_ISBLK
+    struct stat st;
+
+    if (rb_stat(fname, &amp;st) &lt; 0) return Qfalse;
+    if (S_ISBLK(st.st_mode)) return Qtrue;
+
+#endif
+    return Qfalse;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: SOAP::SOAPBody</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">SOAP::SOAPBody</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/soap/rpc/element_rb.html">
+                soap/rpc/element.rb
+                </a>
+        <br />
+                <a href="../../files/soap/element_rb.html">
+                soap/element.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="SOAPStruct.html">
+                SOAPStruct
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Add method definitions for <a href="RPC.html">RPC</a> to common definition
+in element.rb
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004202">encode</a>&nbsp;&nbsp;
+      <a href="#M004199">fault</a>&nbsp;&nbsp;
+      <a href="#M004200">fault=</a>&nbsp;&nbsp;
+      <a href="#M004201">new</a>&nbsp;&nbsp;
+      <a href="#M004198">outparams</a>&nbsp;&nbsp;
+      <a href="#M004196">request</a>&nbsp;&nbsp;
+      <a href="#M004197">response</a>&nbsp;&nbsp;
+      <a href="#M004203">root_node</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="SOAPEnvelopeElement.html">SOAPEnvelopeElement</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M004201" class="m-detail">
+        <a name="M004201"></a>
+
+        <div class="method-heading">
+          <a href="#M004201" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(data = nil, is_fault = false)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004201-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004201-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/element.rb, line 98</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">data</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">is_fault</span> = <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-keyword kw">super</span>(<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-ivar">@elename</span> = <span class="ruby-constant">EleBodyName</span>
+    <span class="ruby-ivar">@encodingstyle</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">data</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:elename</span>)
+        <span class="ruby-identifier">add</span>(<span class="ruby-identifier">data</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">data</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">data</span>.<span class="ruby-identifier">to_a</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">datum</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">add</span>(<span class="ruby-identifier">datum</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">datum</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@is_fault</span> = <span class="ruby-identifier">is_fault</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004202" class="m-detail">
+        <a name="M004202"></a>
+
+        <div class="method-heading">
+          <a href="#M004202" class="method-signature">
+          <span class="method-name">encode</span><span class="method-args">(generator, ns, attrs = {}) {|@data| ...}</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004202-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004202-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/element.rb, line 114</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode</span>(<span class="ruby-identifier">generator</span>, <span class="ruby-identifier">ns</span>, <span class="ruby-identifier">attrs</span> = {})
+    <span class="ruby-identifier">name</span> = <span class="ruby-identifier">ns</span>.<span class="ruby-identifier">name</span>(<span class="ruby-ivar">@elename</span>)
+    <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">encode_tag</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">attrs</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@is_fault</span>
+      <span class="ruby-keyword kw">yield</span>(<span class="ruby-ivar">@data</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-ivar">@data</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">data</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">data</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">encode_tag_end</span>(<span class="ruby-identifier">name</span>, <span class="ruby-keyword kw">true</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004199" class="m-detail">
+        <a name="M004199"></a>
+
+        <div class="method-heading">
+          <a href="#M004199" class="method-signature">
+          <span class="method-name">fault</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004199-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004199-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/element.rb, line 49</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">fault</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@is_fault</span>
+      <span class="ruby-keyword kw">self</span>[<span class="ruby-value str">'fault'</span>]
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004200" class="m-detail">
+        <a name="M004200"></a>
+
+        <div class="method-heading">
+          <a href="#M004200" class="method-signature">
+          <span class="method-name">fault=</span><span class="method-args">(fault)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004200-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004200-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/element.rb, line 57</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">fault=</span>(<span class="ruby-identifier">fault</span>)
+    <span class="ruby-ivar">@is_fault</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-identifier">add_member</span>(<span class="ruby-value str">'fault'</span>, <span class="ruby-identifier">fault</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004198" class="m-detail">
+        <a name="M004198"></a>
+
+        <div class="method-heading">
+          <a href="#M004198" class="method-signature">
+          <span class="method-name">outparams</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004198-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004198-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/element.rb, line 38</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">outparams</span>
+    <span class="ruby-identifier">root</span> = <span class="ruby-identifier">root_node</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@is_fault</span> <span class="ruby-keyword kw">and</span> <span class="ruby-operator">!</span><span class="ruby-identifier">root</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword kw">and</span> <span class="ruby-operator">!</span><span class="ruby-identifier">root</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SOAPBasetype</span>)
+      <span class="ruby-identifier">op</span> = <span class="ruby-identifier">root</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>]
+      <span class="ruby-identifier">op</span> = <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">op</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">op</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">op</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004196" class="m-detail">
+        <a name="M004196"></a>
+
+        <div class="method-heading">
+          <a href="#M004196" class="method-signature">
+          <span class="method-name">request</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004196-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004196-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/element.rb, line 18</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">request</span>
+    <span class="ruby-identifier">root_node</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004197" class="m-detail">
+        <a name="M004197"></a>
+
+        <div class="method-heading">
+          <a href="#M004197" class="method-signature">
+          <span class="method-name">response</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004197-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004197-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/rpc/element.rb, line 22</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">response</span>
+    <span class="ruby-identifier">root</span> = <span class="ruby-identifier">root_node</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@is_fault</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">root</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">root</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SOAPBasetype</span>)
+        <span class="ruby-identifier">root</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-comment cmt"># Initial element is [retval].</span>
+        <span class="ruby-identifier">root</span>[<span class="ruby-value">0</span>]
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">root</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004203" class="m-detail">
+        <a name="M004203"></a>
+
+        <div class="method-heading">
+          <a href="#M004203" class="method-signature">
+          <span class="method-name">root_node</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004203-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004203-source">
+<pre>
+<span class="ruby-comment cmt"># File soap/element.rb, line 127</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">root_node</span>
+    <span class="ruby-ivar">@data</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">node</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">root</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">node</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># No specified root...</span>
+    <span class="ruby-ivar">@data</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">node</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">root</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">node</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">Parser</span><span class="ruby-operator">::</span><span class="ruby-constant">FormatDecodeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">'no root element'</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 2 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a service of <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, AZ</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

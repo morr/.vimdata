@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>decode_utf7 (Net::IMAP)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/net/imap.rb, line 827</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">decode_utf7</span>(<span class="ruby-identifier">s</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">s</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/&amp;(.*?)-/n</span>) {
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">empty?</span>
+          <span class="ruby-value str">&quot;&amp;&quot;</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">base64</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">tr</span>(<span class="ruby-value str">&quot;,&quot;</span>, <span class="ruby-value str">&quot;/&quot;</span>)
+          <span class="ruby-identifier">x</span> = <span class="ruby-identifier">base64</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">%</span> <span class="ruby-value">4</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">x</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+            <span class="ruby-identifier">base64</span>.<span class="ruby-identifier">concat</span>(<span class="ruby-value str">&quot;=&quot;</span> <span class="ruby-operator">*</span> (<span class="ruby-value">4</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">x</span>))
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">u16tou8</span>(<span class="ruby-identifier">base64</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">&quot;m&quot;</span>)[<span class="ruby-value">0</span>])
+        <span class="ruby-keyword kw">end</span>
+      }
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

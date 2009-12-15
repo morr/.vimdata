@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>bind (UnboundMethod)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     umeth.bind(obj) -&gt; method
+ *  
+ *  Bind &lt;i&gt;umeth&lt;/i&gt; to &lt;i&gt;obj&lt;/i&gt;. If &lt;code&gt;Klass&lt;/code&gt; was the class
+ *  from which &lt;i&gt;umeth&lt;/i&gt; was obtained,
+ *  &lt;code&gt;obj.kind_of?(Klass)&lt;/code&gt; must be true.
+ *     
+ *     class A
+ *       def test
+ *         puts &quot;In test, class = #{self.class}&quot;
+ *       end
+ *     end
+ *     class B &lt; A
+ *     end
+ *     class C &lt; B
+ *     end
+ *     
+ *     
+ *     um = B.instance_method(:test)
+ *     bm = um.bind(C.new)
+ *     bm.call
+ *     bm = um.bind(B.new)
+ *     bm.call
+ *     bm = um.bind(A.new)
+ *     bm.call
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     In test, class = C
+ *     In test, class = B
+ *     prog.rb:16:in `bind': bind argument must be an instance of B (TypeError)
+ *      from prog.rb:16
+ */
+
+static VALUE
+umethod_bind(method, recv)
+    VALUE method, recv;
+{
+    struct METHOD *data, *bound;
+    VALUE rklass = CLASS_OF(recv);
+
+    Data_Get_Struct(method, struct METHOD, data);
+    if (data-&gt;rklass != rklass) {
+        if (FL_TEST(data-&gt;rklass, FL_SINGLETON)) {
+            rb_raise(rb_eTypeError, &quot;singleton method bound for a different object&quot;);
+        }
+        if (TYPE(data-&gt;rklass) == T_MODULE) {
+            st_table *m_tbl = RCLASS(data-&gt;rklass)-&gt;m_tbl;
+            while (RCLASS(rklass)-&gt;m_tbl != m_tbl) {
+                rklass = RCLASS(rklass)-&gt;super;
+                if (!rklass) goto not_instace;
+            }
+        }
+        else if (!rb_obj_is_kind_of(recv, data-&gt;rklass)) {
+          not_instace:
+            rb_raise(rb_eTypeError, &quot;bind argument must be an instance of %s&quot;,
+                     rb_class2name(data-&gt;rklass));
+        }
+    }
+
+    method = Data_Make_Struct(rb_cMethod,struct METHOD,bm_mark,free,bound);
+    *bound = *data;
+    bound-&gt;recv = recv;
+    bound-&gt;rklass = rklass;
+
+    return method;
+}</pre>
+</body>
+</html>

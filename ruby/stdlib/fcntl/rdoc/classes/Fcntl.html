@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Fcntl</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Fcntl</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/fcntl/fcntl_c.html">
+                fcntl/fcntl.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="Fcntl.html">Fcntl</a> loads the constants defined in the
+system&#8216;s &lt;fcntl.h&gt; C header file, and used with both the
+fcntl(2) and open(2) POSIX system calls.
+</p>
+<p>
+Copyright (C) 1997-2001 Yukihiro Matsumoto
+</p>
+<p>
+Documented by mathew &lt;meta@pobox.com&gt;
+</p>
+<h1>Usage</h1>
+<p>
+To perform a fcntl(2) operation, use IO::fcntl in the core classes.
+</p>
+<p>
+To perform an open(2) operation, use IO::sysopen.
+</p>
+<p>
+The set of operations and constants available depends upon specific OS
+platform. Some values listed below may not be supported on your system.
+</p>
+<p>
+The constants supported by Ruby for use with IO::fcntl are:
+</p>
+<ul>
+<li>F_DUPFD - duplicate a close-on-exec file handle to a non-close-on-exec file
+handle.
+
+</li>
+<li>F_GETFD - read the close-on-exec flag of a file handle.
+
+</li>
+<li>F_SETFD - set the close-on-exec flag of a file handle.
+
+</li>
+<li>FD_CLOEXEC - the value of the close-on-exec flag.
+
+</li>
+<li>F_GETFL - get file descriptor flags.
+
+</li>
+<li>F_SETFL - set file descriptor flags.
+
+</li>
+<li>O_APPEND, O_NONBLOCK, etc (see below) - file descriptor flag values for the
+above.
+
+</li>
+<li>F_GETLK - determine whether a given region of a file is locked.
+
+</li>
+<li>F_SETLK - acquire a lock on a region of a file.
+
+</li>
+<li>F_SETLKW - acquire a lock on a region of a file, waiting if necessary.
+
+</li>
+<li>F_RDLCK, F_WRLCK, F_UNLCK - types of lock for the above.
+
+</li>
+</ul>
+<p>
+The constants supported by Ruby for use with IO::sysopen are:
+</p>
+<ul>
+<li>O_APPEND - open file in append mode.
+
+</li>
+<li>O_NOCTTY - open tty without it becoming controlling tty.
+
+</li>
+<li>O_CREAT - create file if it doesn&#8216;t exist.
+
+</li>
+<li>O_EXCL - used with O_CREAT, fail if file exists.
+
+</li>
+<li>O_TRUNC - truncate file on open.
+
+</li>
+<li>O_NONBLOCK / O_NDELAY - open in non-blocking mode.
+
+</li>
+<li>O_RDONLY - open read-only.
+
+</li>
+<li>O_WRONLY - open write-only.
+
+</li>
+<li>O_RDWR - open read-write.
+
+</li>
+<li>O_ACCMODE - mask to extract read/write flags.
+
+</li>
+</ul>
+<p>
+Example:
+</p>
+<pre>
+  require 'fcntl'
+
+  fd = IO::sysopen('/tmp/tempfile',
+       Fcntl::O_WRONLY | Fcntl::O_EXCL | Fcntl::O_CREAT)
+  f = IO.open(fd)
+  f.syswrite(&quot;TEMP DATA&quot;)
+  f.close
+</pre>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">F_DUPFD</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(F_DUPFD)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">F_GETFD</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(F_GETFD)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">F_GETLK</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(F_GETLK)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">F_SETFD</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(F_SETFD)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">F_GETFL</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(F_GETFL)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">F_SETFL</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(F_SETFL)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">F_SETLK</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(F_SETLK)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">F_SETLKW</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(F_SETLKW)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FD_CLOEXEC</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(FD_CLOEXEC)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">F_RDLCK</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(F_RDLCK)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">F_UNLCK</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(F_UNLCK)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">F_WRLCK</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(F_WRLCK)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">O_CREAT</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(O_CREAT)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">O_EXCL</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(O_EXCL)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">O_NOCTTY</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(O_NOCTTY)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">O_TRUNC</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(O_TRUNC)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">O_APPEND</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(O_APPEND)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">O_NONBLOCK</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(O_NONBLOCK)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">O_NDELAY</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(O_NDELAY)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">O_RDONLY</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(O_RDONLY)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">O_RDWR</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(O_RDWR)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">O_WRONLY</td>
+          <td>=</td>
+          <td class="context-item-value">INT2NUM(O_WRONLY)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">O_ACCMODE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(O_ACCMODE)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">O_ACCMODE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(O_RDONLY | O_WRONLY | O_RDWR)</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+<!-- 1  --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and maintained by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. The site was created in 2002 as part of the Ruby Documentation Project to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

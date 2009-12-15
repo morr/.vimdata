@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>clear (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* 
+ *  call-seq:
+ *     array.clear    -&gt;  array
+ *
+ *  Removes all elements from _self_.
+ *
+ *     a = [ &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot; ]
+ *     a.clear    #=&gt; [ ]
+ */
+
+VALUE
+rb_ary_clear(ary)
+    VALUE ary;
+{
+    rb_ary_modify(ary);
+    RARRAY(ary)-&gt;len = 0;
+    if (ARY_DEFAULT_SIZE * 2 &lt; RARRAY(ary)-&gt;aux.capa) {
+        REALLOC_N(RARRAY(ary)-&gt;ptr, VALUE, ARY_DEFAULT_SIZE * 2);
+        RARRAY(ary)-&gt;aux.capa = ARY_DEFAULT_SIZE * 2;
+    }
+    return ary;
+}</pre>
+</body>
+</html>

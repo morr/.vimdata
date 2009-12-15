@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>const_set (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mod.const_set(sym, obj)    =&gt; obj
+ *  
+ *  Sets the named constant to the given object, returning that object.
+ *  Creates a new constant if no constant with the given name previously
+ *  existed.
+ *     
+ *     Math.const_set(&quot;HIGH_SCHOOL_PI&quot;, 22.0/7.0)   #=&gt; 3.14285714285714
+ *     Math::HIGH_SCHOOL_PI - Math::PI              #=&gt; 0.00126448926734968
+ */
+
+static VALUE
+rb_mod_const_set(mod, name, value)
+    VALUE mod, name, value;
+{
+    ID id = rb_to_id(name);
+
+    if (!rb_is_const_id(id)) {
+        rb_name_error(id, &quot;wrong constant name %s&quot;, rb_id2name(id));
+    }
+    rb_const_set(mod, id, value);
+    return value;
+}</pre>
+</body>
+</html>

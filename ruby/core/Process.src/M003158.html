@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>detach (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.detach(pid)   =&gt; thread
+ *
+ *  Some operating systems retain the status of terminated child
+ *  processes until the parent collects that status (normally using
+ *  some variant of &lt;code&gt;wait()&lt;/code&gt;. If the parent never collects
+ *  this status, the child stays around as a &lt;em&gt;zombie&lt;/em&gt; process.
+ *  &lt;code&gt;Process::detach&lt;/code&gt; prevents this by setting up a
+ *  separate Ruby thread whose sole job is to reap the status of the
+ *  process _pid_ when it terminates. Use &lt;code&gt;detach&lt;/code&gt;
+ *  only when you do not intent to explicitly wait for the child to
+ *  terminate.  &lt;code&gt;detach&lt;/code&gt; only checks the status
+ *  periodically (currently once each second).
+ *
+ *  The waiting thread returns the exit status of the detached process
+ *  when it terminates, so you can use &lt;code&gt;Thread#join&lt;/code&gt; to
+ *  know the result.  If specified _pid_ is not a valid child process
+ *  ID, the thread returns +nil+ immediately.
+ *
+ *  In this first example, we don't reap the first child process, so
+ *  it appears as a zombie in the process status display.
+ *
+ *     p1 = fork { sleep 0.1 }
+ *     p2 = fork { sleep 0.2 }
+ *     Process.waitpid(p2)
+ *     sleep 2
+ *     system(&quot;ps -ho pid,state -p #{p1}&quot;)
+ *
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *
+ *     27389 Z
+ *
+ *  In the next example, &lt;code&gt;Process::detach&lt;/code&gt; is used to reap
+ *  the child automatically.
+ *
+ *     p1 = fork { sleep 0.1 }
+ *     p2 = fork { sleep 0.2 }
+ *     Process.detach(p1)
+ *     Process.waitpid(p2)
+ *     sleep 2
+ *     system(&quot;ps -ho pid,state -p #{p1}&quot;)
+ *
+ *  &lt;em&gt;(produces no output)&lt;/em&gt;
+ */
+
+static VALUE
+proc_detach(VALUE obj, VALUE pid)
+{
+    rb_secure(2);
+    return rb_detach_process(NUM2INT(pid));
+}</pre>
+</body>
+</html>

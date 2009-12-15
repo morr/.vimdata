@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (WIN32OLE_EVENT)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE_EVENT.new(ole, event) #=&gt; WIN32OLE_EVENT object.
+ *
+ *  Returns OLE event object.
+ *  The first argument specifies WIN32OLE object.
+ *  The second argument specifies OLE event name.
+ *     ie = WIN32OLE.new('InternetExplorer.Application')
+ *     ev = WIN32OLE_EVENT.new(ie, 'DWebBrowserEvents')
+ */     
+static VALUE
+fev_initialize(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE ole, itf;
+    struct oledata *pole;
+    char *pitf;
+    HRESULT hr;
+    IID iid;
+    ITypeInfo *pTypeInfo;
+    IDispatch *pDispatch;
+    IConnectionPointContainer *pContainer;
+    IConnectionPoint *pConnectionPoint;
+    IEVENTSINKOBJ *pIEV;
+    DWORD dwCookie = 0;
+    struct oleeventdata *poleev;
+
+    rb_secure(4);
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;ole, &amp;itf);
+
+    if (!rb_obj_is_kind_of(ole, cWIN32OLE)) {
+        rb_raise(rb_eTypeError, &quot;1st parameter must be WIN32OLE object&quot;);
+    }
+
+    if(TYPE(itf) != T_NIL) {
+        if (ruby_safe_level &gt; 0 &amp;&amp; OBJ_TAINTED(itf)) {
+            rb_raise(rb_eSecurityError, &quot;Insecure Event Creation - %s&quot;,
+                     StringValuePtr(itf));
+        }
+        Check_SafeStr(itf);
+        pitf = StringValuePtr(itf);
+        hr = find_iid(ole, pitf, &amp;iid, &amp;pTypeInfo);
+    }
+    else {
+        hr = find_default_source(ole, &amp;iid, &amp;pTypeInfo);
+    }
+    if (FAILED(hr)) {
+        ole_raise(hr, rb_eRuntimeError, &quot;interface not found&quot;);
+    }
+
+    OLEData_Get_Struct(ole, pole);
+    pDispatch = pole-&gt;pDispatch;
+    hr = pDispatch-&gt;lpVtbl-&gt;QueryInterface(pDispatch,
+                                           &amp;IID_IConnectionPointContainer,
+                                           (void**)&amp;pContainer);
+    if (FAILED(hr)) {
+        OLE_RELEASE(pTypeInfo);
+        ole_raise(hr, rb_eRuntimeError,
+                  &quot;failed to query IConnectionPointContainer&quot;);
+    }
+
+    hr = pContainer-&gt;lpVtbl-&gt;FindConnectionPoint(pContainer,
+                                                 &amp;iid,
+                                                 &amp;pConnectionPoint);
+    OLE_RELEASE(pContainer);
+    if (FAILED(hr)) {
+        OLE_RELEASE(pTypeInfo);
+        ole_raise(hr, rb_eRuntimeError, &quot;failed to query IConnectionPoint&quot;);
+    }
+    pIEV = EVENTSINK_Constructor();
+    pIEV-&gt;m_iid = iid;
+    hr = pConnectionPoint-&gt;lpVtbl-&gt;Advise(pConnectionPoint,
+                                          (IUnknown*)pIEV,
+                                          &amp;dwCookie);
+    if (FAILED(hr)) {
+        ole_raise(hr, rb_eRuntimeError, &quot;Advise Error&quot;);
+    }
+
+    Data_Get_Struct(self, struct oleeventdata, poleev);
+    poleev-&gt;pEvent = pIEV;
+    poleev-&gt;pEvent-&gt;m_event_id
+        = NUM2INT(rb_funcall(ary_ole_event, rb_intern(&quot;length&quot;), 0));
+    poleev-&gt;pEvent-&gt;pConnectionPoint = pConnectionPoint;
+    poleev-&gt;pEvent-&gt;pTypeInfo = pTypeInfo;
+    poleev-&gt;pEvent-&gt;m_dwCookie = dwCookie;
+    poleev-&gt;freed = 0;
+    poleev-&gt;pEvent-&gt;ptr_freed = &amp;(poleev-&gt;freed);
+    rb_ary_push(ary_ole_event, self);
+    return self;
+}</pre>
+</body>
+</html>

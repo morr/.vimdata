@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: REXML::Parsers::BaseParser</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">REXML::Parsers::BaseParser</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/lib/rexml/parsers/baseparser_rb.html">
+                lib/rexml/parsers/baseparser.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1>Using the Pull Parser</h1>
+<p>
+<em>This API is experimental, and subject to change.</em>
+</p>
+<pre>
+ parser = PullParser.new( &quot;&lt;a&gt;text&lt;b att='val'/&gt;txet&lt;/a&gt;&quot; )
+ while parser.has_next?
+   res = parser.next
+   puts res[1]['att'] if res.start_tag? and res[0] == 'b'
+ end
+</pre>
+<p>
+See the <a href="PullEvent.html">PullEvent</a> class for information on the
+content of the results. The data is identical to the arguments passed for
+the various events to the <a
+href="../StreamListener.html">StreamListener</a> API.
+</p>
+<p>
+Notice that:
+</p>
+<pre>
+ parser = PullParser.new( &quot;&lt;a&gt;BAD DOCUMENT&quot; )
+ while parser.has_next?
+   res = parser.next
+   raise res[1] if res.error?
+ end
+</pre>
+<p>
+Nat Price gave me some good ideas for the API.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M005154">add_listener</a>&nbsp;&nbsp;
+      <a href="#M005157">empty?</a>&nbsp;&nbsp;
+      <a href="#M005162">entity</a>&nbsp;&nbsp;
+      <a href="#M005158">has_next?</a>&nbsp;&nbsp;
+      <a href="#M005153">new</a>&nbsp;&nbsp;
+      <a href="#M005163">normalize</a>&nbsp;&nbsp;
+      <a href="#M005160">peek</a>&nbsp;&nbsp;
+      <a href="#M005156">position</a>&nbsp;&nbsp;
+      <a href="#M005161">pull</a>&nbsp;&nbsp;
+      <a href="#M005155">stream=</a>&nbsp;&nbsp;
+      <a href="#M005164">unnormalize</a>&nbsp;&nbsp;
+      <a href="#M005159">unshift</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NCNAME_STR</td>
+          <td>=</td>
+          <td class="context-item-value">'[\w:][\-\w\d.]*'</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NAME_STR</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;(?:(#{NCNAME_STR}):)?(#{NCNAME_STR})&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">UNAME_STR</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;(?:#{NCNAME_STR}:)?#{NCNAME_STR}&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NAMECHAR</td>
+          <td>=</td>
+          <td class="context-item-value">'[\-\w\d\.:]'</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NAME</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;([\\w:]#{NAMECHAR}*)&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NMTOKEN</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;(?:#{NAMECHAR})+&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NMTOKENS</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;#{NMTOKEN}(\\s+#{NMTOKEN})*&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">REFERENCE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;(?:&amp;#{NAME};|&amp;#\\d+;|&amp;#x[0-9a-fA-F]+;)&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">REFERENCE_RE</td>
+          <td>=</td>
+          <td class="context-item-value">/#{REFERENCE}/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DOCTYPE_START</td>
+          <td>=</td>
+          <td class="context-item-value">/\A\s*&lt;!DOCTYPE\s/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DOCTYPE_PATTERN</td>
+          <td>=</td>
+          <td class="context-item-value">/\s*&lt;!DOCTYPE\s+(.*?)(\[|&gt;)/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ATTRIBUTE_PATTERN</td>
+          <td>=</td>
+          <td class="context-item-value">/\s*(#{NAME_STR})\s*=\s*([&quot;'])(.*?)\4/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">COMMENT_START</td>
+          <td>=</td>
+          <td class="context-item-value">/\A&lt;!--/u</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">COMMENT_PATTERN</td>
+          <td>=</td>
+          <td class="context-item-value">/&lt;!--(.*?)--&gt;/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CDATA_START</td>
+          <td>=</td>
+          <td class="context-item-value">/\A&lt;!\[CDATA\[/u</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CDATA_END</td>
+          <td>=</td>
+          <td class="context-item-value">/^\s*\]\s*&gt;/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CDATA_PATTERN</td>
+          <td>=</td>
+          <td class="context-item-value">/&lt;!\[CDATA\[(.*?)\]\]&gt;/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">XMLDECL_START</td>
+          <td>=</td>
+          <td class="context-item-value">/\A&lt;\?xml\s/u;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">XMLDECL_PATTERN</td>
+          <td>=</td>
+          <td class="context-item-value">/&lt;\?xml\s+(.*?)\?&gt;/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">INSTRUCTION_START</td>
+          <td>=</td>
+          <td class="context-item-value">/\A&lt;\?/u</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">INSTRUCTION_PATTERN</td>
+          <td>=</td>
+          <td class="context-item-value">/&lt;\?(.*?)(\s+.*?)?\?&gt;/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">TAG_MATCH</td>
+          <td>=</td>
+          <td class="context-item-value">/^&lt;((?&gt;#{NAME_STR}))\s*((?&gt;\s+#{UNAME_STR}\s*=\s*([&quot;']).*?\5)*)\s*(\/)?&gt;/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CLOSE_MATCH</td>
+          <td>=</td>
+          <td class="context-item-value">/^\s*&lt;\/(#{NAME_STR})\s*&gt;/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">VERSION</td>
+          <td>=</td>
+          <td class="context-item-value">/\bversion\s*=\s*[&quot;'](.*?)['&quot;]/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ENCODING</td>
+          <td>=</td>
+          <td class="context-item-value">/\bencoding\s*=\s*[&quot;'](.*?)['&quot;]/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">STANDALONE</td>
+          <td>=</td>
+          <td class="context-item-value">/\bstandalone\s*=\s[&quot;'](.*?)['&quot;]/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ENTITY_START</td>
+          <td>=</td>
+          <td class="context-item-value">/^\s*&lt;!ENTITY/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">IDENTITY</td>
+          <td>=</td>
+          <td class="context-item-value">/^([!\*\w\-]+)(\s+#{NCNAME_STR})?(\s+[&quot;'](.*?)['&quot;])?(\s+['&quot;](.*?)[&quot;'])?/u</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ELEMENTDECL_START</td>
+          <td>=</td>
+          <td class="context-item-value">/^\s*&lt;!ELEMENT/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ELEMENTDECL_PATTERN</td>
+          <td>=</td>
+          <td class="context-item-value">/^\s*(&lt;!ELEMENT.*?)&gt;/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYSTEMENTITY</td>
+          <td>=</td>
+          <td class="context-item-value">/^\s*(%.*?;)\s*$/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ENUMERATION</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\\(\\s*#{NMTOKEN}(?:\\s*\\|\\s*#{NMTOKEN})*\\s*\\)&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NOTATIONTYPE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;NOTATION\\s+\\(\\s*#{NAME}(?:\\s*\\|\\s*#{NAME})*\\s*\\)&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ENUMERATEDTYPE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;(?:(?:#{NOTATIONTYPE})|(?:#{ENUMERATION}))&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ATTTYPE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;(CDATA|ID|IDREF|IDREFS|ENTITY|ENTITIES|NMTOKEN|NMTOKENS|#{ENUMERATEDTYPE})&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ATTVALUE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;(?:\&quot;((?:[^&lt;&amp;\&quot;]|#{REFERENCE})*)\&quot;)|(?:'((?:[^&lt;&amp;']|#{REFERENCE})*)')&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DEFAULTDECL</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;(#REQUIRED|#IMPLIED|(?:(#FIXED\\s+)?#{ATTVALUE}))&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ATTDEF</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\\s+#{NAME}\\s+#{ATTTYPE}\\s+#{DEFAULTDECL}&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ATTDEF_RE</td>
+          <td>=</td>
+          <td class="context-item-value">/#{ATTDEF}/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ATTLISTDECL_START</td>
+          <td>=</td>
+          <td class="context-item-value">/^\s*&lt;!ATTLIST/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ATTLISTDECL_PATTERN</td>
+          <td>=</td>
+          <td class="context-item-value">/^\s*&lt;!ATTLIST\s+#{NAME}(?:#{ATTDEF})*\s*&gt;/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NOTATIONDECL_START</td>
+          <td>=</td>
+          <td class="context-item-value">/^\s*&lt;!NOTATION/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PUBLIC</td>
+          <td>=</td>
+          <td class="context-item-value">/^\s*&lt;!NOTATION\s+(\w[\-\w]*)\s+(PUBLIC)\s+([&quot;'])(.*?)\3(?:\s+([&quot;'])(.*?)\5)?\s*&gt;/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYSTEM</td>
+          <td>=</td>
+          <td class="context-item-value">/^\s*&lt;!NOTATION\s+(\w[\-\w]*)\s+(SYSTEM)\s+([&quot;'])(.*?)\3\s*&gt;/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">TEXT_PATTERN</td>
+          <td>=</td>
+          <td class="context-item-value">/\A([^&lt;]*)/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PUBIDCHAR</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\x20\x0D\x0Aa-zA-Z0-9\\-()+,./:=?;!*@$_%#&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+<a href="../Entity.html">Entity</a> constants
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYSTEMLITERAL</td>
+          <td>=</td>
+          <td class="context-item-value">%Q{((?:&quot;[^&quot;]*&quot;)|(?:'[^']*'))}</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PUBIDLITERAL</td>
+          <td>=</td>
+          <td class="context-item-value">%Q{(&quot;[#{PUBIDCHAR}']*&quot;|'[#{PUBIDCHAR}]*')}</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EXTERNALID</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;(?:(?:(SYSTEM)\\s+#{SYSTEMLITERAL})|(?:(PUBLIC)\\s+#{PUBIDLITERAL}\\s+#{SYSTEMLITERAL}))&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NDATADECL</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\\s+NDATA\\s+#{NAME}&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PEREFERENCE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;%#{NAME};&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ENTITYVALUE</td>
+          <td>=</td>
+          <td class="context-item-value">%Q{((?:&quot;(?:[^%&amp;&quot;]|#{PEREFERENCE}|#{REFERENCE})*&quot;)|(?:'([^%&amp;']|#{PEREFERENCE}|#{REFERENCE})*'))}</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PEDEF</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;(?:#{ENTITYVALUE}|#{EXTERNALID})&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ENTITYDEF</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;(?:#{ENTITYVALUE}|(?:#{EXTERNALID}(#{NDATADECL})?))&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">PEDECL</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;&lt;!ENTITY\\s+(%)\\s+#{NAME}\\s+#{PEDEF}\\s*&gt;&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">GEDECL</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;&lt;!ENTITY\\s+#{NAME}\\s+#{ENTITYDEF}\\s*&gt;&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ENTITYDECL</td>
+          <td>=</td>
+          <td class="context-item-value">/\s*(?:#{GEDECL})|(?:#{PEDECL})/um</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EREFERENCE</td>
+          <td>=</td>
+          <td class="context-item-value">/&amp;(?!#{NAME};)/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DEFAULT_ENTITIES</td>
+          <td>=</td>
+          <td class="context-item-value">{          'gt' =&gt; [/&amp;gt;/, '&amp;gt;', '&gt;', /&gt;/],          'lt' =&gt; [/&amp;lt;/, '&amp;lt;', '&lt;', /&lt;/],          'quot' =&gt; [/&amp;quot;/, '&amp;quot;', '&quot;', /&quot;/],          &quot;apos&quot; =&gt; [/&amp;apos;/, &quot;&amp;apos;&quot;, &quot;'&quot;, /'/]</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">MISSING_ATTRIBUTE_QUOTES</td>
+          <td>=</td>
+          <td class="context-item-value">/^&lt;#{NAME_STR}\s+#{NAME_STR}\s*=\s*[^&quot;']/um</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+These are patterns to identify common markup errors, to make the error
+messages more informative.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">source</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M005153" class="method-detail">
+        <a name="M005153"></a>
+
+        <div class="method-heading">
+          <a href="BaseParser.src/M005153.html" target="Code" class="method-signature"
+            onclick="popupCode('BaseParser.src/M005153.html');return false;">
+          <span class="method-name">new</span><span class="method-args">( source )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M005154" class="method-detail">
+        <a name="M005154"></a>
+
+        <div class="method-heading">
+          <a href="BaseParser.src/M005154.html" target="Code" class="method-signature"
+            onclick="popupCode('BaseParser.src/M005154.html');return false;">
+          <span class="method-name">add_listener</span><span class="method-args">( listener )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M005157" class="method-detail">
+        <a name="M005157"></a>
+
+        <div class="method-heading">
+          <a href="BaseParser.src/M005157.html" target="Code" class="method-signature"
+            onclick="popupCode('BaseParser.src/M005157.html');return false;">
+          <span class="method-name">empty?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if there are no more events
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005162" class="method-detail">
+        <a name="M005162"></a>
+
+        <div class="method-heading">
+          <a href="BaseParser.src/M005162.html" target="Code" class="method-signature"
+            onclick="popupCode('BaseParser.src/M005162.html');return false;">
+          <span class="method-name">entity</span><span class="method-args">( reference, entities )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M005158" class="method-detail">
+        <a name="M005158"></a>
+
+        <div class="method-heading">
+          <a href="BaseParser.src/M005158.html" target="Code" class="method-signature"
+            onclick="popupCode('BaseParser.src/M005158.html');return false;">
+          <span class="method-name">has_next?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if there are more events. Synonymous with !<a
+href="BaseParser.html#M005157">empty?</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005163" class="method-detail">
+        <a name="M005163"></a>
+
+        <div class="method-heading">
+          <a href="BaseParser.src/M005163.html" target="Code" class="method-signature"
+            onclick="popupCode('BaseParser.src/M005163.html');return false;">
+          <span class="method-name">normalize</span><span class="method-args">( input, entities=nil, entity_filter=nil )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Escapes all possible entities
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005160" class="method-detail">
+        <a name="M005160"></a>
+
+        <div class="method-heading">
+          <a href="BaseParser.src/M005160.html" target="Code" class="method-signature"
+            onclick="popupCode('BaseParser.src/M005160.html');return false;">
+          <span class="method-name">peek</span><span class="method-args">(depth=0)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Peek at the <tt>depth</tt> event in the stack. The first element on the
+stack is at depth 0. If <tt>depth</tt> is -1, will parse to the end of the
+input stream and return the last event, which is always :end_document. Be
+aware that this causes the stream to be parsed up to the <tt>depth</tt>
+event, so you can effectively pre-parse the entire document (<a
+href="BaseParser.html#M005161">pull</a> the entire thing into memory) using
+this method.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005156" class="method-detail">
+        <a name="M005156"></a>
+
+        <div class="method-heading">
+          <a href="BaseParser.src/M005156.html" target="Code" class="method-signature"
+            onclick="popupCode('BaseParser.src/M005156.html');return false;">
+          <span class="method-name">position</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M005161" class="method-detail">
+        <a name="M005161"></a>
+
+        <div class="method-heading">
+          <a href="BaseParser.src/M005161.html" target="Code" class="method-signature"
+            onclick="popupCode('BaseParser.src/M005161.html');return false;">
+          <span class="method-name">pull</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the next event. This is a <tt><a
+href="PullEvent.html">PullEvent</a></tt> object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005155" class="method-detail">
+        <a name="M005155"></a>
+
+        <div class="method-heading">
+          <a href="BaseParser.src/M005155.html" target="Code" class="method-signature"
+            onclick="popupCode('BaseParser.src/M005155.html');return false;">
+          <span class="method-name">stream=</span><span class="method-args">( source )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M005164" class="method-detail">
+        <a name="M005164"></a>
+
+        <div class="method-heading">
+          <a href="BaseParser.src/M005164.html" target="Code" class="method-signature"
+            onclick="popupCode('BaseParser.src/M005164.html');return false;">
+          <span class="method-name">unnormalize</span><span class="method-args">( string, entities=nil, filter=nil )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Unescapes all possible entities
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005159" class="method-detail">
+        <a name="M005159"></a>
+
+        <div class="method-heading">
+          <a href="BaseParser.src/M005159.html" target="Code" class="method-signature"
+            onclick="popupCode('BaseParser.src/M005159.html');return false;">
+          <span class="method-name">unshift</span><span class="method-args">(token)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Push an event back on the head of the stream. This method has
+(theoretically) infinite depth.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

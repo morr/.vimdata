@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: OpenSSL::X509::Name::RFC2253DN</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">OpenSSL::X509::Name::RFC2253DN</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../../files/openssl/lib/openssl/x509_rb.html">
+                openssl/lib/openssl/x509.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001456">expand_hexstring</a>&nbsp;&nbsp;
+      <a href="#M001455">expand_pair</a>&nbsp;&nbsp;
+      <a href="#M001457">expand_value</a>&nbsp;&nbsp;
+      <a href="#M001458">scan</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Special</td>
+          <td>=</td>
+          <td class="context-item-value">',=+&lt;&gt;#;'</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">HexChar</td>
+          <td>=</td>
+          <td class="context-item-value">/[0-9a-fA-F]/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">HexPair</td>
+          <td>=</td>
+          <td class="context-item-value">/#{HexChar}#{HexChar}/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">HexString</td>
+          <td>=</td>
+          <td class="context-item-value">/#{HexPair}+/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Pair</td>
+          <td>=</td>
+          <td class="context-item-value">/\\(?:[#{Special}]|\\|&quot;|#{HexPair})/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">StringChar</td>
+          <td>=</td>
+          <td class="context-item-value">/[^#{Special}\\&quot;]/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">QuoteChar</td>
+          <td>=</td>
+          <td class="context-item-value">/[^\\&quot;]/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">AttributeType</td>
+          <td>=</td>
+          <td class="context-item-value">/[a-zA-Z][0-9a-zA-Z]*|[0-9]+(?:\.[0-9]+)*/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">AttributeValue</td>
+          <td>=</td>
+          <td class="context-item-value">/           (?![&quot;#])((?:#{StringChar}|#{Pair})*)|           \#(#{HexString})|           &quot;((?:#{QuoteChar}|#{Pair})*)&quot;         /x</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">TypeAndValue</td>
+          <td>=</td>
+          <td class="context-item-value">/\A(#{AttributeType})=#{AttributeValue}/</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001456" class="m-detail">
+        <a name="M001456"></a>
+
+        <div class="method-heading">
+          <a href="#M001456" class="method-signature">
+          <span class="method-name">expand_hexstring</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001456-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001456-source">
+<pre>
+<span class="ruby-comment cmt"># File openssl/lib/openssl/x509.rb, line 94</span>
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">expand_hexstring</span>(<span class="ruby-identifier">str</span>)
+          <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">str</span>
+          <span class="ruby-identifier">der</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-constant">HexPair</span>){<span class="ruby-operator">|</span><span class="ruby-identifier">hex</span><span class="ruby-operator">|</span> <span class="ruby-constant">Integer</span>(<span class="ruby-node">&quot;0x#{hex}&quot;</span>).<span class="ruby-identifier">chr</span> }
+          <span class="ruby-identifier">a1</span> = <span class="ruby-constant">OpenSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">ASN1</span>.<span class="ruby-identifier">decode</span>(<span class="ruby-identifier">der</span>)
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">a1</span>.<span class="ruby-identifier">value</span>, <span class="ruby-identifier">a1</span>.<span class="ruby-identifier">tag</span>
+        <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001455" class="m-detail">
+        <a name="M001455"></a>
+
+        <div class="method-heading">
+          <a href="#M001455" class="method-signature">
+          <span class="method-name">expand_pair</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001455-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001455-source">
+<pre>
+<span class="ruby-comment cmt"># File openssl/lib/openssl/x509.rb, line 83</span>
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">expand_pair</span>(<span class="ruby-identifier">str</span>)
+          <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">str</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-constant">Pair</span>){<span class="ruby-operator">|</span><span class="ruby-identifier">pair</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">pair</span>.<span class="ruby-identifier">size</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value">2</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">pair</span>[<span class="ruby-value">1</span>,<span class="ruby-value">1</span>]
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value">3</span> <span class="ruby-keyword kw">then</span> <span class="ruby-constant">Integer</span>(<span class="ruby-node">&quot;0x#{pair[1,2]}&quot;</span>).<span class="ruby-identifier">chr</span>
+            <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">raise</span> <span class="ruby-constant">OpenSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">X509</span><span class="ruby-operator">::</span><span class="ruby-constant">NameError</span>, <span class="ruby-node">&quot;invalid pair: #{str}&quot;</span>
+            <span class="ruby-keyword kw">end</span>
+          }
+        <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001457" class="m-detail">
+        <a name="M001457"></a>
+
+        <div class="method-heading">
+          <a href="#M001457" class="method-signature">
+          <span class="method-name">expand_value</span><span class="method-args">(str1, str2, str3)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001457-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001457-source">
+<pre>
+<span class="ruby-comment cmt"># File openssl/lib/openssl/x509.rb, line 101</span>
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">expand_value</span>(<span class="ruby-identifier">str1</span>, <span class="ruby-identifier">str2</span>, <span class="ruby-identifier">str3</span>)
+          <span class="ruby-identifier">value</span> = <span class="ruby-identifier">expand_pair</span>(<span class="ruby-identifier">str1</span>)
+          <span class="ruby-identifier">value</span>, <span class="ruby-identifier">tag</span> = <span class="ruby-identifier">expand_hexstring</span>(<span class="ruby-identifier">str2</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">value</span>
+          <span class="ruby-identifier">value</span> = <span class="ruby-identifier">expand_pair</span>(<span class="ruby-identifier">str3</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">value</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">value</span>, <span class="ruby-identifier">tag</span>
+        <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001458" class="m-detail">
+        <a name="M001458"></a>
+
+        <div class="method-heading">
+          <a href="#M001458" class="method-signature">
+          <span class="method-name">scan</span><span class="method-args">(dn)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001458-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001458-source">
+<pre>
+<span class="ruby-comment cmt"># File openssl/lib/openssl/x509.rb, line 108</span>
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">scan</span>(<span class="ruby-identifier">dn</span>)
+          <span class="ruby-identifier">str</span> = <span class="ruby-identifier">dn</span>
+          <span class="ruby-identifier">ary</span> = []
+          <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">md</span> = <span class="ruby-constant">TypeAndValue</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">str</span>)
+              <span class="ruby-identifier">matched</span> = <span class="ruby-identifier">md</span>.<span class="ruby-identifier">to_s</span>
+              <span class="ruby-identifier">remain</span> = <span class="ruby-identifier">md</span>.<span class="ruby-identifier">post_match</span>
+              <span class="ruby-identifier">type</span> = <span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>]
+              <span class="ruby-identifier">value</span>, <span class="ruby-identifier">tag</span> = <span class="ruby-identifier">expand_value</span>(<span class="ruby-identifier">md</span>[<span class="ruby-value">2</span>], <span class="ruby-identifier">md</span>[<span class="ruby-value">3</span>], <span class="ruby-identifier">md</span>[<span class="ruby-value">4</span>]) <span class="ruby-keyword kw">rescue</span> <span class="ruby-keyword kw">nil</span>
+              <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span>
+                <span class="ruby-identifier">type_and_value</span> = [<span class="ruby-identifier">type</span>, <span class="ruby-identifier">value</span>]
+                <span class="ruby-identifier">type_and_value</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">tag</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tag</span>
+                <span class="ruby-identifier">ary</span>.<span class="ruby-identifier">unshift</span>(<span class="ruby-identifier">type_and_value</span>)
+                <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">remain</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">2</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">remain</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?,</span>
+                  <span class="ruby-identifier">str</span> = <span class="ruby-identifier">remain</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>]
+                  <span class="ruby-keyword kw">next</span>
+                <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">remain</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">2</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">remain</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?+</span>
+                  <span class="ruby-identifier">raise</span> <span class="ruby-constant">OpenSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">X509</span><span class="ruby-operator">::</span><span class="ruby-constant">NameError</span>,
+                    <span class="ruby-node">&quot;multi-valued RDN is not supported: #{dn}&quot;</span>
+                <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">remain</span>.<span class="ruby-identifier">empty?</span>
+                  <span class="ruby-keyword kw">break</span>
+                <span class="ruby-keyword kw">end</span>
+              <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-identifier">msg_dn</span> = <span class="ruby-identifier">dn</span>[<span class="ruby-value">0</span>, <span class="ruby-identifier">dn</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">length</span>] <span class="ruby-operator">+</span> <span class="ruby-value str">&quot; =&gt;&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">str</span>
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">OpenSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">X509</span><span class="ruby-operator">::</span><span class="ruby-constant">NameError</span>, <span class="ruby-node">&quot;malformed RDN: #{msg_dn}&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">ary</span>
+        <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 4 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>connect (WIN32OLE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE.connect( ole ) --&gt; aWIN32OLE
+ * 
+ *  Returns running OLE Automation object or WIN32OLE object from moniker.
+ *  1st argument should be OLE program id or class id or moniker.
+ *     
+ *     WIN32OLE.connect('Excel.Application') # =&gt; WIN32OLE object which represents running Excel.
+ */
+static VALUE
+fole_s_connect(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE svr_name;
+    VALUE others;
+    HRESULT hr;
+    CLSID   clsid;
+    OLECHAR *pBuf;
+    IDispatch *pDispatch;
+    IUnknown *pUnknown;
+
+    rb_secure(4);
+    /* initialize to use OLE */
+    ole_initialize();
+
+    rb_scan_args(argc, argv, &quot;1*&quot;, &amp;svr_name, &amp;others);
+    if (ruby_safe_level &gt; 0 &amp;&amp; OBJ_TAINTED(svr_name)) {
+        rb_raise(rb_eSecurityError, &quot;Insecure Object Connection - %s&quot;,
+                 StringValuePtr(svr_name));
+    }
+
+    /* get CLSID from OLE server name */
+    pBuf  = ole_mb2wc(StringValuePtr(svr_name), -1);
+    hr = CLSIDFromProgID(pBuf, &amp;clsid);
+    if(FAILED(hr)) {
+        hr = CLSIDFromString(pBuf, &amp;clsid);
+    }
+    SysFreeString(pBuf);
+    if(FAILED(hr)) {
+        return ole_bind_obj(svr_name, argc, argv, self);
+    }
+
+    hr = GetActiveObject(&amp;clsid, 0, &amp;pUnknown);
+    if (FAILED(hr)) {
+        ole_raise(hr, eWIN32OLE_RUNTIME_ERROR, 
+                  &quot;OLE server `%s' not running&quot;, StringValuePtr(svr_name));
+    }
+    hr = pUnknown-&gt;lpVtbl-&gt;QueryInterface(pUnknown, &amp;IID_IDispatch,
+                                             (void **)&amp;pDispatch);
+    if(FAILED(hr)) {
+        OLE_RELEASE(pUnknown);
+        ole_raise(hr, eWIN32OLE_RUNTIME_ERROR, 
+                  &quot;failed to create WIN32OLE server `%s'&quot;, 
+                  StringValuePtr(svr_name));
+    }
+
+    OLE_RELEASE(pUnknown);
+
+    return create_win32ole_object(self, pDispatch, argc, argv);
+}</pre>
+</body>
+</html>

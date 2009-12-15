@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>reverse! (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.reverse!   =&gt; str
+ *  
+ *  Reverses &lt;i&gt;str&lt;/i&gt; in place.
+ */
+
+static VALUE
+rb_str_reverse_bang(str)
+    VALUE str;
+{
+    char *s, *e;
+    char c;
+
+    if (RSTRING(str)-&gt;len &gt; 1) {
+        rb_str_modify(str);
+        s = RSTRING(str)-&gt;ptr;
+        e = s + RSTRING(str)-&gt;len - 1;
+        while (s &lt; e) {
+            c = *s;
+            *s++ = *e;
+            *e-- = c;
+        }
+    }
+    return str;
+}</pre>
+</body>
+</html>

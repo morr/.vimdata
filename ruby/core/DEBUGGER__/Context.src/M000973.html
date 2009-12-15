@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>excn_handle (DEBUGGER__::Context)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/debug.rb, line 690</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">excn_handle</span>(<span class="ruby-identifier">file</span>, <span class="ruby-identifier">line</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">binding</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$!</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-constant">SystemExit</span>
+      <span class="ruby-identifier">set_trace_func</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">exit</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@catch</span> <span class="ruby-keyword kw">and</span> (<span class="ruby-identifier">$!</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">ancestors</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@catch</span> })
+      <span class="ruby-identifier">stdout</span>.<span class="ruby-identifier">printf</span> <span class="ruby-value str">&quot;%s:%d: `%s' (%s)\n&quot;</span>, <span class="ruby-identifier">file</span>, <span class="ruby-identifier">line</span>, <span class="ruby-identifier">$!</span>, <span class="ruby-identifier">$!</span>.<span class="ruby-identifier">class</span>
+      <span class="ruby-identifier">fs</span> = <span class="ruby-ivar">@frames</span>.<span class="ruby-identifier">size</span>
+      <span class="ruby-identifier">tb</span> = <span class="ruby-identifier">caller</span>(<span class="ruby-value">0</span>)[<span class="ruby-operator">-</span><span class="ruby-identifier">fs</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>]
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tb</span>
+        <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">i</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">tb</span>
+          <span class="ruby-identifier">stdout</span>.<span class="ruby-identifier">printf</span> <span class="ruby-value str">&quot;\tfrom %s\n&quot;</span>, <span class="ruby-identifier">i</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">suspend_all</span>
+      <span class="ruby-identifier">debug_command</span>(<span class="ruby-identifier">file</span>, <span class="ruby-identifier">line</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">binding</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>unscan (StringScanner)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Set the scan pointer to the previous position.  Only one previous position is
+ * remembered, and it changes with each scanning operation.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.scan(/\w+/)        # =&gt; &quot;test&quot;
+ *   s.unscan
+ *   s.scan(/../)         # =&gt; &quot;te&quot;
+ *   s.scan(/\d/)         # =&gt; nil
+ *   s.unscan             # ScanError: unscan failed: previous match had failed
+ */
+static VALUE
+strscan_unscan(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    if (! MATCHED_P(p)) {
+        rb_raise(ScanError, &quot;unscan failed: previous match had failed&quot;);
+    }
+    p-&gt;curr = p-&gt;prev;
+    CLEAR_MATCH_STATUS(p);
+    return self;
+}</pre>
+</body>
+</html>

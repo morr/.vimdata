@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: observer.rb</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>observer.rb</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>observer.rb
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Tue Mar 13 02:07:05 -0500 2007</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+observer.rb implements the <em>Observer</em> object-oriented design
+pattern. The following documentation is copied, with modifications, from
+&quot;Programming Ruby&quot;, by Hunt and Thomas; <a
+href="http://www.rubycentral.com/book/lib_patterns.html">www.rubycentral.com/book/lib_patterns.html</a>.
+</p>
+<h2>About</h2>
+<p>
+The Observer pattern, also known as Publish/Subscribe, provides a simple
+mechanism for one object to inform a set of interested third-party objects
+when its state changes.
+</p>
+<h2>Mechanism</h2>
+<p>
+In the Ruby implementation, the notifying class mixes in the <tt><a
+href="../classes/Observable.html">Observable</a></tt> module, which
+provides the methods for managing the associated observer objects.
+</p>
+<p>
+The observers must implement the <tt>update</tt> method to receive
+notifications.
+</p>
+<p>
+The observable object must:
+</p>
+<ul>
+<li>assert that it has <tt>changed</tt>
+
+</li>
+<li>call <tt>notify_observers</tt>
+
+</li>
+</ul>
+<h2>Example</h2>
+<p>
+The following example demonstrates this nicely. A <tt>Ticker</tt>, when
+run, continually receives the stock <tt>Price</tt> for its +@symbol+. A
+<tt>Warner</tt> is a general observer of the price, and two warners are
+demonstrated, a <tt>WarnLow</tt> and a <tt>WarnHigh</tt>, which print a
+warning if the price is below or above their set limits, respectively.
+</p>
+<p>
+The <tt>update</tt> callback allows the warners to run without being
+explicitly called. The system is set up with the <tt>Ticker</tt> and
+several observers, and the observers do their duty without the top-level
+code having to interfere.
+</p>
+<p>
+Note that the contract between publisher and subscriber (observable and
+observer) is not declared or enforced. The <tt>Ticker</tt> publishes a time
+and a price, and the warners receive that. But if you don&#8216;t ensure
+that your contracts are correct, nothing else can warn you.
+</p>
+<pre>
+  require &quot;observer&quot;
+
+  class Ticker          ### Periodically fetch a stock price.
+    include Observable
+
+    def initialize(symbol)
+      @symbol = symbol
+    end
+
+    def run
+      lastPrice = nil
+      loop do
+        price = Price.fetch(@symbol)
+        print &quot;Current price: #{price}\n&quot;
+        if price != lastPrice
+          changed                 # notify observers
+          lastPrice = price
+          notify_observers(Time.now, price)
+        end
+        sleep 1
+      end
+    end
+  end
+
+  class Price           ### A mock class to fetch a stock price (60 - 140).
+    def Price.fetch(symbol)
+      60 + rand(80)
+    end
+  end
+
+  class Warner          ### An abstract observer of Ticker objects.
+    def initialize(ticker, limit)
+      @limit = limit
+      ticker.add_observer(self)
+    end
+  end
+
+  class WarnLow &lt; Warner
+    def update(time, price)       # callback for observer
+      if price &lt; @limit
+        print &quot;--- #{time.to_s}: Price below #@limit: #{price}\n&quot;
+      end
+    end
+  end
+
+  class WarnHigh &lt; Warner
+    def update(time, price)       # callback for observer
+      if price &gt; @limit
+        print &quot;+++ #{time.to_s}: Price above #@limit: #{price}\n&quot;
+      end
+    end
+  end
+
+  ticker = Ticker.new(&quot;MSFT&quot;)
+  WarnLow.new(ticker, 80)
+  WarnHigh.new(ticker, 120)
+  ticker.run
+</pre>
+<p>
+Produces:
+</p>
+<pre>
+  Current price: 83
+  Current price: 75
+  --- Sun Jun 09 00:10:25 CDT 2002: Price below 80: 75
+  Current price: 90
+  Current price: 134
+  +++ Sun Jun 09 00:10:25 CDT 2002: Price above 120: 134
+  Current price: 134
+  Current price: 112
+  Current price: 79
+  --- Sun Jun 09 00:10:25 CDT 2002: Price below 80: 79
+</pre>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 0 --> <p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and run  by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. Ruby-doc.org was created in 2002 to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

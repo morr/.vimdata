@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>dup (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.dup -&gt; an_object
+ *  
+ *  Produces a shallow copy of &lt;i&gt;obj&lt;/i&gt;---the instance variables of
+ *  &lt;i&gt;obj&lt;/i&gt; are copied, but not the objects they reference.
+ *  &lt;code&gt;dup&lt;/code&gt; copies the tainted state of &lt;i&gt;obj&lt;/i&gt;. See also
+ *  the discussion under &lt;code&gt;Object#clone&lt;/code&gt;. In general,
+ *  &lt;code&gt;clone&lt;/code&gt; and &lt;code&gt;dup&lt;/code&gt; may have different semantics
+ *  in descendent classes. While &lt;code&gt;clone&lt;/code&gt; is used to duplicate
+ *  an object, including its internal state, &lt;code&gt;dup&lt;/code&gt; typically
+ *  uses the class of the descendent object to create the new instance.
+ *
+ *  This method may have class-specific behavior.  If so, that
+ *  behavior will be documented under the #+initialize_copy+ method of
+ *  the class.
+ */
+
+VALUE
+rb_obj_dup(obj)
+    VALUE obj;
+{
+    VALUE dup;
+
+    if (rb_special_const_p(obj)) {
+        rb_raise(rb_eTypeError, &quot;can't dup %s&quot;, rb_obj_classname(obj));
+    }
+    dup = rb_obj_alloc(rb_obj_class(obj));
+    init_copy(dup, obj);
+
+    return dup;
+}</pre>
+</body>
+</html>

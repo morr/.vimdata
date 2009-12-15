@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>read (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.read([length [, buffer]])    =&gt; string, buffer, or nil
+ *
+ *  Reads at most &lt;i&gt;length&lt;/i&gt; bytes from the I/O stream, or to the
+ *  end of file if &lt;i&gt;length&lt;/i&gt; is omitted or is &lt;code&gt;nil&lt;/code&gt;.
+ *  &lt;i&gt;length&lt;/i&gt; must be a non-negative integer or nil.
+ *  If the optional &lt;i&gt;buffer&lt;/i&gt; argument is present, it must reference
+ *  a String, which will receive the data.
+ *
+ *  At end of file, it returns &lt;code&gt;nil&lt;/code&gt; or &lt;code&gt;&quot;&quot;&lt;/code&gt;
+ *  depend on &lt;i&gt;length&lt;/i&gt;.
+ *  &lt;code&gt;&lt;i&gt;ios&lt;/i&gt;.read()&lt;/code&gt; and
+ *  &lt;code&gt;&lt;i&gt;ios&lt;/i&gt;.read(nil)&lt;/code&gt; returns &lt;code&gt;&quot;&quot;&lt;/code&gt;.
+ *  &lt;code&gt;&lt;i&gt;ios&lt;/i&gt;.read(&lt;i&gt;positive-integer&lt;/i&gt;)&lt;/code&gt; returns nil.
+ *
+ *     f = File.new(&quot;testfile&quot;)
+ *     f.read(16)   #=&gt; &quot;This is line one&quot;
+ */
+
+static VALUE
+io_read(argc, argv, io)
+    int argc;
+    VALUE *argv;
+    VALUE io;
+{
+    OpenFile *fptr;
+    long n, len;
+    VALUE length, str;
+
+    rb_scan_args(argc, argv, &quot;02&quot;, &amp;length, &amp;str);
+
+    if (NIL_P(length)) {
+        if (!NIL_P(str)) StringValue(str);
+        GetOpenFile(io, fptr);
+        rb_io_check_readable(fptr);    
+        return read_all(fptr, remain_size(fptr), str);
+    }
+    len = NUM2LONG(length);
+    if (len &lt; 0) {
+        rb_raise(rb_eArgError, &quot;negative length %ld given&quot;, len);
+    }
+
+    if (NIL_P(str)) {
+        str = rb_tainted_str_new(0, len);
+    }
+    else {
+        StringValue(str);
+        rb_str_modify(str);
+        rb_str_resize(str,len);
+    }
+
+    GetOpenFile(io, fptr);
+    rb_io_check_readable(fptr);
+    if (feof(fptr-&gt;f)) return Qnil;
+    if (len == 0) return str;
+
+    rb_str_locktmp(str);
+    READ_CHECK(fptr-&gt;f);
+    if (RSTRING(str)-&gt;len != len) {
+        rb_raise(rb_eRuntimeError, &quot;buffer string modified&quot;);
+    }
+    n = io_fread(RSTRING(str)-&gt;ptr, len, fptr);
+    rb_str_unlocktmp(str);
+    if (n == 0) {
+        if (!fptr-&gt;f) return Qnil;
+        if (feof(fptr-&gt;f)) {
+            rb_str_resize(str, 0);
+            return Qnil;
+        }
+        if (len &gt; 0) rb_sys_fail(fptr-&gt;path);
+    }
+    rb_str_resize(str, n);
+    RSTRING(str)-&gt;len = n;
+    RSTRING(str)-&gt;ptr[n] = '\0';
+    OBJ_TAINT(str);
+
+    return str;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>deflate (Zlib::Deflate)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: deflate(string[, flush])
+ *
+ * Inputs +string+ into the deflate stream and returns the output from the
+ * stream.  On calling this method, both the input and the output buffers of
+ * the stream are flushed. If +string+ is nil, this method finishes the
+ * stream, just like Zlib::ZStream#finish.
+ *
+ * The value of +flush+ should be either &lt;tt&gt;Zlib::NO_FLUSH&lt;/tt&gt;,
+ * &lt;tt&gt;Zlib::SYNC_FLUSH&lt;/tt&gt;, &lt;tt&gt;Zlib::FULL_FLUSH&lt;/tt&gt;, or
+ * &lt;tt&gt;Zlib::FINISH&lt;/tt&gt;. See zlib.h for details.
+ *
+ * TODO: document better!
+ */
+static VALUE
+rb_deflate_deflate(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    struct zstream *z = get_zstream(obj);
+    VALUE src, flush, dst;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;src, &amp;flush);
+    OBJ_INFECT(obj, src);
+    do_deflate(z, src, ARG_FLUSH(flush));
+    dst = zstream_detach_buffer(z);
+
+    OBJ_INFECT(dst, obj);
+    return dst;
+}</pre>
+</body>
+</html>

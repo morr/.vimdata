@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>seek (StringIO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   strio.seek(amount, whence=SEEK_SET) -&gt; 0
+ *
+ * Seeks to a given offset _amount_ in the stream according to
+ * the value of _whence_ (see IO#seek).
+ */
+static VALUE
+strio_seek(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE whence;
+    struct StringIO *ptr = StringIO(self);
+    long offset;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, NULL, &amp;whence);
+    offset = NUM2LONG(argv[0]);
+    switch (NIL_P(whence) ? 0 : NUM2LONG(whence)) {
+      case 0:
+        break;
+      case 1:
+        offset += ptr-&gt;pos;
+        break;
+      case 2:
+        offset += RSTRING(ptr-&gt;string)-&gt;len;
+        break;
+      default:
+        rb_raise(rb_eArgError, &quot;invalid whence %ld&quot;, NUM2LONG(whence));
+    }
+    if (offset &lt; 0) {
+        error_inval(0);
+    }
+    ptr-&gt;pos = offset;
+    ptr-&gt;flags &amp;= ~STRIO_EOF;
+    return INT2FIX(0);
+}</pre>
+</body>
+</html>

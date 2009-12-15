@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>generate_class_info (Generators::RIGenerator)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/generators/ri_generator.rb, line 98</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generate_class_info</span>(<span class="ruby-identifier">cls</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cls</span> <span class="ruby-operator">===</span> <span class="ruby-constant">RDoc</span><span class="ruby-operator">::</span><span class="ruby-constant">NormalModule</span>
+        <span class="ruby-identifier">cls_desc</span> = <span class="ruby-constant">RI</span><span class="ruby-operator">::</span><span class="ruby-constant">ModuleDescription</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">cls_desc</span> = <span class="ruby-constant">RI</span><span class="ruby-operator">::</span><span class="ruby-constant">ClassDescription</span>.<span class="ruby-identifier">new</span>
+        <span class="ruby-identifier">cls_desc</span>.<span class="ruby-identifier">superclass</span>  = <span class="ruby-identifier">cls</span>.<span class="ruby-identifier">superclass</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">cls_desc</span>.<span class="ruby-identifier">name</span>        = <span class="ruby-identifier">cls</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">cls_desc</span>.<span class="ruby-identifier">full_name</span>   = <span class="ruby-identifier">cls</span>.<span class="ruby-identifier">full_name</span>
+      <span class="ruby-identifier">cls_desc</span>.<span class="ruby-identifier">comment</span>     = <span class="ruby-identifier">markup</span>(<span class="ruby-identifier">cls</span>.<span class="ruby-identifier">comment</span>)
+
+      <span class="ruby-identifier">cls_desc</span>.<span class="ruby-identifier">attributes</span> =<span class="ruby-identifier">cls</span>.<span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span>
+        <span class="ruby-constant">RI</span><span class="ruby-operator">::</span><span class="ruby-constant">Attribute</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">a</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">a</span>.<span class="ruby-identifier">rw</span>, <span class="ruby-identifier">markup</span>(<span class="ruby-identifier">a</span>.<span class="ruby-identifier">comment</span>))
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">cls_desc</span>.<span class="ruby-identifier">constants</span> = <span class="ruby-identifier">cls</span>.<span class="ruby-identifier">constants</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+        <span class="ruby-constant">RI</span><span class="ruby-operator">::</span><span class="ruby-constant">Constant</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">c</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">c</span>.<span class="ruby-identifier">value</span>, <span class="ruby-identifier">markup</span>(<span class="ruby-identifier">c</span>.<span class="ruby-identifier">comment</span>))
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">cls_desc</span>.<span class="ruby-identifier">includes</span> = <span class="ruby-identifier">cls</span>.<span class="ruby-identifier">includes</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+        <span class="ruby-constant">RI</span><span class="ruby-operator">::</span><span class="ruby-constant">IncludedModule</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">i</span>.<span class="ruby-identifier">name</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">class_methods</span>, <span class="ruby-identifier">instance_methods</span> = <span class="ruby-identifier">method_list</span>(<span class="ruby-identifier">cls</span>)
+
+      <span class="ruby-identifier">cls_desc</span>.<span class="ruby-identifier">class_methods</span> = <span class="ruby-identifier">class_methods</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span>
+        <span class="ruby-constant">RI</span><span class="ruby-operator">::</span><span class="ruby-constant">MethodSummary</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">m</span>.<span class="ruby-identifier">name</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">cls_desc</span>.<span class="ruby-identifier">instance_methods</span> = <span class="ruby-identifier">instance_methods</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span>
+        <span class="ruby-constant">RI</span><span class="ruby-operator">::</span><span class="ruby-constant">MethodSummary</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">m</span>.<span class="ruby-identifier">name</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">update_or_replace</span>(<span class="ruby-identifier">cls_desc</span>)
+
+      <span class="ruby-identifier">class_methods</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">generate_method_info</span>(<span class="ruby-identifier">cls_desc</span>, <span class="ruby-identifier">m</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">instance_methods</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">generate_method_info</span>(<span class="ruby-identifier">cls_desc</span>, <span class="ruby-identifier">m</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

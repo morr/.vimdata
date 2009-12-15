@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>flush (Zlib::GzipWriter)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: flush(flush=nil)
+ *
+ * Flushes all the internal buffers of the GzipWriter object.  The meaning of
+ * +flush+ is same as in Zlib::Deflate#deflate.  &lt;tt&gt;Zlib::SYNC_FLUSH&lt;/tt&gt; is used if
+ * +flush+ is omitted.  It is no use giving flush &lt;tt&gt;Zlib::NO_FLUSH&lt;/tt&gt;.
+ */
+static VALUE
+rb_gzwriter_flush(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    struct gzfile *gz = get_gzfile(obj);
+    VALUE v_flush;
+    int flush;
+
+    rb_scan_args(argc, argv, &quot;01&quot;, &amp;v_flush);
+
+    flush = FIXNUMARG(v_flush, Z_SYNC_FLUSH);
+    if (flush != Z_NO_FLUSH) {  /* prevent Z_BUF_ERROR */
+        zstream_run(&amp;gz-&gt;z, &quot;&quot;, 0, flush);
+    }
+
+    gzfile_write_raw(gz);
+    if (rb_respond_to(gz-&gt;io, id_flush)) {
+        rb_funcall(gz-&gt;io, id_flush, 0);
+    }
+    return obj;
+}</pre>
+</body>
+</html>

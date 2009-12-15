@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Hash)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Hash.new                          =&gt; hash
+ *     Hash.new(obj)                     =&gt; aHash
+ *     Hash.new {|hash, key| block }     =&gt; aHash
+ *  
+ *  Returns a new, empty hash. If this hash is subsequently accessed by
+ *  a key that doesn't correspond to a hash entry, the value returned
+ *  depends on the style of &lt;code&gt;new&lt;/code&gt; used to create the hash. In
+ *  the first form, the access returns &lt;code&gt;nil&lt;/code&gt;. If
+ *  &lt;i&gt;obj&lt;/i&gt; is specified, this single object will be used for
+ *  all &lt;em&gt;default values&lt;/em&gt;. If a block is specified, it will be
+ *  called with the hash object and the key, and should return the
+ *  default value. It is the block's responsibility to store the value
+ *  in the hash if required.
+ *     
+ *     h = Hash.new(&quot;Go Fish&quot;)
+ *     h[&quot;a&quot;] = 100
+ *     h[&quot;b&quot;] = 200
+ *     h[&quot;a&quot;]           #=&gt; 100
+ *     h[&quot;c&quot;]           #=&gt; &quot;Go Fish&quot;
+ *     # The following alters the single default object
+ *     h[&quot;c&quot;].upcase!   #=&gt; &quot;GO FISH&quot;
+ *     h[&quot;d&quot;]           #=&gt; &quot;GO FISH&quot;
+ *     h.keys           #=&gt; [&quot;a&quot;, &quot;b&quot;]
+ *     
+ *     # While this creates a new default object each time
+ *     h = Hash.new { |hash, key| hash[key] = &quot;Go Fish: #{key}&quot; }
+ *     h[&quot;c&quot;]           #=&gt; &quot;Go Fish: c&quot;
+ *     h[&quot;c&quot;].upcase!   #=&gt; &quot;GO FISH: C&quot;
+ *     h[&quot;d&quot;]           #=&gt; &quot;Go Fish: d&quot;
+ *     h.keys           #=&gt; [&quot;c&quot;, &quot;d&quot;]
+ *     
+ */
+
+static VALUE
+rb_hash_initialize(argc, argv, hash)
+    int argc;
+    VALUE *argv;
+    VALUE hash;
+{
+    VALUE ifnone;
+
+    rb_hash_modify(hash);
+    if (rb_block_given_p()) {
+        if (argc &gt; 0) {
+            rb_raise(rb_eArgError, &quot;wrong number of arguments&quot;);
+        }
+        RHASH(hash)-&gt;ifnone = rb_block_proc();
+        FL_SET(hash, HASH_PROC_DEFAULT);
+    }
+    else {
+        rb_scan_args(argc, argv, &quot;01&quot;, &amp;ifnone);
+        RHASH(hash)-&gt;ifnone = ifnone;
+    }
+
+    return hash;
+}</pre>
+</body>
+</html>

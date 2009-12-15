@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>encode (Resolv::DNS::Message)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/resolv.rb, line 1170</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-constant">MessageEncoder</span>.<span class="ruby-identifier">new</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">msg</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">put_pack</span>(<span class="ruby-value str">'nnnnnn'</span>,
+            <span class="ruby-ivar">@id</span>,
+            (<span class="ruby-ivar">@qr</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">1</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">15</span> <span class="ruby-operator">|</span>
+            (<span class="ruby-ivar">@opcode</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">15</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">11</span> <span class="ruby-operator">|</span>
+            (<span class="ruby-ivar">@aa</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">1</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">10</span> <span class="ruby-operator">|</span>
+            (<span class="ruby-ivar">@tc</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">1</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">9</span> <span class="ruby-operator">|</span>
+            (<span class="ruby-ivar">@rd</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">1</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">8</span> <span class="ruby-operator">|</span>
+            (<span class="ruby-ivar">@ra</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">1</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">7</span> <span class="ruby-operator">|</span>
+            (<span class="ruby-ivar">@rcode</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">15</span>),
+            <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">length</span>,
+            <span class="ruby-ivar">@answer</span>.<span class="ruby-identifier">length</span>,
+            <span class="ruby-ivar">@authority</span>.<span class="ruby-identifier">length</span>,
+            <span class="ruby-ivar">@additional</span>.<span class="ruby-identifier">length</span>)
+          <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">q</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">name</span>, <span class="ruby-identifier">typeclass</span> = <span class="ruby-identifier">q</span>
+            <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">put_name</span>(<span class="ruby-identifier">name</span>)
+            <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">put_pack</span>(<span class="ruby-value str">'nn'</span>, <span class="ruby-identifier">typeclass</span><span class="ruby-operator">::</span><span class="ruby-constant">TypeValue</span>, <span class="ruby-identifier">typeclass</span><span class="ruby-operator">::</span><span class="ruby-constant">ClassValue</span>)
+          }
+          [<span class="ruby-ivar">@answer</span>, <span class="ruby-ivar">@authority</span>, <span class="ruby-ivar">@additional</span>].<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">rr</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">rr</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span>
+              <span class="ruby-identifier">name</span>, <span class="ruby-identifier">ttl</span>, <span class="ruby-identifier">data</span> = <span class="ruby-identifier">r</span>
+              <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">put_name</span>(<span class="ruby-identifier">name</span>)
+              <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">put_pack</span>(<span class="ruby-value str">'nnN'</span>, <span class="ruby-identifier">data</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">TypeValue</span>, <span class="ruby-identifier">data</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ClassValue</span>, <span class="ruby-identifier">ttl</span>)
+              <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">put_length16</span> {<span class="ruby-identifier">data</span>.<span class="ruby-identifier">encode_rdata</span>(<span class="ruby-identifier">msg</span>)}
+            }
+          }
+        }.<span class="ruby-identifier">to_s</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

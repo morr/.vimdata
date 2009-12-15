@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>seek (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.seek(amount, whence=SEEK_SET) -&gt; 0
+ *  
+ *  Seeks to a given offset &lt;i&gt;anInteger&lt;/i&gt; in the stream according to
+ *  the value of &lt;i&gt;whence&lt;/i&gt;:
+ *
+ *    IO::SEEK_CUR  | Seeks to _amount_ plus current position
+ *    --------------+----------------------------------------------------
+ *    IO::SEEK_END  | Seeks to _amount_ plus end of stream (you probably 
+ *                  | want a negative value for _amount_)
+ *    --------------+----------------------------------------------------
+ *    IO::SEEK_SET  | Seeks to the absolute location given by _amount_
+ *
+ *  Example:
+ *     
+ *     f = File.new(&quot;testfile&quot;)
+ *     f.seek(-13, IO::SEEK_END)   #=&gt; 0
+ *     f.readline                  #=&gt; &quot;And so on...\n&quot;
+ */
+
+static VALUE
+rb_io_seek_m(argc, argv, io)
+    int argc;
+    VALUE *argv;
+    VALUE io;
+{
+    VALUE offset, ptrname;
+    int whence = SEEK_SET;
+
+    if (rb_scan_args(argc, argv, &quot;11&quot;, &amp;offset, &amp;ptrname) == 2) {
+        whence = NUM2INT(ptrname);
+    }
+
+    return rb_io_seek(io, offset, whence);
+}</pre>
+</body>
+</html>

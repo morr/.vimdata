@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>binding (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     binding -&gt; a_binding
+ *  
+ *  Returns a +Binding+ object, describing the variable and
+ *  method bindings at the point of call. This object can be used when
+ *  calling +eval+ to execute the evaluated command in this
+ *  environment. Also see the description of class +Binding+.
+ *     
+ *     def getBinding(param)
+ *       return binding
+ *     end
+ *     b = getBinding(&quot;hello&quot;)
+ *     eval(&quot;param&quot;, b)   #=&gt; &quot;hello&quot;
+ */
+
+static VALUE
+rb_f_binding(self)
+    VALUE self;
+{
+    struct BLOCK *data, *p;
+    struct RVarmap *vars;
+    VALUE bind;
+
+    PUSH_BLOCK(0,0);
+    bind = Data_Make_Struct(rb_cBinding,struct BLOCK,blk_mark,blk_free,data);
+    *data = *ruby_block;
+
+    data-&gt;orig_thread = rb_thread_current();
+    data-&gt;wrapper = ruby_wrapper;
+    data-&gt;iter = rb_f_block_given_p();
+    frame_dup(&amp;data-&gt;frame);
+    if (ruby_frame-&gt;prev) {
+        data-&gt;frame.last_func = ruby_frame-&gt;prev-&gt;last_func;
+        data-&gt;frame.last_class = ruby_frame-&gt;prev-&gt;last_class;
+        data-&gt;frame.orig_func = ruby_frame-&gt;prev-&gt;orig_func;
+    }
+
+    if (data-&gt;iter) {
+        blk_copy_prev(data);
+    }
+    else {
+        data-&gt;prev = 0;
+    }
+
+    for (p = data; p; p = p-&gt;prev) {
+        for (vars = p-&gt;dyna_vars; vars; vars = vars-&gt;next) {
+            if (FL_TEST(vars, DVAR_DONT_RECYCLE)) break;
+            FL_SET(vars, DVAR_DONT_RECYCLE);
+        }
+    }
+    scope_dup(data-&gt;scope);
+    POP_BLOCK();
+
+    return bind;
+}</pre>
+</body>
+</html>

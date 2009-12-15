@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>fcntl (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.fcntl(integer_cmd, arg)    =&gt; integer
+ *  
+ *  Provides a mechanism for issuing low-level commands to control or
+ *  query file-oriented I/O streams. Arguments and results are platform
+ *  dependent. If &lt;i&gt;arg&lt;/i&gt; is a number, its value is passed
+ *  directly. If it is a string, it is interpreted as a binary sequence
+ *  of bytes (&lt;code&gt;Array#pack&lt;/code&gt; might be a useful way to build this
+ *  string). On Unix platforms, see &lt;code&gt;fcntl(2)&lt;/code&gt; for details.
+ *  Not implemented on all platforms.
+ */
+
+static VALUE
+rb_io_fcntl(argc, argv, io)
+    int argc;
+    VALUE *argv;
+    VALUE io;
+{
+#ifdef HAVE_FCNTL
+    VALUE req, arg;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;req, &amp;arg);
+    return rb_io_ctl(io, req, arg, 0);
+#else
+    rb_notimplement();
+    return Qnil;                /* not reached */
+#endif
+}</pre>
+</body>
+</html>

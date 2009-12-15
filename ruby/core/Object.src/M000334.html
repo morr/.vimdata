@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>instance_eval (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.instance_eval(string [, filename [, lineno]] )   =&gt; obj
+ *     obj.instance_eval {| | block }                       =&gt; obj
+ *  
+ *  Evaluates a string containing Ruby source code, or the given block,
+ *  within the context of the receiver (_obj_). In order to set the
+ *  context, the variable +self+ is set to _obj_ while
+ *  the code is executing, giving the code access to _obj_'s
+ *  instance variables. In the version of &lt;code&gt;instance_eval&lt;/code&gt;
+ *  that takes a +String+, the optional second and third
+ *  parameters supply a filename and starting line number that are used
+ *  when reporting compilation errors.
+ *     
+ *     class Klass
+ *       def initialize
+ *         @secret = 99
+ *       end
+ *     end
+ *     k = Klass.new
+ *     k.instance_eval { @secret }   #=&gt; 99
+ */
+
+VALUE
+rb_obj_instance_eval(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE klass;
+
+    if (SPECIAL_CONST_P(self)) {
+        klass = Qnil;
+    }
+    else {
+        klass = rb_singleton_class(self);
+    }
+    return specific_eval(argc, argv, klass, self);
+}</pre>
+</body>
+</html>

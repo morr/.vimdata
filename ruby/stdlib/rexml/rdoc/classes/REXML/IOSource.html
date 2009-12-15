@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: REXML::IOSource</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">REXML::IOSource</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/rexml/source_rb.html">
+                rexml/source.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Source.html">
+                Source
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+A <a href="Source.html">Source</a> that wraps an IO. See the <a
+href="Source.html">Source</a> class for method documentation
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002916">consume</a>&nbsp;&nbsp;
+      <a href="#M002920">current_line</a>&nbsp;&nbsp;
+      <a href="#M002918">empty?</a>&nbsp;&nbsp;
+      <a href="#M002917">match</a>&nbsp;&nbsp;
+      <a href="#M002913">new</a>&nbsp;&nbsp;
+      <a href="#M002919">position</a>&nbsp;&nbsp;
+      <a href="#M002915">read</a>&nbsp;&nbsp;
+      <a href="#M002914">scan</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M002913" class="m-detail">
+        <a name="M002913"></a>
+
+        <div class="method-heading">
+          <a href="#M002913" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(arg, block_size=500, encoding=nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+block_size has been deprecated
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002913-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002913-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/source.rb, line 134</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">arg</span>, <span class="ruby-identifier">block_size</span>=<span class="ruby-value">500</span>, <span class="ruby-identifier">encoding</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-ivar">@er_source</span> = <span class="ruby-ivar">@source</span> = <span class="ruby-identifier">arg</span>
+      <span class="ruby-ivar">@to_utf</span> = <span class="ruby-keyword kw">false</span>
+
+      <span class="ruby-comment cmt"># Determining the encoding is a deceptively difficult issue to resolve.</span>
+      <span class="ruby-comment cmt"># First, we check the first two bytes for UTF-16.  Then we</span>
+      <span class="ruby-comment cmt"># assume that the encoding is at least ASCII enough for the '&gt;', and</span>
+      <span class="ruby-comment cmt"># we read until we get one of those.  This gives us the XML declaration,</span>
+      <span class="ruby-comment cmt"># if there is one.  If there isn't one, the file MUST be UTF-8, as per</span>
+      <span class="ruby-comment cmt"># the XML spec.  If there is one, we can determine the encoding from</span>
+      <span class="ruby-comment cmt"># it.</span>
+      <span class="ruby-ivar">@buffer</span> = <span class="ruby-value str">&quot;&quot;</span>
+      <span class="ruby-identifier">str</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">read</span>( <span class="ruby-value">2</span> )
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">encoding</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">encoding</span> = <span class="ruby-identifier">encoding</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-value">0xfe</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-value">0xff</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">1</span>]
+        <span class="ruby-ivar">@line_break</span> = <span class="ruby-value str">&quot;\000&gt;&quot;</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-value">0xff</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-value">0xfe</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">1</span>]
+        <span class="ruby-ivar">@line_break</span> = <span class="ruby-value str">&quot;&gt;\000&quot;</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-value">0xef</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-value">0xbb</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">1</span>]
+        <span class="ruby-identifier">str</span> <span class="ruby-operator">+=</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">read</span>(<span class="ruby-value">1</span>)
+        <span class="ruby-identifier">str</span> = <span class="ruby-value str">''</span> <span class="ruby-keyword kw">if</span> (<span class="ruby-value">0xbf</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">str</span>[<span class="ruby-value">2</span>])
+        <span class="ruby-ivar">@line_break</span> = <span class="ruby-value str">&quot;&gt;&quot;</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@line_break</span> = <span class="ruby-value str">&quot;&gt;&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">super</span> <span class="ruby-identifier">str</span><span class="ruby-operator">+</span><span class="ruby-ivar">@source</span>.<span class="ruby-identifier">readline</span>( <span class="ruby-ivar">@line_break</span> )
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002916" class="m-detail">
+        <a name="M002916"></a>
+
+        <div class="method-heading">
+          <a href="#M002916" class="method-signature">
+          <span class="method-name">consume</span><span class="method-args">( pattern )</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002916-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002916-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/source.rb, line 200</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">consume</span>( <span class="ruby-identifier">pattern</span> )
+      <span class="ruby-identifier">match</span>( <span class="ruby-identifier">pattern</span>, <span class="ruby-keyword kw">true</span> )
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002920" class="m-detail">
+        <a name="M002920"></a>
+
+        <div class="method-heading">
+          <a href="#M002920" class="method-signature">
+          <span class="method-name">current_line</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+@return the current line in the source
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002920-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002920-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/source.rb, line 231</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">current_line</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">pos</span> = <span class="ruby-ivar">@er_source</span>.<span class="ruby-identifier">pos</span>        <span class="ruby-comment cmt"># The byte position in the source</span>
+        <span class="ruby-identifier">lineno</span> = <span class="ruby-ivar">@er_source</span>.<span class="ruby-identifier">lineno</span>  <span class="ruby-comment cmt"># The XML &lt; position in the source</span>
+        <span class="ruby-ivar">@er_source</span>.<span class="ruby-identifier">rewind</span>
+        <span class="ruby-identifier">line</span> = <span class="ruby-value">0</span>                    <span class="ruby-comment cmt"># The \r\n position in the source</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-keyword kw">while</span> <span class="ruby-ivar">@er_source</span>.<span class="ruby-identifier">pos</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">pos</span>
+            <span class="ruby-ivar">@er_source</span>.<span class="ruby-identifier">readline</span>
+            <span class="ruby-identifier">line</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">rescue</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">IOError</span>
+        <span class="ruby-identifier">pos</span> = <span class="ruby-value">-1</span>
+        <span class="ruby-identifier">line</span> = <span class="ruby-value">-1</span>
+      <span class="ruby-keyword kw">end</span>
+      [<span class="ruby-identifier">pos</span>, <span class="ruby-identifier">lineno</span>, <span class="ruby-identifier">line</span>]
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002918" class="m-detail">
+        <a name="M002918"></a>
+
+        <div class="method-heading">
+          <a href="#M002918" class="method-signature">
+          <span class="method-name">empty?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002918-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002918-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/source.rb, line 222</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">empty?</span>
+      <span class="ruby-keyword kw">super</span> <span class="ruby-keyword kw">and</span> ( <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">eof?</span> )
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002917" class="m-detail">
+        <a name="M002917"></a>
+
+        <div class="method-heading">
+          <a href="#M002917" class="method-signature">
+          <span class="method-name">match</span><span class="method-args">( pattern, cons=false )</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002917-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002917-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/source.rb, line 204</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">match</span>( <span class="ruby-identifier">pattern</span>, <span class="ruby-identifier">cons</span>=<span class="ruby-keyword kw">false</span> )
+      <span class="ruby-identifier">rv</span> = <span class="ruby-identifier">pattern</span>.<span class="ruby-identifier">match</span>(<span class="ruby-ivar">@buffer</span>)
+      <span class="ruby-ivar">@buffer</span> = <span class="ruby-identifier">$'</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cons</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">rv</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-operator">!</span><span class="ruby-identifier">rv</span> <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@source</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">str</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">readline</span>(<span class="ruby-ivar">@line_break</span>)
+          <span class="ruby-identifier">str</span> = <span class="ruby-identifier">decode</span>(<span class="ruby-identifier">str</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@to_utf</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">str</span>
+          <span class="ruby-ivar">@buffer</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">str</span>
+          <span class="ruby-identifier">rv</span> = <span class="ruby-identifier">pattern</span>.<span class="ruby-identifier">match</span>(<span class="ruby-ivar">@buffer</span>)
+          <span class="ruby-ivar">@buffer</span> = <span class="ruby-identifier">$'</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cons</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">rv</span>
+        <span class="ruby-keyword kw">rescue</span>
+          <span class="ruby-ivar">@source</span> = <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">rv</span>.<span class="ruby-identifier">taint</span>
+      <span class="ruby-identifier">rv</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002919" class="m-detail">
+        <a name="M002919"></a>
+
+        <div class="method-heading">
+          <a href="#M002919" class="method-signature">
+          <span class="method-name">position</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002919-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002919-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/source.rb, line 226</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">position</span>
+      <span class="ruby-ivar">@er_source</span>.<span class="ruby-identifier">stat</span>.<span class="ruby-identifier">pipe?</span> <span class="ruby-value">? </span><span class="ruby-value">0</span> <span class="ruby-operator">:</span> <span class="ruby-ivar">@er_source</span>.<span class="ruby-identifier">pos</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002915" class="m-detail">
+        <a name="M002915"></a>
+
+        <div class="method-heading">
+          <a href="#M002915" class="method-signature">
+          <span class="method-name">read</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002915-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002915-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/source.rb, line 190</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">read</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">str</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">readline</span>(<span class="ruby-ivar">@line_break</span>)
+        <span class="ruby-identifier">str</span> = <span class="ruby-identifier">decode</span>(<span class="ruby-identifier">str</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@to_utf</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">str</span> 
+        <span class="ruby-ivar">@buffer</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">str</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span>, <span class="ruby-constant">NameError</span>
+        <span class="ruby-ivar">@source</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002914" class="m-detail">
+        <a name="M002914"></a>
+
+        <div class="method-heading">
+          <a href="#M002914" class="method-signature">
+          <span class="method-name">scan</span><span class="method-args">(pattern, cons=false)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002914-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002914-source">
+<pre>
+<span class="ruby-comment cmt"># File rexml/source.rb, line 163</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">scan</span>(<span class="ruby-identifier">pattern</span>, <span class="ruby-identifier">cons</span>=<span class="ruby-keyword kw">false</span>)
+      <span class="ruby-identifier">rv</span> = <span class="ruby-keyword kw">super</span>
+      <span class="ruby-comment cmt"># You'll notice that this next section is very similar to the same</span>
+      <span class="ruby-comment cmt"># section in match(), but just a liiittle different.  This is</span>
+      <span class="ruby-comment cmt"># because it is a touch faster to do it this way with scan()</span>
+      <span class="ruby-comment cmt"># than the way match() does it; enough faster to warrent duplicating</span>
+      <span class="ruby-comment cmt"># some code</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rv</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+        <span class="ruby-keyword kw">until</span> <span class="ruby-ivar">@buffer</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">pattern</span> <span class="ruby-keyword kw">or</span> <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">nil?</span>
+          <span class="ruby-keyword kw">begin</span>
+            <span class="ruby-comment cmt"># READLINE OPT</span>
+            <span class="ruby-comment cmt">#str = @source.read(@block_size)</span>
+            <span class="ruby-identifier">str</span> = <span class="ruby-ivar">@source</span>.<span class="ruby-identifier">readline</span>(<span class="ruby-ivar">@line_break</span>)
+            <span class="ruby-identifier">str</span> = <span class="ruby-identifier">decode</span>(<span class="ruby-identifier">str</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@to_utf</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">str</span>
+            <span class="ruby-ivar">@buffer</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">str</span>
+          <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Iconv</span><span class="ruby-operator">::</span><span class="ruby-constant">IllegalSequence</span>
+            <span class="ruby-identifier">raise</span>
+          <span class="ruby-keyword kw">rescue</span>
+            <span class="ruby-ivar">@source</span> = <span class="ruby-keyword kw">nil</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">rv</span> = <span class="ruby-keyword kw">super</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">rv</span>.<span class="ruby-identifier">taint</span>
+      <span class="ruby-identifier">rv</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+<!-- 1  --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and maintained by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. The site was created in 2002 as part of the Ruby Documentation Project to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

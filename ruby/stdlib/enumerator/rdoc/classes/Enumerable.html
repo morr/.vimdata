@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Enumerable</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Enumerable</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/enumerator/enumerator_c.html">
+                enumerator/enumerator.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000644">each_cons</a>&nbsp;&nbsp;
+      <a href="#M000642">each_slice</a>&nbsp;&nbsp;
+      <a href="#M000645">enum_cons</a>&nbsp;&nbsp;
+      <a href="#M000643">enum_slice</a>&nbsp;&nbsp;
+      <a href="#M000641">enum_with_index</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="Enumerable/Enumerator.html" class="link">Enumerable::Enumerator</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000644" class="m-detail">
+        <a name="M000644"></a>
+
+        <div class="method-heading">
+          <a href="#M000644" class="method-signature">
+          <span class="method-name">each_cons(n) {...}<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Iterates the given block for each array of consecutive &lt;n&gt; elements.
+</p>
+<p>
+e.g.:
+</p>
+<pre>
+    (1..10).each_cons(3) {|a| p a}
+    # outputs below
+    [1, 2, 3]
+    [2, 3, 4]
+    [3, 4, 5]
+    [4, 5, 6]
+    [5, 6, 7]
+    [6, 7, 8]
+    [7, 8, 9]
+    [8, 9, 10]
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000644-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000644-source">
+<pre>
+/*
+ *  call-seq:
+ *    each_cons(n) {...}
+ *
+ *  Iterates the given block for each array of consecutive &lt;n&gt;
+ *  elements.
+ *
+ *  e.g.:
+ *      (1..10).each_cons(3) {|a| p a}
+ *      # outputs below
+ *      [1, 2, 3]
+ *      [2, 3, 4]
+ *      [3, 4, 5]
+ *      [4, 5, 6]
+ *      [5, 6, 7]
+ *      [6, 7, 8]
+ *      [7, 8, 9]
+ *      [8, 9, 10]
+ *
+ */
+static VALUE
+enum_each_cons(obj, n)
+    VALUE obj, n;
+{
+    long size = NUM2LONG(n);
+    NODE *memo;
+
+    if (size &lt;= 0) rb_raise(rb_eArgError, &quot;invalid size&quot;);
+    memo = rb_node_newnode(NODE_MEMO, rb_ary_new2(size), 0, size);
+
+    rb_iterate(rb_each, obj, each_cons_i, (VALUE)memo);
+
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000642" class="m-detail">
+        <a name="M000642"></a>
+
+        <div class="method-heading">
+          <a href="#M000642" class="method-signature">
+          <span class="method-name">e.each_slice(n) {...}<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Iterates the given block for each slice of &lt;n&gt; elements.
+</p>
+<p>
+e.g.:
+</p>
+<pre>
+    (1..10).each_slice(3) {|a| p a}
+    # outputs below
+    [1, 2, 3]
+    [4, 5, 6]
+    [7, 8, 9]
+    [10]
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000642-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000642-source">
+<pre>
+/*
+ *  call-seq:
+ *    e.each_slice(n) {...}
+ *
+ *  Iterates the given block for each slice of &lt;n&gt; elements.
+ *
+ *  e.g.:
+ *      (1..10).each_slice(3) {|a| p a}
+ *      # outputs below
+ *      [1, 2, 3]
+ *      [4, 5, 6]
+ *      [7, 8, 9]
+ *      [10]
+ *
+ */
+static VALUE
+enum_each_slice(obj, n)
+    VALUE obj, n;
+{
+    long size = NUM2LONG(n);
+    NODE *memo;
+    VALUE ary;
+
+    if (size &lt;= 0) rb_raise(rb_eArgError, &quot;invalid slice size&quot;);
+
+    memo = rb_node_newnode(NODE_MEMO, rb_ary_new2(size), 0, size);
+
+    rb_iterate(rb_each, obj, each_slice_i, (VALUE)memo);
+
+    ary = memo-&gt;u1.value;
+    if (RARRAY(ary)-&gt;len &gt; 0) rb_yield(ary);
+
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000645" class="m-detail">
+        <a name="M000645"></a>
+
+        <div class="method-heading">
+          <a href="#M000645" class="method-signature">
+          <span class="method-name">e.enum_cons(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns <a
+href="Enumerable/Enumerator.html#M000646">Enumerable::Enumerator.new</a>(self,
+:<a href="Enumerable.html#M000644">each_cons</a>, n).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000645-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000645-source">
+<pre>
+/*
+ *  call-seq:
+ *    e.enum_cons(n)
+ *
+ *  Returns Enumerable::Enumerator.new(self, :each_cons, n).
+ *
+ */
+static VALUE
+enumerator_enum_cons(obj, n)
+    VALUE obj, n;
+{
+    return rb_funcall(rb_cEnumerator, id_new, 3, obj, sym_each_cons, n);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000643" class="m-detail">
+        <a name="M000643"></a>
+
+        <div class="method-heading">
+          <a href="#M000643" class="method-signature">
+          <span class="method-name">e.enum_slice(n)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns <a
+href="Enumerable/Enumerator.html#M000646">Enumerable::Enumerator.new</a>(self,
+:<a href="Enumerable.html#M000642">each_slice</a>, n).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000643-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000643-source">
+<pre>
+/*
+ *  call-seq:
+ *    e.enum_slice(n)
+ *
+ *  Returns Enumerable::Enumerator.new(self, :each_slice, n).
+ *
+ */
+static VALUE
+enumerator_enum_slice(obj, n)
+    VALUE obj, n;
+{
+    return rb_funcall(rb_cEnumerator, id_new, 3, obj, sym_each_slice, n);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000641" class="m-detail">
+        <a name="M000641"></a>
+
+        <div class="method-heading">
+          <a href="#M000641" class="method-signature">
+          <span class="method-name">enum_with_index<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns <a
+href="Enumerable/Enumerator.html#M000646">Enumerable::Enumerator.new</a>(self,
+:each_with_index).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000641-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000641-source">
+<pre>
+/*
+ *  call-seq:
+ *    enum_with_index
+ *
+ *  Returns Enumerable::Enumerator.new(self, :each_with_index).
+ *
+ */
+static VALUE
+enumerator_enum_with_index(obj)
+    VALUE obj;
+{
+    return rb_funcall(rb_cEnumerator, id_new, 2, obj, sym_each_with_index);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 3 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>zip (Enumerable)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     enum.zip(arg, ...)                   =&gt; array
+ *     enum.zip(arg, ...) {|arr| block }    =&gt; nil
+ *  
+ *  Converts any arguments to arrays, then merges elements of
+ *  &lt;i&gt;enum&lt;/i&gt; with corresponding elements from each argument. This
+ *  generates a sequence of &lt;code&gt;enum#size&lt;/code&gt; &lt;em&gt;n&lt;/em&gt;-element
+ *  arrays, where &lt;em&gt;n&lt;/em&gt; is one more that the count of arguments. If
+ *  the size of any argument is less than &lt;code&gt;enum#size&lt;/code&gt;,
+ *  &lt;code&gt;nil&lt;/code&gt; values are supplied. If a block given, it is
+ *  invoked for each output array, otherwise an array of arrays is
+ *  returned.
+ *     
+ *     a = [ 4, 5, 6 ]
+ *     b = [ 7, 8, 9 ]
+ *     
+ *     (1..3).zip(a, b)      #=&gt; [[1, 4, 7], [2, 5, 8], [3, 6, 9]]
+ *     &quot;cat\ndog&quot;.zip([1])   #=&gt; [[&quot;cat\n&quot;, 1], [&quot;dog&quot;, nil]]
+ *     (1..3).zip            #=&gt; [[1], [2], [3]]
+ *     
+ */
+
+static VALUE
+enum_zip(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    int i;
+    VALUE result;
+    VALUE memo[3];
+
+    for (i=0; i&lt;argc; i++) {
+        argv[i] = rb_convert_type(argv[i], T_ARRAY, &quot;Array&quot;, &quot;to_a&quot;);
+    }
+    result = rb_block_given_p() ? Qnil : rb_ary_new();
+    memo[0] = result;
+    memo[1] = rb_ary_new4(argc, argv);
+    memo[2] = 0;
+    rb_iterate(rb_each, obj, zip_i, (VALUE)memo);
+
+    return result;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>change_privilege (Process::GID)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process::GID.change_privilege(integer)   =&gt; fixnum
+ *
+ *  Change the current process's real and effective group ID to that
+ *  specified by _integer_. Returns the new group ID. Not
+ *  available on all platforms.
+ *
+ *     [Process.gid, Process.egid]          #=&gt; [0, 0]
+ *     Process::GID.change_privilege(33)    #=&gt; 33
+ *     [Process.gid, Process.egid]          #=&gt; [33, 33]
+ */
+
+static VALUE
+p_gid_change_privilege(obj, id)
+    VALUE obj, id;
+{
+    int gid;
+
+    check_gid_switch();
+
+    gid = NUM2INT(id);
+
+    if (geteuid() == 0) { /* root-user */
+#if defined(HAVE_SETRESGID)
+        if (setresgid(gid, gid, gid) &lt; 0) rb_sys_fail(0);
+        SAVED_GROUP_ID = gid;
+#elif defined HAVE_SETGID
+        if (setgid(gid) &lt; 0) rb_sys_fail(0);
+        SAVED_GROUP_ID = gid;
+#elif defined(HAVE_SETREGID) &amp;&amp; !defined(OBSOLETE_SETREGID)
+        if (getgid() == gid) {
+            if (SAVED_GROUP_ID == gid) {
+                if (setregid(-1, gid) &lt; 0) rb_sys_fail(0);
+            } else {
+                if (gid == 0) { /* (r,e,s) == (root, y, x) */
+                    if (setregid(-1, SAVED_GROUP_ID) &lt; 0) rb_sys_fail(0);
+                    if (setregid(SAVED_GROUP_ID, 0) &lt; 0) rb_sys_fail(0);
+                    SAVED_GROUP_ID = 0; /* (r,e,s) == (x, root, root) */
+                    if (setregid(gid, gid) &lt; 0) rb_sys_fail(0);
+                    SAVED_GROUP_ID = gid;
+                } else { /* (r,e,s) == (z, y, x) */
+                    if (setregid(0, 0) &lt; 0) rb_sys_fail(0);
+                    SAVED_GROUP_ID = 0;
+                    if (setregid(gid, gid) &lt; 0) rb_sys_fail(0);
+                    SAVED_GROUP_ID = gid;
+                }
+            }
+        } else {
+            if (setregid(gid, gid) &lt; 0) rb_sys_fail(0);
+            SAVED_GROUP_ID = gid;
+        }
+#elif defined(HAVE_SETRGID) &amp;&amp; defined (HAVE_SETEGID)
+        if (getgid() == gid) {
+            if (SAVED_GROUP_ID == gid) {
+                if (setegid(gid) &lt; 0) rb_sys_fail(0);
+            } else {
+                if (gid == 0) {
+                    if (setegid(gid) &lt; 0) rb_sys_fail(0);
+                    if (setrgid(SAVED_GROUP_ID) &lt; 0) rb_sys_fail(0);
+                    SAVED_GROUP_ID = 0;
+                    if (setrgid(0) &lt; 0) rb_sys_fail(0);
+                } else {
+                    if (setrgid(0) &lt; 0) rb_sys_fail(0);
+                    SAVED_GROUP_ID = 0;
+                    if (setegid(gid) &lt; 0) rb_sys_fail(0);
+                    if (setrgid(gid) &lt; 0) rb_sys_fail(0);
+                    SAVED_GROUP_ID = gid;
+                }
+            }
+        } else {
+            if (setegid(gid) &lt; 0) rb_sys_fail(0);
+            if (setrgid(gid) &lt; 0) rb_sys_fail(0);
+            SAVED_GROUP_ID = gid;
+        }
+#else
+        rb_notimplement();
+#endif
+    } else { /* unprivileged user */
+#if defined(HAVE_SETRESGID)
+        if (setresgid((getgid() == gid)? -1: gid,
+                      (getegid() == gid)? -1: gid,
+                      (SAVED_GROUP_ID == gid)? -1: gid) &lt; 0) rb_sys_fail(0);
+        SAVED_GROUP_ID = gid;
+#elif defined(HAVE_SETREGID) &amp;&amp; !defined(OBSOLETE_SETREGID)
+        if (SAVED_GROUP_ID == gid) {
+            if (setregid((getgid() == gid)? -1: gid,
+                         (getegid() == gid)? -1: gid) &lt; 0) rb_sys_fail(0);
+        } else if (getgid() != gid) {
+            if (setregid(gid, (getegid() == gid)? -1: gid) &lt; 0) rb_sys_fail(0);
+            SAVED_GROUP_ID = gid;
+        } else if (/* getgid() == gid &amp;&amp; */ getegid() != gid) {
+            if (setregid(getegid(), gid) &lt; 0) rb_sys_fail(0);
+            SAVED_GROUP_ID = gid;
+            if (setregid(gid, -1) &lt; 0) rb_sys_fail(0);
+        } else { /* getgid() == gid &amp;&amp; getegid() == gid */
+            if (setregid(-1, SAVED_GROUP_ID) &lt; 0) rb_sys_fail(0);
+            if (setregid(SAVED_GROUP_ID, gid) &lt; 0) rb_sys_fail(0);
+            SAVED_GROUP_ID = gid;
+            if (setregid(gid, -1) &lt; 0) rb_sys_fail(0);
+        }
+#elif defined(HAVE_SETRGID) &amp;&amp; defined(HAVE_SETEGID)
+        if (SAVED_GROUP_ID == gid) {
+            if (getegid() != gid &amp;&amp; setegid(gid) &lt; 0) rb_sys_fail(0);
+            if (getgid() != gid &amp;&amp; setrgid(gid) &lt; 0) rb_sys_fail(0);
+        } else if (/* SAVED_GROUP_ID != gid &amp;&amp; */ getegid() == gid) {
+            if (getgid() != gid) {
+                if (setrgid(gid) &lt; 0) rb_sys_fail(0);
+                SAVED_GROUP_ID = gid;
+            } else {
+                if (setrgid(SAVED_GROUP_ID) &lt; 0) rb_sys_fail(0);
+                SAVED_GROUP_ID = gid;
+                if (setrgid(gid) &lt; 0) rb_sys_fail(0);
+            }
+        } else if (/* getegid() != gid &amp;&amp; */ getgid() == gid) {
+            if (setegid(gid) &lt; 0) rb_sys_fail(0);
+            if (setrgid(SAVED_GROUP_ID) &lt; 0) rb_sys_fail(0);
+            SAVED_GROUP_ID = gid;
+            if (setrgid(gid) &lt; 0) rb_sys_fail(0);
+        } else {
+            errno = EPERM;
+            rb_sys_fail(0);
+        }
+#elif defined HAVE_44BSD_SETGID
+        if (getgid() == gid) {
+            /* (r,e,s)==(gid,?,?) ==&gt; (gid,gid,gid) */
+            if (setgid(gid) &lt; 0) rb_sys_fail(0);
+            SAVED_GROUP_ID = gid;
+        } else {
+            errno = EPERM;
+            rb_sys_fail(0);
+        }
+#elif defined HAVE_SETEGID
+        if (getgid() == gid &amp;&amp; SAVED_GROUP_ID == gid) {
+            if (setegid(gid) &lt; 0) rb_sys_fail(0);
+        } else {
+            errno = EPERM;
+            rb_sys_fail(0);
+        }
+#elif defined HAVE_SETGID
+        if (getgid() == gid &amp;&amp; SAVED_GROUP_ID == gid) {
+            if (setgid(gid) &lt; 0) rb_sys_fail(0);
+        } else {
+            errno = EPERM;
+            rb_sys_fail(0);
+        }
+#else
+        rb_notimplement();
+#endif
+    }
+    return INT2FIX(gid);
+}</pre>
+</body>
+</html>

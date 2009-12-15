@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>ole_obj_help (WIN32OLE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *   call-seq:
+ *      WIN32OLE#ole_obj_help
+ * 
+ *   Returns WIN32OLE_TYPE object.
+ *
+ *      excel = WIN32OLE.new('Excel.Application')
+ *      tobj = excel.ole_obj_help
+ */
+static VALUE
+fole_obj_help( self )
+    VALUE self;
+{
+    unsigned int index;
+    ITypeInfo *pTypeInfo;
+    ITypeLib *pTypeLib;
+    HRESULT hr;
+    struct oledata *pole;
+    BSTR bstr;
+    LCID  lcid = LOCALE_SYSTEM_DEFAULT;
+    VALUE type = Qnil;
+
+    OLEData_Get_Struct(self, pole);
+
+    hr = pole-&gt;pDispatch-&gt;lpVtbl-&gt;GetTypeInfo( pole-&gt;pDispatch, 0, lcid, &amp;pTypeInfo );
+    if(FAILED(hr)) {
+        ole_raise(hr, rb_eRuntimeError, &quot;failed to GetTypeInfo&quot;);
+    }
+    hr = pTypeInfo-&gt;lpVtbl-&gt;GetContainingTypeLib( pTypeInfo, &amp;pTypeLib, &amp;index );
+    if(FAILED(hr)) {
+        OLE_RELEASE(pTypeInfo);
+        ole_raise(hr, rb_eRuntimeError, &quot;failed to GetContainingTypeLib&quot;);
+    }
+    hr = pTypeLib-&gt;lpVtbl-&gt;GetDocumentation( pTypeLib, index,
+                                             &amp;bstr, NULL, NULL, NULL);
+    if (SUCCEEDED(hr)) {
+        type = foletype_s_allocate(cWIN32OLE_TYPE);
+        oletype_set_member(type, pTypeInfo, WC2VSTR(bstr));
+    }
+    OLE_RELEASE(pTypeLib);
+    OLE_RELEASE(pTypeInfo);
+
+    return type;
+}</pre>
+</body>
+</html>

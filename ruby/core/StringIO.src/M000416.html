@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>ungetc (StringIO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   strio.ungetc(integer)   -&gt; nil
+ *
+ * Pushes back one character (passed as a parameter) onto *strio*
+ * such that a subsequent buffered read will return it.  Pushing back 
+ * behind the beginning of the buffer string is not possible.  Nothing
+ * will be done if such an attempt is made.
+ * In other case, there is no limitation for multiple pushbacks.
+ */
+static VALUE
+strio_ungetc(self, ch)
+    VALUE self, ch;
+{
+    struct StringIO *ptr = readable(StringIO(self));
+    int cc = NUM2INT(ch);
+    long len, pos = ptr-&gt;pos;
+
+    if (cc != EOF) {
+        len = RSTRING(ptr-&gt;string)-&gt;len;
+        if (pos == 0) {
+            char *p;
+            rb_str_resize(ptr-&gt;string, len + 1);
+            p = RSTRING(ptr-&gt;string)-&gt;ptr;
+            memmove(p + 1, p, len);
+        }
+        else {
+            if (len &lt; pos-- ||
+                (unsigned char)RSTRING(ptr-&gt;string)-&gt;ptr[pos] !=
+                (unsigned char)cc) {
+                strio_extend(ptr, pos, 1);
+            }
+            --ptr-&gt;pos;
+        }
+        RSTRING(ptr-&gt;string)-&gt;ptr[pos] = cc;
+        OBJ_INFECT(ptr-&gt;string, self);
+        ptr-&gt;flags &amp;= ~STRIO_EOF;
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

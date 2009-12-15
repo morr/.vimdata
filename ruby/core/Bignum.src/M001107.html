@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>quo (Bignum)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     big.quo(numeric) -&gt; float
+ *  
+ *  Returns the floating point result of dividing &lt;i&gt;big&lt;/i&gt; by
+ *  &lt;i&gt;numeric&lt;/i&gt;.
+ *     
+ *     -1234567890987654321.quo(13731)      #=&gt; -89910996357705.5
+ *     -1234567890987654321.quo(13731.24)   #=&gt; -89909424858035.7
+ *     
+ */
+
+static VALUE
+rb_big_quo(x, y)
+    VALUE x, y;
+{
+    double dx = rb_big2dbl(x);
+    double dy;
+
+    switch (TYPE(y)) {
+      case T_FIXNUM:
+        dy = (double)FIX2LONG(y);
+        break;
+
+      case T_BIGNUM:
+        dy = rb_big2dbl(y);
+        break;
+
+      case T_FLOAT:
+        dy = RFLOAT(y)-&gt;value;
+        break;
+
+      default:
+        return rb_num_coerce_bin(x, y);
+    }
+    return rb_float_new(dx / dy);
+}</pre>
+</body>
+</html>

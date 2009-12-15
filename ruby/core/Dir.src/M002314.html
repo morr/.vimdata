@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>chdir (Dir)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Dir.chdir( [ string] ) =&gt; 0
+ *     Dir.chdir( [ string] ) {| path | block }  =&gt; anObject
+ *
+ *  Changes the current working directory of the process to the given
+ *  string. When called without an argument, changes the directory to
+ *  the value of the environment variable &lt;code&gt;HOME&lt;/code&gt;, or
+ *  &lt;code&gt;LOGDIR&lt;/code&gt;. &lt;code&gt;SystemCallError&lt;/code&gt; (probably
+ *  &lt;code&gt;Errno::ENOENT&lt;/code&gt;) if the target directory does not exist.
+ *
+ *  If a block is given, it is passed the name of the new current
+ *  directory, and the block is executed with that as the current
+ *  directory. The original working directory is restored when the block
+ *  exits. The return value of &lt;code&gt;chdir&lt;/code&gt; is the value of the
+ *  block. &lt;code&gt;chdir&lt;/code&gt; blocks can be nested, but in a
+ *  multi-threaded program an error will be raised if a thread attempts
+ *  to open a &lt;code&gt;chdir&lt;/code&gt; block while another thread has one
+ *  open.
+ *
+ *     Dir.chdir(&quot;/var/spool/mail&quot;)
+ *     puts Dir.pwd
+ *     Dir.chdir(&quot;/tmp&quot;) do
+ *       puts Dir.pwd
+ *       Dir.chdir(&quot;/usr&quot;) do
+ *         puts Dir.pwd
+ *       end
+ *       puts Dir.pwd
+ *     end
+ *     puts Dir.pwd
+ *
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *
+ *     /var/spool/mail
+ *     /tmp
+ *     /usr
+ *     /tmp
+ *     /var/spool/mail
+ */
+static VALUE
+dir_s_chdir(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    VALUE path = Qnil;
+
+    rb_secure(2);
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;path) == 1) {
+        SafeStringValue(path);
+    }
+    else {
+        const char *dist = getenv(&quot;HOME&quot;);
+        if (!dist) {
+            dist = getenv(&quot;LOGDIR&quot;);
+            if (!dist) rb_raise(rb_eArgError, &quot;HOME/LOGDIR not set&quot;);
+        }
+        path = rb_str_new2(dist);
+    }
+
+    if (chdir_blocking &gt; 0) {
+        if (!rb_block_given_p() || rb_thread_current() != chdir_thread)
+            rb_warn(&quot;conflicting chdir during another chdir block&quot;);
+    }
+
+    if (rb_block_given_p()) {
+        struct chdir_data args;
+        char *cwd = my_getcwd();
+
+        args.old_path = rb_tainted_str_new2(cwd); free(cwd);
+        args.new_path = path;
+        args.done = Qfalse;
+        return rb_ensure(chdir_yield, (VALUE)&amp;args, chdir_restore, (VALUE)&amp;args);
+    }
+    dir_chdir(path);
+
+    return INT2FIX(0);
+}</pre>
+</body>
+</html>

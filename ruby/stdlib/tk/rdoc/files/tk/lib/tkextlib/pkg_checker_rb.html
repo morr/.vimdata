@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: pkg_checker.rb</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>pkg_checker.rb</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>tk/lib/tkextlib/pkg_checker.rb
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Tue Mar 13 02:04:48 -0500 2007</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Ruby/<a href="../../../../classes/Tk.html">Tk</a> extension library checker
+</p>
+<pre>
+                             by Hidetoshi NAGAI (nagai@ai.kyutech.ac.jp)
+</pre>
+
+    </div>
+
+    <div id="requires-list">
+      <h3 class="section-bar">Required files</h3>
+
+      <div class="name-list">
+      tk&nbsp;&nbsp;
+      </div>
+    </div>
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004630">check_pkg</a>&nbsp;&nbsp;
+      <a href="#M004629">get_pkg_list</a>&nbsp;&nbsp;
+      <a href="#M004628">help_msg</a>&nbsp;&nbsp;
+      <a href="#M004631">subdir_check</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004630" class="m-detail">
+        <a name="M004630"></a>
+
+        <div class="method-heading">
+          <a href="#M004630" class="method-signature">
+          <span class="method-name">check_pkg</span><span class="method-args">(file, verbose=false)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004630-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004630-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/pkg_checker.rb, line 91</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">check_pkg</span>(<span class="ruby-identifier">file</span>, <span class="ruby-identifier">verbose</span>=<span class="ruby-keyword kw">false</span>)
+  <span class="ruby-identifier">pkg_list</span> = <span class="ruby-identifier">get_pkg_list</span>(<span class="ruby-identifier">file</span>)
+
+  <span class="ruby-identifier">error_list</span> = []
+  <span class="ruby-identifier">success_list</span> = {}
+
+  <span class="ruby-identifier">pkg_list</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">success_list</span>[<span class="ruby-identifier">name</span>]
+
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">type</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:package</span>
+        <span class="ruby-identifier">ver</span> = <span class="ruby-constant">TkPackage</span>.<span class="ruby-identifier">require</span>(<span class="ruby-identifier">name</span>)
+        <span class="ruby-identifier">success_list</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">ver</span>
+        <span class="ruby-identifier">error_list</span>.<span class="ruby-identifier">delete_if</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">n</span>, <span class="ruby-identifier">t</span><span class="ruby-operator">|</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">name</span>}
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:library</span>
+        <span class="ruby-constant">Tk</span>.<span class="ruby-identifier">load_tcllibrary</span>(<span class="ruby-identifier">name</span>)
+        <span class="ruby-identifier">success_list</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">:library</span>
+        <span class="ruby-identifier">error_list</span>.<span class="ruby-identifier">delete_if</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">n</span>, <span class="ruby-identifier">t</span><span class="ruby-operator">|</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">name</span>}
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:script</span>
+        <span class="ruby-constant">Tk</span>.<span class="ruby-identifier">load_tclscript</span>(<span class="ruby-identifier">name</span>)
+        <span class="ruby-identifier">success_list</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">:script</span>
+        <span class="ruby-identifier">error_list</span>.<span class="ruby-identifier">delete_if</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">n</span>, <span class="ruby-identifier">t</span><span class="ruby-operator">|</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">name</span>}
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:require_ruby_lib</span>
+        <span class="ruby-identifier">require</span> <span class="ruby-identifier">name</span>
+
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verbose</span>
+        <span class="ruby-identifier">error_list</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span>, <span class="ruby-identifier">e</span>.<span class="ruby-identifier">message</span>]
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">error_list</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span>]
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  }
+
+  <span class="ruby-identifier">success_list</span>.<span class="ruby-identifier">dup</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">ver</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">ver</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">String</span>)
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">ver</span> = <span class="ruby-constant">TkPackage</span>.<span class="ruby-identifier">require</span>(<span class="ruby-identifier">name</span>)
+        <span class="ruby-identifier">sccess_list</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">ver</span>
+      <span class="ruby-keyword kw">rescue</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  }
+
+  [<span class="ruby-identifier">success_list</span>, <span class="ruby-identifier">error_list</span>]
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004629" class="m-detail">
+        <a name="M004629"></a>
+
+        <div class="method-heading">
+          <a href="#M004629" class="method-signature">
+          <span class="method-name">get_pkg_list</span><span class="method-args">(file)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004629-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004629-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/pkg_checker.rb, line 66</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">get_pkg_list</span>(<span class="ruby-identifier">file</span>)
+  <span class="ruby-identifier">pkg_list</span> = []
+
+  <span class="ruby-constant">File</span>.<span class="ruby-identifier">foreach</span>(<span class="ruby-identifier">file</span>){<span class="ruby-operator">|</span><span class="ruby-identifier">l</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">l</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^(?:[^#]+\s|\s*)(?:|;\s*)TkPackage\s*\.\s*require\s*\(?\s*([&quot;'])((\w|:)+)\1/</span>
+      <span class="ruby-identifier">pkg</span> = [<span class="ruby-identifier">$2</span>, <span class="ruby-identifier">:package</span>]
+      <span class="ruby-identifier">pkg_list</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">pkg</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">pkg_list</span>.<span class="ruby-identifier">member?</span>(<span class="ruby-identifier">pkg</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">l</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^(?:[^#]+\s|\s*)(?:|;\s*)Tk\s*\.\s*load_tcllibrary\s*\(?\s*([&quot;'])((\w|:)+)\1/</span>
+      <span class="ruby-identifier">pkg</span> = [<span class="ruby-identifier">$2</span>, <span class="ruby-identifier">:library</span>]
+      <span class="ruby-identifier">pkg_list</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">pkg</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">pkg_list</span>.<span class="ruby-identifier">member?</span>(<span class="ruby-identifier">pkg</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">l</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^(?:[^#]+\s|\s*)(?:|;\s*)Tk\s*\.\s*load_tclscript\s*\(?\s*([&quot;'])((\w|:)+)\1/</span>
+      <span class="ruby-identifier">pkg</span> = [<span class="ruby-identifier">$2</span>, <span class="ruby-identifier">:script</span>]
+      <span class="ruby-identifier">pkg_list</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">pkg</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">pkg_list</span>.<span class="ruby-identifier">member?</span>(<span class="ruby-identifier">pkg</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">l</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^(?:[^#]+\s|\s*)(?:|;\s*)require\s*\(?\s*([&quot;'])((\w|\/|:)+)\1/</span>
+      <span class="ruby-identifier">pkg</span> = [<span class="ruby-identifier">$2</span>, <span class="ruby-identifier">:require_ruby_lib</span>]
+      <span class="ruby-identifier">pkg_list</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">pkg</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">pkg_list</span>.<span class="ruby-identifier">member?</span>(<span class="ruby-identifier">pkg</span>)
+    <span class="ruby-keyword kw">end</span>
+  }
+
+  <span class="ruby-identifier">pkg_list</span>
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004628" class="m-detail">
+        <a name="M004628"></a>
+
+        <div class="method-heading">
+          <a href="#M004628" class="method-signature">
+          <span class="method-name">help_msg</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004628-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004628-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/pkg_checker.rb, line 16</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">help_msg</span>
+  <span class="ruby-identifier">print</span> <span class="ruby-node">&quot;Usage: #{$0} [-l] [-v] [-h] [--] [dir]\n&quot;</span>
+  <span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;\tIf dir is omitted, check the directry that this command exists.\n&quot;</span>
+  <span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;\tAvailable options are \n&quot;</span>
+  <span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;\t  -l : Add dir to $LOAD_PATH\n&quot;</span>
+  <span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;\t       (If dir == '&lt;parent&gt;/tkextlib', add &lt;parent&gt; also.)\n&quot;</span>
+  <span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;\t  -v : Verbose mode (show reason of fail)\n&quot;</span>
+  <span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;\t  -h : Show this message\n&quot;</span>
+  <span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;\t  -- : End of options\n&quot;</span>
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004631" class="m-detail">
+        <a name="M004631"></a>
+
+        <div class="method-heading">
+          <a href="#M004631" class="method-signature">
+          <span class="method-name">subdir_check</span><span class="method-args">(dir, verbose=false)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004631-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004631-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tkextlib/pkg_checker.rb, line 143</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">subdir_check</span>(<span class="ruby-identifier">dir</span>, <span class="ruby-identifier">verbose</span>=<span class="ruby-keyword kw">false</span>)
+  <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">foreach</span>(<span class="ruby-identifier">dir</span>){<span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">f</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'.'</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">f</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'..'</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">directory?</span>(<span class="ruby-identifier">f</span>)
+      <span class="ruby-identifier">subdir_check</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">dir</span>, <span class="ruby-identifier">f</span>))
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">extname</span>(<span class="ruby-identifier">f</span>) <span class="ruby-operator">==</span> <span class="ruby-value str">'.rb'</span>
+      <span class="ruby-identifier">path</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">dir</span>, <span class="ruby-identifier">f</span>)
+      <span class="ruby-identifier">suc</span>, <span class="ruby-identifier">err</span> = <span class="ruby-identifier">check_pkg</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">verbose</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">err</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">print</span> <span class="ruby-value str">'Ready : '</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">' : require-&gt;'</span>, <span class="ruby-identifier">suc</span>.<span class="ruby-identifier">inspect</span>, <span class="ruby-value str">&quot;\n&quot;</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">print</span> <span class="ruby-value str">'*LACK : '</span>, <span class="ruby-identifier">path</span>, <span class="ruby-value str">' : require-&gt;'</span>, <span class="ruby-identifier">suc</span>.<span class="ruby-identifier">inspect</span>, 
+          <span class="ruby-value str">'  FAIL-&gt;'</span>, <span class="ruby-identifier">err</span>.<span class="ruby-identifier">inspect</span>, <span class="ruby-value str">&quot;\n&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  }
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 2 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a service of <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, AZ</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

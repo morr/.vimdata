@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Proc)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Proc.new {|...| block } =&gt; a_proc 
+ *     Proc.new                =&gt; a_proc 
+ *  
+ *  Creates a new &lt;code&gt;Proc&lt;/code&gt; object, bound to the current
+ *  context. &lt;code&gt;Proc::new&lt;/code&gt; may be called without a block only
+ *  within a method with an attached block, in which case that block is
+ *  converted to the &lt;code&gt;Proc&lt;/code&gt; object.
+ *     
+ *     def proc_from
+ *       Proc.new
+ *     end
+ *     proc = proc_from { &quot;hello&quot; }
+ *     proc.call   #=&gt; &quot;hello&quot;
+ */
+
+static VALUE
+proc_s_new(argc, argv, klass)
+    int argc;
+    VALUE *argv;
+    VALUE klass;
+{
+    VALUE block = proc_alloc(klass, Qfalse);
+
+    rb_obj_call_init(block, argc, argv);
+    return block;
+}</pre>
+</body>
+</html>

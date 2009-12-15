@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>default (WIN32OLE_PARAM)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE_PARAM#default
+ * 
+ *  Returns default value. If the default value does not exist, 
+ *  this method returns nil.
+ *     tobj = WIN32OLE_TYPE.new('Microsoft Excel 9.0 Object Library', 'Workbook')
+ *     method = WIN32OLE_METHOD.new(tobj, 'SaveAs')
+ *     method.params.each do |param|
+ *       if param.default
+ *         puts &quot;#{param.name} (= #{param.default})&quot;
+ *       else
+ *         puts &quot;#{param}&quot;
+ *       end
+ *     end
+ *
+ *     The above script result is following:
+ *         Filename
+ *         FileFormat
+ *         Password
+ *         WriteResPassword
+ *         ReadOnlyRecommended
+ *         CreateBackup
+ *         AccessMode (= 1)
+ *         ConflictResolution
+ *         AddToMru
+ *         TextCodepage
+ *         TextVisualLayout
+ */
+static VALUE foleparam_default(self)
+    VALUE self;
+{
+    struct oleparamdata *pparam;
+    Data_Get_Struct(self, struct oleparamdata, pparam);
+    return ole_param_default(pparam-&gt;pTypeInfo, pparam-&gt;method_index,
+                             pparam-&gt;index);
+}</pre>
+</body>
+</html>

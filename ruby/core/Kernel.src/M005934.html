@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>throw (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     throw(symbol [, obj])
+ *  
+ *  Transfers control to the end of the active +catch+ block
+ *  waiting for _symbol_. Raises +NameError+ if there
+ *  is no +catch+ block for the symbol. The optional second
+ *  parameter supplies a return value for the +catch+ block,
+ *  which otherwise defaults to +nil+. For examples, see
+ *  &lt;code&gt;Kernel::catch&lt;/code&gt;.
+ */
+
+static VALUE
+rb_f_throw(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE tag, value;
+    struct tag *tt = prot_tag;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;tag, &amp;value);
+    tag = ID2SYM(rb_to_id(tag));
+
+    while (tt) {
+        if (tt-&gt;tag == tag) {
+            tt-&gt;dst = tag;
+            tt-&gt;retval = value;
+            break;
+        }
+        if (tt-&gt;tag == PROT_THREAD) {
+            rb_raise(rb_eThreadError, &quot;uncaught throw `%s' in thread 0x%lx&quot;,
+                     rb_id2name(SYM2ID(tag)),
+                     curr_thread);
+        }
+        tt = tt-&gt;prev;
+    }
+    if (!tt) {
+        rb_name_error(SYM2ID(tag), &quot;uncaught throw `%s'&quot;, rb_id2name(SYM2ID(tag)));
+    }
+    rb_trap_restore_mask();
+    JUMP_TAG(TAG_THROW);
+#ifndef __GNUC__
+    return Qnil;                /* not reached */
+#endif
+}</pre>
+</body>
+</html>

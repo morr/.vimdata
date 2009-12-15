@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: URI::MailTo</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">URI::MailTo</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/uri/mailto_rb.html">
+                uri/mailto.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Generic.html">
+                Generic
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+RFC2368, The mailto URL scheme
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M009406">build</a>&nbsp;&nbsp;
+      <a href="#M009411">headers=</a>&nbsp;&nbsp;
+      <a href="#M009407">new</a>&nbsp;&nbsp;
+      <a href="#M009410">set_headers</a>&nbsp;&nbsp;
+      <a href="#M009408">set_to</a>&nbsp;&nbsp;
+      <a href="#M009409">to=</a>&nbsp;&nbsp;
+      <a href="#M009413">to_mailtext</a>&nbsp;&nbsp;
+      <a href="#M009414">to_rfc822text</a>&nbsp;&nbsp;
+      <a href="#M009412">to_s</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="REGEXP.html">REGEXP</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DEFAULT_PORT</td>
+          <td>=</td>
+          <td class="context-item-value">nil</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">COMPONENT</td>
+          <td>=</td>
+          <td class="context-item-value">[ :scheme, :to, :headers ].freeze</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">headers</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+E-mail headers set by the URL, as an Array of Arrays
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">to</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The primary e-mail address of the URL, as a String
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M009406" class="m-detail">
+        <a name="M009406"></a>
+
+        <div class="method-heading">
+          <a href="#M009406" class="method-signature">
+          <span class="method-name">build</span><span class="method-args">(args)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <h2>Description</h2>
+<p>
+Creates a <a href="MailTo.html#M009407">new</a> <a
+href="MailTo.html">URI::MailTo</a> object from components, with syntax
+checking.
+</p>
+<p>
+Components can be provided as an Array or Hash. If an Array is used, the
+components must be supplied as [to, headers].
+</p>
+<p>
+If a Hash is used, the keys are the component names preceded by colons.
+</p>
+<p>
+The headers can be supplied as a pre-encoded string, such as
+&quot;subject=subscribe&amp;cc=address&quot;, or as an Array of Arrays like
+[[&#8216;subject&#8217;, &#8216;subscribe&#8217;], [&#8216;cc&#8217;,
+&#8216;address&#8217;]]
+</p>
+<p>
+Examples:
+</p>
+<pre>
+   require 'uri'
+
+   m1 = URI::MailTo.build(['joe@example.com', 'subject=Ruby'])
+   puts m1.to_s  -&gt;  mailto:joe@example.com?subject=Ruby
+
+   m2 = URI::MailTo.build(['john@example.com', [['Subject', 'Ruby'], ['Cc', 'jack@example.com']]])
+   puts m2.to_s  -&gt;  mailto:john@example.com?Subject=Ruby&amp;Cc=jack@example.com
+
+   m3 = URI::MailTo.build({:to =&gt; 'listman@example.com', :headers =&gt; [['subject', 'subscribe']]})
+   puts m3.to_s  -&gt;  mailto:listman@example.com?subject=subscribe
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009406-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009406-source">
+<pre>
+<span class="ruby-comment cmt"># File uri/mailto.rb, line 88</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">build</span>(<span class="ruby-identifier">args</span>)
+      <span class="ruby-identifier">tmp</span> = <span class="ruby-constant">Util</span><span class="ruby-operator">::</span><span class="ruby-identifier">make_components_hash</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">args</span>)
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:to</span>]
+        <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:opaque</span>] = <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:to</span>]
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:opaque</span>] = <span class="ruby-value str">''</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:headers</span>]
+        <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:opaque</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">'?'</span>
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:headers</span>].<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Array</span>)
+          <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:opaque</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:headers</span>].<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Array</span>)
+              <span class="ruby-identifier">x</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">+</span> <span class="ruby-value str">'='</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">x</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>].<span class="ruby-identifier">to_s</span>
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_s</span>
+            <span class="ruby-keyword kw">end</span>
+          }.<span class="ruby-identifier">join</span>(<span class="ruby-value str">'&amp;'</span>)
+
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:headers</span>].<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Hash</span>)
+          <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:opaque</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:headers</span>].<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">h</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">h</span> <span class="ruby-operator">+</span> <span class="ruby-value str">'='</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">v</span>
+          }.<span class="ruby-identifier">join</span>(<span class="ruby-value str">'&amp;'</span>)
+
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:opaque</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">tmp</span>[<span class="ruby-identifier">:headers</span>].<span class="ruby-identifier">to_s</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">super</span>(<span class="ruby-identifier">tmp</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009407" class="m-detail">
+        <a name="M009407"></a>
+
+        <div class="method-heading">
+          <a href="#M009407" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(*arg)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <h2>Description</h2>
+<p>
+Creates a <a href="MailTo.html#M009407">new</a> <a
+href="MailTo.html">URI::MailTo</a> object from generic URL components with
+no syntax checking.
+</p>
+<p>
+This method is usually called from URI::parse, which checks the validity of
+each component.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009407-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009407-source">
+<pre>
+<span class="ruby-comment cmt"># File uri/mailto.rb, line 131</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">arg</span>)
+      <span class="ruby-keyword kw">super</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">arg</span>)
+
+      <span class="ruby-ivar">@to</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@headers</span> = []
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">MAILTO_REGEXP</span> <span class="ruby-operator">=~</span> <span class="ruby-ivar">@opaque</span>
+         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">arg</span>[<span class="ruby-value">-1</span>]
+          <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">to</span> = <span class="ruby-identifier">$1</span>
+          <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">headers</span> = <span class="ruby-identifier">$2</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">set_to</span>(<span class="ruby-identifier">$1</span>)
+          <span class="ruby-identifier">set_headers</span>(<span class="ruby-identifier">$2</span>)
+        <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">InvalidComponentError</span>,
+          <span class="ruby-node">&quot;unrecognised opaque part for mailtoURL: #{@opaque}&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M009411" class="m-detail">
+        <a name="M009411"></a>
+
+        <div class="method-heading">
+          <a href="#M009411" class="method-signature">
+          <span class="method-name">headers=</span><span class="method-args">(v)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009411-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009411-source">
+<pre>
+<span class="ruby-comment cmt"># File uri/mailto.rb, line 206</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">headers=</span>(<span class="ruby-identifier">v</span>)
+      <span class="ruby-identifier">check_headers</span>(<span class="ruby-identifier">v</span>)
+      <span class="ruby-identifier">set_headers</span>(<span class="ruby-identifier">v</span>)
+      <span class="ruby-identifier">v</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009409" class="m-detail">
+        <a name="M009409"></a>
+
+        <div class="method-heading">
+          <a href="#M009409" class="method-signature">
+          <span class="method-name">to=</span><span class="method-args">(v)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009409-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009409-source">
+<pre>
+<span class="ruby-comment cmt"># File uri/mailto.rb, line 176</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to=</span>(<span class="ruby-identifier">v</span>)
+      <span class="ruby-identifier">check_to</span>(<span class="ruby-identifier">v</span>)
+      <span class="ruby-identifier">set_to</span>(<span class="ruby-identifier">v</span>)
+      <span class="ruby-identifier">v</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009413" class="m-detail">
+        <a name="M009413"></a>
+
+        <div class="method-heading">
+          <a href="#M009413" class="method-signature">
+          <span class="method-name">to_mailtext</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the RFC822 e-mail text equivalent of the URL, as a String.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  require 'uri'
+
+  uri = URI.parse(&quot;mailto:ruby-list@ruby-lang.org?Subject=subscribe&amp;cc=myaddr&quot;)
+  uri.to_mailtext
+  # =&gt; &quot;To: ruby-list@ruby-lang.org\nSubject: subscribe\nCc: myaddr\n\n\n&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009413-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009413-source">
+<pre>
+<span class="ruby-comment cmt"># File uri/mailto.rb, line 241</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_mailtext</span>
+      <span class="ruby-identifier">to</span> = <span class="ruby-constant">URI</span><span class="ruby-operator">::</span><span class="ruby-identifier">unescape</span>(<span class="ruby-ivar">@to</span>)
+      <span class="ruby-identifier">head</span> = <span class="ruby-value str">''</span>
+      <span class="ruby-identifier">body</span> = <span class="ruby-value str">''</span>
+      <span class="ruby-ivar">@headers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">x</span>[<span class="ruby-value">0</span>]
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'body'</span>
+          <span class="ruby-identifier">body</span> = <span class="ruby-constant">URI</span><span class="ruby-operator">::</span><span class="ruby-identifier">unescape</span>(<span class="ruby-identifier">x</span>[<span class="ruby-value">1</span>])
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'to'</span>
+          <span class="ruby-identifier">to</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">', '</span> <span class="ruby-operator">+</span> <span class="ruby-constant">URI</span><span class="ruby-operator">::</span><span class="ruby-identifier">unescape</span>(<span class="ruby-identifier">x</span>[<span class="ruby-value">1</span>])
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">head</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">URI</span><span class="ruby-operator">::</span><span class="ruby-identifier">unescape</span>(<span class="ruby-identifier">x</span>[<span class="ruby-value">0</span>]).<span class="ruby-identifier">capitalize</span> <span class="ruby-operator">+</span> <span class="ruby-value str">': '</span> <span class="ruby-operator">+</span>
+            <span class="ruby-constant">URI</span><span class="ruby-operator">::</span><span class="ruby-identifier">unescape</span>(<span class="ruby-identifier">x</span>[<span class="ruby-value">1</span>])  <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\n&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;To: #{to}
+#{head}
+#{body}
+&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009414" class="m-detail">
+        <a name="M009414"></a>
+
+        <div class="method-heading">
+          <span class="method-name">to_rfc822text</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="MailTo.html#M009413">to_mailtext</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M009412" class="m-detail">
+        <a name="M009412"></a>
+
+        <div class="method-heading">
+          <a href="#M009412" class="method-signature">
+          <span class="method-name">to_s</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009412-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009412-source">
+<pre>
+<span class="ruby-comment cmt"># File uri/mailto.rb, line 212</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s</span>
+      <span class="ruby-ivar">@scheme</span> <span class="ruby-operator">+</span> <span class="ruby-value str">':'</span> <span class="ruby-operator">+</span> 
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@to</span> 
+          <span class="ruby-ivar">@to</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">end</span> <span class="ruby-operator">+</span> 
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@headers</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+          <span class="ruby-value str">'?'</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@headers</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">'='</span>)}.<span class="ruby-identifier">join</span>(<span class="ruby-value str">'&amp;'</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">end</span> <span class="ruby-operator">+</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@fragment</span>
+          <span class="ruby-value str">'#'</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@fragment</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M009410" class="m-detail">
+        <a name="M009410"></a>
+
+        <div class="method-heading">
+          <a href="#M009410" class="method-signature">
+          <span class="method-name">set_headers</span><span class="method-args">(v)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009410-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009410-source">
+<pre>
+<span class="ruby-comment cmt"># File uri/mailto.rb, line 196</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_headers</span>(<span class="ruby-identifier">v</span>)
+      <span class="ruby-ivar">@headers</span> = []
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">v</span>
+        <span class="ruby-identifier">v</span>.<span class="ruby-identifier">scan</span>(<span class="ruby-constant">HEADER_REGEXP</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span>
+          <span class="ruby-ivar">@headers</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/=/o</span>, <span class="ruby-value">2</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009408" class="m-detail">
+        <a name="M009408"></a>
+
+        <div class="method-heading">
+          <a href="#M009408" class="method-signature">
+          <span class="method-name">set_to</span><span class="method-args">(v)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009408-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009408-source">
+<pre>
+<span class="ruby-comment cmt"># File uri/mailto.rb, line 171</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_to</span>(<span class="ruby-identifier">v</span>)
+      <span class="ruby-ivar">@to</span> = <span class="ruby-identifier">v</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+<!-- 1  --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and maintained by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. The site was created in 2002 as part of the Ruby Documentation Project to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

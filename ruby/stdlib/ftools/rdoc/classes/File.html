@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: File</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">File</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/ftools_rb.html">
+                ftools.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1>ftools.rb: Extra tools for the <a href="File.html">File</a> class</h1>
+<table>
+<tr><td valign="top">Author:</td><td>WATANABE, Hirofumi
+
+</td></tr>
+<tr><td valign="top">Documentation:</td><td>Zachary Landau
+
+</td></tr>
+</table>
+<p>
+This library can be distributed under the terms of the Ruby license. You
+can freely distribute/modify this library.
+</p>
+<p>
+It is included in the Ruby standard library.
+</p>
+<h2>Description</h2>
+<p>
+ftools adds several (class, not instance) methods to the <a
+href="File.html">File</a> class, for copying, moving, deleting, installing,
+and comparing files, as well as creating a directory path. See the <a
+href="File.html">File</a> class for details.
+</p>
+<p>
+FileUtils contains all or nearly all the same functionality and more, and
+is a recommended option over ftools
+</p>
+<p>
+When you
+</p>
+<pre>
+  require 'ftools'
+</pre>
+<p>
+then the <a href="File.html">File</a> class aquires some utility methods
+for copying, moving, and deleting files, and more.
+</p>
+<p>
+See the method descriptions below, and consider using FileUtils as it is
+more comprehensive.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000737">catname</a>&nbsp;&nbsp;
+      <a href="#M000744">chmod</a>&nbsp;&nbsp;
+      <a href="#M000741">compare</a>&nbsp;&nbsp;
+      <a href="#M000739">copy</a>&nbsp;&nbsp;
+      <a href="#M000745">install</a>&nbsp;&nbsp;
+      <a href="#M000743">makedirs</a>&nbsp;&nbsp;
+      <a href="#M000740">move</a>&nbsp;&nbsp;
+      <a href="#M000742">safe_unlink</a>&nbsp;&nbsp;
+      <a href="#M000738">syscopy</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BUFSIZE</td>
+          <td>=</td>
+          <td class="context-item-value">8 * 1024</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">copy</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">cp</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">move</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">mv</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">compare</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">cmp</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">safe_unlink</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">rm_f</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">makedirs</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">mkpath</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">chmod</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">o_chmod</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000737" class="m-detail">
+        <a name="M000737"></a>
+
+        <div class="method-heading">
+          <a href="#M000737" class="method-signature">
+          <span class="method-name">catname</span><span class="method-args">(from, to)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+If <tt>to</tt> is a valid directory, <tt>from</tt> will be appended to
+<tt>to</tt>, adding and escaping backslashes as necessary. Otherwise,
+<tt>to</tt> will be returned. Useful for appending <tt>from</tt> to
+<tt>to</tt> only if the filename was not specified in <tt>to</tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000737-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000737-source">
+<pre>
+<span class="ruby-comment cmt"># File ftools.rb, line 44</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">catname</span>(<span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">directory?</span> <span class="ruby-identifier">to</span>
+      <span class="ruby-identifier">join</span> <span class="ruby-identifier">to</span>.<span class="ruby-identifier">sub</span>(<span class="ruby-regexp re">%r([/\\]$)</span>, <span class="ruby-value str">''</span>), <span class="ruby-identifier">basename</span>(<span class="ruby-identifier">from</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">to</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000744" class="m-detail">
+        <a name="M000744"></a>
+
+        <div class="method-heading">
+          <a href="#M000744" class="method-signature">
+          <span class="method-name">chmod</span><span class="method-args">(mode, *files)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Changes permission bits on <tt>files</tt> to the bit pattern represented by
+<tt>mode</tt>. If the last parameter isn&#8216;t a String, verbose mode
+will be enabled.
+</p>
+<pre>
+  File.chmod 0755, 'somecommand'
+  File.chmod 0644, 'my.rb', 'your.rb', true
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000744-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000744-source">
+<pre>
+<span class="ruby-comment cmt"># File ftools.rb, line 237</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">chmod</span>(<span class="ruby-identifier">mode</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">files</span>)
+    <span class="ruby-identifier">verbose</span> = <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">files</span>[<span class="ruby-value">-1</span>].<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">String</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">files</span>.<span class="ruby-identifier">pop</span> <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">printf</span> <span class="ruby-value str">&quot;chmod %04o %s\n&quot;</span>, <span class="ruby-identifier">mode</span>, <span class="ruby-identifier">files</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot; &quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verbose</span>
+    <span class="ruby-identifier">o_chmod</span> <span class="ruby-identifier">mode</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">files</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000741" class="m-detail">
+        <a name="M000741"></a>
+
+        <div class="method-heading">
+          <a href="#M000741" class="method-signature">
+          <span class="method-name">compare</span><span class="method-args">(from, to, verbose = false)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns <tt>true</tt> if and only if the contents of files <tt>from</tt>
+and <tt>to</tt> are identical. If <tt>verbose</tt> is <tt>true</tt>,
+<tt>from &lt;=&gt; to</tt> is printed.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000741-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000741-source">
+<pre>
+<span class="ruby-comment cmt"># File ftools.rb, line 130</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">compare</span>(<span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>, <span class="ruby-identifier">verbose</span> = <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">print</span> <span class="ruby-identifier">from</span>, <span class="ruby-value str">&quot; &lt;=&gt; &quot;</span>, <span class="ruby-identifier">to</span>, <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verbose</span>
+
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">stat</span>(<span class="ruby-identifier">from</span>).<span class="ruby-identifier">size</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">stat</span>(<span class="ruby-identifier">to</span>).<span class="ruby-identifier">size</span>
+
+    <span class="ruby-identifier">from</span> = <span class="ruby-identifier">open</span>(<span class="ruby-identifier">from</span>, <span class="ruby-value str">&quot;rb&quot;</span>)
+    <span class="ruby-identifier">to</span> = <span class="ruby-identifier">open</span>(<span class="ruby-identifier">to</span>, <span class="ruby-value str">&quot;rb&quot;</span>)
+
+    <span class="ruby-identifier">ret</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-identifier">fr</span> = <span class="ruby-identifier">tr</span> = <span class="ruby-value str">''</span>
+
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">fr</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">tr</span>
+        <span class="ruby-identifier">fr</span> = <span class="ruby-identifier">from</span>.<span class="ruby-identifier">read</span>(<span class="ruby-constant">BUFSIZE</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">fr</span>
+          <span class="ruby-identifier">tr</span> = <span class="ruby-identifier">to</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">fr</span>.<span class="ruby-identifier">size</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">ret</span> = <span class="ruby-identifier">to</span>.<span class="ruby-identifier">read</span>(<span class="ruby-constant">BUFSIZE</span>)
+          <span class="ruby-identifier">ret</span> = <span class="ruby-operator">!</span><span class="ruby-identifier">ret</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">ret</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+          <span class="ruby-keyword kw">break</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">rescue</span>
+      <span class="ruby-identifier">ret</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">ensure</span>
+      <span class="ruby-identifier">to</span>.<span class="ruby-identifier">close</span>
+      <span class="ruby-identifier">from</span>.<span class="ruby-identifier">close</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">ret</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000739" class="m-detail">
+        <a name="M000739"></a>
+
+        <div class="method-heading">
+          <a href="#M000739" class="method-signature">
+          <span class="method-name">copy</span><span class="method-args">(from, to, verbose = false)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Copies a file <tt>from</tt> to <tt>to</tt> using <a
+href="File.html#M000738">syscopy</a>. If <tt>to</tt> is a directory, copies
+<tt>from</tt> to <tt>to/from</tt>. If <tt>verbose</tt> is true, <tt>from
+-&gt; to</tt> is printed.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000739-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000739-source">
+<pre>
+<span class="ruby-comment cmt"># File ftools.rb, line 87</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">copy</span>(<span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>, <span class="ruby-identifier">verbose</span> = <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">print</span> <span class="ruby-identifier">from</span>, <span class="ruby-value str">&quot; -&gt; &quot;</span>, <span class="ruby-identifier">catname</span>(<span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>), <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verbose</span>
+    <span class="ruby-identifier">syscopy</span> <span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000745" class="m-detail">
+        <a name="M000745"></a>
+
+        <div class="method-heading">
+          <a href="#M000745" class="method-signature">
+          <span class="method-name">install</span><span class="method-args">(from, to, mode = nil, verbose = false)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+If <tt>src</tt> is not the same as <tt>dest</tt>, copies it and changes the
+permission mode to <tt>mode</tt>. If <tt>dest</tt> is a directory,
+destination is <tt>dest/src</tt>. If <tt>mode</tt> is not set, default is
+used. If <tt>verbose</tt> is set to true, the name of each file copied will
+be printed.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000745-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000745-source">
+<pre>
+<span class="ruby-comment cmt"># File ftools.rb, line 250</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">install</span>(<span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>, <span class="ruby-identifier">mode</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">verbose</span> = <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-identifier">to</span> = <span class="ruby-identifier">catname</span>(<span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>)
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">exist?</span> <span class="ruby-identifier">to</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">cmp</span> <span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>
+      <span class="ruby-identifier">safe_unlink</span> <span class="ruby-identifier">to</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">exist?</span> <span class="ruby-identifier">to</span>
+      <span class="ruby-identifier">cp</span> <span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>, <span class="ruby-identifier">verbose</span>
+      <span class="ruby-identifier">chmod</span> <span class="ruby-identifier">mode</span>, <span class="ruby-identifier">to</span>, <span class="ruby-identifier">verbose</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mode</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000743" class="m-detail">
+        <a name="M000743"></a>
+
+        <div class="method-heading">
+          <a href="#M000743" class="method-signature">
+          <span class="method-name">makedirs</span><span class="method-args">(*dirs)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Creates a directory and all its parent directories. For example,
+</p>
+<pre>
+    File.makedirs '/usr/lib/ruby'
+</pre>
+<p>
+causes the following directories to be made, if they do not exist.
+</p>
+<pre>
+    * /usr
+    * /usr/lib
+    * /usr/lib/ruby
+</pre>
+<p>
+You can pass several directories, each as a parameter. If the last
+parameter isn&#8216;t a String, verbose mode will be enabled.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000743-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000743-source">
+<pre>
+<span class="ruby-comment cmt"># File ftools.rb, line 205</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">makedirs</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">dirs</span>)
+    <span class="ruby-identifier">verbose</span> = <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">dirs</span>[<span class="ruby-value">-1</span>].<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">String</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">dirs</span>.<span class="ruby-identifier">pop</span> <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">mode</span> = <span class="ruby-value">0755</span>
+    <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">dir</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">dirs</span>
+      <span class="ruby-identifier">parent</span> = <span class="ruby-identifier">dirname</span>(<span class="ruby-identifier">dir</span>)
+      <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">parent</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">dir</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">directory?</span> <span class="ruby-identifier">dir</span>
+      <span class="ruby-identifier">makedirs</span> <span class="ruby-identifier">parent</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">directory?</span> <span class="ruby-identifier">parent</span>
+      <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;mkdir &quot;</span>, <span class="ruby-identifier">dir</span>, <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verbose</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">basename</span>(<span class="ruby-identifier">dir</span>) <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;&quot;</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">mkdir</span> <span class="ruby-identifier">dir</span>, <span class="ruby-identifier">mode</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">SystemCallError</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">directory?</span> <span class="ruby-identifier">dir</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000740" class="m-detail">
+        <a name="M000740"></a>
+
+        <div class="method-heading">
+          <a href="#M000740" class="method-signature">
+          <span class="method-name">move</span><span class="method-args">(from, to, verbose = false)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Moves a file <tt>from</tt> to <tt>to</tt> using <a
+href="File.html#M000738">syscopy</a>. If <tt>to</tt> is a directory, copies
+from <tt>from</tt> to <tt>to/from</tt>. If <tt>verbose</tt> is true,
+<tt>from -&gt; to</tt> is printed.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000740-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000740-source">
+<pre>
+<span class="ruby-comment cmt"># File ftools.rb, line 99</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">move</span>(<span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>, <span class="ruby-identifier">verbose</span> = <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-identifier">to</span> = <span class="ruby-identifier">catname</span>(<span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>)
+    <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">print</span> <span class="ruby-identifier">from</span>, <span class="ruby-value str">&quot; -&gt; &quot;</span>, <span class="ruby-identifier">to</span>, <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verbose</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-constant">RUBY_PLATFORM</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/djgpp|(cyg|ms|bcc)win|mingw/</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">file?</span> <span class="ruby-identifier">to</span>
+      <span class="ruby-identifier">unlink</span> <span class="ruby-identifier">to</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">fstat</span> = <span class="ruby-identifier">stat</span>(<span class="ruby-identifier">from</span>)
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">rename</span> <span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>
+    <span class="ruby-keyword kw">rescue</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">symlink</span> <span class="ruby-identifier">readlink</span>(<span class="ruby-identifier">from</span>), <span class="ruby-identifier">to</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">unlink</span> <span class="ruby-identifier">from</span>
+      <span class="ruby-keyword kw">rescue</span>
+        <span class="ruby-identifier">from_stat</span> = <span class="ruby-identifier">stat</span>(<span class="ruby-identifier">from</span>)
+        <span class="ruby-identifier">syscopy</span> <span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">unlink</span> <span class="ruby-identifier">from</span>
+        <span class="ruby-identifier">utime</span>(<span class="ruby-identifier">from_stat</span>.<span class="ruby-identifier">atime</span>, <span class="ruby-identifier">from_stat</span>.<span class="ruby-identifier">mtime</span>, <span class="ruby-identifier">to</span>)
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">chown</span>(<span class="ruby-identifier">fstat</span>.<span class="ruby-identifier">uid</span>, <span class="ruby-identifier">fstat</span>.<span class="ruby-identifier">gid</span>, <span class="ruby-identifier">to</span>)
+        <span class="ruby-keyword kw">rescue</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000742" class="m-detail">
+        <a name="M000742"></a>
+
+        <div class="method-heading">
+          <a href="#M000742" class="method-signature">
+          <span class="method-name">safe_unlink</span><span class="method-args">(*files)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Removes a list of files. Each parameter should be the name of the file to
+delete. If the last parameter isn&#8216;t a String, verbose mode will be
+enabled. Returns the number of files deleted.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000742-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000742-source">
+<pre>
+<span class="ruby-comment cmt"># File ftools.rb, line 168</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">safe_unlink</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">files</span>)
+    <span class="ruby-identifier">verbose</span> = <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">files</span>[<span class="ruby-value">-1</span>].<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">String</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">files</span>.<span class="ruby-identifier">pop</span> <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">files</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">unlink</span> <span class="ruby-identifier">file</span>
+        <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;removing &quot;</span>, <span class="ruby-identifier">file</span>, <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verbose</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">EACCES</span> <span class="ruby-comment cmt"># for Windows</span>
+        <span class="ruby-identifier">continue</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">symlink?</span> <span class="ruby-identifier">file</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">mode</span> = <span class="ruby-identifier">stat</span>(<span class="ruby-identifier">file</span>).<span class="ruby-identifier">mode</span>
+          <span class="ruby-identifier">o_chmod</span> <span class="ruby-identifier">mode</span> <span class="ruby-operator">|</span> <span class="ruby-value">0200</span>, <span class="ruby-identifier">file</span>
+          <span class="ruby-identifier">unlink</span> <span class="ruby-identifier">file</span>
+          <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;removing &quot;</span>, <span class="ruby-identifier">file</span>, <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verbose</span>
+        <span class="ruby-keyword kw">rescue</span>
+          <span class="ruby-identifier">o_chmod</span> <span class="ruby-identifier">mode</span>, <span class="ruby-identifier">file</span> <span class="ruby-keyword kw">rescue</span> <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">rescue</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000738" class="m-detail">
+        <a name="M000738"></a>
+
+        <div class="method-heading">
+          <a href="#M000738" class="method-signature">
+          <span class="method-name">syscopy</span><span class="method-args">(from, to)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Copies a file <tt>from</tt> to <tt>to</tt>. If <tt>to</tt> is a directory,
+copies <tt>from</tt> to <tt>to/from</tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000738-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000738-source">
+<pre>
+<span class="ruby-comment cmt"># File ftools.rb, line 56</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">syscopy</span>(<span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>)
+    <span class="ruby-identifier">to</span> = <span class="ruby-identifier">catname</span>(<span class="ruby-identifier">from</span>, <span class="ruby-identifier">to</span>)
+
+    <span class="ruby-identifier">fmode</span> = <span class="ruby-identifier">stat</span>(<span class="ruby-identifier">from</span>).<span class="ruby-identifier">mode</span>
+    <span class="ruby-identifier">tpath</span> = <span class="ruby-identifier">to</span>
+    <span class="ruby-identifier">not_exist</span> = <span class="ruby-operator">!</span><span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">tpath</span>)
+
+    <span class="ruby-identifier">from</span> = <span class="ruby-identifier">open</span>(<span class="ruby-identifier">from</span>, <span class="ruby-value str">&quot;rb&quot;</span>)
+    <span class="ruby-identifier">to</span> = <span class="ruby-identifier">open</span>(<span class="ruby-identifier">to</span>, <span class="ruby-value str">&quot;wb&quot;</span>)
+
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+        <span class="ruby-identifier">to</span>.<span class="ruby-identifier">syswrite</span> <span class="ruby-identifier">from</span>.<span class="ruby-identifier">sysread</span>(<span class="ruby-constant">BUFSIZE</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">EOFError</span>
+      <span class="ruby-identifier">ret</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-keyword kw">rescue</span>
+      <span class="ruby-identifier">ret</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">ensure</span>
+      <span class="ruby-identifier">to</span>.<span class="ruby-identifier">close</span>
+      <span class="ruby-identifier">from</span>.<span class="ruby-identifier">close</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">chmod</span>(<span class="ruby-identifier">fmode</span>, <span class="ruby-identifier">tpath</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">not_exist</span>
+    <span class="ruby-identifier">ret</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 4 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

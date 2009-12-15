@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each_byte (StringIO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   strio.each_byte {|byte| block }  -&gt; strio
+ *
+ * See IO#each_byte.
+ */
+static VALUE
+strio_each_byte(self)
+    VALUE self;
+{
+    struct StringIO *ptr = readable(StringIO(self));
+    while (ptr-&gt;pos &lt; RSTRING(ptr-&gt;string)-&gt;len) {
+        char c = RSTRING(ptr-&gt;string)-&gt;ptr[ptr-&gt;pos++];
+        rb_yield(CHR2FIX(c));
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

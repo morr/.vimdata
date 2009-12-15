@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>min (Enumerable)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     enum.min                    =&gt; obj
+ *     enum.min {| a,b | block }   =&gt; obj
+ *  
+ *  Returns the object in &lt;i&gt;enum&lt;/i&gt; with the minimum value. The
+ *  first form assumes all objects implement &lt;code&gt;Comparable&lt;/code&gt;;
+ *  the second uses the block to return &lt;em&gt;a &lt;=&gt; b&lt;/em&gt;.
+ *     
+ *     a = %w(albatross dog horse)
+ *     a.min                                  #=&gt; &quot;albatross&quot;
+ *     a.min {|a,b| a.length &lt;=&gt; b.length }   #=&gt; &quot;dog&quot;
+ */
+
+static VALUE
+enum_min(obj)
+    VALUE obj;
+{
+    VALUE result = Qundef;
+
+    rb_iterate(rb_each, obj, rb_block_given_p() ? min_ii : min_i, (VALUE)&amp;result);
+    if (result == Qundef) return Qnil;
+    return result;
+}</pre>
+</body>
+</html>

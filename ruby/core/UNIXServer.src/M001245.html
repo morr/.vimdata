@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>accept_nonblock (UNIXServer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *      unixserver.accept_nonblock =&gt; unixsocket
+ * 
+ * Accepts an incoming connection using accept(2) after
+ * O_NONBLOCK is set for the underlying file descriptor.
+ * It returns an accepted UNIXSocket for the incoming connection.
+ * 
+ * === Example
+ *      require 'socket'
+ *      serv = UNIXServer.new(&quot;/tmp/sock&quot;)
+ *      begin
+ *        sock = serv.accept_nonblock
+ *      rescue Errno::EAGAIN, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR
+ *        IO.select([serv])
+ *        retry
+ *      end
+ *      # sock is an accepted socket.
+ * 
+ * Refer to Socket#accept for the exceptions that may be thrown if the call
+ * to UNIXServer#accept_nonblock fails. 
+ *
+ * UNIXServer#accept_nonblock may raise any error corresponding to accept(2) failure,
+ * including Errno::EAGAIN.
+ * 
+ * === See
+ * * UNIXServer#accept
+ * * Socket#accept
+ */
+static VALUE
+unix_accept_nonblock(sock)
+    VALUE sock;
+{
+    OpenFile *fptr;
+    struct sockaddr_un from;
+    socklen_t fromlen;
+
+    GetOpenFile(sock, fptr);
+    fromlen = sizeof(from);
+    return s_accept_nonblock(rb_cUNIXSocket, fptr,
+                             (struct sockaddr *)&amp;from, &amp;fromlen);
+}</pre>
+</body>
+</html>

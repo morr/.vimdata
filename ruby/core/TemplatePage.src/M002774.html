@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>substitute_into (TemplatePage)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/template.rb, line 161</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">substitute_into</span>(<span class="ruby-identifier">lines</span>, <span class="ruby-identifier">values</span>)
+    <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">values</span>)
+    <span class="ruby-identifier">skip_to</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">result</span> = []
+
+    <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">lines</span>.<span class="ruby-identifier">read</span>
+
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">line</span>
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^IF:(\w+)/</span>
+        <span class="ruby-identifier">lines</span>.<span class="ruby-identifier">read_up_to</span>(<span class="ruby-regexp re">/^ENDIF:#$1/</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">lookup</span>(<span class="ruby-identifier">$1</span>)
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^IFNOT:(\w+)/</span>
+        <span class="ruby-identifier">lines</span>.<span class="ruby-identifier">read_up_to</span>(<span class="ruby-regexp re">/^ENDIF:#$1/</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">lookup</span>(<span class="ruby-identifier">$1</span>)
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^ENDIF:/</span>
+        ;
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^START:(\w+)/</span>
+        <span class="ruby-identifier">tag</span> = <span class="ruby-identifier">$1</span>
+        <span class="ruby-identifier">body</span> = <span class="ruby-identifier">lines</span>.<span class="ruby-identifier">read_up_to</span>(<span class="ruby-node">/^END:#{tag}/</span>)
+        <span class="ruby-identifier">inner_values</span> = <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">lookup</span>(<span class="ruby-identifier">tag</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;unknown tag: #{tag}&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">inner_values</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;not array: #{tag}&quot;</span>   <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">inner_values</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Array</span>)
+        <span class="ruby-identifier">inner_values</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">vals</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">substitute_into</span>(<span class="ruby-identifier">body</span>.<span class="ruby-identifier">dup</span>, <span class="ruby-identifier">vals</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">expand_line</span>(<span class="ruby-identifier">line</span>.<span class="ruby-identifier">dup</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">pop</span>
+
+    <span class="ruby-identifier">result</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

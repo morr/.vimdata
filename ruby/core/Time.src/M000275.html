@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>- (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     time - other_time =&gt; float
+ *     time - numeric    =&gt; time
+ *  
+ *  Difference---Returns a new time that represents the difference
+ *  between two times, or subtracts the given number of seconds in
+ *  &lt;i&gt;numeric&lt;/i&gt; from &lt;i&gt;time&lt;/i&gt;.
+ *     
+ *     t = Time.now       #=&gt; Wed Apr 09 08:56:03 CDT 2003
+ *     t2 = t + 2592000   #=&gt; Fri May 09 08:56:03 CDT 2003
+ *     t2 - t             #=&gt; 2592000.0
+ *     t2 - 2592000       #=&gt; Wed Apr 09 08:56:03 CDT 2003
+ */
+
+static VALUE
+time_minus(time1, time2)
+    VALUE time1, time2;
+{
+    struct time_object *tobj;
+
+    GetTimeval(time1, tobj);
+    if (TYPE(time2) == T_DATA &amp;&amp; RDATA(time2)-&gt;dfree == time_free) {
+        struct time_object *tobj2;
+        double f;
+
+        GetTimeval(time2, tobj2);
+        f = (double)tobj-&gt;tv.tv_sec - (double)tobj2-&gt;tv.tv_sec;
+        f += ((double)tobj-&gt;tv.tv_usec - (double)tobj2-&gt;tv.tv_usec)*1e-6;
+        /* XXX: should check float overflow on 64bit time_t platforms */
+
+        return rb_float_new(f);
+    }
+    return time_add(tobj, time2, -1);
+}</pre>
+</body>
+</html>

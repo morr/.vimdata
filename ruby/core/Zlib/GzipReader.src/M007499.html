@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Zlib::GzipReader)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: Zlib::GzipReader.new(io)
+ *
+ * Creates a GzipReader object associated with +io+. The GzipReader object reads
+ * gzipped data from +io+, and parses/decompresses them.  At least, +io+ must have
+ * a +read+ method that behaves same as the +read+ method in IO class.
+ *
+ * If the gzip file header is incorrect, raises an Zlib::GzipFile::Error
+ * exception.
+ */
+static VALUE
+rb_gzreader_initialize(obj, io)
+    VALUE obj, io;
+{
+    struct gzfile *gz;
+    int err;
+
+    Data_Get_Struct(obj, struct gzfile, gz);
+
+    /* this is undocumented feature of zlib */
+    err = inflateInit2(&amp;gz-&gt;z.stream, -MAX_WBITS);
+    if (err != Z_OK) {
+        raise_zlib_error(err, gz-&gt;z.stream.msg);
+    }
+    gz-&gt;io = io;
+    ZSTREAM_READY(&amp;gz-&gt;z);
+    gzfile_read_header(gz);
+
+    return obj;
+}</pre>
+</body>
+</html>

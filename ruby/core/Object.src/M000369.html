@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>instance_variable_defined? (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.instance_variable_defined?(symbol)    =&gt; true or false
+ *
+ *  Returns &lt;code&gt;true&lt;/code&gt; if the given instance variable is
+ *  defined in &lt;i&gt;obj&lt;/i&gt;.
+ *
+ *     class Fred
+ *       def initialize(p1, p2)
+ *         @a, @b = p1, p2
+ *       end
+ *     end
+ *     fred = Fred.new('cat', 99)
+ *     fred.instance_variable_defined?(:@a)    #=&gt; true
+ *     fred.instance_variable_defined?(&quot;@b&quot;)   #=&gt; true
+ *     fred.instance_variable_defined?(&quot;@c&quot;)   #=&gt; false
+ */
+
+static VALUE
+rb_obj_ivar_defined(obj, iv)
+    VALUE obj, iv;
+{
+    ID id = rb_to_id(iv);
+
+    if (!rb_is_instance_id(id)) {
+        rb_name_error(id, &quot;`%s' is not allowed as an instance variable name&quot;, rb_id2name(id));
+    }
+    return rb_ivar_defined(obj, id);
+}</pre>
+</body>
+</html>

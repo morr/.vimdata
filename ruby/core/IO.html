@@ -1,0 +1,2245 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: IO</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">IO</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/io_c.html">
+                io.c
+                </a>
+        <br />
+                <a href="../files/lib/readbytes_rb.html">
+                lib/readbytes.rb
+                </a>
+        <br />
+                <a href="../files/lib/scanf_rb.html">
+                lib/scanf.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="Class.html">Class</a> <tt><a href="IO.html">IO</a></tt> is the
+basis for all input and output in Ruby. An I/O stream may be
+<em>duplexed</em> (that is, bidirectional), and so may use more than one
+native operating system stream.
+</p>
+<p>
+Many of the examples in this section use class <tt><a
+href="File.html">File</a></tt>, the only standard subclass of <tt><a
+href="IO.html">IO</a></tt>. The two classes are closely associated.
+</p>
+<p>
+As used in this section, <em>portname</em> may take any of the following
+forms.
+</p>
+<ul>
+<li>A plain string represents a filename suitable for the underlying operating
+system.
+
+</li>
+<li>A string starting with ``<tt>|</tt>&#8217;&#8217; indicates a subprocess.
+The remainder of the string following the ``<tt>|</tt>&#8217;&#8217; is
+invoked as a process with appropriate input/output channels connected to
+it.
+
+</li>
+<li>A string equal to ``<tt>|-</tt>&#8217;&#8217; will create another Ruby
+instance as a subprocess.
+
+</li>
+</ul>
+<p>
+Ruby will convert pathnames between different operating system conventions
+if possible. For instance, on a Windows system the filename
+``<tt>/gumby/ruby/test.rb</tt>&#8217;&#8217; will be opened as
+``<tt>\gumby\ruby\test.rb</tt>&#8217;&#8217;. When specifying a
+Windows-style filename in a Ruby string, remember to escape the
+backslashes:
+</p>
+<pre>
+   &quot;c:\\gumby\\ruby\\test.rb&quot;
+</pre>
+<p>
+Our examples here will use the Unix-style forward slashes;
+<tt>File::SEPARATOR</tt> can be used to get the platform-specific separator
+character.
+</p>
+<p>
+I/O ports may be opened in any one of several different modes, which are
+shown in this section as <em>mode</em>. The mode may either be a <a
+href="Fixnum.html">Fixnum</a> or a <a href="String.html">String</a>. If
+numeric, it should be one of the operating system specific constants
+(O_RDONLY, O_WRONLY, O_RDWR, O_APPEND and so on). See man <a
+href="IO.html#M002239">open</a>(2) for more information.
+</p>
+<p>
+If the mode is given as a <a href="String.html">String</a>, it must be one
+of the values listed in the following table.
+</p>
+<pre>
+  Mode |  Meaning
+  -----+--------------------------------------------------------
+  &quot;r&quot;  |  Read-only, starts at beginning of file  (default mode).
+  -----+--------------------------------------------------------
+  &quot;r+&quot; |  Read-write, starts at beginning of file.
+  -----+--------------------------------------------------------
+  &quot;w&quot;  |  Write-only, truncates existing file
+       |  to zero length or creates a new file for writing.
+  -----+--------------------------------------------------------
+  &quot;w+&quot; |  Read-write, truncates existing file to zero length
+       |  or creates a new file for reading and writing.
+  -----+--------------------------------------------------------
+  &quot;a&quot;  |  Write-only, starts at end of file if file exists,
+       |  otherwise creates a new file for writing.
+  -----+--------------------------------------------------------
+  &quot;a+&quot; |  Read-write, starts at end of file if file exists,
+       |  otherwise creates a new file for reading and
+       |  writing.
+  -----+--------------------------------------------------------
+   &quot;b&quot; |  (DOS/Windows only) Binary file mode (may appear with
+       |  any of the key letters listed above).
+</pre>
+<p>
+The global constant ARGF (also accessible as $&lt;) provides an <a
+href="IO.html">IO</a>-like stream which allows access to all files
+mentioned on the command line (or STDIN if no files are mentioned). ARGF
+provides the methods <tt>path</tt> and <tt>filename</tt> to access the name
+of the file currently being <a href="IO.html#M002245">read</a>.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002277">&lt;&lt;</a>&nbsp;&nbsp;
+      <a href="#M002292">binmode</a>&nbsp;&nbsp;
+      <a href="#M002286">close</a>&nbsp;&nbsp;
+      <a href="#M002288">close_read</a>&nbsp;&nbsp;
+      <a href="#M002289">close_write</a>&nbsp;&nbsp;
+      <a href="#M002287">closed?</a>&nbsp;&nbsp;
+      <a href="#M002254">each</a>&nbsp;&nbsp;
+      <a href="#M002256">each_byte</a>&nbsp;&nbsp;
+      <a href="#M002255">each_line</a>&nbsp;&nbsp;
+      <a href="#M002284">eof</a>&nbsp;&nbsp;
+      <a href="#M002285">eof?</a>&nbsp;&nbsp;
+      <a href="#M002295">fcntl</a>&nbsp;&nbsp;
+      <a href="#M002259">fileno</a>&nbsp;&nbsp;
+      <a href="#M002278">flush</a>&nbsp;&nbsp;
+      <a href="#M002241">for_fd</a>&nbsp;&nbsp;
+      <a href="#M002243">foreach</a>&nbsp;&nbsp;
+      <a href="#M002261">fsync</a>&nbsp;&nbsp;
+      <a href="#M002274">getc</a>&nbsp;&nbsp;
+      <a href="#M002272">gets</a>&nbsp;&nbsp;
+      <a href="#M002297">inspect</a>&nbsp;&nbsp;
+      <a href="#M002294">ioctl</a>&nbsp;&nbsp;
+      <a href="#M002290">isatty</a>&nbsp;&nbsp;
+      <a href="#M002264">lineno</a>&nbsp;&nbsp;
+      <a href="#M002265">lineno=</a>&nbsp;&nbsp;
+      <a href="#M002238">new</a>&nbsp;&nbsp;
+      <a href="#M002248">new</a>&nbsp;&nbsp;
+      <a href="#M002239">open</a>&nbsp;&nbsp;
+      <a href="#M002296">pid</a>&nbsp;&nbsp;
+      <a href="#M002247">pipe</a>&nbsp;&nbsp;
+      <a href="#M002242">popen</a>&nbsp;&nbsp;
+      <a href="#M002282">pos</a>&nbsp;&nbsp;
+      <a href="#M002283">pos=</a>&nbsp;&nbsp;
+      <a href="#M002250">print</a>&nbsp;&nbsp;
+      <a href="#M002253">printf</a>&nbsp;&nbsp;
+      <a href="#M002251">putc</a>&nbsp;&nbsp;
+      <a href="#M002252">puts</a>&nbsp;&nbsp;
+      <a href="#M002270">read</a>&nbsp;&nbsp;
+      <a href="#M002245">read</a>&nbsp;&nbsp;
+      <a href="#M002267">read_nonblock</a>&nbsp;&nbsp;
+      <a href="#M002299">readbytes</a>&nbsp;&nbsp;
+      <a href="#M002275">readchar</a>&nbsp;&nbsp;
+      <a href="#M002273">readline</a>&nbsp;&nbsp;
+      <a href="#M002266">readlines</a>&nbsp;&nbsp;
+      <a href="#M002244">readlines</a>&nbsp;&nbsp;
+      <a href="#M002269">readpartial</a>&nbsp;&nbsp;
+      <a href="#M002249">reopen</a>&nbsp;&nbsp;
+      <a href="#M002281">rewind</a>&nbsp;&nbsp;
+      <a href="#M002300">scanf</a>&nbsp;&nbsp;
+      <a href="#M002280">seek</a>&nbsp;&nbsp;
+      <a href="#M002246">select</a>&nbsp;&nbsp;
+      <a href="#M002237">stat</a>&nbsp;&nbsp;
+      <a href="#M002262">sync</a>&nbsp;&nbsp;
+      <a href="#M002263">sync=</a>&nbsp;&nbsp;
+      <a href="#M002240">sysopen</a>&nbsp;&nbsp;
+      <a href="#M002258">sysread</a>&nbsp;&nbsp;
+      <a href="#M002293">sysseek</a>&nbsp;&nbsp;
+      <a href="#M002257">syswrite</a>&nbsp;&nbsp;
+      <a href="#M002279">tell</a>&nbsp;&nbsp;
+      <a href="#M002298">to_i</a>&nbsp;&nbsp;
+      <a href="#M002260">to_io</a>&nbsp;&nbsp;
+      <a href="#M002291">tty?</a>&nbsp;&nbsp;
+      <a href="#M002276">ungetc</a>&nbsp;&nbsp;
+      <a href="#M002271">write</a>&nbsp;&nbsp;
+      <a href="#M002268">write_nonblock</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="File/Constants.html">File::Constants</a></span>
+        <span class="include-name"><a href="Enumerable.html">Enumerable</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SEEK_SET</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(SEEK_SET)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SEEK_CUR</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(SEEK_CUR)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SEEK_END</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(SEEK_END)</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M002241" class="method-detail">
+        <a name="M002241"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002241.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002241.html');return false;">
+          <span class="method-name">IO.for_fd(fd, mode)    => io<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Synonym for <tt>IO::new</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002243" class="method-detail">
+        <a name="M002243"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002243.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002243.html');return false;">
+          <span class="method-name">IO.foreach(name, sep_string=$/) {|line| block }   => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Executes the block for every line in the named I/O port, where lines are
+separated by <em>sep_string</em>.
+</p>
+<pre>
+   IO.foreach(&quot;testfile&quot;) {|x| print &quot;GOT &quot;, x }
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   GOT This is line one
+   GOT This is line two
+   GOT This is line three
+   GOT And so on...
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002238" class="method-detail">
+        <a name="M002238"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002238.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002238.html');return false;">
+          <span class="method-name">IO.new(fd, mode_string)   => io<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="IO.html#M002238">new</a> <tt><a
+href="IO.html">IO</a></tt> object (a stream) for the given integer file
+descriptor and mode string. See also <tt><a
+href="IO.html#M002259">IO#fileno</a></tt> and <tt>IO::for_fd</tt>.
+</p>
+<pre>
+   a = IO.new(2,&quot;w&quot;)      # '2' is standard error
+   $stderr.puts &quot;Hello&quot;
+   a.puts &quot;World&quot;
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   Hello
+   World
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002248" class="method-detail">
+        <a name="M002248"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002248.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002248.html');return false;">
+          <span class="method-name">IO.new(fd, mode)   => io<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="IO.html#M002238">new</a> <tt><a
+href="IO.html">IO</a></tt> object (a stream) for the given integer file
+descriptor and mode string. See also <tt><a
+href="IO.html#M002259">IO#fileno</a></tt> and <tt>IO::for_fd</tt>.
+</p>
+<pre>
+   a = IO.new(2,&quot;w&quot;)      # '2' is standard error
+   $stderr.puts &quot;Hello&quot;
+   a.puts &quot;World&quot;
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   Hello
+   World
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002239" class="method-detail">
+        <a name="M002239"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002239.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002239.html');return false;">
+          <span class="method-name">IO.open(fd, mode_string="r" )               => io<br />
+IO.open(fd, mode_string="r" ) {|io| block } => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+With no associated block, <tt><a href="IO.html#M002239">open</a></tt> is a
+synonym for <tt>IO::new</tt>. If the optional code block is given, it will
+be passed <em>io</em> as an argument, and the <a href="IO.html">IO</a>
+object will automatically be closed when the block terminates. In this
+instance, <tt>IO::open</tt> returns the value of the block.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002247" class="method-detail">
+        <a name="M002247"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002247.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002247.html');return false;">
+          <span class="method-name">IO.pipe &rarr; array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a pair of <a href="IO.html#M002247">pipe</a> endpoints (connected
+to <a href="IO.html#M002254">each</a> other) and returns them as a
+two-element array of <tt><a href="IO.html">IO</a></tt> objects: <tt>[</tt>
+<em>read_file</em>, <em>write_file</em> <tt>]</tt>. Not available on all
+platforms.
+</p>
+<p>
+In the example below, the two processes <a href="IO.html#M002286">close</a>
+the ends of the <a href="IO.html#M002247">pipe</a> that they are not using.
+This is not just a cosmetic nicety. The <a href="IO.html#M002245">read</a>
+end of a <a href="IO.html#M002247">pipe</a> will not generate an end of
+file condition if there are any writers with the <a
+href="IO.html#M002247">pipe</a> still <a href="IO.html#M002239">open</a>.
+In the case of the parent process, the <tt>rd.read</tt> will never return
+if it does not first issue a <tt>wr.close</tt>.
+</p>
+<pre>
+   rd, wr = IO.pipe
+
+   if fork
+     wr.close
+     puts &quot;Parent got: &lt;#{rd.read}&gt;&quot;
+     rd.close
+     Process.wait
+   else
+     rd.close
+     puts &quot;Sending message to parent&quot;
+     wr.write &quot;Hi Dad&quot;
+     wr.close
+   end
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   Sending message to parent
+   Parent got: &lt;Hi Dad&gt;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002242" class="method-detail">
+        <a name="M002242"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002242.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002242.html');return false;">
+          <span class="method-name">IO.popen(cmd_string, mode="r" )               => io<br />
+IO.popen(cmd_string, mode="r" ) {|io| block } => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Runs the specified command string as a subprocess; the subprocess&#8216;s
+standard input and output will be connected to the returned <tt><a
+href="IO.html">IO</a></tt> object. If <em>cmd_string</em> starts with a
+``<tt>-</tt>&#8217;&#8217;, then a <a href="IO.html#M002238">new</a>
+instance of Ruby is started as the subprocess. The default mode for the <a
+href="IO.html#M002238">new</a> file object is ``r&#8217;&#8217;, but
+<em>mode</em> may be set to any of the modes listed in the description for
+class <a href="IO.html">IO</a>.
+</p>
+<p>
+If a block is given, Ruby will run the command as a child connected to Ruby
+with a <a href="IO.html#M002247">pipe</a>. Ruby&#8216;s end of the <a
+href="IO.html#M002247">pipe</a> will be passed as a parameter to the block.
+At the end of block, Ruby <a href="IO.html#M002286">close</a> the <a
+href="IO.html#M002247">pipe</a> and sets <tt>$?</tt>. In this case
+<tt>IO::popen</tt> returns the value of the block.
+</p>
+<p>
+If a block is given with a <em>cmd_string</em> of
+``<tt>-</tt>&#8217;&#8217;, the block will be run in two separate
+processes: once in the parent, and once in a child. The parent process will
+be passed the <a href="IO.html#M002247">pipe</a> object as a parameter to
+the block, the child version of the block will be passed <tt>nil</tt>, and
+the child&#8216;s standard in and standard out will be connected to the
+parent through the <a href="IO.html#M002247">pipe</a>. Not available on all
+platforms.
+</p>
+<pre>
+   f = IO.popen(&quot;uname&quot;)
+   p f.readlines
+   puts &quot;Parent is #{Process.pid}&quot;
+   IO.popen (&quot;date&quot;) { |f| puts f.gets }
+   IO.popen(&quot;-&quot;) {|f| $stderr.puts &quot;#{Process.pid} is here, f is #{f}&quot;}
+   p $?
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   [&quot;Linux\n&quot;]
+   Parent is 26166
+   Wed Apr  9 08:53:52 CDT 2003
+   26169 is here, f is
+   26166 is here, f is #&lt;IO:0x401b3d44&gt;
+   #&lt;Process::Status: pid=26166,exited(0)&gt;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002245" class="method-detail">
+        <a name="M002245"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002245.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002245.html');return false;">
+          <span class="method-name">IO.read(name, [length [, offset]] )   => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Opens the file, optionally seeks to the given offset, then returns
+<em>length</em> bytes (defaulting to the rest of the file). <tt><a
+href="IO.html#M002245">read</a></tt> ensures the file is closed before
+returning.
+</p>
+<pre>
+   IO.read(&quot;testfile&quot;)           #=&gt; &quot;This is line one\nThis is line two\nThis is line three\nAnd so on...\n&quot;
+   IO.read(&quot;testfile&quot;, 20)       #=&gt; &quot;This is line one\nThi&quot;
+   IO.read(&quot;testfile&quot;, 20, 10)   #=&gt; &quot;ne one\nThis is line &quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002244" class="method-detail">
+        <a name="M002244"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002244.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002244.html');return false;">
+          <span class="method-name">IO.readlines(name, sep_string=$/)   => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reads the entire file specified by <em>name</em> as individual lines, and
+returns those lines in an array. Lines are separated by
+<em>sep_string</em>.
+</p>
+<pre>
+   a = IO.readlines(&quot;testfile&quot;)
+   a[0]   #=&gt; &quot;This is line one\n&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002246" class="method-detail">
+        <a name="M002246"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002246.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002246.html');return false;">
+          <span class="method-name">IO.select(read_array <br />
+[, write_array <br />
+[, error_array <br />
+[, timeout]]] ) =>  array  or  nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="Kernel.html#M005958">Kernel#select</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002240" class="method-detail">
+        <a name="M002240"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002240.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002240.html');return false;">
+          <span class="method-name">IO.sysopen(path, [mode, [perm]])  => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Opens the given path, returning the underlying file descriptor as a <tt><a
+href="Fixnum.html">Fixnum</a></tt>.
+</p>
+<pre>
+   IO.sysopen(&quot;testfile&quot;)   #=&gt; 3
+</pre>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002277" class="method-detail">
+        <a name="M002277"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002277.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002277.html');return false;">
+          <span class="method-name">ios << obj     => ios<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="String.html">String</a> Output&#8212;Writes <em>obj</em> to
+<em>ios</em>. <em>obj</em> will be converted to a string using
+<tt>to_s</tt>.
+</p>
+<pre>
+   $stdout &lt;&lt; &quot;Hello &quot; &lt;&lt; &quot;world!\n&quot;
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   Hello world!
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002292" class="method-detail">
+        <a name="M002292"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002292.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002292.html');return false;">
+          <span class="method-name">ios.binmode    => ios<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Puts <em>ios</em> into binary mode. This is useful only in MS-DOS/Windows
+environments. Once a stream is in binary mode, it cannot be reset to
+nonbinary mode.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002286" class="method-detail">
+        <a name="M002286"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002286.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002286.html');return false;">
+          <span class="method-name">ios.close   => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Closes <em>ios</em> and flushes any pending writes to the operating system.
+The stream is unavailable for any further data operations; an <tt><a
+href="IOError.html">IOError</a></tt> is raised if such an attempt is made.
+I/O streams are automatically closed when they are claimed by the garbage
+collector.
+</p>
+<p>
+If <em>ios</em> is opened by <tt><a
+href="IO.html#M002242">IO.popen</a></tt>, <tt><a
+href="IO.html#M002286">close</a></tt> sets <tt>$?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002288" class="method-detail">
+        <a name="M002288"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002288.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002288.html');return false;">
+          <span class="method-name">ios.close_read    => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Closes the <a href="IO.html#M002245">read</a> end of a duplex I/O stream
+(i.e., one that contains both a <a href="IO.html#M002245">read</a> and a <a
+href="IO.html#M002271">write</a> stream, such as a <a
+href="IO.html#M002247">pipe</a>). Will raise an <tt><a
+href="IOError.html">IOError</a></tt> if the stream is not duplexed.
+</p>
+<pre>
+   f = IO.popen(&quot;/bin/sh&quot;,&quot;r+&quot;)
+   f.close_read
+   f.readlines
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   prog.rb:3:in `readlines': not opened for reading (IOError)
+    from prog.rb:3
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002289" class="method-detail">
+        <a name="M002289"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002289.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002289.html');return false;">
+          <span class="method-name">ios.close_write   => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Closes the <a href="IO.html#M002271">write</a> end of a duplex I/O stream
+(i.e., one that contains both a <a href="IO.html#M002245">read</a> and a <a
+href="IO.html#M002271">write</a> stream, such as a <a
+href="IO.html#M002247">pipe</a>). Will raise an <tt><a
+href="IOError.html">IOError</a></tt> if the stream is not duplexed.
+</p>
+<pre>
+   f = IO.popen(&quot;/bin/sh&quot;,&quot;r+&quot;)
+   f.close_write
+   f.print &quot;nowhere&quot;
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   prog.rb:3:in `write': not opened for writing (IOError)
+    from prog.rb:3:in `print'
+    from prog.rb:3
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002287" class="method-detail">
+        <a name="M002287"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002287.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002287.html');return false;">
+          <span class="method-name">ios.closed?    => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if <em>ios</em> is completely closed (for duplex
+streams, both reader and writer), <tt>false</tt> otherwise.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.close         #=&gt; nil
+   f.closed?       #=&gt; true
+   f = IO.popen(&quot;/bin/sh&quot;,&quot;r+&quot;)
+   f.close_write   #=&gt; nil
+   f.closed?       #=&gt; false
+   f.close_read    #=&gt; nil
+   f.closed?       #=&gt; true
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002254" class="method-detail">
+        <a name="M002254"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002254.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002254.html');return false;">
+          <span class="method-name">ios.each(sep_string=$/)      {|line| block }  => ios<br />
+ios.each_line(sep_string=$/) {|line| block }  => ios<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Executes the block for every line in <em>ios</em>, where lines are
+separated by <em>sep_string</em>. <em>ios</em> must be opened for reading
+or an <tt><a href="IOError.html">IOError</a></tt> will be raised.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.each {|line| puts &quot;#{f.lineno}: #{line}&quot; }
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   1: This is line one
+   2: This is line two
+   3: This is line three
+   4: And so on...
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002256" class="method-detail">
+        <a name="M002256"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002256.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002256.html');return false;">
+          <span class="method-name">ios.each_byte {|byte| block }  => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Calls the given block once for <a href="IO.html#M002254">each</a> byte
+(0..255) in <em>ios</em>, passing the byte as an argument. The stream must
+be opened for reading or an <tt><a href="IOError.html">IOError</a></tt>
+will be raised.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   checksum = 0
+   f.each_byte {|x| checksum ^= x }   #=&gt; #&lt;File:testfile&gt;
+   checksum                           #=&gt; 12
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002255" class="method-detail">
+        <a name="M002255"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002255.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002255.html');return false;">
+          <span class="method-name">ios.each(sep_string=$/)      {|line| block }  => ios<br />
+ios.each_line(sep_string=$/) {|line| block }  => ios<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Executes the block for every line in <em>ios</em>, where lines are
+separated by <em>sep_string</em>. <em>ios</em> must be opened for reading
+or an <tt><a href="IOError.html">IOError</a></tt> will be raised.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.each {|line| puts &quot;#{f.lineno}: #{line}&quot; }
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   1: This is line one
+   2: This is line two
+   3: This is line three
+   4: And so on...
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002284" class="method-detail">
+        <a name="M002284"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002284.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002284.html');return false;">
+          <span class="method-name">ios.eof     => true or false<br />
+ios.eof?    => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if <em>ios</em> is at end of file that means there are no more
+data to <a href="IO.html#M002245">read</a>. The stream must be opened for
+reading or an <tt><a href="IOError.html">IOError</a></tt> will be raised.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   dummy = f.readlines
+   f.eof   #=&gt; true
+</pre>
+<p>
+If <em>ios</em> is a stream such as <a href="IO.html#M002247">pipe</a> or
+socket, <tt><a href="IO.html#M002284">IO#eof</a>?</tt> blocks until the
+other end sends some data or closes it.
+</p>
+<pre>
+   r, w = IO.pipe
+   Thread.new { sleep 1; w.close }
+   r.eof?  #=&gt; true after 1 second blocking
+
+   r, w = IO.pipe
+   Thread.new { sleep 1; w.puts &quot;a&quot; }
+   r.eof?  #=&gt; false after 1 second blocking
+
+   r, w = IO.pipe
+   r.eof?  # blocks forever
+</pre>
+<p>
+Note that <tt><a href="IO.html#M002284">IO#eof</a>?</tt> reads data to a
+input buffer. So <tt><a href="IO.html#M002258">IO#sysread</a></tt>
+doesn&#8216;t work with <tt><a href="IO.html#M002284">IO#eof</a>?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002285" class="method-detail">
+        <a name="M002285"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002285.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002285.html');return false;">
+          <span class="method-name">ios.eof     => true or false<br />
+ios.eof?    => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if <em>ios</em> is at end of file that means there are no more
+data to <a href="IO.html#M002245">read</a>. The stream must be opened for
+reading or an <tt><a href="IOError.html">IOError</a></tt> will be raised.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   dummy = f.readlines
+   f.eof   #=&gt; true
+</pre>
+<p>
+If <em>ios</em> is a stream such as <a href="IO.html#M002247">pipe</a> or
+socket, <tt><a href="IO.html#M002284">IO#eof</a>?</tt> blocks until the
+other end sends some data or closes it.
+</p>
+<pre>
+   r, w = IO.pipe
+   Thread.new { sleep 1; w.close }
+   r.eof?  #=&gt; true after 1 second blocking
+
+   r, w = IO.pipe
+   Thread.new { sleep 1; w.puts &quot;a&quot; }
+   r.eof?  #=&gt; false after 1 second blocking
+
+   r, w = IO.pipe
+   r.eof?  # blocks forever
+</pre>
+<p>
+Note that <tt><a href="IO.html#M002284">IO#eof</a>?</tt> reads data to a
+input buffer. So <tt><a href="IO.html#M002258">IO#sysread</a></tt>
+doesn&#8216;t work with <tt><a href="IO.html#M002284">IO#eof</a>?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002295" class="method-detail">
+        <a name="M002295"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002295.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002295.html');return false;">
+          <span class="method-name">ios.fcntl(integer_cmd, arg)    => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Provides a mechanism for issuing low-level commands to control or query
+file-oriented I/O streams. Arguments and results are platform dependent. If
+<em>arg</em> is a number, its value is passed directly. If it is a string,
+it is interpreted as a binary sequence of bytes (<tt><a
+href="Array.html#M002222">Array#pack</a></tt> might be a useful way to
+build this string). On Unix platforms, see <tt><a
+href="IO.html#M002295">fcntl</a>(2)</tt> for details. Not implemented on
+all platforms.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002259" class="method-detail">
+        <a name="M002259"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002259.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002259.html');return false;">
+          <span class="method-name">ios.fileno    => fixnum<br />
+ios.to_i      => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an integer representing the numeric file descriptor for
+<em>ios</em>.
+</p>
+<pre>
+   $stdin.fileno    #=&gt; 0
+   $stdout.fileno   #=&gt; 1
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002278" class="method-detail">
+        <a name="M002278"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002278.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002278.html');return false;">
+          <span class="method-name">ios.flush    => ios<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Flushes any buffered data within <em>ios</em> to the underlying operating
+system (note that this is Ruby internal buffering only; the OS may buffer
+the data as well).
+</p>
+<pre>
+   $stdout.print &quot;no newline&quot;
+   $stdout.flush
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   no newline
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002261" class="method-detail">
+        <a name="M002261"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002261.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002261.html');return false;">
+          <span class="method-name">ios.fsync   => 0 or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Immediately writes all buffered data in <em>ios</em> to disk. Returns
+<tt>nil</tt> if the underlying operating system does not support <em><a
+href="IO.html#M002261">fsync</a>(2)</em>. Note that <tt><a
+href="IO.html#M002261">fsync</a></tt> differs from using <tt><a
+href="IO.html#M002262">IO#sync</a>=</tt>. The latter ensures that data is
+flushed from Ruby&#8216;s buffers, but doesn&#8216;t not guarantee that the
+underlying operating system actually writes it to disk.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002274" class="method-detail">
+        <a name="M002274"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002274.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002274.html');return false;">
+          <span class="method-name">ios.getc   => fixnum or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Gets the next 8-bit byte (0..255) from <em>ios</em>. Returns <tt>nil</tt>
+if called at end of file.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.getc   #=&gt; 84
+   f.getc   #=&gt; 104
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002272" class="method-detail">
+        <a name="M002272"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002272.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002272.html');return false;">
+          <span class="method-name">ios.gets(sep_string=$/)   => string or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reads the next ``line&#8217;&#8217; from the I/O stream; lines are
+separated by <em>sep_string</em>. A separator of <tt>nil</tt> reads the
+entire contents, and a zero-length separator reads the input a paragraph at
+a time (two successive newlines in the input separate paragraphs). The
+stream must be opened for reading or an <tt><a
+href="IOError.html">IOError</a></tt> will be raised. The line <a
+href="IO.html#M002245">read</a> in will be returned and also assigned to
+<tt>$_</tt>. Returns <tt>nil</tt> if called at end of file.
+</p>
+<pre>
+   File.new(&quot;testfile&quot;).gets   #=&gt; &quot;This is line one\n&quot;
+   $_                          #=&gt; &quot;This is line one\n&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002297" class="method-detail">
+        <a name="M002297"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002297.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002297.html');return false;">
+          <span class="method-name">ios.inspect   => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a string describing this <a href="IO.html">IO</a> object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002294" class="method-detail">
+        <a name="M002294"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002294.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002294.html');return false;">
+          <span class="method-name">ios.ioctl(integer_cmd, arg)    => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Provides a mechanism for issuing low-level commands to control or query I/O
+devices. Arguments and results are platform dependent. If <em>arg</em> is a
+number, its value is passed directly. If it is a string, it is interpreted
+as a binary sequence of bytes. On Unix platforms, see <tt><a
+href="IO.html#M002294">ioctl</a>(2)</tt> for details. Not implemented on
+all platforms.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002290" class="method-detail">
+        <a name="M002290"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002290.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002290.html');return false;">
+          <span class="method-name">ios.isatty   => true or false<br />
+ios.tty?     => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if <em>ios</em> is associated with a terminal device
+(tty), <tt>false</tt> otherwise.
+</p>
+<pre>
+   File.new(&quot;testfile&quot;).isatty   #=&gt; false
+   File.new(&quot;/dev/tty&quot;).isatty   #=&gt; true
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002264" class="method-detail">
+        <a name="M002264"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002264.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002264.html');return false;">
+          <span class="method-name">ios.lineno    => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the current line number in <em>ios</em>. The stream must be opened
+for reading. <tt><a href="IO.html#M002264">lineno</a></tt> counts the
+number of times <tt><a href="IO.html#M002272">gets</a></tt> is called,
+rather than the number of newlines encountered. The two values will differ
+if <tt><a href="IO.html#M002272">gets</a></tt> is called with a separator
+other than newline. See also the <tt>$.</tt> variable.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.lineno   #=&gt; 0
+   f.gets     #=&gt; &quot;This is line one\n&quot;
+   f.lineno   #=&gt; 1
+   f.gets     #=&gt; &quot;This is line two\n&quot;
+   f.lineno   #=&gt; 2
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002265" class="method-detail">
+        <a name="M002265"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002265.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002265.html');return false;">
+          <span class="method-name">ios.lineno = integer    => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Manually sets the current line number to the given value. <tt>$.</tt> is
+updated only on the next <a href="IO.html#M002245">read</a>.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.gets                     #=&gt; &quot;This is line one\n&quot;
+   $.                         #=&gt; 1
+   f.lineno = 1000
+   f.lineno                   #=&gt; 1000
+   $. # lineno of last read   #=&gt; 1
+   f.gets                     #=&gt; &quot;This is line two\n&quot;
+   $. # lineno of last read   #=&gt; 1001
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002296" class="method-detail">
+        <a name="M002296"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002296.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002296.html');return false;">
+          <span class="method-name">ios.pid    => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the process ID of a child process associated with <em>ios</em>.
+This will be set by <tt>IO::popen</tt>.
+</p>
+<pre>
+   pipe = IO.popen(&quot;-&quot;)
+   if pipe
+     $stderr.puts &quot;In parent, child pid is #{pipe.pid}&quot;
+   else
+     $stderr.puts &quot;In child, pid is #{$$}&quot;
+   end
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   In child, pid is 26209
+   In parent, child pid is 26209
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002282" class="method-detail">
+        <a name="M002282"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002282.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002282.html');return false;">
+          <span class="method-name">ios.pos     => integer<br />
+ios.tell    => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the current offset (in bytes) of <em>ios</em>.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.pos    #=&gt; 0
+   f.gets   #=&gt; &quot;This is line one\n&quot;
+   f.pos    #=&gt; 17
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002283" class="method-detail">
+        <a name="M002283"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002283.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002283.html');return false;">
+          <span class="method-name">ios.pos = integer    => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Seeks to the given position (in bytes) in <em>ios</em>.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.pos = 17
+   f.gets   #=&gt; &quot;This is line two\n&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002250" class="method-detail">
+        <a name="M002250"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002250.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002250.html');return false;">
+          <span class="method-name">ios.print()             => nil<br />
+ios.print(obj, ...)     => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Writes the given object(s) to <em>ios</em>. The stream must be opened for
+writing. If the output record separator (<tt>$\</tt>) is not <tt>nil</tt>,
+it will be appended to the output. If no arguments are given, prints
+<tt>$_</tt>. Objects that aren&#8216;t strings will be converted by calling
+their <tt>to_s</tt> method. With no argument, prints the contents of the
+variable <tt>$_</tt>. Returns <tt>nil</tt>.
+</p>
+<pre>
+   $stdout.print(&quot;This is &quot;, 100, &quot; percent.\n&quot;)
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   This is 100 percent.
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002253" class="method-detail">
+        <a name="M002253"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002253.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002253.html');return false;">
+          <span class="method-name">ios.printf(format_string [, obj, ...] )   => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Formats and writes to <em>ios</em>, converting parameters under control of
+the format string. See <tt><a
+href="Kernel.html#M005962">Kernel#sprintf</a></tt> for details.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002251" class="method-detail">
+        <a name="M002251"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002251.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002251.html');return false;">
+          <span class="method-name">ios.putc(obj)    => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+If <em>obj</em> is <tt><a href="Numeric.html">Numeric</a></tt>, <a
+href="IO.html#M002271">write</a> the character whose code is <em>obj</em>,
+otherwise <a href="IO.html#M002271">write</a> the first character of the
+string representation of <em>obj</em> to <em>ios</em>.
+</p>
+<pre>
+   $stdout.putc &quot;A&quot;
+   $stdout.putc 65
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   AA
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002252" class="method-detail">
+        <a name="M002252"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002252.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002252.html');return false;">
+          <span class="method-name">ios.puts(obj, ...)    => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Writes the given objects to <em>ios</em> as with <tt><a
+href="IO.html#M002250">IO#print</a></tt>. Writes a record separator
+(typically a newline) after any that do not already end with a newline
+sequence. If called with an array argument, writes <a
+href="IO.html#M002254">each</a> element on a <a
+href="IO.html#M002238">new</a> line. If called without arguments, outputs a
+single record separator.
+</p>
+<pre>
+   $stdout.puts(&quot;this&quot;, &quot;is&quot;, &quot;a&quot;, &quot;test&quot;)
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   this
+   is
+   a
+   test
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002270" class="method-detail">
+        <a name="M002270"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002270.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002270.html');return false;">
+          <span class="method-name">ios.read([length [, buffer]])    => string, buffer, or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reads at most <em>length</em> bytes from the I/O stream, or to the end of
+file if <em>length</em> is omitted or is <tt>nil</tt>. <em>length</em> must
+be a non-negative integer or nil. If the optional <em>buffer</em> argument
+is present, it must reference a <a href="String.html">String</a>, which
+will receive the data.
+</p>
+<p>
+At end of file, it returns <tt>nil</tt> or <tt>&quot;&quot;</tt> depend on
+<em>length</em>. <tt><em>ios</em>.<a href="IO.html#M002245">read</a>()</tt>
+and <tt><em>ios</em>.<a href="IO.html#M002245">read</a>(nil)</tt> returns
+<tt>&quot;&quot;</tt>. <tt><em>ios</em>.<a
+href="IO.html#M002245">read</a>(<em>positive-integer</em>)</tt> returns
+nil.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.read(16)   #=&gt; &quot;This is line one&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002267" class="method-detail">
+        <a name="M002267"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002267.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002267.html');return false;">
+          <span class="method-name">ios.read_nonblock(maxlen)              => string<br />
+ios.read_nonblock(maxlen, outbuf)      => outbuf<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reads at most <em>maxlen</em> bytes from <em>ios</em> using <a
+href="IO.html#M002245">read</a>(2) system call after O_NONBLOCK is set for
+the underlying file descriptor.
+</p>
+<p>
+If the optional <em>outbuf</em> argument is present, it must reference a <a
+href="String.html">String</a>, which will receive the data.
+</p>
+<p>
+<a href="IO.html#M002267">read_nonblock</a> just calls <a
+href="IO.html#M002245">read</a>(2). It causes all errors <a
+href="IO.html#M002245">read</a>(2) causes: EAGAIN, EINTR, etc. The caller
+should care such errors.
+</p>
+<p>
+<a href="IO.html#M002267">read_nonblock</a> causes <a
+href="EOFError.html">EOFError</a> on EOF.
+</p>
+<p>
+If the <a href="IO.html#M002245">read</a> buffer is not empty, <a
+href="IO.html#M002267">read_nonblock</a> reads from the buffer like <a
+href="IO.html#M002269">readpartial</a>. In this case, <a
+href="IO.html#M002245">read</a>(2) is not called.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002299" class="method-detail">
+        <a name="M002299"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002299.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002299.html');return false;">
+          <span class="method-name">readbytes</span><span class="method-args">(n)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reads exactly <tt>n</tt> bytes.
+</p>
+<p>
+If the data <a href="IO.html#M002245">read</a> is nil an <a
+href="EOFError.html">EOFError</a> is raised.
+</p>
+<p>
+If the data <a href="IO.html#M002245">read</a> is too short a <a
+href="TruncatedDataError.html">TruncatedDataError</a> is raised and the <a
+href="IO.html#M002245">read</a> data is obtainable via its data method.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002275" class="method-detail">
+        <a name="M002275"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002275.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002275.html');return false;">
+          <span class="method-name">ios.readchar   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reads a character as with <tt><a href="IO.html#M002274">IO#getc</a></tt>,
+but raises an <tt><a href="EOFError.html">EOFError</a></tt> on end of file.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002273" class="method-detail">
+        <a name="M002273"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002273.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002273.html');return false;">
+          <span class="method-name">ios.readline(sep_string=$/)   => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reads a line as with <tt><a href="IO.html#M002272">IO#gets</a></tt>, but
+raises an <tt><a href="EOFError.html">EOFError</a></tt> on end of file.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002266" class="method-detail">
+        <a name="M002266"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002266.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002266.html');return false;">
+          <span class="method-name">ios.readlines(sep_string=$/)  =>   array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reads all of the lines in <em>ios</em>, and returns them in
+<em>anArray</em>. Lines are separated by the optional <em>sep_string</em>.
+If <em>sep_string</em> is <tt>nil</tt>, the rest of the stream is returned
+as a single record. The stream must be opened for reading or an <tt><a
+href="IOError.html">IOError</a></tt> will be raised.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.readlines[0]   #=&gt; &quot;This is line one\n&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002269" class="method-detail">
+        <a name="M002269"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002269.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002269.html');return false;">
+          <span class="method-name">ios.readpartial(maxlen)              => string<br />
+ios.readpartial(maxlen, outbuf)      => outbuf<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reads at most <em>maxlen</em> bytes from the I/O stream. It blocks only if
+<em>ios</em> has no data immediately available. It doesn&#8216;t block if
+some data available. If the optional <em>outbuf</em> argument is present,
+it must reference a <a href="String.html">String</a>, which will receive
+the data. It raises <tt><a href="EOFError.html">EOFError</a></tt> on end of
+file.
+</p>
+<p>
+<a href="IO.html#M002269">readpartial</a> is designed for streams such as
+<a href="IO.html#M002247">pipe</a>, socket, tty, etc. It blocks only when
+no data immediately available. This means that it blocks only when
+following all conditions hold.
+</p>
+<ul>
+<li>the buffer in the <a href="IO.html">IO</a> object is empty.
+
+</li>
+<li>the content of the stream is empty.
+
+</li>
+<li>the stream is not reached to EOF.
+
+</li>
+</ul>
+<p>
+When <a href="IO.html#M002269">readpartial</a> blocks, it waits data or EOF
+on the stream. If some data is reached, <a
+href="IO.html#M002269">readpartial</a> returns with the data. If EOF is
+reached, <a href="IO.html#M002269">readpartial</a> raises <a
+href="EOFError.html">EOFError</a>.
+</p>
+<p>
+When <a href="IO.html#M002269">readpartial</a> doesn&#8216;t blocks, it
+returns or raises immediately. If the buffer is not empty, it returns the
+data in the buffer. Otherwise if the stream has some content, it returns
+the data in the stream. Otherwise if the stream is reached to EOF, it
+raises <a href="EOFError.html">EOFError</a>.
+</p>
+<pre>
+   r, w = IO.pipe           #               buffer          pipe content
+   w &lt;&lt; &quot;abc&quot;               #               &quot;&quot;              &quot;abc&quot;.
+   r.readpartial(4096)      #=&gt; &quot;abc&quot;       &quot;&quot;              &quot;&quot;
+   r.readpartial(4096)      # blocks because buffer and pipe is empty.
+
+   r, w = IO.pipe           #               buffer          pipe content
+   w &lt;&lt; &quot;abc&quot;               #               &quot;&quot;              &quot;abc&quot;
+   w.close                  #               &quot;&quot;              &quot;abc&quot; EOF
+   r.readpartial(4096)      #=&gt; &quot;abc&quot;       &quot;&quot;              EOF
+   r.readpartial(4096)      # raises EOFError
+
+   r, w = IO.pipe           #               buffer          pipe content
+   w &lt;&lt; &quot;abc\ndef\n&quot;        #               &quot;&quot;              &quot;abc\ndef\n&quot;
+   r.gets                   #=&gt; &quot;abc\n&quot;     &quot;def\n&quot;         &quot;&quot;
+   w &lt;&lt; &quot;ghi\n&quot;             #               &quot;def\n&quot;         &quot;ghi\n&quot;
+   r.readpartial(4096)      #=&gt; &quot;def\n&quot;     &quot;&quot;              &quot;ghi\n&quot;
+   r.readpartial(4096)      #=&gt; &quot;ghi\n&quot;     &quot;&quot;              &quot;&quot;
+</pre>
+<p>
+Note that <a href="IO.html#M002269">readpartial</a> behaves similar to <a
+href="IO.html#M002258">sysread</a>. The differences are:
+</p>
+<ul>
+<li>If the buffer is not empty, <a href="IO.html#M002245">read</a> from the
+buffer instead of &quot;<a href="IO.html#M002258">sysread</a> for buffered
+<a href="IO.html">IO</a> (<a href="IOError.html">IOError</a>)&quot;.
+
+</li>
+<li>It doesn&#8216;t cause Errno::EAGAIN and Errno::EINTR. When <a
+href="IO.html#M002269">readpartial</a> meets EAGAIN and EINTR by <a
+href="IO.html#M002245">read</a> system call, <a
+href="IO.html#M002269">readpartial</a> retry the system call.
+
+</li>
+</ul>
+<p>
+The later means that <a href="IO.html#M002269">readpartial</a> is
+nonblocking-flag insensitive. It blocks on the situation <a
+href="IO.html#M002258">IO#sysread</a> causes Errno::EAGAIN as if the fd is
+blocking mode.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002249" class="method-detail">
+        <a name="M002249"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002249.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002249.html');return false;">
+          <span class="method-name">ios.reopen(other_IO)         => ios <br />
+ios.reopen(path, mode_str)   => ios<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reassociates <em>ios</em> with the I/O stream given in <em>other_IO</em> or
+to a <a href="IO.html#M002238">new</a> stream opened on <em>path</em>. This
+may dynamically change the actual class of this stream.
+</p>
+<pre>
+   f1 = File.new(&quot;testfile&quot;)
+   f2 = File.new(&quot;testfile&quot;)
+   f2.readlines[0]   #=&gt; &quot;This is line one\n&quot;
+   f2.reopen(f1)     #=&gt; #&lt;File:testfile&gt;
+   f2.readlines[0]   #=&gt; &quot;This is line one\n&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002281" class="method-detail">
+        <a name="M002281"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002281.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002281.html');return false;">
+          <span class="method-name">ios.rewind    => 0<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Positions <em>ios</em> to the beginning of input, resetting <tt><a
+href="IO.html#M002264">lineno</a></tt> to zero.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.readline   #=&gt; &quot;This is line one\n&quot;
+   f.rewind     #=&gt; 0
+   f.lineno     #=&gt; 0
+   f.readline   #=&gt; &quot;This is line one\n&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002300" class="method-detail">
+        <a name="M002300"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002300.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002300.html');return false;">
+          <span class="method-name">scanf</span><span class="method-args">(str,&amp;b)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The trick here is doing a match where you grab one <b>line</b> of input at
+a time. The linebreak may or may not occur at the boundary where the string
+matches a format specifier. And if it does, some rule about whitespace may
+or may not be in effect&#8230;
+</p>
+<p>
+That&#8216;s why this is much more elaborate than the string version.
+</p>
+<p>
+For <a href="IO.html#M002254">each</a> line: Match succeeds (non-emptily)
+and the last attempted spec/string sub-match succeeded:
+</p>
+<pre>
+  could the last spec keep matching?
+    yes: save interim results and continue (next line)
+</pre>
+<p>
+The last attempted spec/string did not match:
+</p>
+<p>
+are we on the next-to-last spec in the string?
+</p>
+<pre>
+  yes:
+    is fmt_string.string_left all spaces?
+      yes: does current spec care about input space?
+        yes: fatal failure
+        no: save interim results and continue
+  no: continue  [this state could be analyzed further]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002280" class="method-detail">
+        <a name="M002280"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002280.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002280.html');return false;">
+          <span class="method-name">ios.seek(amount, whence=SEEK_SET) &rarr; 0<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Seeks to a given offset <em>anInteger</em> in the stream according to the
+value of <em>whence</em>:
+</p>
+<pre>
+  IO::SEEK_CUR  | Seeks to _amount_ plus current position
+  --------------+----------------------------------------------------
+  IO::SEEK_END  | Seeks to _amount_ plus end of stream (you probably
+                | want a negative value for _amount_)
+  --------------+----------------------------------------------------
+  IO::SEEK_SET  | Seeks to the absolute location given by _amount_
+</pre>
+<p>
+Example:
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.seek(-13, IO::SEEK_END)   #=&gt; 0
+   f.readline                  #=&gt; &quot;And so on...\n&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002237" class="method-detail">
+        <a name="M002237"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002237.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002237.html');return false;">
+          <span class="method-name">ios.stat    => stat<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns status information for <em>ios</em> as an object of type <tt><a
+href="File/Stat.html">File::Stat</a></tt>.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   s = f.stat
+   &quot;%o&quot; % s.mode   #=&gt; &quot;100644&quot;
+   s.blksize       #=&gt; 4096
+   s.atime         #=&gt; Wed Apr 09 08:53:54 CDT 2003
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002262" class="method-detail">
+        <a name="M002262"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002262.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002262.html');return false;">
+          <span class="method-name">ios.sync    => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the current ``<a href="IO.html#M002262">sync</a> mode&#8217;&#8217;
+of <em>ios</em>. When <a href="IO.html#M002262">sync</a> mode is true, all
+output is immediately flushed to the underlying operating system and is not
+buffered by Ruby internally. See also <tt><a
+href="IO.html#M002261">IO#fsync</a></tt>.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.sync   #=&gt; false
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002263" class="method-detail">
+        <a name="M002263"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002263.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002263.html');return false;">
+          <span class="method-name">ios.sync = boolean   => boolean<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the ``<a href="IO.html#M002262">sync</a> mode&#8217;&#8217; to
+<tt>true</tt> or <tt>false</tt>. When <a href="IO.html#M002262">sync</a>
+mode is true, all output is immediately flushed to the underlying operating
+system and is not buffered internally. Returns the <a
+href="IO.html#M002238">new</a> state. See also <tt><a
+href="IO.html#M002261">IO#fsync</a></tt>.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.sync = true
+</pre>
+<p>
+<em>(produces no output)</em>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002258" class="method-detail">
+        <a name="M002258"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002258.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002258.html');return false;">
+          <span class="method-name">ios.sysread(integer )    => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reads <em>integer</em> bytes from <em>ios</em> using a low-level <a
+href="IO.html#M002245">read</a> and returns them as a string. Do not mix
+with other methods that <a href="IO.html#M002245">read</a> from
+<em>ios</em> or you may get unpredictable results. Raises <tt><a
+href="SystemCallError.html">SystemCallError</a></tt> on error and <tt><a
+href="EOFError.html">EOFError</a></tt> at end of file.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.sysread(16)   #=&gt; &quot;This is line one&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002293" class="method-detail">
+        <a name="M002293"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002293.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002293.html');return false;">
+          <span class="method-name">ios.sysseek(offset, whence=SEEK_SET)   => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Seeks to a given <em>offset</em> in the stream according to the value of
+<em>whence</em> (see <tt><a href="IO.html#M002280">IO#seek</a></tt> for
+values of <em>whence</em>). Returns the <a href="IO.html#M002238">new</a>
+offset into the file.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.sysseek(-13, IO::SEEK_END)   #=&gt; 53
+   f.sysread(10)                  #=&gt; &quot;And so on.&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002257" class="method-detail">
+        <a name="M002257"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002257.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002257.html');return false;">
+          <span class="method-name">ios.syswrite(string)   => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Writes the given string to <em>ios</em> using a low-level <a
+href="IO.html#M002271">write</a>. Returns the number of bytes written. Do
+not mix with other methods that <a href="IO.html#M002271">write</a> to
+<em>ios</em> or you may get unpredictable results. Raises <tt><a
+href="SystemCallError.html">SystemCallError</a></tt> on error.
+</p>
+<pre>
+   f = File.new(&quot;out&quot;, &quot;w&quot;)
+   f.syswrite(&quot;ABCDEF&quot;)   #=&gt; 6
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002279" class="method-detail">
+        <a name="M002279"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002279.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002279.html');return false;">
+          <span class="method-name">ios.pos     => integer<br />
+ios.tell    => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the current offset (in bytes) of <em>ios</em>.
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)
+   f.pos    #=&gt; 0
+   f.gets   #=&gt; &quot;This is line one\n&quot;
+   f.pos    #=&gt; 17
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002298" class="method-detail">
+        <a name="M002298"></a>
+
+        <div class="method-heading">
+          <span class="method-name">to_i</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="IO.html#M002259">fileno</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002260" class="method-detail">
+        <a name="M002260"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002260.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002260.html');return false;">
+          <span class="method-name">ios.to_io &rarr; ios<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <em>ios</em>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002291" class="method-detail">
+        <a name="M002291"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002291.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002291.html');return false;">
+          <span class="method-name">ios.isatty   => true or false<br />
+ios.tty?     => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if <em>ios</em> is associated with a terminal device
+(tty), <tt>false</tt> otherwise.
+</p>
+<pre>
+   File.new(&quot;testfile&quot;).isatty   #=&gt; false
+   File.new(&quot;/dev/tty&quot;).isatty   #=&gt; true
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002276" class="method-detail">
+        <a name="M002276"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002276.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002276.html');return false;">
+          <span class="method-name">ios.ungetc(integer)   => nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Pushes back one character (passed as a parameter) onto <em>ios</em>, such
+that a subsequent buffered <a href="IO.html#M002245">read</a> will return
+it. Only one character may be pushed back before a subsequent <a
+href="IO.html#M002245">read</a> operation (that is, you will be able to <a
+href="IO.html#M002245">read</a> only the last of several characters that
+have been pushed back). Has no effect with unbuffered reads (such as <tt><a
+href="IO.html#M002258">IO#sysread</a></tt>).
+</p>
+<pre>
+   f = File.new(&quot;testfile&quot;)   #=&gt; #&lt;File:testfile&gt;
+   c = f.getc                 #=&gt; 84
+   f.ungetc(c)                #=&gt; nil
+   f.getc                     #=&gt; 84
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002271" class="method-detail">
+        <a name="M002271"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002271.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002271.html');return false;">
+          <span class="method-name">ios.write(string)    => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Writes the given string to <em>ios</em>. The stream must be opened for
+writing. If the argument is not a string, it will be converted to a string
+using <tt>to_s</tt>. Returns the number of bytes written.
+</p>
+<pre>
+   count = $stdout.write( &quot;This is a test\n&quot; )
+   puts &quot;That was #{count} bytes of data&quot;
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   This is a test
+   That was 15 bytes of data
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002268" class="method-detail">
+        <a name="M002268"></a>
+
+        <div class="method-heading">
+          <a href="IO.src/M002268.html" target="Code" class="method-signature"
+            onclick="popupCode('IO.src/M002268.html');return false;">
+          <span class="method-name">ios.write_nonblock(string)   => integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Writes the given string to <em>ios</em> using <a
+href="IO.html#M002271">write</a>(2) system call after O_NONBLOCK is set for
+the underlying file descriptor.
+</p>
+<p>
+<a href="IO.html#M002268">write_nonblock</a> just calls <a
+href="IO.html#M002271">write</a>(2). It causes all errors <a
+href="IO.html#M002271">write</a>(2) causes: EAGAIN, EINTR, etc. The result
+may also be smaller than string.length (partial <a
+href="IO.html#M002271">write</a>). The caller should care such errors and
+partial <a href="IO.html#M002271">write</a>.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>&lt;=&gt; (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     time &lt;=&gt; other_time =&gt; -1, 0, +1 
+ *     time &lt;=&gt; numeric    =&gt; -1, 0, +1
+ *  
+ *  Comparison---Compares &lt;i&gt;time&lt;/i&gt; with &lt;i&gt;other_time&lt;/i&gt; or with
+ *  &lt;i&gt;numeric&lt;/i&gt;, which is the number of seconds (possibly
+ *  fractional) since epoch.
+ *     
+ *     t = Time.now       #=&gt; Wed Apr 09 08:56:03 CDT 2003
+ *     t2 = t + 2592000   #=&gt; Fri May 09 08:56:03 CDT 2003
+ *     t &lt;=&gt; t2           #=&gt; -1
+ *     t2 &lt;=&gt; t           #=&gt; 1
+ *     t &lt;=&gt; t            #=&gt; 0
+ */
+
+static VALUE
+time_cmp(time1, time2)
+    VALUE time1, time2;
+{
+    struct time_object *tobj1, *tobj2;
+
+    GetTimeval(time1, tobj1);
+    if (TYPE(time2) == T_DATA &amp;&amp; RDATA(time2)-&gt;dfree == time_free) {
+        GetTimeval(time2, tobj2);
+        if (tobj1-&gt;tv.tv_sec == tobj2-&gt;tv.tv_sec) {
+            if (tobj1-&gt;tv.tv_usec == tobj2-&gt;tv.tv_usec) return INT2FIX(0);
+            if (tobj1-&gt;tv.tv_usec &gt; tobj2-&gt;tv.tv_usec) return INT2FIX(1);
+            return INT2FIX(-1);
+        }
+        if (tobj1-&gt;tv.tv_sec &gt; tobj2-&gt;tv.tv_sec) return INT2FIX(1);
+        return INT2FIX(-1);
+    }
+
+    return Qnil;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>squeeze! (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.squeeze!([other_str]*)   =&gt; str or nil
+ *  
+ *  Squeezes &lt;i&gt;str&lt;/i&gt; in place, returning either &lt;i&gt;str&lt;/i&gt;, or
+ *  &lt;code&gt;nil&lt;/code&gt; if no changes were made.
+ */
+
+static VALUE
+rb_str_squeeze_bang(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    char squeez[256];
+    char *s, *send, *t;
+    int c, save, modify = 0;
+    int init = 1;
+    int i;
+
+    if (argc == 0) {
+        for (i=0; i&lt;256; i++) {
+            squeez[i] = 1;
+        }
+    }
+    else {
+        for (i=0; i&lt;argc; i++) {
+            VALUE s = argv[i];
+
+            StringValue(s);
+            tr_setup_table(s, squeez, init);
+            init = 0;
+        }
+    }
+
+    rb_str_modify(str);
+    s = t = RSTRING(str)-&gt;ptr;
+    if (!s || RSTRING(str)-&gt;len == 0) return Qnil;
+    send = s + RSTRING(str)-&gt;len;
+    save = -1;
+    while (s &lt; send) {
+        c = *s++ &amp; 0xff;
+        if (c != save || !squeez[c]) {
+            *t++ = save = c;
+        }
+    }
+    *t = '\0';
+    if (t - RSTRING(str)-&gt;ptr != RSTRING(str)-&gt;len) {
+        RSTRING(str)-&gt;len = t - RSTRING(str)-&gt;ptr;
+        modify = 1;
+    }
+
+    if (modify) return str;
+    return Qnil;
+}</pre>
+</body>
+</html>

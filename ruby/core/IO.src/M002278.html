@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>flush (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.flush    =&gt; ios
+ *  
+ *  Flushes any buffered data within &lt;em&gt;ios&lt;/em&gt; to the underlying
+ *  operating system (note that this is Ruby internal buffering only;
+ *  the OS may buffer the data as well).
+ *     
+ *     $stdout.print &quot;no newline&quot;
+ *     $stdout.flush
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     no newline
+ */
+
+static VALUE
+rb_io_flush(io)
+    VALUE io;
+{
+    OpenFile *fptr;
+    FILE *f;
+
+    GetOpenFile(io, fptr);
+    rb_io_check_writable(fptr);
+    f = GetWriteFile(fptr);
+
+    io_fflush(f, fptr);
+
+    return io;
+}</pre>
+</body>
+</html>

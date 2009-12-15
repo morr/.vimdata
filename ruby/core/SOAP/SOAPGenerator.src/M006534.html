@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>encode_string (SOAP::SOAPGenerator)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/generator.rb, line 194</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode_string</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@use_numeric_character_reference</span> <span class="ruby-keyword kw">and</span> <span class="ruby-operator">!</span><span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">Charset</span>.<span class="ruby-identifier">is_us_ascii</span>(<span class="ruby-identifier">str</span>)
+      <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-constant">EncodeCharRegexp</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-constant">EncodeMap</span>[<span class="ruby-identifier">c</span>] }
+      <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">&quot;U*&quot;</span>).<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">==</span> <span class="ruby-value">0x9</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">==</span> <span class="ruby-value">0xa</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">==</span> <span class="ruby-value">0xd</span> <span class="ruby-keyword kw">or</span> (<span class="ruby-identifier">c</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">0x20</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">0x7f</span>)
+          <span class="ruby-identifier">c</span>.<span class="ruby-identifier">chr</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;&amp;#x%x;&quot;</span>, <span class="ruby-identifier">c</span>)
+        <span class="ruby-keyword kw">end</span>
+      }.<span class="ruby-identifier">join</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-ivar">@buf</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-constant">EncodeCharRegexp</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-constant">EncodeMap</span>[<span class="ruby-identifier">c</span>] }
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

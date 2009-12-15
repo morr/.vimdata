@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>define_method (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     define_method(symbol, method)     =&gt; new_method
+ *     define_method(symbol) { block }   =&gt; proc
+ *  
+ *  Defines an instance method in the receiver. The _method_
+ *  parameter can be a +Proc+ or +Method+ object.
+ *  If a block is specified, it is used as the method body. This block
+ *  is evaluated using &lt;code&gt;instance_eval&lt;/code&gt;, a point that is
+ *  tricky to demonstrate because &lt;code&gt;define_method&lt;/code&gt; is private.
+ *  (This is why we resort to the +send+ hack in this example.)
+ *     
+ *     class A
+ *       def fred
+ *         puts &quot;In Fred&quot;
+ *       end
+ *       def create_method(name, &amp;block)
+ *         self.class.send(:define_method, name, &amp;block)
+ *       end
+ *       define_method(:wilma) { puts &quot;Charge it!&quot; }
+ *     end
+ *     class B &lt; A
+ *       define_method(:barney, instance_method(:fred))
+ *     end
+ *     a = B.new
+ *     a.barney
+ *     a.wilma
+ *     a.create_method(:betty) { p self }
+ *     a.betty
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     In Fred
+ *     Charge it!
+ *     #&lt;B:0x401b39e8&gt;
+ */
+
+static VALUE
+rb_mod_define_method(argc, argv, mod)
+    int argc;
+    VALUE *argv;
+    VALUE mod;
+{
+    ID id;
+    VALUE body;
+    NODE *node;
+    int noex;
+
+    if (argc == 1) {
+        id = rb_to_id(argv[0]);
+        body = proc_lambda();
+    }
+    else if (argc == 2) {
+        id = rb_to_id(argv[0]);
+        body = argv[1];
+        if (!rb_obj_is_method(body) &amp;&amp; !rb_obj_is_proc(body)) {
+            rb_raise(rb_eTypeError, &quot;wrong argument type %s (expected Proc/Method)&quot;,
+                     rb_obj_classname(body));
+        }
+    }
+    else {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments (%d for 1)&quot;, argc);
+    }
+    if (RDATA(body)-&gt;dmark == (RUBY_DATA_FUNC)bm_mark) {
+        node = NEW_DMETHOD(method_unbind(body));
+    }
+    else if (RDATA(body)-&gt;dmark == (RUBY_DATA_FUNC)blk_mark) {
+        struct BLOCK *block;
+
+        body = proc_clone(body);
+        Data_Get_Struct(body, struct BLOCK, block);
+        block-&gt;frame.last_func = id;
+        block-&gt;frame.orig_func = id;
+        block-&gt;frame.last_class = mod;
+        node = NEW_BMETHOD(body);
+    }
+    else {
+        /* type error */
+        rb_raise(rb_eTypeError, &quot;wrong argument type (expected Proc/Method)&quot;);
+    }
+
+    noex = NOEX_PUBLIC;
+    if (ruby_cbase == mod) {
+        if (SCOPE_TEST(SCOPE_PRIVATE)) {
+            noex = NOEX_PRIVATE;
+        }
+        else if (SCOPE_TEST(SCOPE_PROTECTED)) {
+            noex = NOEX_PROTECTED;
+        }
+    }
+    rb_add_method(mod, id, node, noex);
+    return body;
+}</pre>
+</body>
+</html>

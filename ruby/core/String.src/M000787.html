@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_i (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.to_i(base=10)   =&gt; integer
+ *  
+ *  Returns the result of interpreting leading characters in &lt;i&gt;str&lt;/i&gt; as an
+ *  integer base &lt;i&gt;base&lt;/i&gt; (2, 8, 10, or 16). Extraneous characters past the
+ *  end of a valid number are ignored. If there is not a valid number at the
+ *  start of &lt;i&gt;str&lt;/i&gt;, &lt;code&gt;0&lt;/code&gt; is returned. This method never raises an
+ *  exception.
+ *     
+ *     &quot;12345&quot;.to_i             #=&gt; 12345
+ *     &quot;99 red balloons&quot;.to_i   #=&gt; 99
+ *     &quot;0a&quot;.to_i                #=&gt; 0
+ *     &quot;0a&quot;.to_i(16)            #=&gt; 10
+ *     &quot;hello&quot;.to_i             #=&gt; 0
+ *     &quot;1100101&quot;.to_i(2)        #=&gt; 101
+ *     &quot;1100101&quot;.to_i(8)        #=&gt; 294977
+ *     &quot;1100101&quot;.to_i(10)       #=&gt; 1100101
+ *     &quot;1100101&quot;.to_i(16)       #=&gt; 17826049
+ */
+
+static VALUE
+rb_str_to_i(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    VALUE b;
+    int base;
+
+    rb_scan_args(argc, argv, &quot;01&quot;, &amp;b);
+    if (argc == 0) base = 10;
+    else base = NUM2INT(b);
+
+    if (base &lt; 0) {
+        rb_raise(rb_eArgError, &quot;illegal radix %d&quot;, base);
+    }
+    return rb_str_to_inum(str, base, Qfalse);
+}</pre>
+</body>
+</html>

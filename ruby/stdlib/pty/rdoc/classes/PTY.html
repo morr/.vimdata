@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: PTY</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">PTY</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/pty/pty_c.html">
+                pty/pty.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001752">getpty</a>&nbsp;&nbsp;
+      <a href="#M001754">protect_signal</a>&nbsp;&nbsp;
+      <a href="#M001755">reset_signal</a>&nbsp;&nbsp;
+      <a href="#M001753">spawn</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="PTY/ChildExited.html" class="link">PTY::ChildExited</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001752" class="m-detail">
+        <a name="M001752"></a>
+
+        <div class="method-heading">
+          <a href="#M001752" class="method-signature">
+          <span class="method-name">getpty</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+ruby function: <a href="PTY.html#M001752">getpty</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001752-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001752-source">
+<pre>
+/* ruby function: getpty */
+static VALUE
+pty_getpty(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE res;
+    struct pty_info info;
+    struct pty_info thinfo;
+    OpenFile *wfptr,*rfptr;
+    VALUE rport = rb_obj_alloc(rb_cFile);
+    VALUE wport = rb_obj_alloc(rb_cFile);
+
+    MakeOpenFile(rport, rfptr);
+    MakeOpenFile(wport, wfptr);
+
+    establishShell(argc, argv, &amp;info);
+
+    rfptr-&gt;mode = rb_io_mode_flags(&quot;r&quot;);
+    rfptr-&gt;f = fdopen(info.fd, &quot;r&quot;);
+    rfptr-&gt;path = strdup(SlaveName);
+
+    wfptr-&gt;mode = rb_io_mode_flags(&quot;w&quot;) | FMODE_SYNC;
+    wfptr-&gt;f = fdopen(dup(info.fd), &quot;w&quot;);
+    wfptr-&gt;path = strdup(SlaveName);
+
+    res = rb_ary_new2(3);
+    rb_ary_store(res,0,(VALUE)rport);
+    rb_ary_store(res,1,(VALUE)wport);
+    rb_ary_store(res,2,INT2FIX(info.child_pid));
+
+    thinfo.thread = rb_thread_create(pty_syswait, (void*)&amp;info);
+    thinfo.child_pid = info.child_pid;
+    rb_thread_schedule();
+
+    if (rb_block_given_p()) {
+        rb_ensure(rb_yield, res, pty_finalize_syswait, (VALUE)&amp;thinfo);
+        return Qnil;
+    }
+    return res;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001754" class="m-detail">
+        <a name="M001754"></a>
+
+        <div class="method-heading">
+          <a href="#M001754" class="method-signature">
+          <span class="method-name">protect_signal</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+ruby function: <a href="PTY.html#M001754">protect_signal</a> - obsolete
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001754-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001754-source">
+<pre>
+/* ruby function: protect_signal - obsolete */
+static VALUE
+pty_protect(self)
+    VALUE self;
+{
+    rb_warn(&quot;PTY::protect_signal is no longer needed&quot;);
+    rb_yield(Qnil);
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001755" class="m-detail">
+        <a name="M001755"></a>
+
+        <div class="method-heading">
+          <a href="#M001755" class="method-signature">
+          <span class="method-name">reset_signal</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+ruby function: <a href="PTY.html#M001755">reset_signal</a> - obsolete
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001755-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001755-source">
+<pre>
+/* ruby function: reset_signal - obsolete */
+static VALUE
+pty_reset_signal(self)
+    VALUE self;
+{
+    rb_warn(&quot;PTY::reset_signal is no longer needed&quot;);
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001753" class="m-detail">
+        <a name="M001753"></a>
+
+        <div class="method-heading">
+          <a href="#M001753" class="method-signature">
+          <span class="method-name">spawn</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+ruby function: <a href="PTY.html#M001752">getpty</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001753-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001753-source">
+<pre>
+/* ruby function: getpty */
+static VALUE
+pty_getpty(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE res;
+    struct pty_info info;
+    struct pty_info thinfo;
+    OpenFile *wfptr,*rfptr;
+    VALUE rport = rb_obj_alloc(rb_cFile);
+    VALUE wport = rb_obj_alloc(rb_cFile);
+
+    MakeOpenFile(rport, rfptr);
+    MakeOpenFile(wport, wfptr);
+
+    establishShell(argc, argv, &amp;info);
+
+    rfptr-&gt;mode = rb_io_mode_flags(&quot;r&quot;);
+    rfptr-&gt;f = fdopen(info.fd, &quot;r&quot;);
+    rfptr-&gt;path = strdup(SlaveName);
+
+    wfptr-&gt;mode = rb_io_mode_flags(&quot;w&quot;) | FMODE_SYNC;
+    wfptr-&gt;f = fdopen(dup(info.fd), &quot;w&quot;);
+    wfptr-&gt;path = strdup(SlaveName);
+
+    res = rb_ary_new2(3);
+    rb_ary_store(res,0,(VALUE)rport);
+    rb_ary_store(res,1,(VALUE)wport);
+    rb_ary_store(res,2,INT2FIX(info.child_pid));
+
+    thinfo.thread = rb_thread_create(pty_syswait, (void*)&amp;info);
+    thinfo.child_pid = info.child_pid;
+    rb_thread_schedule();
+
+    if (rb_block_given_p()) {
+        rb_ensure(rb_yield, res, pty_finalize_syswait, (VALUE)&amp;thinfo);
+        return Qnil;
+    }
+    return res;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 2 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a service of <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, AZ</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>translate (REXML::Functions)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/functions.rb, line 228</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Functions</span><span class="ruby-operator">::</span><span class="ruby-identifier">translate</span>( <span class="ruby-identifier">string</span>, <span class="ruby-identifier">tr1</span>, <span class="ruby-identifier">tr2</span> )
+      <span class="ruby-identifier">from</span> = <span class="ruby-identifier">string</span>(<span class="ruby-identifier">tr1</span>)
+      <span class="ruby-identifier">to</span> = <span class="ruby-identifier">string</span>(<span class="ruby-identifier">tr2</span>)
+
+      <span class="ruby-comment cmt"># the map is our translation table.</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-comment cmt"># if a character occurs more than once in the</span>
+      <span class="ruby-comment cmt"># from string then we ignore the second &amp;</span>
+      <span class="ruby-comment cmt"># subsequent mappings</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-comment cmt"># if a charactcer maps to nil then we delete it</span>
+      <span class="ruby-comment cmt"># in the output.  This happens if the from</span>
+      <span class="ruby-comment cmt"># string is longer than the to string</span>
+      <span class="ruby-comment cmt">#</span>
+      <span class="ruby-comment cmt"># there's nothing about - or ^ being special in</span>
+      <span class="ruby-comment cmt"># http://www.w3.org/TR/xpath#function-translate</span>
+      <span class="ruby-comment cmt"># so we don't build ranges or negated classes</span>
+
+      <span class="ruby-identifier">map</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-value">0</span>.<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">from</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">pos</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">from_char</span> = <span class="ruby-identifier">from</span>[<span class="ruby-identifier">pos</span>]
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">map</span>.<span class="ruby-identifier">has_key?</span> <span class="ruby-identifier">from_char</span>
+          <span class="ruby-identifier">map</span>[<span class="ruby-identifier">from_char</span>] = 
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">pos</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">to</span>.<span class="ruby-identifier">length</span>
+            <span class="ruby-identifier">to</span>[<span class="ruby-identifier">pos</span>]
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-keyword kw">nil</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      }
+
+      <span class="ruby-identifier">string</span>(<span class="ruby-identifier">string</span>).<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">'U*'</span>).<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">map</span>.<span class="ruby-identifier">has_key?</span> <span class="ruby-identifier">c</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">map</span>[<span class="ruby-identifier">c</span>] <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">c</span> <span class="ruby-keyword kw">end</span>
+      }.<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">pack</span>(<span class="ruby-value str">'U*'</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

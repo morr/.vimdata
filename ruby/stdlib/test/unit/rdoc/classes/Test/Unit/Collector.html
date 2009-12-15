@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Test::Unit::Collector</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Test::Unit::Collector</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/test/unit/collector/objectspace_rb.html">
+                test/unit/collector/objectspace.rb
+                </a>
+        <br />
+                <a href="../../../files/test/unit/collector/dir_rb.html">
+                test/unit/collector/dir.rb
+                </a>
+        <br />
+                <a href="../../../files/test/unit/collector_rb.html">
+                test/unit/collector.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004439">add_suite</a>&nbsp;&nbsp;
+      <a href="#M004438">filter=</a>&nbsp;&nbsp;
+      <a href="#M004440">include?</a>&nbsp;&nbsp;
+      <a href="#M004437">new</a>&nbsp;&nbsp;
+      <a href="#M004441">sort</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="Collector/Dir.html" class="link">Test::Unit::Collector::Dir</a><br />
+Class <a href="Collector/ObjectSpace.html" class="link">Test::Unit::Collector::ObjectSpace</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M004437" class="m-detail">
+        <a name="M004437"></a>
+
+        <div class="method-heading">
+          <a href="#M004437" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004437-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004437-source">
+<pre>
+<span class="ruby-comment cmt"># File test/unit/collector.rb, line 4</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>
+        <span class="ruby-ivar">@filters</span> = []
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004439" class="m-detail">
+        <a name="M004439"></a>
+
+        <div class="method-heading">
+          <a href="#M004439" class="method-signature">
+          <span class="method-name">add_suite</span><span class="method-args">(destination, suite)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004439-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004439-source">
+<pre>
+<span class="ruby-comment cmt"># File test/unit/collector.rb, line 17</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_suite</span>(<span class="ruby-identifier">destination</span>, <span class="ruby-identifier">suite</span>)
+        <span class="ruby-identifier">to_delete</span> = <span class="ruby-identifier">suite</span>.<span class="ruby-identifier">tests</span>.<span class="ruby-identifier">find_all</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span> <span class="ruby-operator">!</span><span class="ruby-identifier">include?</span>(<span class="ruby-identifier">t</span>)}
+        <span class="ruby-identifier">to_delete</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span> <span class="ruby-identifier">suite</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">t</span>)}
+        <span class="ruby-identifier">destination</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">suite</span> <span class="ruby-keyword kw">unless</span>(<span class="ruby-identifier">suite</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>)
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004438" class="m-detail">
+        <a name="M004438"></a>
+
+        <div class="method-heading">
+          <a href="#M004438" class="method-signature">
+          <span class="method-name">filter=</span><span class="method-args">(filters)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004438-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004438-source">
+<pre>
+<span class="ruby-comment cmt"># File test/unit/collector.rb, line 8</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">filter=</span>(<span class="ruby-identifier">filters</span>)
+        <span class="ruby-ivar">@filters</span> = <span class="ruby-keyword kw">case</span>(<span class="ruby-identifier">filters</span>)
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Proc</span>
+            [<span class="ruby-identifier">filters</span>]
+          <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Array</span>
+            <span class="ruby-identifier">filters</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004440" class="m-detail">
+        <a name="M004440"></a>
+
+        <div class="method-heading">
+          <a href="#M004440" class="method-signature">
+          <span class="method-name">include?</span><span class="method-args">(test)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004440-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004440-source">
+<pre>
+<span class="ruby-comment cmt"># File test/unit/collector.rb, line 23</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">include?</span>(<span class="ruby-identifier">test</span>)
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">if</span>(<span class="ruby-ivar">@filters</span>.<span class="ruby-identifier">empty?</span>)
+        <span class="ruby-ivar">@filters</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">filter</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">result</span> = <span class="ruby-identifier">filter</span>[<span class="ruby-identifier">test</span>]
+          <span class="ruby-keyword kw">if</span>(<span class="ruby-identifier">result</span>.<span class="ruby-identifier">nil?</span>)
+            <span class="ruby-keyword kw">next</span>
+          <span class="ruby-keyword kw">elsif</span>(<span class="ruby-operator">!</span><span class="ruby-identifier">result</span>)
+            <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">true</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M004441" class="m-detail">
+        <a name="M004441"></a>
+
+        <div class="method-heading">
+          <a href="#M004441" class="method-signature">
+          <span class="method-name">sort</span><span class="method-args">(suites)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M004441-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M004441-source">
+<pre>
+<span class="ruby-comment cmt"># File test/unit/collector.rb, line 38</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sort</span>(<span class="ruby-identifier">suites</span>)
+        <span class="ruby-identifier">suites</span>.<span class="ruby-identifier">sort_by</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span> <span class="ruby-identifier">s</span>.<span class="ruby-identifier">name</span>}
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 3 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

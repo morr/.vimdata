@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Regexp)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Regexp.new(string [, options [, lang]])       =&gt; regexp
+ *     Regexp.new(regexp)                            =&gt; regexp
+ *     Regexp.compile(string [, options [, lang]])   =&gt; regexp
+ *     Regexp.compile(regexp)                        =&gt; regexp
+ *  
+ *  Constructs a new regular expression from &lt;i&gt;pattern&lt;/i&gt;, which can be either
+ *  a &lt;code&gt;String&lt;/code&gt; or a &lt;code&gt;Regexp&lt;/code&gt; (in which case that regexp's
+ *  options are propagated, and new options may not be specified (a change as of
+ *  Ruby 1.8). If &lt;i&gt;options&lt;/i&gt; is a &lt;code&gt;Fixnum&lt;/code&gt;, it should be one or
+ *  more of the constants &lt;code&gt;Regexp::EXTENDED&lt;/code&gt;,
+ *  &lt;code&gt;Regexp::IGNORECASE&lt;/code&gt;, and &lt;code&gt;Regexp::MULTILINE&lt;/code&gt;,
+ *  &lt;em&gt;or&lt;/em&gt;-ed together. Otherwise, if &lt;i&gt;options&lt;/i&gt; is not
+ *  &lt;code&gt;nil&lt;/code&gt;, the regexp will be case insensitive. The &lt;i&gt;lang&lt;/i&gt;
+ *  parameter enables multibyte support for the regexp: `n', `N' = none, `e',
+ *  `E' = EUC, `s', `S' = SJIS, `u', `U' = UTF-8.
+ * 
+ *     r1 = Regexp.new('^a-z+:\\s+\w+')           #=&gt; /^a-z+:\s+\w+/
+ *     r2 = Regexp.new('cat', true)               #=&gt; /cat/i
+ *     r3 = Regexp.new('dog', Regexp::EXTENDED)   #=&gt; /dog/x
+ *     r4 = Regexp.new(r2)                        #=&gt; /cat/i
+ */
+
+static VALUE
+rb_reg_initialize_m(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    const char *s;
+    long len;
+    int flags = 0;
+
+    if (argc == 0 || argc &gt; 3) {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments&quot;);
+    }
+    if (TYPE(argv[0]) == T_REGEXP) {
+        if (argc &gt; 1) {
+            rb_warn(&quot;flags%s ignored&quot;, (argc == 3) ? &quot; and encoding&quot;: &quot;&quot;);
+        }
+        rb_reg_check(argv[0]);
+        flags = RREGEXP(argv[0])-&gt;ptr-&gt;options &amp; 0xf;
+        if (FL_TEST(argv[0], KCODE_FIXED)) {
+            switch (RBASIC(argv[0])-&gt;flags &amp; KCODE_MASK) {
+              case KCODE_NONE:
+                flags |= 16;
+                break;
+              case KCODE_EUC:
+                flags |= 32;
+                break;
+              case KCODE_SJIS:
+                flags |= 48;
+                break;
+              case KCODE_UTF8:
+                flags |= 64;
+                break;
+              default:
+                break;
+            }
+        }
+        s = RREGEXP(argv[0])-&gt;str;
+        len = RREGEXP(argv[0])-&gt;len;
+    }
+    else {
+        if (argc &gt;= 2) {
+            if (FIXNUM_P(argv[1])) flags = FIX2INT(argv[1]);
+            else if (RTEST(argv[1])) flags = RE_OPTION_IGNORECASE;
+        }
+        if (argc == 3 &amp;&amp; !NIL_P(argv[2])) {
+            char *kcode = StringValuePtr(argv[2]);
+
+            flags &amp;= ~0x70;
+            switch (kcode[0]) {
+              case 'n': case 'N':
+                flags |= 16;
+                break;
+              case 'e': case 'E':
+                flags |= 32;
+                break;
+              case 's': case 'S':
+                flags |= 48;
+                break;
+              case 'u': case 'U':
+                flags |= 64;
+                break;
+              default:
+                break;
+            }
+        }
+        s = StringValuePtr(argv[0]);
+        len = RSTRING(argv[0])-&gt;len;
+    }
+    rb_reg_initialize(self, s, len, flags);
+    return self;
+}</pre>
+</body>
+</html>

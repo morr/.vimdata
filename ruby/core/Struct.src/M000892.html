@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>hash (Struct)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   struct.hash   =&gt; fixnum
+ *
+ * Return a hash value based on this struct's contents.
+ */
+
+static VALUE
+rb_struct_hash(s)
+    VALUE s;
+{
+    long i, h;
+    VALUE n;
+
+    h = rb_hash(rb_obj_class(s));
+    for (i = 0; i &lt; RSTRUCT(s)-&gt;len; i++) {
+        h = (h &lt;&lt; 1) | (h&lt;0 ? 1 : 0);
+        n = rb_hash(RSTRUCT(s)-&gt;ptr[i]);
+        h ^= NUM2LONG(n);
+    }
+    return LONG2FIX(h);
+}</pre>
+</body>
+</html>

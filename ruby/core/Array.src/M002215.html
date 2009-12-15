@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>uniq! (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.uniq! -&gt; array or nil
+ *  
+ *  Removes duplicate elements from _self_.
+ *  Returns &lt;code&gt;nil&lt;/code&gt; if no changes are made (that is, no
+ *  duplicates are found).
+ *     
+ *     a = [ &quot;a&quot;, &quot;a&quot;, &quot;b&quot;, &quot;b&quot;, &quot;c&quot; ]
+ *     a.uniq!   #=&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+ *     b = [ &quot;a&quot;, &quot;b&quot;, &quot;c&quot; ]
+ *     b.uniq!   #=&gt; nil
+ */
+
+static VALUE
+rb_ary_uniq_bang(ary)
+    VALUE ary;
+{
+    VALUE hash, v, vv;
+    long i, j;
+
+    hash = ary_make_hash(ary, 0);
+
+    if (RARRAY(ary)-&gt;len == RHASH(hash)-&gt;tbl-&gt;num_entries) {
+        return Qnil;
+    }
+    for (i=j=0; i&lt;RARRAY(ary)-&gt;len; i++) {
+        v = vv = rb_ary_elt(ary, i);
+        if (st_delete(RHASH(hash)-&gt;tbl, (st_data_t*)&amp;vv, 0)) {
+            rb_ary_store(ary, j++, v);
+        }
+    }
+    RARRAY(ary)-&gt;len = j;
+
+    return ary;
+}</pre>
+</body>
+</html>

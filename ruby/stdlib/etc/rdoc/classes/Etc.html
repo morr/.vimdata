@@ -1,0 +1,907 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Etc</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Etc</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/etc/etc_c.html">
+                etc/etc.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The etc module provides access to information from the /etc/passwd and
+/etc/group files on Linux and Unix systems.
+</p>
+<p>
+Documented by mathew &lt;meta@pobox.com&gt;.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000668">endgrent</a>&nbsp;&nbsp;
+      <a href="#M000661">endpwent</a>&nbsp;&nbsp;
+      <a href="#M000669">getgrent</a>&nbsp;&nbsp;
+      <a href="#M000664">getgrgid</a>&nbsp;&nbsp;
+      <a href="#M000665">getgrnam</a>&nbsp;&nbsp;
+      <a href="#M000657">getlogin</a>&nbsp;&nbsp;
+      <a href="#M000662">getpwent</a>&nbsp;&nbsp;
+      <a href="#M000659">getpwnam</a>&nbsp;&nbsp;
+      <a href="#M000658">getpwuid</a>&nbsp;&nbsp;
+      <a href="#M000666">group</a>&nbsp;&nbsp;
+      <a href="#M000663">passwd</a>&nbsp;&nbsp;
+      <a href="#M000667">setgrent</a>&nbsp;&nbsp;
+      <a href="#M000660">setpwent</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000668" class="m-detail">
+        <a name="M000668"></a>
+
+        <div class="method-heading">
+          <a href="#M000668" class="method-signature">
+          <span class="method-name">endgrent</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Ends the process of scanning through the /etc/group file begun by <a
+href="Etc.html#M000669">getgrent</a>, and closes the file.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000668-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000668-source">
+<pre>
+/* Ends the process of scanning through the /etc/group file begun by 
+ * getgrent, and closes the file.
+ */
+static VALUE
+etc_endgrent(obj)
+    VALUE obj;
+{
+#ifdef HAVE_GETGRENT
+    endgrent();
+#endif
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000661" class="m-detail">
+        <a name="M000661"></a>
+
+        <div class="method-heading">
+          <a href="#M000661" class="method-signature">
+          <span class="method-name">endpwent</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Ends the process of scanning through the /etc/passwd file begun with <a
+href="Etc.html#M000662">getpwent</a>, and closes the file.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000661-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000661-source">
+<pre>
+/* Ends the process of scanning through the /etc/passwd file begun with
+ * getpwent, and closes the file.
+ */
+static VALUE
+etc_endpwent(obj)
+    VALUE obj;
+{
+#ifdef HAVE_GETPWENT
+    endpwent();
+#endif
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000669" class="m-detail">
+        <a name="M000669"></a>
+
+        <div class="method-heading">
+          <a href="#M000669" class="method-signature">
+          <span class="method-name">getgrent</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns an entry from the /etc/group file. The first time it is called it
+opens the file and returns the first entry; each successive call returns
+the next entry, or nil if the end of the file has been reached.
+</p>
+<p>
+To close the file when processing is complete, call <a
+href="Etc.html#M000668">endgrent</a>.
+</p>
+<p>
+Each entry is returned as a Struct::Group:
+</p>
+<ul>
+<li>Group#name contains the name of the <a href="Etc.html#M000666">group</a> as
+a String.
+
+</li>
+<li>Group#passwd contains the encrypted password as a String. An
+&#8216;x&#8217; is returned if password access to the <a
+href="Etc.html#M000666">group</a> is not available; an empty string is
+returned if no password is needed to obtain membership of the <a
+href="Etc.html#M000666">group</a>.
+
+</li>
+<li>Group#gid contains the <a href="Etc.html#M000666">group</a>&#8216;s numeric
+ID as an integer.
+
+</li>
+<li>Group#mem is an Array of Strings containing the short login names of the
+members of the <a href="Etc.html#M000666">group</a>.
+
+</li>
+</ul>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000669-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000669-source">
+<pre>
+/* Returns an entry from the /etc/group file. The first time it is called it
+ * opens the file and returns the first entry; each successive call returns 
+ * the next entry, or nil if the end of the file has been reached.
+ *
+ * To close the file when processing is complete, call endgrent.
+ *
+ * Each entry is returned as a Struct::Group:
+ *
+ * - Group#name contains the name of the group as a String.
+ *
+ * - Group#passwd contains the encrypted password as a String. An 'x' is
+ *   returned if password access to the group is not available; an empty 
+ *   string is returned if no password is needed to obtain membership of 
+ *   the group.
+ *
+ * - Group#gid contains the group's numeric ID as an integer.
+ *
+ * - Group#mem is an Array of Strings containing the short login names of the 
+ *   members of the group.
+ */
+static VALUE
+etc_getgrent(obj)
+    VALUE obj;
+{
+#ifdef HAVE_GETGRENT
+    struct group *gr;
+
+    if (gr = getgrent()) {
+        return setup_group(gr);
+    }
+#endif
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000664" class="m-detail">
+        <a name="M000664"></a>
+
+        <div class="method-heading">
+          <a href="#M000664" class="method-signature">
+          <span class="method-name">getgrgid</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns information about the <a href="Etc.html#M000666">group</a> with
+specified integer <a href="Etc.html#M000666">group</a> id (gid), as found
+in /etc/group.
+</p>
+<p>
+The information is returned as a Struct::Group; see <a
+href="Etc.html#M000669">getgrent</a> above for details.
+</p>
+<p>
+e.g. <a href="Etc.html#M000664">Etc.getgrgid(100)</a> -&gt; #&lt;struct
+Struct::Group name=&quot;users&quot;, passwd=&quot;x&quot;, gid=100,
+mem=[&quot;meta&quot;, &quot;root&quot;]&gt;
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000664-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000664-source">
+<pre>
+/* Returns information about the group with specified integer group id (gid), 
+ * as found in /etc/group.
+ *
+ * The information is returned as a Struct::Group; see getgrent above for
+ * details.
+ *
+ * e.g.  Etc.getgrgid(100) -&gt; #&lt;struct Struct::Group name=&quot;users&quot;, passwd=&quot;x&quot;,
+ * gid=100, mem=[&quot;meta&quot;, &quot;root&quot;]&gt;
+ *
+ */
+static VALUE
+etc_getgrgid(obj, id)
+    VALUE obj, id;
+{
+#ifdef HAVE_GETGRENT
+    gid_t gid;
+    struct group *grp;
+
+    rb_secure(4);
+    gid = PW_VAL2GID(id);
+    grp = getgrgid(gid);
+    if (grp == 0) rb_raise(rb_eArgError, &quot;can't find group for %d&quot;, gid);
+    return setup_group(grp);
+#else
+    return Qnil;
+#endif
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000665" class="m-detail">
+        <a name="M000665"></a>
+
+        <div class="method-heading">
+          <a href="#M000665" class="method-signature">
+          <span class="method-name">getgrnam</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns information about the <a href="Etc.html#M000666">group</a> with
+specified String name, as found in /etc/group.
+</p>
+<p>
+The information is returned as a Struct::Group; see <a
+href="Etc.html#M000669">getgrent</a> above for details.
+</p>
+<p>
+e.g. <a href="Etc.html#M000665">Etc.getgrnam</a>(&#8216;users&#8217;) -&gt;
+#&lt;struct Struct::Group name=&quot;users&quot;, passwd=&quot;x&quot;,
+gid=100, mem=[&quot;meta&quot;, &quot;root&quot;]&gt;
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000665-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000665-source">
+<pre>
+/* Returns information about the group with specified String name, as found 
+ * in /etc/group.
+ *
+ * The information is returned as a Struct::Group; see getgrent above for
+ * details.
+ *
+ * e.g.  Etc.getgrnam('users') -&gt; #&lt;struct Struct::Group name=&quot;users&quot;,
+ * passwd=&quot;x&quot;, gid=100, mem=[&quot;meta&quot;, &quot;root&quot;]&gt;
+ *
+ */
+static VALUE
+etc_getgrnam(obj, nam)
+    VALUE obj, nam;
+{
+#ifdef HAVE_GETGRENT
+    struct group *grp;
+
+    rb_secure(4);
+    SafeStringValue(nam);
+    grp = getgrnam(RSTRING(nam)-&gt;ptr);
+    if (grp == 0) rb_raise(rb_eArgError, &quot;can't find group for %s&quot;, RSTRING(nam)-&gt;ptr);
+    return setup_group(grp);
+#else
+    return Qnil;
+#endif
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000657" class="m-detail">
+        <a name="M000657"></a>
+
+        <div class="method-heading">
+          <a href="#M000657" class="method-signature">
+          <span class="method-name">getlogin</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the short user name of the currently logged in user.
+</p>
+<p>
+e.g.
+</p>
+<pre>
+  Etc.getlogin -&gt; 'guest'
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000657-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000657-source">
+<pre>
+/* Returns the short user name of the currently logged in user.
+ *
+ * e.g.
+ *   Etc.getlogin -&gt; 'guest'
+ */
+static VALUE
+etc_getlogin(obj)
+    VALUE obj;
+{
+    char *login;
+
+    rb_secure(4);
+#ifdef HAVE_GETLOGIN
+    login = getlogin();
+    if (!login) login = getenv(&quot;USER&quot;);
+#else
+    login = getenv(&quot;USER&quot;);
+#endif
+
+    if (login)
+        return rb_tainted_str_new2(login);
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000662" class="m-detail">
+        <a name="M000662"></a>
+
+        <div class="method-heading">
+          <a href="#M000662" class="method-signature">
+          <span class="method-name">getpwent</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns an entry from the /etc/passwd file. The first time it is called it
+opens the file and returns the first entry; each successive call returns
+the next entry, or nil if the end of the file has been reached.
+</p>
+<p>
+To close the file when processing is complete, call <a
+href="Etc.html#M000661">endpwent</a>.
+</p>
+<p>
+Each entry is returned as a Struct::Passwd:
+</p>
+<ul>
+<li>Passwd#name contains the short login name of the user as a String.
+
+</li>
+<li>Passwd#passwd contains the encrypted password of the user as a String. an
+&#8216;x&#8217; is returned if shadow passwords are in use. An
+&#8217;*&#8217; is returned if the user cannot log in using a password.
+
+</li>
+<li>Passwd#uid contains the integer user ID (uid) of the user.
+
+</li>
+<li>Passwd#gid contains the integer <a href="Etc.html#M000666">group</a> ID
+(gid) of the user&#8216;s primary <a href="Etc.html#M000666">group</a>.
+
+</li>
+<li>Passwd#gecos contains a longer String description of the user, such as a
+full name. Some Unix systems provide structured information in the gecos
+field, but this is system-dependent.
+
+</li>
+<li>Passwd#dir contains the path to the home directory of the user as a String.
+
+</li>
+<li>Passwd#shell contains the path to the login shell of the user as a String.
+
+</li>
+</ul>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000662-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000662-source">
+<pre>
+/* Returns an entry from the /etc/passwd file. The first time it is called it
+ * opens the file and returns the first entry; each successive call returns 
+ * the next entry, or nil if the end of the file has been reached.
+ *
+ * To close the file when processing is complete, call endpwent.
+ *
+ * Each entry is returned as a Struct::Passwd:
+ *
+ * - Passwd#name contains the short login name of the user as a String.
+ *
+ * - Passwd#passwd contains the encrypted password of the user as a String.
+ *   an 'x' is returned if shadow passwords are in use. An '*' is returned
+ *   if the user cannot log in using a password.
+ *
+ * - Passwd#uid contains the integer user ID (uid) of the user.
+ *
+ * - Passwd#gid contains the integer group ID (gid) of the user's primary group.
+ *
+ * - Passwd#gecos contains a longer String description of the user, such as 
+ *   a full name. Some Unix systems provide structured information in the 
+ *   gecos field, but this is system-dependent.
+ *
+ * - Passwd#dir contains the path to the home directory of the user as a String.
+ *
+ * - Passwd#shell contains the path to the login shell of the user as a String.
+ */
+static VALUE
+etc_getpwent(obj)
+    VALUE obj;
+{
+#ifdef HAVE_GETPWENT
+    struct passwd *pw;
+
+    if (pw = getpwent()) {
+        return setup_passwd(pw);
+    }
+#endif
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000659" class="m-detail">
+        <a name="M000659"></a>
+
+        <div class="method-heading">
+          <a href="#M000659" class="method-signature">
+          <span class="method-name">getpwnam</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the /etc/passwd information for the user with specified login name.
+</p>
+<p>
+The information is returned as a Struct::Passwd; see <a
+href="Etc.html#M000662">getpwent</a> above for details.
+</p>
+<p>
+e.g. * <a href="Etc.html#M000659">Etc.getpwnam</a>(&#8216;root&#8217;)
+-&gt; #&lt;struct Struct::Passwd name=&quot;root&quot;,
+passwd=&quot;x&quot;, uid=0, gid=0,
+gecos=&quot;root&quot;,dir=&quot;/root&quot;,
+shell=&quot;/bin/bash&quot;&gt;
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000659-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000659-source">
+<pre>
+/* Returns the /etc/passwd information for the user with specified login name.
+ *
+ * The information is returned as a Struct::Passwd; see getpwent above for
+ * details.
+ *
+ * e.g.  * Etc.getpwnam('root') -&gt; #&lt;struct Struct::Passwd name=&quot;root&quot;,
+ * passwd=&quot;x&quot;, uid=0, gid=0, gecos=&quot;root&quot;,dir=&quot;/root&quot;, shell=&quot;/bin/bash&quot;&gt;
+ */
+static VALUE
+etc_getpwnam(obj, nam)
+    VALUE obj, nam;
+{
+#ifdef HAVE_GETPWENT
+    struct passwd *pwd;
+
+    SafeStringValue(nam);
+    pwd = getpwnam(RSTRING(nam)-&gt;ptr);
+    if (pwd == 0) rb_raise(rb_eArgError, &quot;can't find user for %s&quot;, RSTRING(nam)-&gt;ptr);
+    return setup_passwd(pwd);
+#else 
+    return Qnil;
+#endif
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000658" class="m-detail">
+        <a name="M000658"></a>
+
+        <div class="method-heading">
+          <a href="#M000658" class="method-signature">
+          <span class="method-name">getpwuid</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the /etc/passwd information for the user with specified integer
+user id (uid).
+</p>
+<p>
+The information is returned as a Struct::Passwd; see <a
+href="Etc.html#M000662">getpwent</a> above for details.
+</p>
+<p>
+e.g. * <a href="Etc.html#M000658">Etc.getpwuid(0)</a> -&gt; #&lt;struct
+Struct::Passwd name=&quot;root&quot;, passwd=&quot;x&quot;, uid=0, gid=0,
+gecos=&quot;root&quot;,dir=&quot;/root&quot;,
+shell=&quot;/bin/bash&quot;&gt;
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000658-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000658-source">
+<pre>
+/* Returns the /etc/passwd information for the user with specified integer
+ * user id (uid).
+ *
+ * The information is returned as a Struct::Passwd; see getpwent above for
+ * details.
+ *
+ * e.g.  * Etc.getpwuid(0) -&gt; #&lt;struct Struct::Passwd name=&quot;root&quot;,
+ * passwd=&quot;x&quot;, uid=0, gid=0, gecos=&quot;root&quot;,dir=&quot;/root&quot;, shell=&quot;/bin/bash&quot;&gt;
+ */
+static VALUE
+etc_getpwuid(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+#if defined(HAVE_GETPWENT)
+    VALUE id;
+    uid_t uid;
+    struct passwd *pwd;
+
+    rb_secure(4);
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;id) == 1) {
+        uid = PW_VAL2UID(id);
+    }
+    else {
+        uid = getuid();
+    }
+    pwd = getpwuid(uid);
+    if (pwd == 0) rb_raise(rb_eArgError, &quot;can't find user for %d&quot;, uid);
+    return setup_passwd(pwd);
+#else 
+    return Qnil;
+#endif
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000666" class="m-detail">
+        <a name="M000666"></a>
+
+        <div class="method-heading">
+          <a href="#M000666" class="method-signature">
+          <span class="method-name">group</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Provides a convenient Ruby iterator which executes a block for each entry
+in the /etc/group file.
+</p>
+<p>
+The code block is passed an Etc::Group struct; see <a
+href="Etc.html#M000669">getgrent</a> above for details.
+</p>
+<p>
+Example:
+</p>
+<pre>
+    require 'etc'
+
+    Etc.group {|g|
+      puts g.name + &quot;: &quot; + g.mem.join(', ')
+    }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000666-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000666-source">
+<pre>
+/* Provides a convenient Ruby iterator which executes a block for each entry 
+ * in the /etc/group file.
+ *
+ * The code block is passed an Etc::Group struct; see getgrent above for 
+ * details.
+ *
+ * Example:
+ *
+ *     require 'etc'
+ *
+ *     Etc.group {|g|
+ *       puts g.name + &quot;: &quot; + g.mem.join(', ')
+ *     }
+ *
+ */
+static VALUE
+etc_group(obj)
+    VALUE obj;
+{
+#ifdef HAVE_GETGRENT
+    struct group *grp;
+
+    rb_secure(4);
+    if (rb_block_given_p()) {
+        if (group_blocking) {
+            rb_raise(rb_eRuntimeError, &quot;parallel group iteration&quot;);
+        }
+        group_blocking = Qtrue;
+        rb_ensure(group_iterate, 0, group_ensure, 0);
+    }
+    if (grp = getgrent()) {
+        return setup_group(grp);
+    }
+#endif
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000663" class="m-detail">
+        <a name="M000663"></a>
+
+        <div class="method-heading">
+          <a href="#M000663" class="method-signature">
+          <span class="method-name">passwd</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Provides a convenient Ruby iterator which executes a block for each entry
+in the /etc/passwd file.
+</p>
+<p>
+The code block is passed an Etc::Passwd struct; see <a
+href="Etc.html#M000662">getpwent</a> above for details.
+</p>
+<p>
+Example:
+</p>
+<pre>
+    require 'etc'
+
+    Etc.passwd {|u|
+      puts u.name + &quot; = &quot; + u.gecos
+    }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000663-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000663-source">
+<pre>
+/* Provides a convenient Ruby iterator which executes a block for each entry 
+ * in the /etc/passwd file.
+ *
+ * The code block is passed an Etc::Passwd struct; see getpwent above for 
+ * details.
+ *
+ * Example:
+ *
+ *     require 'etc'
+ *
+ *     Etc.passwd {|u|
+ *       puts u.name + &quot; = &quot; + u.gecos
+ *     }
+ *
+ */
+static VALUE
+etc_passwd(obj)
+    VALUE obj;
+{
+#ifdef HAVE_GETPWENT
+    struct passwd *pw;
+
+    rb_secure(4);
+    if (rb_block_given_p()) {
+        if (passwd_blocking) {
+            rb_raise(rb_eRuntimeError, &quot;parallel passwd iteration&quot;);
+        }
+        passwd_blocking = Qtrue;
+        rb_ensure(passwd_iterate, 0, passwd_ensure, 0);
+    }
+    if (pw = getpwent()) {
+        return setup_passwd(pw);
+    }
+#endif
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000667" class="m-detail">
+        <a name="M000667"></a>
+
+        <div class="method-heading">
+          <a href="#M000667" class="method-signature">
+          <span class="method-name">setgrent</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Resets the process of reading the /etc/group file, so that the next call to
+<a href="Etc.html#M000669">getgrent</a> will return the first entry again.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000667-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000667-source">
+<pre>
+/* Resets the process of reading the /etc/group file, so that the next call
+ * to getgrent will return the first entry again.
+ */
+static VALUE
+etc_setgrent(obj)
+    VALUE obj;
+{
+#ifdef HAVE_GETGRENT
+    setgrent();
+#endif
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000660" class="m-detail">
+        <a name="M000660"></a>
+
+        <div class="method-heading">
+          <a href="#M000660" class="method-signature">
+          <span class="method-name">setpwent</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Resets the process of reading the /etc/passwd file, so that the next call
+to <a href="Etc.html#M000662">getpwent</a> will return the first entry
+again.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000660-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000660-source">
+<pre>
+/* Resets the process of reading the /etc/passwd file, so that the next call
+ * to getpwent will return the first entry again.
+ */
+static VALUE
+etc_setpwent(obj)
+    VALUE obj;
+{
+#ifdef HAVE_GETPWENT
+    setpwent();
+#endif
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 4 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

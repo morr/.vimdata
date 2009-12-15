@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>inspect (Iconv::Failure)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Document-method: inspect
+ * call-seq: inspect
+ *
+ * Returns inspected string like as: #&lt;_class_: _success_, _failed_&gt;
+ */
+static VALUE
+iconv_failure_inspect
+    (self)
+    VALUE self;
+{
+    const char *cname = rb_class2name(CLASS_OF(self));
+    VALUE success = rb_attr_get(self, rb_success);
+    VALUE failed = rb_attr_get(self, rb_failed);
+    VALUE str = rb_str_buf_cat2(rb_str_new2(&quot;#&lt;&quot;), cname);
+    str = rb_str_buf_cat(str, &quot;: &quot;, 2);
+    str = rb_str_buf_append(str, rb_inspect(success));
+    str = rb_str_buf_cat(str, &quot;, &quot;, 2);
+    str = rb_str_buf_append(str, rb_inspect(failed));
+    return rb_str_buf_cat(str, &quot;&gt;&quot;, 1);
+}</pre>
+</body>
+</html>

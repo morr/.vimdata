@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>parse_attr (WSDL::XMLSchema::Element)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/wsdl/xmlSchema/element.rb, line 108</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_attr</span>(<span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">attr</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">NameAttrName</span>
+      <span class="ruby-comment cmt"># namespace may be nil</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">directelement?</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">elementform</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'qualified'</span>
+        <span class="ruby-ivar">@name</span> = <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">QName</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">targetnamespace</span>, <span class="ruby-identifier">value</span>.<span class="ruby-identifier">source</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@name</span> = <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">QName</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">value</span>.<span class="ruby-identifier">source</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">FormAttrName</span>
+      <span class="ruby-ivar">@form</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">source</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">TypeAttrName</span>
+      <span class="ruby-ivar">@type</span> = <span class="ruby-identifier">value</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">RefAttrName</span>
+      <span class="ruby-ivar">@ref</span> = <span class="ruby-identifier">value</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">MaxOccursAttrName</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">All</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">source</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">'1'</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">Parser</span><span class="ruby-operator">::</span><span class="ruby-constant">AttrConstraintError</span>.<span class="ruby-identifier">new</span>(
+            <span class="ruby-node">&quot;cannot parse #{value} for #{attr}&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@maxoccurs</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">source</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">MinOccursAttrName</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">All</span>)
+        <span class="ruby-keyword kw">unless</span> [<span class="ruby-value str">'0'</span>, <span class="ruby-value str">'1'</span>].<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">value</span>.<span class="ruby-identifier">source</span>)
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">Parser</span><span class="ruby-operator">::</span><span class="ruby-constant">AttrConstraintError</span>.<span class="ruby-identifier">new</span>(
+            <span class="ruby-node">&quot;cannot parse #{value} for #{attr}&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@minoccurs</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">source</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">NillableAttrName</span>
+      <span class="ruby-ivar">@nillable</span> = (<span class="ruby-identifier">value</span>.<span class="ruby-identifier">source</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'true'</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>remove_instance_variable (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.remove_instance_variable(symbol)    =&gt; obj
+ *  
+ *  Removes the named instance variable from &lt;i&gt;obj&lt;/i&gt;, returning that
+ *  variable's value.
+ *     
+ *     class Dummy
+ *       attr_reader :var
+ *       def initialize
+ *         @var = 99
+ *       end
+ *       def remove
+ *         remove_instance_variable(:@var)
+ *       end
+ *     end
+ *     d = Dummy.new
+ *     d.var      #=&gt; 99
+ *     d.remove   #=&gt; 99
+ *     d.var      #=&gt; nil
+ */
+
+VALUE
+rb_obj_remove_instance_variable(obj, name)
+    VALUE obj, name;
+{
+    VALUE val = Qnil;
+    ID id = rb_to_id(name);
+
+    if (!OBJ_TAINTED(obj) &amp;&amp; rb_safe_level() &gt;= 4)
+	rb_raise(rb_eSecurityError, &quot;Insecure: can't modify instance variable&quot;);
+    if (OBJ_FROZEN(obj)) rb_error_frozen(&quot;object&quot;);
+    if (!rb_is_instance_id(id)) {
+	rb_name_error(id, &quot;`%s' is not allowed as an instance variable name&quot;, rb_id2name(id));
+    }
+
+    switch (TYPE(obj)) {
+      case T_OBJECT:
+      case T_CLASS:
+      case T_MODULE:
+	if (ROBJECT(obj)-&gt;iv_tbl &amp;&amp; st_delete(ROBJECT(obj)-&gt;iv_tbl, (st_data_t*)&amp;id, &amp;val)) {
+	    return val;
+	}
+	break;
+      default:
+	if (FL_TEST(obj, FL_EXIVAR) || rb_special_const_p(obj)) {
+	    if (generic_ivar_remove(obj, id, &amp;val)) {
+		return val;
+	    }
+	}
+	break;
+    }
+    rb_name_error(id, &quot;instance variable %s not defined&quot;, rb_id2name(id));
+    return Qnil;		/* not reached */
+}</pre>
+</body>
+</html>

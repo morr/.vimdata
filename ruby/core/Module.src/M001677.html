@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>ancestors (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mod.ancestors -&gt; array
+ *  
+ *  Returns a list of modules included in &lt;i&gt;mod&lt;/i&gt; (including
+ *  &lt;i&gt;mod&lt;/i&gt; itself).
+ *     
+ *     module Mod
+ *       include Math
+ *       include Comparable
+ *     end
+ *     
+ *     Mod.ancestors    #=&gt; [Mod, Comparable, Math]
+ *     Math.ancestors   #=&gt; [Math]
+ */
+
+VALUE
+rb_mod_ancestors(mod)
+    VALUE mod;
+{
+    VALUE p, ary = rb_ary_new();
+
+    for (p = mod; p; p = RCLASS(p)-&gt;super) {
+	if (FL_TEST(p, FL_SINGLETON))
+	    continue;
+	if (BUILTIN_TYPE(p) == T_ICLASS) {
+	    rb_ary_push(ary, RBASIC(p)-&gt;klass);
+	}
+	else {
+	    rb_ary_push(ary, p);
+	}
+    }
+    return ary;
+}</pre>
+</body>
+</html>

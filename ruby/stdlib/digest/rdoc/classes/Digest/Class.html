@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Digest::Class</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Digest::Class</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/digest/digest_c.html">
+                digest/digest.c
+                </a>
+        <br />
+                <a href="../../files/digest/lib/digest_rb.html">
+                digest/lib/digest.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+This module stands as a base class for <a
+href="Class.html#M000450">digest</a> implementation classes.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000450">digest</a>&nbsp;&nbsp;
+      <a href="#M000452">file</a>&nbsp;&nbsp;
+      <a href="#M000451">hexdigest</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="Instance.html">Digest::Instance</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000450" class="m-detail">
+        <a name="M000450"></a>
+
+        <div class="method-heading">
+          <a href="#M000450" class="method-signature">
+          <span class="method-name">Digest::Class.digest(string, *parameters) &rarr; hash_string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the hash value of a given <em>string</em>. This is equivalent to
+Digest::Class.new(*parameters).<a
+href="Class.html#M000450">digest</a>(string), where extra
+<em>parameters</em>, if any, are passed through to the constructor and the
+<em>string</em> is passed to <a href="Class.html#M000450">digest</a>().
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000450-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000450-source">
+<pre>
+/*
+ * call-seq:
+ *     Digest::Class.digest(string, *parameters) -&gt; hash_string
+ *
+ * Returns the hash value of a given _string_.  This is equivalent to
+ * Digest::Class.new(*parameters).digest(string), where extra
+ * _parameters_, if any, are passed through to the constructor and the
+ * _string_ is passed to #digest().
+ */
+static VALUE
+rb_digest_class_s_digest(int argc, VALUE *argv, VALUE klass)
+{
+    VALUE str;
+    volatile VALUE obj;
+
+    if (argc &lt; 1) {
+        rb_raise(rb_eArgError, &quot;no data given&quot;);
+    }
+
+    str = *argv++;
+    argc--;
+
+    StringValue(str);
+
+    obj = rb_obj_alloc(klass);
+    rb_obj_call_init(obj, argc, argv);
+
+    return rb_funcall(obj, id_digest, 1, str);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000452" class="m-detail">
+        <a name="M000452"></a>
+
+        <div class="method-heading">
+          <a href="#M000452" class="method-signature">
+          <span class="method-name">file</span><span class="method-args">(name)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+creates a <a href="Class.html#M000450">digest</a> object and reads a given
+<a href="Class.html#M000452">file</a>, <em>name</em>.
+</p>
+<pre>
+ p Digest::SHA256.file(&quot;X11R6.8.2-src.tar.bz2&quot;).hexdigest
+ # =&gt; &quot;f02e3c85572dc9ad7cb77c2a638e3be24cc1b5bea9fdbb0b0299c9668475c534&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000452-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000452-source">
+<pre>
+<span class="ruby-comment cmt"># File digest/lib/digest.rb, line 28</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">file</span>(<span class="ruby-identifier">name</span>)
+      <span class="ruby-identifier">new</span>.<span class="ruby-identifier">file</span>(<span class="ruby-identifier">name</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000451" class="m-detail">
+        <a name="M000451"></a>
+
+        <div class="method-heading">
+          <a href="#M000451" class="method-signature">
+          <span class="method-name">Digest::Class.hexdigest(string[, ...]) &rarr; hash_string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the hex-encoded hash value of a given <em>string</em>. This is
+almost equivalent to <a
+href="../Digest.html#M000423">Digest.hexencode</a>(Digest::Class.new(*parameters).<a
+href="Class.html#M000450">digest</a>(string)).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000451-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000451-source">
+<pre>
+/*
+ * call-seq:
+ *     Digest::Class.hexdigest(string[, ...]) -&gt; hash_string
+ *
+ * Returns the hex-encoded hash value of a given _string_.  This is
+ * almost equivalent to
+ * Digest.hexencode(Digest::Class.new(*parameters).digest(string)).
+ */
+static VALUE
+rb_digest_class_s_hexdigest(int argc, VALUE *argv, VALUE klass)
+{
+    return hexencode_str_new(rb_funcall2(klass, id_digest, argc, argv));
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 0 --> <p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and run  by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. Ruby-doc.org was created in 2002 to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

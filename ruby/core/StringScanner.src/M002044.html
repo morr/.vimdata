@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>post_match (StringScanner)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Return the &lt;i&gt;&lt;b&gt;post&lt;/b&gt;-match&lt;/i&gt; (in the regular expression sense) of the last scan.
+ *
+ *   s = StringScanner.new('test string')
+ *   s.scan(/\w+/)           # -&gt; &quot;test&quot;
+ *   s.scan(/\s+/)           # -&gt; &quot; &quot;
+ *   s.pre_match             # -&gt; &quot;test&quot;
+ *   s.post_match            # -&gt; &quot;string&quot;
+ */
+static VALUE
+strscan_post_match(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    if (! MATCHED_P(p)) return Qnil;
+
+    return extract_range(p, p-&gt;prev + p-&gt;regs.end[0], S_LEN(p));
+}</pre>
+</body>
+</html>

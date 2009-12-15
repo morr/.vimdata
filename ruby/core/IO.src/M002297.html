@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>inspect (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   ios.inspect   =&gt; string
+ *
+ * Return a string describing this IO object.
+ */
+
+static VALUE
+rb_io_inspect(obj)
+    VALUE obj;
+{
+    OpenFile *fptr;
+    char *buf, *cname, *st = &quot;&quot;;
+    long len;
+
+    fptr = RFILE(rb_io_taint_check(obj))-&gt;fptr;
+    if (!fptr || !fptr-&gt;path) return rb_any_to_s(obj);
+    cname = rb_obj_classname(obj);
+    len = strlen(cname) + strlen(fptr-&gt;path) + 5;
+    if (!(fptr-&gt;f || fptr-&gt;f2)) {
+        st = &quot; (closed)&quot;;
+        len += 9;
+    }
+    buf = ALLOCA_N(char, len);
+    snprintf(buf, len, &quot;#&lt;%s:%s%s&gt;&quot;, cname, fptr-&gt;path, st);
+    return rb_str_new2(buf);
+}</pre>
+</body>
+</html>

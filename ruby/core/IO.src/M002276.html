@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>ungetc (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.ungetc(integer)   =&gt; nil
+ *  
+ *  Pushes back one character (passed as a parameter) onto &lt;em&gt;ios&lt;/em&gt;,
+ *  such that a subsequent buffered read will return it. Only one character
+ *  may be pushed back before a subsequent read operation (that is,
+ *  you will be able to read only the last of several characters that have been pushed
+ *  back). Has no effect with unbuffered reads (such as &lt;code&gt;IO#sysread&lt;/code&gt;).
+ *     
+ *     f = File.new(&quot;testfile&quot;)   #=&gt; #&lt;File:testfile&gt;
+ *     c = f.getc                 #=&gt; 84
+ *     f.ungetc(c)                #=&gt; nil
+ *     f.getc                     #=&gt; 84
+ */
+
+VALUE
+rb_io_ungetc(io, c)
+    VALUE io, c;
+{
+    OpenFile *fptr;
+    int cc = NUM2INT(c);
+
+    GetOpenFile(io, fptr);
+    if (!(fptr-&gt;mode &amp; FMODE_RBUF))
+        rb_raise(rb_eIOError, &quot;unread stream&quot;);
+    rb_io_check_readable(fptr);
+
+    if (ungetc(cc, fptr-&gt;f) == EOF &amp;&amp; cc != EOF) {
+        rb_raise(rb_eIOError, &quot;ungetc failed&quot;);
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

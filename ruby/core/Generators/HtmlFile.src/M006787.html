@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>file_attribute_values (Generators::HtmlFile)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/generators/html_generator.rb, line 872</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">file_attribute_values</span>
+      <span class="ruby-identifier">full_path</span> = <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">file_absolute_name</span>
+      <span class="ruby-identifier">short_name</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">full_path</span>)
+      
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;title&quot;</span>] = <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">escapeHTML</span>(<span class="ruby-node">&quot;File: #{short_name}&quot;</span>)
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">diagram</span>
+        <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;diagram&quot;</span>] = <span class="ruby-identifier">diagram_reference</span>(<span class="ruby-ivar">@context</span>.<span class="ruby-identifier">diagram</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;short_name&quot;</span>]   = <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">escapeHTML</span>(<span class="ruby-identifier">short_name</span>)
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;full_path&quot;</span>]    = <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">escapeHTML</span>(<span class="ruby-identifier">full_path</span>)
+      <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;dtm_modified&quot;</span>] = <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">file_stat</span>.<span class="ruby-identifier">mtime</span>.<span class="ruby-identifier">to_s</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">webcvs</span>
+        <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;cvsurl&quot;</span>] = <span class="ruby-identifier">cvs_url</span>( <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">webcvs</span>, <span class="ruby-ivar">@values</span>[<span class="ruby-value str">&quot;full_path&quot;</span>] )
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

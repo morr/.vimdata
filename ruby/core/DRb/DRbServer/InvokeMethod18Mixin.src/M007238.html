@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>perform_with_block (DRb::DRbServer::InvokeMethod18Mixin)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/drb/invokemethod.rb, line 13</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">perform_with_block</span>
+        <span class="ruby-ivar">@obj</span>.<span class="ruby-identifier">__send__</span>(<span class="ruby-ivar">@msg_id</span>, <span class="ruby-operator">*</span><span class="ruby-ivar">@argv</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-operator">*</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">jump_error</span> = <span class="ruby-keyword kw">nil</span>
+          <span class="ruby-keyword kw">begin</span>
+            <span class="ruby-identifier">block_value</span> = <span class="ruby-identifier">block_yield</span>(<span class="ruby-identifier">x</span>)
+          <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LocalJumpError</span>
+            <span class="ruby-identifier">jump_error</span> = <span class="ruby-identifier">$!</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">jump_error</span>
+            <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">jump_error</span>.<span class="ruby-identifier">reason</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:retry</span>
+              <span class="ruby-keyword kw">retry</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:break</span>
+              <span class="ruby-keyword kw">break</span>(<span class="ruby-identifier">jump_error</span>.<span class="ruby-identifier">exit_value</span>)
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">raise</span> <span class="ruby-identifier">jump_error</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">block_value</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

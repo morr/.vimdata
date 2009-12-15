@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>getch (StringScanner)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Scans one character and returns it.
+ * This method is multi-byte character sensitive.
+ * See also #get_byte.
+ *
+ *   s = StringScanner.new('ab')
+ *   s.getch           # =&gt; &quot;a&quot;
+ *   s.getch           # =&gt; &quot;b&quot;
+ *   s.getch           # =&gt; nil
+ *
+ *   $KCODE = 'EUC'
+ *   s = StringScanner.new(&quot;\244\242&quot;)
+ *   s.getch           # =&gt; &quot;\244\242&quot;   # Japanese hira-kana &quot;A&quot; in EUC-JP
+ *   s.getch           # =&gt; nil
+ */
+static VALUE
+strscan_getch(VALUE self)
+{
+    struct strscanner *p;
+    long len;
+
+    GET_SCANNER(self, p);
+    CLEAR_MATCH_STATUS(p);
+    if (EOS_P(p))
+        return Qnil;
+    len = mbclen(*CURPTR(p));
+    if (p-&gt;curr + len &gt; S_LEN(p)) {
+        len = S_LEN(p) - p-&gt;curr;
+    }
+    p-&gt;prev = p-&gt;curr;
+    p-&gt;curr += len;
+    MATCHED(p);
+    adjust_registers_to_matched(p);
+    return extract_range(p, p-&gt;prev + p-&gt;regs.beg[0],
+                            p-&gt;prev + p-&gt;regs.end[0]);
+}</pre>
+</body>
+</html>

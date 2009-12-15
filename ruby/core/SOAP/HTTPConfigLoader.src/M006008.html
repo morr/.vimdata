@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>set_ssl_config (SOAP::HTTPConfigLoader)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/httpconfigloader.rb, line 60</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_ssl_config</span>(<span class="ruby-identifier">client</span>, <span class="ruby-identifier">ssl_config</span>)
+    <span class="ruby-identifier">ssl_config</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">cfg</span> = <span class="ruby-identifier">client</span>.<span class="ruby-identifier">ssl_config</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cfg</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;SSL not supported&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">key</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'client_cert'</span>
+        <span class="ruby-identifier">cfg</span>.<span class="ruby-identifier">client_cert</span> = <span class="ruby-identifier">cert_from_file</span>(<span class="ruby-identifier">value</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'client_key'</span>
+        <span class="ruby-identifier">cfg</span>.<span class="ruby-identifier">client_key</span> = <span class="ruby-identifier">key_from_file</span>(<span class="ruby-identifier">value</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'client_ca'</span>
+        <span class="ruby-identifier">cfg</span>.<span class="ruby-identifier">client_ca</span> = <span class="ruby-identifier">value</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'ca_path'</span>
+        <span class="ruby-identifier">cfg</span>.<span class="ruby-identifier">set_trust_ca</span>(<span class="ruby-identifier">value</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'ca_file'</span>
+        <span class="ruby-identifier">cfg</span>.<span class="ruby-identifier">set_trust_ca</span>(<span class="ruby-identifier">value</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'crl'</span>
+        <span class="ruby-identifier">cfg</span>.<span class="ruby-identifier">set_crl</span>(<span class="ruby-identifier">value</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'verify_mode'</span>
+        <span class="ruby-identifier">cfg</span>.<span class="ruby-identifier">verify_mode</span> = <span class="ruby-identifier">ssl_config_int</span>(<span class="ruby-identifier">value</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'verify_depth'</span>
+        <span class="ruby-identifier">cfg</span>.<span class="ruby-identifier">verify_depth</span> = <span class="ruby-identifier">ssl_config_int</span>(<span class="ruby-identifier">value</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'options'</span>
+        <span class="ruby-identifier">cfg</span>.<span class="ruby-identifier">options</span> = <span class="ruby-identifier">value</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'ciphers'</span>
+        <span class="ruby-identifier">cfg</span>.<span class="ruby-identifier">ciphers</span> = <span class="ruby-identifier">value</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'verify_callback'</span>
+        <span class="ruby-identifier">cfg</span>.<span class="ruby-identifier">verify_callback</span> = <span class="ruby-identifier">value</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'cert_store'</span>
+        <span class="ruby-identifier">cfg</span>.<span class="ruby-identifier">cert_store</span> = <span class="ruby-identifier">value</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;unknown ssl_config property #{key}&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

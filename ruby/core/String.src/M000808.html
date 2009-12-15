@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>crypt (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.crypt(other_str)   =&gt; new_str
+ *  
+ *  Applies a one-way cryptographic hash to &lt;i&gt;str&lt;/i&gt; by invoking the standard
+ *  library function &lt;code&gt;crypt&lt;/code&gt;. The argument is the salt string, which
+ *  should be two characters long, each character drawn from
+ *  &lt;code&gt;[a-zA-Z0-9./]&lt;/code&gt;.
+ */
+
+static VALUE
+rb_str_crypt(str, salt)
+    VALUE str, salt;
+{
+    extern char *crypt();
+    VALUE result;
+    char *s;
+
+    StringValue(salt);
+    if (RSTRING(salt)-&gt;len &lt; 2)
+        rb_raise(rb_eArgError, &quot;salt too short(need &gt;=2 bytes)&quot;);
+
+    if (RSTRING(str)-&gt;ptr) s = RSTRING(str)-&gt;ptr;
+    else s = &quot;&quot;;
+    result = rb_str_new2(crypt(s, RSTRING(salt)-&gt;ptr));
+    OBJ_INFECT(result, str);
+    OBJ_INFECT(result, salt);
+    return result;
+}</pre>
+</body>
+</html>

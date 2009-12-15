@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>params (Zlib::Deflate)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: params(level, strategy)
+ * 
+ * Changes the parameters of the deflate stream. See zlib.h for details. The
+ * output from the stream by changing the params is preserved in output
+ * buffer.
+ *
+ * TODO: document better!
+ */
+static VALUE
+rb_deflate_params(obj, v_level, v_strategy)
+    VALUE obj, v_level, v_strategy;
+{
+    struct zstream *z = get_zstream(obj);
+    int level, strategy;
+    int err;
+
+    level = ARG_LEVEL(v_level);
+    strategy = ARG_STRATEGY(v_strategy);
+
+    err = deflateParams(&amp;z-&gt;stream, level, strategy);
+    while (err == Z_BUF_ERROR) {
+        rb_warning(&quot;deflateParams() returned Z_BUF_ERROR&quot;);
+        zstream_expand_buffer(z);
+        err = deflateParams(&amp;z-&gt;stream, level, strategy);
+    }
+    if (err != Z_OK) {
+        raise_zlib_error(err, z-&gt;stream.msg);
+    }
+
+    return Qnil;
+}</pre>
+</body>
+</html>

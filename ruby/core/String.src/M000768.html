@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>+ (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str + other_str   =&gt; new_str
+ *  
+ *  Concatenation---Returns a new &lt;code&gt;String&lt;/code&gt; containing
+ *  &lt;i&gt;other_str&lt;/i&gt; concatenated to &lt;i&gt;str&lt;/i&gt;.
+ *     
+ *     &quot;Hello from &quot; + self.to_s   #=&gt; &quot;Hello from main&quot;
+ */
+
+VALUE
+rb_str_plus(str1, str2)
+    VALUE str1, str2;
+{
+    VALUE str3;
+
+    StringValue(str2);
+    str3 = rb_str_new(0, RSTRING(str1)-&gt;len+RSTRING(str2)-&gt;len);
+    memcpy(RSTRING(str3)-&gt;ptr, RSTRING(str1)-&gt;ptr, RSTRING(str1)-&gt;len);
+    memcpy(RSTRING(str3)-&gt;ptr + RSTRING(str1)-&gt;len,
+           RSTRING(str2)-&gt;ptr, RSTRING(str2)-&gt;len);
+    RSTRING(str3)-&gt;ptr[RSTRING(str3)-&gt;len] = '\0';
+
+    if (OBJ_TAINTED(str1) || OBJ_TAINTED(str2))
+        OBJ_TAINT(str3);
+    return str3;
+}</pre>
+</body>
+</html>

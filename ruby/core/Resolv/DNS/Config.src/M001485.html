@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>default_config_hash (Resolv::DNS::Config)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/resolv.rb, line 802</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Config</span>.<span class="ruby-identifier">default_config_hash</span>(<span class="ruby-identifier">filename</span>=<span class="ruby-value str">&quot;/etc/resolv.conf&quot;</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span> <span class="ruby-identifier">filename</span>
+          <span class="ruby-identifier">config_hash</span> = <span class="ruby-constant">Config</span>.<span class="ruby-identifier">parse_resolv_conf</span>(<span class="ruby-identifier">filename</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-regexp re">/mswin32|cygwin|mingw|bccwin/</span> <span class="ruby-operator">=~</span> <span class="ruby-constant">RUBY_PLATFORM</span>
+            <span class="ruby-identifier">require</span> <span class="ruby-value str">'win32/resolv'</span>
+            <span class="ruby-identifier">search</span>, <span class="ruby-identifier">nameserver</span> = <span class="ruby-constant">Win32</span><span class="ruby-operator">::</span><span class="ruby-constant">Resolv</span>.<span class="ruby-identifier">get_resolv_info</span>
+            <span class="ruby-identifier">config_hash</span> = {}
+            <span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">:nameserver</span>] = <span class="ruby-identifier">nameserver</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">nameserver</span>
+            <span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">:search</span>] = [<span class="ruby-identifier">search</span>].<span class="ruby-identifier">flatten</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">search</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">config_hash</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

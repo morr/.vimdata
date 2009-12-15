@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>accept_nonblock (Socket)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *    socket.accept_nonblock =&gt; [client_socket, client_sockaddr]
+ * 
+ * Accepts an incoming connection using accept(2) after
+ * O_NONBLOCK is set for the underlying file descriptor.
+ * It returns an array containg the accpeted socket
+ * for the incoming connection, _client_socket_,
+ * and a string that contains the +struct+ sockaddr information
+ * about the caller, _client_sockaddr_.
+ * 
+ * === Example
+ *      # In one script, start this first
+ *      require 'socket'
+ *      include Socket::Constants
+ *      socket = Socket.new(AF_INET, SOCK_STREAM, 0)
+ *      sockaddr = Socket.sockaddr_in(2200, 'localhost')
+ *      socket.bind(sockaddr)
+ *      socket.listen(5)
+ *      begin
+ *        client_socket, client_sockaddr = socket.accept_nonblock
+ *      rescue Errno::EAGAIN, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR
+ *        IO.select([socket])
+ *        retry
+ *      end
+ *      puts &quot;The client said, '#{client_socket.readline.chomp}'&quot;
+ *      client_socket.puts &quot;Hello from script one!&quot;
+ *      socket.close
+ *
+ *      # In another script, start this second
+ *      require 'socket'
+ *      include Socket::Constants
+ *      socket = Socket.new(AF_INET, SOCK_STREAM, 0)
+ *      sockaddr = Socket.sockaddr_in(2200, 'localhost')
+ *      socket.connect(sockaddr)
+ *      socket.puts &quot;Hello from script 2.&quot; 
+ *      puts &quot;The server said, '#{socket.readline.chomp}'&quot;
+ *      socket.close
+ * 
+ * Refer to Socket#accept for the exceptions that may be thrown if the call
+ * to _accept_nonblock_ fails. 
+ *
+ * Socket#accept_nonblock may raise any error corresponding to accept(2) failure,
+ * including Errno::EAGAIN.
+ * 
+ * === See
+ * * Socket#accept
+ */
+static VALUE
+sock_accept_nonblock(sock)
+    VALUE sock;
+{
+    OpenFile *fptr;
+    VALUE sock2;
+    char buf[1024];
+    socklen_t len = sizeof buf;
+
+    GetOpenFile(sock, fptr);
+    sock2 = s_accept_nonblock(rb_cSocket, fptr, (struct sockaddr *)buf, &amp;len);
+    return rb_assoc_new(sock2, rb_str_new(buf, len));
+}</pre>
+</body>
+</html>

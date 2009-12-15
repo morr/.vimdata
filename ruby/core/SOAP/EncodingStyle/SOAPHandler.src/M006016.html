@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>decode_tag (SOAP::EncodingStyle::SOAPHandler)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/encodingstyle/soapHandler.rb, line 145</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">decode_tag</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">elename</span>, <span class="ruby-identifier">attrs</span>, <span class="ruby-identifier">parent</span>)
+    <span class="ruby-ivar">@textbuf</span> = <span class="ruby-value str">''</span>
+    <span class="ruby-identifier">is_nil</span>, <span class="ruby-identifier">type</span>, <span class="ruby-identifier">arytype</span>, <span class="ruby-identifier">root</span>, <span class="ruby-identifier">offset</span>, <span class="ruby-identifier">position</span>, <span class="ruby-identifier">href</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">extraattr</span> =
+      <span class="ruby-identifier">decode_attrs</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">attrs</span>)
+    <span class="ruby-identifier">o</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">is_nil</span>
+      <span class="ruby-identifier">o</span> = <span class="ruby-constant">SOAPNil</span>.<span class="ruby-identifier">decode</span>(<span class="ruby-identifier">elename</span>)
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">href</span>
+      <span class="ruby-identifier">o</span> = <span class="ruby-constant">SOAPReference</span>.<span class="ruby-identifier">decode</span>(<span class="ruby-identifier">elename</span>, <span class="ruby-identifier">href</span>)
+      <span class="ruby-ivar">@refpool</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">o</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@decode_typemap</span>
+      <span class="ruby-identifier">o</span> = <span class="ruby-identifier">decode_tag_by_wsdl</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">elename</span>, <span class="ruby-identifier">type</span>, <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">node</span>, <span class="ruby-identifier">arytype</span>, <span class="ruby-identifier">extraattr</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">o</span> = <span class="ruby-identifier">decode_tag_by_type</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">elename</span>, <span class="ruby-identifier">type</span>, <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">node</span>, <span class="ruby-identifier">arytype</span>, <span class="ruby-identifier">extraattr</span>)
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SOAPArray</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">offset</span>
+        <span class="ruby-identifier">o</span>.<span class="ruby-identifier">offset</span> = <span class="ruby-identifier">decode_arypos</span>(<span class="ruby-identifier">offset</span>)
+        <span class="ruby-identifier">o</span>.<span class="ruby-identifier">sparse</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">o</span>.<span class="ruby-identifier">sparse</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">o</span>.<span class="ruby-identifier">parent</span> = <span class="ruby-identifier">parent</span>
+    <span class="ruby-identifier">o</span>.<span class="ruby-identifier">id</span> = <span class="ruby-identifier">id</span>
+    <span class="ruby-identifier">o</span>.<span class="ruby-identifier">root</span> = <span class="ruby-identifier">root</span>
+    <span class="ruby-identifier">o</span>.<span class="ruby-identifier">position</span> = <span class="ruby-identifier">position</span>
+
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SOAPTemporalObject</span>)
+      <span class="ruby-ivar">@idpool</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">o</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">id</span>
+      <span class="ruby-identifier">decode_parent</span>(<span class="ruby-identifier">parent</span>, <span class="ruby-identifier">o</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">o</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

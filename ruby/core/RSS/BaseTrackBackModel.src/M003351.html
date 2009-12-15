@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>append_features (RSS::BaseTrackBackModel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rss/trackback.rb, line 27</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">append_features</span>(<span class="ruby-identifier">klass</span>)
+      <span class="ruby-keyword kw">super</span>
+
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Module</span>
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">module_eval</span> {<span class="ruby-identifier">include</span> <span class="ruby-constant">TrackBackUtils</span>}
+
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">install_must_call_validator</span>(<span class="ruby-constant">TRACKBACK_PREFIX</span>, <span class="ruby-constant">TRACKBACK_URI</span>)
+        <span class="ruby-node">%w(ping)</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">var_name</span> = <span class="ruby-node">&quot;#{TRACKBACK_PREFIX}_#{name}&quot;</span>
+          <span class="ruby-identifier">klass_name</span> = <span class="ruby-node">&quot;TrackBack#{Utils.to_class_name(name)}&quot;</span>
+          <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">install_have_child_element</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">TRACKBACK_URI</span>, <span class="ruby-value str">&quot;?&quot;</span>, <span class="ruby-identifier">var_name</span>)
+          <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">module_eval</span>(<span class="ruby-value str">&quot;remove_method :\#{var_name}\ndef \#{var_name}\n@\#{var_name} and @\#{var_name}.value\nend\n\nremove_method :\#{var_name}=\ndef \#{var_name}=(value)\n@\#{var_name} = Utils.new_with_value_if_need(\#{klass_name}, value)\nend\n&quot;</span>, <span class="ruby-keyword kw">__FILE__</span>, <span class="ruby-keyword kw">__LINE__</span>)
+        <span class="ruby-keyword kw">end</span>
+        
+        [<span class="ruby-node">%w(about s)</span>].<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">postfix</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">var_name</span> = <span class="ruby-node">&quot;#{TRACKBACK_PREFIX}_#{name}&quot;</span>
+          <span class="ruby-identifier">klass_name</span> = <span class="ruby-node">&quot;TrackBack#{Utils.to_class_name(name)}&quot;</span>
+          <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">install_have_children_element</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">TRACKBACK_URI</span>, <span class="ruby-value str">&quot;*&quot;</span>,
+                                              <span class="ruby-identifier">var_name</span>)
+          <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">module_eval</span>(<span class="ruby-value str">&quot;remove_method :\#{var_name}\ndef \#{var_name}(*args)\nif args.empty?\n@\#{var_name}.first and @\#{var_name}.first.value\nelse\nret = @\#{var_name}.__send__(\&quot;[]\&quot;, *args)\nif ret.is_a?(Array)\nret.collect {|x| x.value}\nelse\nret.value\nend\nend\nend\n\nremove_method :\#{var_name}=\nremove_method :set_\#{var_name}\ndef \#{var_name}=(*args)\nif args.size == 1\nitem = Utils.new_with_value_if_need(\#{klass_name}, args[0])\n@\#{var_name}.push(item)\nelse\nnew_val = args.last\nif new_val.is_a?(Array)\nnew_val = new_value.collect do |val|\nUtils.new_with_value_if_need(\#{klass_name}, val)\nend\nelse\nnew_val = Utils.new_with_value_if_need(\#{klass_name}, new_val)\nend\n@\#{var_name}.__send__(\&quot;[]=\&quot;, *(args[0..-2] + [new_val]))\nend\nend\nalias set_\#{var_name} \#{var_name}=\n&quot;</span>, <span class="ruby-keyword kw">__FILE__</span>, <span class="ruby-keyword kw">__LINE__</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

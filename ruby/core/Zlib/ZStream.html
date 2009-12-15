@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Zlib::ZStream</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Zlib::ZStream</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/ext/zlib/zlib_c.html">
+                ext/zlib/zlib.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="ZStream.html">Zlib::ZStream</a> is the abstract class for the
+stream which handles the compressed data. The operations are defined in the
+subclasses: <a href="Deflate.html">Zlib::Deflate</a> for compression, and
+<a href="Inflate.html">Zlib::Inflate</a> for decompression.
+</p>
+<p>
+An instance of <a href="ZStream.html">Zlib::ZStream</a> has one stream
+(struct zstream in the source) and two variable-length buffers which
+associated to the input (next_in) of the stream and the output (next_out)
+of the stream. In this document, &quot;input buffer&quot; means the buffer
+for input, and &quot;output buffer&quot; means the buffer for output.
+</p>
+<p>
+<a href="../Data.html">Data</a> input into an instance of <a
+href="ZStream.html">Zlib::ZStream</a> are temporally stored into the <a
+href="ZStream.html#M007487">end</a> of input buffer, and then data in input
+buffer are processed from the beginning of the buffer until no more output
+from the stream is produced (i.e. until <a
+href="ZStream.html#M007475">avail_out</a> &gt; 0 after processing). During
+processing, output buffer is allocated and expanded automatically to hold
+all output data.
+</p>
+<p>
+Some particular instance methods consume the data in output buffer and
+return them as a <a href="../String.html">String</a>.
+</p>
+<p>
+Here is an ascii art for describing above:
+</p>
+<pre>
+   +================ an instance of Zlib::ZStream ================+
+   ||                                                            ||
+   ||     +--------+          +-------+          +--------+      ||
+   ||  +--| output |&lt;---------|zstream|&lt;---------| input  |&lt;--+  ||
+   ||  |  | buffer |  next_out+-------+next_in   | buffer |   |  ||
+   ||  |  +--------+                             +--------+   |  ||
+   ||  |                                                      |  ||
+   +===|======================================================|===+
+       |                                                      |
+       v                                                      |
+   &quot;output data&quot;                                         &quot;input data&quot;
+</pre>
+<p>
+If an error occurs during processing input buffer, an exception which is a
+subclass of <a href="Error.html">Zlib::Error</a> is raised. At that time,
+both input and output buffer keep their conditions at the time when the
+error occurs.
+</p>
+<h2><a href="../Method.html">Method</a> Catalogue</h2>
+<p>
+Many of the methods in this class are fairly low-level and unlikely to be
+of interest to users. In fact, users are unlikely to use this class
+directly; rather they will be interested in <a
+href="Inflate.html">Zlib::Inflate</a> and <a
+href="Deflate.html">Zlib::Deflate</a>.
+</p>
+<p>
+The higher level methods are listed below.
+</p>
+<ul>
+<li><a href="ZStream.html#M007478">total_in</a>
+
+</li>
+<li><a href="ZStream.html#M007479">total_out</a>
+
+</li>
+<li><a href="ZStream.html#M007480">data_type</a>
+
+</li>
+<li><a href="ZStream.html#M007481">adler</a>
+
+</li>
+<li><a href="ZStream.html#M007488">reset</a>
+
+</li>
+<li><a href="ZStream.html#M007489">finish</a>
+
+</li>
+<li>finished?
+
+</li>
+<li><a href="ZStream.html#M007486">close</a>
+
+</li>
+<li>closed?
+
+</li>
+</ul>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M007481">adler</a>&nbsp;&nbsp;
+      <a href="#M007477">avail_in</a>&nbsp;&nbsp;
+      <a href="#M007475">avail_out</a>&nbsp;&nbsp;
+      <a href="#M007476">avail_out=</a>&nbsp;&nbsp;
+      <a href="#M007486">close</a>&nbsp;&nbsp;
+      <a href="#M007484">closed?</a>&nbsp;&nbsp;
+      <a href="#M007480">data_type</a>&nbsp;&nbsp;
+      <a href="#M007487">end</a>&nbsp;&nbsp;
+      <a href="#M007485">ended?</a>&nbsp;&nbsp;
+      <a href="#M007489">finish</a>&nbsp;&nbsp;
+      <a href="#M007482">finished?</a>&nbsp;&nbsp;
+      <a href="#M007490">flush_next_in</a>&nbsp;&nbsp;
+      <a href="#M007491">flush_next_out</a>&nbsp;&nbsp;
+      <a href="#M007488">reset</a>&nbsp;&nbsp;
+      <a href="#M007483">stream_end?</a>&nbsp;&nbsp;
+      <a href="#M007478">total_in</a>&nbsp;&nbsp;
+      <a href="#M007479">total_out</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M007481" class="method-detail">
+        <a name="M007481"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007481.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007481.html');return false;">
+          <span class="method-name">adler</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="ZStream.html#M007481">adler</a>-32 checksum.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007477" class="method-detail">
+        <a name="M007477"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007477.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007477.html');return false;">
+          <span class="method-name">avail_in</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns bytes of data in the input buffer. Normally, returns 0.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007475" class="method-detail">
+        <a name="M007475"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007475.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007475.html');return false;">
+          <span class="method-name">avail_out</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns number of bytes of free spaces in output buffer. Because the free
+space is allocated automatically, this method returns 0 normally.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007476" class="method-detail">
+        <a name="M007476"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007476.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007476.html');return false;">
+          <span class="method-name">avail_out=</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Allocates <tt>size</tt> bytes of free space in the output buffer. If there
+are more than <tt>size</tt> bytes already in the buffer, the buffer is
+truncated. Because free space is allocated automatically, you usually
+don&#8216;t need to use this method.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007486" class="method-detail">
+        <a name="M007486"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007486.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007486.html');return false;">
+          <span class="method-name">close</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Closes the stream. All operations on the closed stream will raise an
+exception.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007484" class="method-detail">
+        <a name="M007484"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007484.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007484.html');return false;">
+          <span class="method-name">closed?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if the stream is closed.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007480" class="method-detail">
+        <a name="M007480"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007480.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007480.html');return false;">
+          <span class="method-name">data_type</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Guesses the type of the data which have been inputed into the stream. The
+returned value is either <tt>Zlib::BINARY</tt>, <tt>Zlib::ASCII</tt>, or
+<tt>Zlib::UNKNOWN</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007487" class="method-detail">
+        <a name="M007487"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007487.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007487.html');return false;">
+          <span class="method-name">end</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Closes the stream. All operations on the closed stream will raise an
+exception.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007485" class="method-detail">
+        <a name="M007485"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007485.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007485.html');return false;">
+          <span class="method-name">ended?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if the stream is closed.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007489" class="method-detail">
+        <a name="M007489"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007489.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007489.html');return false;">
+          <span class="method-name">finish</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Finishes the stream and flushes output buffer. See Zlib::Deflate#finish and
+Zlib::Inflate#finish for details of this behavior.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007482" class="method-detail">
+        <a name="M007482"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007482.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007482.html');return false;">
+          <span class="method-name">finished?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if the stream is finished.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007490" class="method-detail">
+        <a name="M007490"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007490.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007490.html');return false;">
+          <span class="method-name">flush_next_in</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Flushes input buffer and returns all data in that buffer.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007491" class="method-detail">
+        <a name="M007491"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007491.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007491.html');return false;">
+          <span class="method-name">flush_next_out</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Flushes output buffer and returns all data in that buffer.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007488" class="method-detail">
+        <a name="M007488"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007488.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007488.html');return false;">
+          <span class="method-name">reset</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Resets and initializes the stream. All data in both input and output buffer
+are discarded.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007483" class="method-detail">
+        <a name="M007483"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007483.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007483.html');return false;">
+          <span class="method-name">stream_end?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if the stream is finished.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007478" class="method-detail">
+        <a name="M007478"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007478.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007478.html');return false;">
+          <span class="method-name">total_in</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the total bytes of the input data to the stream. FIXME
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007479" class="method-detail">
+        <a name="M007479"></a>
+
+        <div class="method-heading">
+          <a href="ZStream.src/M007479.html" target="Code" class="method-signature"
+            onclick="popupCode('ZStream.src/M007479.html');return false;">
+          <span class="method-name">total_out</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the total bytes of the output data from the stream. FIXME
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

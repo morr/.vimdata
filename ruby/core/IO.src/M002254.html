@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.each(sep_string=$/)      {|line| block }  =&gt; ios
+ *     ios.each_line(sep_string=$/) {|line| block }  =&gt; ios
+ *  
+ *  Executes the block for every line in &lt;em&gt;ios&lt;/em&gt;, where lines are
+ *  separated by &lt;i&gt;sep_string&lt;/i&gt;. &lt;em&gt;ios&lt;/em&gt; must be opened for
+ *  reading or an &lt;code&gt;IOError&lt;/code&gt; will be raised.
+ *     
+ *     f = File.new(&quot;testfile&quot;)
+ *     f.each {|line| puts &quot;#{f.lineno}: #{line}&quot; }
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     1: This is line one
+ *     2: This is line two
+ *     3: This is line three
+ *     4: And so on...
+ */
+
+static VALUE
+rb_io_each_line(argc, argv, io)
+    int argc;
+    VALUE *argv;
+    VALUE io;
+{
+    VALUE str;
+    VALUE rs;
+
+    if (argc == 0) {
+        rs = rb_rs;
+    }
+    else {
+        rb_scan_args(argc, argv, &quot;1&quot;, &amp;rs);
+        if (!NIL_P(rs)) StringValue(rs);
+    }
+    while (!NIL_P(str = rb_io_getline(rs, io))) {
+        rb_yield(str);
+    }
+    return io;
+}</pre>
+</body>
+</html>

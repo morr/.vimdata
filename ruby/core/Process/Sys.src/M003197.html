@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>issetugid (Process::Sys)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process::Sys.issetugid   =&gt; true or false
+ *
+ *  Returns +true+ if the process was created as a result
+ *  of an execve(2) system call which had either of the setuid or
+ *  setgid bits set (and extra privileges were given as a result) or
+ *  if it has changed any of its real, effective or saved user or
+ *  group IDs since it began execution.
+ *
+ */
+
+static VALUE
+p_sys_issetugid(obj)
+    VALUE obj;
+{
+#if defined HAVE_ISSETUGID
+    rb_secure(2);
+    if (issetugid()) {
+        return Qtrue;
+    } else {
+        return Qfalse;
+    }
+#else
+    rb_notimplement();
+    return Qnil;                /* not reached */
+#endif
+}</pre>
+</body>
+</html>

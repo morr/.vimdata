@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>assoc (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* 
+ *  call-seq:
+ *     array.assoc(obj)   -&gt;  an_array  or  nil
+ *
+ *  Searches through an array whose elements are also arrays
+ *  comparing _obj_ with the first element of each contained array
+ *  using obj.==.
+ *  Returns the first contained array that matches (that
+ *  is, the first associated array),
+ *  or +nil+ if no match is found.
+ *  See also &lt;code&gt;Array#rassoc&lt;/code&gt;.
+ *
+ *     s1 = [ &quot;colors&quot;, &quot;red&quot;, &quot;blue&quot;, &quot;green&quot; ]
+ *     s2 = [ &quot;letters&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot; ]
+ *     s3 = &quot;foo&quot;
+ *     a  = [ s1, s2, s3 ]
+ *     a.assoc(&quot;letters&quot;)  #=&gt; [ &quot;letters&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot; ]
+ *     a.assoc(&quot;foo&quot;)      #=&gt; nil
+ */
+
+VALUE
+rb_ary_assoc(ary, key)
+    VALUE ary, key;
+{
+    long i;
+    VALUE v;
+
+    for (i = 0; i &lt; RARRAY(ary)-&gt;len; ++i) {
+        v = RARRAY(ary)-&gt;ptr[i];
+        if (TYPE(v) == T_ARRAY &amp;&amp;
+            RARRAY(v)-&gt;len &gt; 0 &amp;&amp;
+            rb_equal(RARRAY(v)-&gt;ptr[0], key))
+            return v;
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

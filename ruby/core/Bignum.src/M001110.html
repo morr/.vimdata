@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>| (Bignum)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *     big | numeric   =&gt;  integer
+ *
+ * Performs bitwise +or+ between _big_ and _numeric_.
+ */
+
+VALUE
+rb_big_or(xx, yy)
+    VALUE xx, yy;
+{
+    volatile VALUE x, y, z;
+    BDIGIT *ds1, *ds2, *zds;
+    long i, l1, l2;
+    char sign;
+
+    x = xx;
+    y = rb_to_int(yy);
+    if (FIXNUM_P(y)) {
+        y = rb_int2big(FIX2LONG(y));
+    }
+    if (!RBIGNUM(y)-&gt;sign) {
+        y = rb_big_clone(y);
+        get2comp(y);
+    }
+    if (!RBIGNUM(x)-&gt;sign) {
+        x = rb_big_clone(x);
+        get2comp(x);
+    }
+    if (RBIGNUM(x)-&gt;len &gt; RBIGNUM(y)-&gt;len) {
+        l1 = RBIGNUM(y)-&gt;len;
+        l2 = RBIGNUM(x)-&gt;len;
+        ds1 = BDIGITS(y);
+        ds2 = BDIGITS(x);
+        sign = RBIGNUM(y)-&gt;sign;
+    }
+    else {
+        l1 = RBIGNUM(x)-&gt;len;
+        l2 = RBIGNUM(y)-&gt;len;
+        ds1 = BDIGITS(x);
+        ds2 = BDIGITS(y);
+        sign = RBIGNUM(x)-&gt;sign;
+    }
+    z = bignew(l2, RBIGNUM(x)-&gt;sign &amp;&amp; RBIGNUM(y)-&gt;sign);
+    zds = BDIGITS(z);
+
+    for (i=0; i&lt;l1; i++) {
+        zds[i] = ds1[i] | ds2[i];
+    }
+    for (; i&lt;l2; i++) {
+        zds[i] = sign?ds2[i]:(BIGRAD-1);
+    }
+    if (!RBIGNUM(z)-&gt;sign) get2comp(z);
+
+    return bignorm(z);
+}</pre>
+</body>
+</html>

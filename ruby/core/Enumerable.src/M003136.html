@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>include? (Enumerable)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     enum.include?(obj)     =&gt; true or false
+ *     enum.member?(obj)      =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; if any member of &lt;i&gt;enum&lt;/i&gt; equals
+ *  &lt;i&gt;obj&lt;/i&gt;. Equality is tested using &lt;code&gt;==&lt;/code&gt;.
+ *     
+ *     IO.constants.include? &quot;SEEK_SET&quot;          #=&gt; true
+ *     IO.constants.include? &quot;SEEK_NO_FURTHER&quot;   #=&gt; false
+ *     
+ */
+
+static VALUE
+enum_member(obj, val)
+    VALUE obj, val;
+{
+    VALUE memo[2];
+
+    memo[0] = val;
+    memo[1] = Qfalse;
+    rb_iterate(rb_each, obj, member_i, (VALUE)memo);
+    return memo[1];
+}</pre>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>chop! (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.chop!   =&gt; str or nil
+ *  
+ *  Processes &lt;i&gt;str&lt;/i&gt; as for &lt;code&gt;String#chop&lt;/code&gt;, returning &lt;i&gt;str&lt;/i&gt;,
+ *  or &lt;code&gt;nil&lt;/code&gt; if &lt;i&gt;str&lt;/i&gt; is the empty string.  See also
+ *  &lt;code&gt;String#chomp!&lt;/code&gt;.
+ */
+
+static VALUE
+rb_str_chop_bang(str)
+    VALUE str;
+{
+    if (RSTRING(str)-&gt;len &gt; 0) {
+        rb_str_modify(str);
+        RSTRING(str)-&gt;len--;
+        if (RSTRING(str)-&gt;ptr[RSTRING(str)-&gt;len] == '\n') {
+            if (RSTRING(str)-&gt;len &gt; 0 &amp;&amp;
+                RSTRING(str)-&gt;ptr[RSTRING(str)-&gt;len-1] == '\r') {
+                RSTRING(str)-&gt;len--;
+            }
+        }
+        RSTRING(str)-&gt;ptr[RSTRING(str)-&gt;len] = '\0';
+        return str;
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

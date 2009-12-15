@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>hash (Regexp)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   rxp.hash   =&gt; fixnum
+ *
+ * Produce a hash based on the text and options of this regular expression.
+ */
+
+static VALUE
+rb_reg_hash(re)
+    VALUE re;
+{
+    int hashval, len;
+    char *p;
+
+    rb_reg_check(re);
+    hashval = RREGEXP(re)-&gt;ptr-&gt;options;
+    len = RREGEXP(re)-&gt;len;
+    p  = RREGEXP(re)-&gt;str;
+    while (len--) {
+        hashval = hashval * 33 + *p++;
+    }
+    hashval = hashval + (hashval&gt;&gt;5);
+    
+    return INT2FIX(hashval);
+}</pre>
+</body>
+</html>

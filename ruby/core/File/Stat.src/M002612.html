@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>readable? (File::Stat)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     stat.readable?    =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; if &lt;i&gt;stat&lt;/i&gt; is readable by the
+ *  effective user id of this process.
+ *     
+ *     File.stat(&quot;testfile&quot;).readable?   #=&gt; true
+ *     
+ */
+
+static VALUE
+rb_stat_r(obj)
+    VALUE obj;
+{
+    struct stat *st = get_stat(obj);
+
+#ifdef USE_GETEUID
+    if (geteuid() == 0) return Qtrue;
+#endif
+#ifdef S_IRUSR
+    if (rb_stat_owned(obj))
+        return st-&gt;st_mode &amp; S_IRUSR ? Qtrue : Qfalse;
+#endif
+#ifdef S_IRGRP
+    if (rb_stat_grpowned(obj))
+        return st-&gt;st_mode &amp; S_IRGRP ? Qtrue : Qfalse;
+#endif
+#ifdef S_IROTH
+    if (!(st-&gt;st_mode &amp; S_IROTH)) return Qfalse;
+#endif
+    return Qtrue;
+}</pre>
+</body>
+</html>

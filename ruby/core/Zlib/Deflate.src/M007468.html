@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Zlib::Deflate)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: Zlib::Deflate.new(level=nil, windowBits=nil, memlevel=nil, strategy=nil)
+ *
+ * Creates a new deflate stream for compression. See zlib.h for details of
+ * each argument. If an argument is nil, the default value of that argument is
+ * used.
+ *
+ * TODO: document better!
+ */
+static VALUE
+rb_deflate_initialize(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    struct zstream *z;
+    VALUE level, wbits, memlevel, strategy;
+    int err;
+
+    rb_scan_args(argc, argv, &quot;04&quot;, &amp;level, &amp;wbits, &amp;memlevel, &amp;strategy);
+    Data_Get_Struct(obj, struct zstream, z);
+
+    err = deflateInit2(&amp;z-&gt;stream, ARG_LEVEL(level), Z_DEFLATED,
+                       ARG_WBITS(wbits), ARG_MEMLEVEL(memlevel),
+                       ARG_STRATEGY(strategy));
+    if (err != Z_OK) {
+        raise_zlib_error(err, z-&gt;stream.msg);
+    }
+    ZSTREAM_READY(z);
+
+    return obj;
+}</pre>
+</body>
+</html>

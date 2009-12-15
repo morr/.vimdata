@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>rehash (Hash)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     hsh.rehash -&gt; hsh
+ *  
+ *  Rebuilds the hash based on the current hash values for each key. If
+ *  values of key objects have changed since they were inserted, this
+ *  method will reindex &lt;i&gt;hsh&lt;/i&gt;. If &lt;code&gt;Hash#rehash&lt;/code&gt; is
+ *  called while an iterator is traversing the hash, an
+ *  &lt;code&gt;IndexError&lt;/code&gt; will be raised in the iterator.
+ *     
+ *     a = [ &quot;a&quot;, &quot;b&quot; ]
+ *     c = [ &quot;c&quot;, &quot;d&quot; ]
+ *     h = { a =&gt; 100, c =&gt; 300 }
+ *     h[a]       #=&gt; 100
+ *     a[0] = &quot;z&quot;
+ *     h[a]       #=&gt; nil
+ *     h.rehash   #=&gt; {[&quot;z&quot;, &quot;b&quot;]=&gt;100, [&quot;c&quot;, &quot;d&quot;]=&gt;300}
+ *     h[a]       #=&gt; 100
+ */
+
+static VALUE
+rb_hash_rehash(hash)
+    VALUE hash;
+{
+    st_table *tbl;
+
+    rb_hash_modify(hash);
+    tbl = st_init_table_with_size(&amp;objhash, RHASH(hash)-&gt;tbl-&gt;num_entries);
+    rb_hash_foreach(hash, rb_hash_rehash_i, (st_data_t)tbl);
+    st_free_table(RHASH(hash)-&gt;tbl);
+    RHASH(hash)-&gt;tbl = tbl;
+
+    return hash;
+}</pre>
+</body>
+</html>

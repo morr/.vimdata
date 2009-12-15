@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: WIN32OLE_EVENT</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">WIN32OLE_EVENT</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/win32ole/win32ole_c.html">
+                win32ole/win32ole.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<tt><a href="WIN32OLE_EVENT.html">WIN32OLE_EVENT</a></tt> objects controls
+OLE event.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001624">message_loop</a>&nbsp;&nbsp;
+      <a href="#M001623">new</a>&nbsp;&nbsp;
+      <a href="#M001625">on_event</a>&nbsp;&nbsp;
+      <a href="#M001626">on_event_with_outargs</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001624" class="method-detail">
+        <a name="M001624"></a>
+
+        <div class="method-heading">
+          <a href="#M001624" class="method-signature">
+          <span class="method-name">WIN32OLE_EVENT.message_loop<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Translates and dispatches Windows message.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001624-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001624-source">
+<pre>
+/*
+ *  call-seq:
+ *     WIN32OLE_EVENT.message_loop
+ * 
+ *  Translates and dispatches Windows message.
+ */
+static VALUE
+fev_s_msg_loop(klass)
+    VALUE klass;
+{
+    ole_msg_loop();
+    return Qnil;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001623" class="method-detail">
+        <a name="M001623"></a>
+
+        <div class="method-heading">
+          <a href="#M001623" class="method-signature">
+          <span class="method-name">WIN32OLE_EVENT.new(ole, event) #=> WIN32OLE_EVENT object.<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns OLE event object. The first argument specifies <a
+href="WIN32OLE.html">WIN32OLE</a> object. The second argument specifies OLE
+event name.
+</p>
+<pre>
+   ie = WIN32OLE.new('InternetExplorer.Application')
+   ev = WIN32OLE_EVENT.new(ie, 'DWebBrowserEvents')
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001623-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001623-source">
+<pre>
+/*
+ *  call-seq:
+ *     WIN32OLE_EVENT.new(ole, event) #=&gt; WIN32OLE_EVENT object.
+ *
+ *  Returns OLE event object.
+ *  The first argument specifies WIN32OLE object.
+ *  The second argument specifies OLE event name.
+ *     ie = WIN32OLE.new('InternetExplorer.Application')
+ *     ev = WIN32OLE_EVENT.new(ie, 'DWebBrowserEvents')
+ */     
+static VALUE
+fev_initialize(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE ole, itf;
+    struct oledata *pole;
+    char *pitf;
+    HRESULT hr;
+    IID iid;
+    ITypeInfo *pTypeInfo;
+    IDispatch *pDispatch;
+    IConnectionPointContainer *pContainer;
+    IConnectionPoint *pConnectionPoint;
+    IEVENTSINKOBJ *pIEV;
+    DWORD dwCookie = 0;
+    struct oleeventdata *poleev;
+
+    rb_secure(4);
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;ole, &amp;itf);
+
+    if (!rb_obj_is_kind_of(ole, cWIN32OLE)) {
+        rb_raise(rb_eTypeError, &quot;1st parameter must be WIN32OLE object&quot;);
+    }
+
+    if(TYPE(itf) != T_NIL) {
+        if (ruby_safe_level &gt; 0 &amp;&amp; OBJ_TAINTED(itf)) {
+            rb_raise(rb_eSecurityError, &quot;Insecure Event Creation - %s&quot;,
+                     StringValuePtr(itf));
+        }
+        Check_SafeStr(itf);
+        pitf = StringValuePtr(itf);
+        hr = find_iid(ole, pitf, &amp;iid, &amp;pTypeInfo);
+    }
+    else {
+        hr = find_default_source(ole, &amp;iid, &amp;pTypeInfo);
+    }
+    if (FAILED(hr)) {
+        ole_raise(hr, rb_eRuntimeError, &quot;interface not found&quot;);
+    }
+
+    OLEData_Get_Struct(ole, pole);
+    pDispatch = pole-&gt;pDispatch;
+    hr = pDispatch-&gt;lpVtbl-&gt;QueryInterface(pDispatch,
+                                           &amp;IID_IConnectionPointContainer,
+                                           (void**)&amp;pContainer);
+    if (FAILED(hr)) {
+        OLE_RELEASE(pTypeInfo);
+        ole_raise(hr, rb_eRuntimeError,
+                  &quot;failed to query IConnectionPointContainer&quot;);
+    }
+
+    hr = pContainer-&gt;lpVtbl-&gt;FindConnectionPoint(pContainer,
+                                                 &amp;iid,
+                                                 &amp;pConnectionPoint);
+    OLE_RELEASE(pContainer);
+    if (FAILED(hr)) {
+        OLE_RELEASE(pTypeInfo);
+        ole_raise(hr, rb_eRuntimeError, &quot;failed to query IConnectionPoint&quot;);
+    }
+    pIEV = EVENTSINK_Constructor();
+    pIEV-&gt;m_iid = iid;
+    hr = pConnectionPoint-&gt;lpVtbl-&gt;Advise(pConnectionPoint,
+                                          (IUnknown*)pIEV,
+                                          &amp;dwCookie);
+    if (FAILED(hr)) {
+        ole_raise(hr, rb_eRuntimeError, &quot;Advise Error&quot;);
+    }
+
+    Data_Get_Struct(self, struct oleeventdata, poleev);
+    poleev-&gt;pEvent = pIEV;
+    poleev-&gt;pEvent-&gt;m_event_id
+        = NUM2INT(rb_funcall(ary_ole_event, rb_intern(&quot;length&quot;), 0));
+    poleev-&gt;pEvent-&gt;pConnectionPoint = pConnectionPoint;
+    poleev-&gt;pEvent-&gt;pTypeInfo = pTypeInfo;
+    poleev-&gt;pEvent-&gt;m_dwCookie = dwCookie;
+    poleev-&gt;freed = 0;
+    poleev-&gt;pEvent-&gt;ptr_freed = &amp;(poleev-&gt;freed);
+    rb_ary_push(ary_ole_event, self);
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001625" class="method-detail">
+        <a name="M001625"></a>
+
+        <div class="method-heading">
+          <a href="#M001625" class="method-signature">
+          <span class="method-name">WIN32OLE_EVENT#on_event([event]){...}<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Defines the callback event. If argument is omitted, this method defines the
+callback of all events.
+</p>
+<pre>
+  ie = WIN32OLE.new('InternetExplorer.Application')
+  ev = WIN32OLE_EVENT.new(ie, 'DWebBrowserEvents')
+  ev.on_event(&quot;NavigateComplete&quot;) {|url| puts url}
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001625-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001625-source">
+<pre>
+/*
+ *  call-seq:
+ *     WIN32OLE_EVENT#on_event([event]){...}
+ * 
+ *  Defines the callback event.
+ *  If argument is omitted, this method defines the callback of all events.
+ *    ie = WIN32OLE.new('InternetExplorer.Application')
+ *    ev = WIN32OLE_EVENT.new(ie, 'DWebBrowserEvents')
+ *    ev.on_event(&quot;NavigateComplete&quot;) {|url| puts url}
+ */
+static VALUE
+fev_on_event(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    return ev_on_event(argc, argv, self, Qfalse);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001626" class="method-detail">
+        <a name="M001626"></a>
+
+        <div class="method-heading">
+          <a href="#M001626" class="method-signature">
+          <span class="method-name">WIN32OLE_EVENT#on_event_with_outargs([event]){...}<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Defines the callback of event. If you want modify argument in callback, you
+should use this method instead of <a
+href="WIN32OLE_EVENT.html#M001625">WIN32OLE_EVENT#on_event</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001626-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001626-source">
+<pre>
+/*
+ *  call-seq:
+ *     WIN32OLE_EVENT#on_event_with_outargs([event]){...}
+ * 
+ *  Defines the callback of event.
+ *  If you want modify argument in callback, 
+ *  you should use this method instead of WIN32OLE_EVENT#on_event.
+ */
+static VALUE
+fev_on_event_with_outargs(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    return ev_on_event(argc, argv, self, Qtrue);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

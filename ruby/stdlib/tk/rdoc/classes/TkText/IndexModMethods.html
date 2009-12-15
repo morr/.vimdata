@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: TkText::IndexModMethods</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">TkText::IndexModMethods</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/tk/lib/tk/text_rb.html">
+                tk/lib/tk/text.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M005269">+</a>&nbsp;&nbsp;
+      <a href="#M005270">-</a>&nbsp;&nbsp;
+      <a href="#M005276">any_char</a>&nbsp;&nbsp;
+      <a href="#M005275">any_chars</a>&nbsp;&nbsp;
+      <a href="#M005279">any_indices</a>&nbsp;&nbsp;
+      <a href="#M005285">any_line</a>&nbsp;&nbsp;
+      <a href="#M005284">any_lines</a>&nbsp;&nbsp;
+      <a href="#M005272">char</a>&nbsp;&nbsp;
+      <a href="#M005271">chars</a>&nbsp;&nbsp;
+      <a href="#M005274">display_char</a>&nbsp;&nbsp;
+      <a href="#M005273">display_chars</a>&nbsp;&nbsp;
+      <a href="#M005278">display_indices</a>&nbsp;&nbsp;
+      <a href="#M005283">display_line</a>&nbsp;&nbsp;
+      <a href="#M005289">display_lineend</a>&nbsp;&nbsp;
+      <a href="#M005282">display_lines</a>&nbsp;&nbsp;
+      <a href="#M005288">display_linestart</a>&nbsp;&nbsp;
+      <a href="#M005293">display_wordend</a>&nbsp;&nbsp;
+      <a href="#M005292">display_wordstart</a>&nbsp;&nbsp;
+      <a href="#M005277">indices</a>&nbsp;&nbsp;
+      <a href="#M005281">line</a>&nbsp;&nbsp;
+      <a href="#M005287">lineend</a>&nbsp;&nbsp;
+      <a href="#M005280">lines</a>&nbsp;&nbsp;
+      <a href="#M005286">linestart</a>&nbsp;&nbsp;
+      <a href="#M005291">wordend</a>&nbsp;&nbsp;
+      <a href="#M005290">wordstart</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M005269" class="m-detail">
+        <a name="M005269"></a>
+
+        <div class="method-heading">
+          <a href="#M005269" class="method-signature">
+          <span class="method-name">+</span><span class="method-args">(mod)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005269-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005269-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 72</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-operator">+</span>(<span class="ruby-identifier">mod</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">chars</span>(<span class="ruby-identifier">mod</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Numeric</span>)
+
+      <span class="ruby-identifier">mod</span> = <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^\s*[+-]?\d/</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' + '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005270" class="m-detail">
+        <a name="M005270"></a>
+
+        <div class="method-heading">
+          <a href="#M005270" class="method-signature">
+          <span class="method-name">-</span><span class="method-args">(mod)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005270-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005270-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 83</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-operator">-</span>(<span class="ruby-identifier">mod</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">chars</span>(<span class="ruby-operator">-</span><span class="ruby-identifier">mod</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Numeric</span>)
+
+      <span class="ruby-identifier">mod</span> = <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^\s*[+-]?\d/</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' - '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>)
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">mod</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^\s*[-]\s+(\d.*)$/</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' - -'</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">$1</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005276" class="m-detail">
+        <a name="M005276"></a>
+
+        <div class="method-heading">
+          <span class="method-name">any_char</span><span class="method-args">(mod)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="IndexModMethods.html#M005275">any_chars</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005275" class="m-detail">
+        <a name="M005275"></a>
+
+        <div class="method-heading">
+          <a href="#M005275" class="method-signature">
+          <span class="method-name">any_chars</span><span class="method-args">(mod)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005275-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005275-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 117</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">any_chars</span>(<span class="ruby-identifier">mod</span>)
+      <span class="ruby-comment cmt"># Tk8.5 feature</span>
+      <span class="ruby-identifier">fail</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'expect Integer'</span>  <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' any chars'</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' + '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' any chars'</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005279" class="m-detail">
+        <a name="M005279"></a>
+
+        <div class="method-heading">
+          <a href="#M005279" class="method-signature">
+          <span class="method-name">any_indices</span><span class="method-args">(mod)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005279-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005279-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 148</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">any_indices</span>(<span class="ruby-identifier">mod</span>)
+      <span class="ruby-comment cmt"># Tk8.5 feature</span>
+      <span class="ruby-identifier">fail</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'expect Integer'</span>  <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' any indices'</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' + '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' any indices'</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005285" class="m-detail">
+        <a name="M005285"></a>
+
+        <div class="method-heading">
+          <span class="method-name">any_line</span><span class="method-args">(mod)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="IndexModMethods.html#M005284">any_lines</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005284" class="m-detail">
+        <a name="M005284"></a>
+
+        <div class="method-heading">
+          <a href="#M005284" class="method-signature">
+          <span class="method-name">any_lines</span><span class="method-args">(mod)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005284-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005284-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 179</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">any_lines</span>(<span class="ruby-identifier">mod</span>)
+      <span class="ruby-comment cmt"># Tk8.5 feature</span>
+      <span class="ruby-identifier">fail</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'expect Integer'</span>  <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' any_lines'</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' + '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' any lines'</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005272" class="m-detail">
+        <a name="M005272"></a>
+
+        <div class="method-heading">
+          <span class="method-name">char</span><span class="method-args">(mod)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="IndexModMethods.html#M005271">chars</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005271" class="m-detail">
+        <a name="M005271"></a>
+
+        <div class="method-heading">
+          <a href="#M005271" class="method-signature">
+          <span class="method-name">chars</span><span class="method-args">(mod)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005271-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005271-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 96</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">chars</span>(<span class="ruby-identifier">mod</span>)
+      <span class="ruby-identifier">fail</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'expect Integer'</span>  <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' chars'</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' + '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' chars'</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005274" class="m-detail">
+        <a name="M005274"></a>
+
+        <div class="method-heading">
+          <span class="method-name">display_char</span><span class="method-args">(mod)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="IndexModMethods.html#M005273">display_chars</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005273" class="m-detail">
+        <a name="M005273"></a>
+
+        <div class="method-heading">
+          <a href="#M005273" class="method-signature">
+          <span class="method-name">display_chars</span><span class="method-args">(mod)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005273-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005273-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 106</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">display_chars</span>(<span class="ruby-identifier">mod</span>)
+      <span class="ruby-comment cmt"># Tk8.5 feature</span>
+      <span class="ruby-identifier">fail</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'expect Integer'</span>  <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' display chars'</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' + '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' display chars'</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005278" class="m-detail">
+        <a name="M005278"></a>
+
+        <div class="method-heading">
+          <a href="#M005278" class="method-signature">
+          <span class="method-name">display_indices</span><span class="method-args">(mod)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005278-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005278-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 138</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">display_indices</span>(<span class="ruby-identifier">mod</span>)
+      <span class="ruby-comment cmt"># Tk8.5 feature</span>
+      <span class="ruby-identifier">fail</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'expect Integer'</span>  <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' display indices'</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' + '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' display indices'</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005283" class="m-detail">
+        <a name="M005283"></a>
+
+        <div class="method-heading">
+          <span class="method-name">display_line</span><span class="method-args">(mod)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="IndexModMethods.html#M005282">display_lines</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005289" class="m-detail">
+        <a name="M005289"></a>
+
+        <div class="method-heading">
+          <a href="#M005289" class="method-signature">
+          <span class="method-name">display_lineend</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005289-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005289-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 201</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">display_lineend</span>
+      <span class="ruby-comment cmt"># Tk8.5 feature</span>
+      <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' display lineend'</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005282" class="m-detail">
+        <a name="M005282"></a>
+
+        <div class="method-heading">
+          <a href="#M005282" class="method-signature">
+          <span class="method-name">display_lines</span><span class="method-args">(mod)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005282-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005282-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 168</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">display_lines</span>(<span class="ruby-identifier">mod</span>)
+      <span class="ruby-comment cmt"># Tk8.5 feature</span>
+      <span class="ruby-identifier">fail</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'expect Integer'</span>  <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' display_lines'</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' + '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' display lines'</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005288" class="m-detail">
+        <a name="M005288"></a>
+
+        <div class="method-heading">
+          <a href="#M005288" class="method-signature">
+          <span class="method-name">display_linestart</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005288-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005288-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 197</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">display_linestart</span>
+      <span class="ruby-comment cmt"># Tk8.5 feature</span>
+      <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' display linestart'</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005293" class="m-detail">
+        <a name="M005293"></a>
+
+        <div class="method-heading">
+          <a href="#M005293" class="method-signature">
+          <span class="method-name">display_wordend</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005293-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005293-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 217</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">display_wordend</span>
+      <span class="ruby-comment cmt"># Tk8.5 feature</span>
+      <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' display wordend'</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005292" class="m-detail">
+        <a name="M005292"></a>
+
+        <div class="method-heading">
+          <a href="#M005292" class="method-signature">
+          <span class="method-name">display_wordstart</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005292-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005292-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 213</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">display_wordstart</span>
+      <span class="ruby-comment cmt"># Tk8.5 feature</span>
+      <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' display wordstart'</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005277" class="m-detail">
+        <a name="M005277"></a>
+
+        <div class="method-heading">
+          <a href="#M005277" class="method-signature">
+          <span class="method-name">indices</span><span class="method-args">(mod)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005277-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005277-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 128</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">indices</span>(<span class="ruby-identifier">mod</span>)
+      <span class="ruby-comment cmt"># Tk8.5 feature</span>
+      <span class="ruby-identifier">fail</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'expect Integer'</span>  <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' indices'</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' + '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' indices'</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005281" class="m-detail">
+        <a name="M005281"></a>
+
+        <div class="method-heading">
+          <span class="method-name">line</span><span class="method-args">(mod)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="IndexModMethods.html#M005280">lines</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M005287" class="m-detail">
+        <a name="M005287"></a>
+
+        <div class="method-heading">
+          <a href="#M005287" class="method-signature">
+          <span class="method-name">lineend</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005287-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005287-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 193</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">lineend</span>
+      <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' lineend'</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005280" class="m-detail">
+        <a name="M005280"></a>
+
+        <div class="method-heading">
+          <a href="#M005280" class="method-signature">
+          <span class="method-name">lines</span><span class="method-args">(mod)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005280-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005280-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 158</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">lines</span>(<span class="ruby-identifier">mod</span>)
+      <span class="ruby-identifier">fail</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'expect Integer'</span>  <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mod</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' lines'</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' + '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">mod</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' lines'</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005286" class="m-detail">
+        <a name="M005286"></a>
+
+        <div class="method-heading">
+          <a href="#M005286" class="method-signature">
+          <span class="method-name">linestart</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005286-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005286-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 190</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">linestart</span>
+      <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' linestart'</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005291" class="m-detail">
+        <a name="M005291"></a>
+
+        <div class="method-heading">
+          <a href="#M005291" class="method-signature">
+          <span class="method-name">wordend</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005291-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005291-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 209</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">wordend</span>
+      <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' wordend'</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M005290" class="m-detail">
+        <a name="M005290"></a>
+
+        <div class="method-heading">
+          <a href="#M005290" class="method-signature">
+          <span class="method-name">wordstart</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M005290-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M005290-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/text.rb, line 206</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">wordstart</span>
+      <span class="ruby-constant">TkText</span><span class="ruby-operator">::</span><span class="ruby-constant">IndexString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">String</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' wordstart'</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 2 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a service of <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, AZ</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>trace_var (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     trace_var(symbol, cmd )             =&gt; nil
+ *     trace_var(symbol) {|val| block }    =&gt; nil
+ *  
+ *  Controls tracing of assignments to global variables. The parameter
+ *  +symbol_ identifies the variable (as either a string name or a
+ *  symbol identifier). _cmd_ (which may be a string or a
+ *  +Proc+ object) or block is executed whenever the variable
+ *  is assigned. The block or +Proc+ object receives the
+ *  variable's new value as a parameter. Also see
+ *  &lt;code&gt;Kernel::untrace_var&lt;/code&gt;.
+ *     
+ *     trace_var :$_, proc {|v| puts &quot;$_ is now '#{v}'&quot; }
+ *     $_ = &quot;hello&quot;
+ *     $_ = ' there'
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     $_ is now 'hello'
+ *     $_ is now ' there'
+ */
+
+VALUE
+rb_f_trace_var(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE var, cmd;
+    struct global_entry *entry;
+    struct trace_var *trace;
+
+    rb_secure(4);
+    if (rb_scan_args(argc, argv, &quot;11&quot;, &amp;var, &amp;cmd) == 1) {
+	cmd = rb_block_proc();
+    }
+    if (NIL_P(cmd)) {
+	return rb_f_untrace_var(argc, argv);
+    }
+    entry = rb_global_entry(rb_to_id(var));
+    if (OBJ_TAINTED(cmd)) {
+	rb_raise(rb_eSecurityError, &quot;Insecure: tainted variable trace&quot;);
+    }
+    trace = ALLOC(struct trace_var);
+    trace-&gt;next = entry-&gt;var-&gt;trace;
+    trace-&gt;func = rb_trace_eval;
+    trace-&gt;data = cmd;
+    trace-&gt;removed = 0;
+    entry-&gt;var-&gt;trace = trace;
+
+    return Qnil;
+}</pre>
+</body>
+</html>

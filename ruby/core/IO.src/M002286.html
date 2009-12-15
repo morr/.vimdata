@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>close (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.close   =&gt; nil
+ *  
+ *  Closes &lt;em&gt;ios&lt;/em&gt; and flushes any pending writes to the operating
+ *  system. The stream is unavailable for any further data operations;
+ *  an &lt;code&gt;IOError&lt;/code&gt; is raised if such an attempt is made. I/O
+ *  streams are automatically closed when they are claimed by the
+ *  garbage collector.
+ *
+ *  If &lt;em&gt;ios&lt;/em&gt; is opened by &lt;code&gt;IO.popen&lt;/code&gt;,
+ *  &lt;code&gt;close&lt;/code&gt; sets &lt;code&gt;$?&lt;/code&gt;.
+ */
+
+static VALUE
+rb_io_close_m(io)
+    VALUE io;
+{
+    if (rb_safe_level() &gt;= 4 &amp;&amp; !OBJ_TAINTED(io)) {
+        rb_raise(rb_eSecurityError, &quot;Insecure: can't close&quot;);
+    }
+    rb_io_check_closed(RFILE(io)-&gt;fptr);
+    rb_io_close(io);
+    return Qnil;
+}</pre>
+</body>
+</html>

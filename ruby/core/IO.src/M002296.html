@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>pid (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.pid    =&gt; fixnum
+ *  
+ *  Returns the process ID of a child process associated with
+ *  &lt;em&gt;ios&lt;/em&gt;. This will be set by &lt;code&gt;IO::popen&lt;/code&gt;.
+ *     
+ *     pipe = IO.popen(&quot;-&quot;)
+ *     if pipe
+ *       $stderr.puts &quot;In parent, child pid is #{pipe.pid}&quot;
+ *     else
+ *       $stderr.puts &quot;In child, pid is #{$$}&quot;
+ *     end
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     In child, pid is 26209
+ *     In parent, child pid is 26209
+ */
+
+static VALUE
+rb_io_pid(io)
+    VALUE io;
+{
+    OpenFile *fptr;
+
+    GetOpenFile(io, fptr);
+    if (!fptr-&gt;pid)
+        return Qnil;
+    return INT2FIX(fptr-&gt;pid);
+}</pre>
+</body>
+</html>

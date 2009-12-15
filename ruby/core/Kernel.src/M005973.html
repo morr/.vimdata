@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>srand (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     srand(number=0)    =&gt; old_seed
+ *  
+ *  Seeds the pseudorandom number generator to the value of
+ *  &lt;i&gt;number&lt;/i&gt;.&lt;code&gt;to_i.abs&lt;/code&gt;. If &lt;i&gt;number&lt;/i&gt; is omitted,
+ *  seeds the generator using a combination of the time, the
+ *  process id, and a sequence number. (This is also the behavior if
+ *  &lt;code&gt;Kernel::rand&lt;/code&gt; is called without previously calling
+ *  &lt;code&gt;srand&lt;/code&gt;, but without the sequence.) By setting the seed
+ *  to a known value, scripts can be made deterministic during testing.
+ *  The previous seed value is returned. Also see &lt;code&gt;Kernel::rand&lt;/code&gt;.
+ */
+
+static VALUE
+rb_f_srand(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    VALUE seed, old;
+
+    rb_secure(4);
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;seed) == 0) {
+        seed = random_seed();
+    }
+    old = rand_init(seed);
+
+    return old;
+}</pre>
+</body>
+</html>

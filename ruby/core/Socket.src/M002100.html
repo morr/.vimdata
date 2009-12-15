@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>getservbyname (Socket)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Document-method: getservbyname
+ * call-seq: Socket.getservbyname(name, proto=&quot;tcp&quot;) =&gt; port
+ *
+ * +name+ is a service name (&quot;ftp&quot;, &quot;telnet&quot;, ...) and proto is a protocol name
+ * (&quot;udp&quot;, &quot;tcp&quot;, ...). '/etc/services' (or your system's equivalent) is
+ * searched for a service for +name+ and +proto+, and the port number is
+ * returned.
+ *
+ * Note that unlike Socket.getaddrinfo, +proto+ may not be specified using the
+ * Socket::SOCK_* constants, a string must must be used.
+ */
+static VALUE
+sock_s_getservbyaname(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE service, proto;
+    struct servent *sp;
+    int port;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;service, &amp;proto);
+    if (NIL_P(proto)) proto = rb_str_new2(&quot;tcp&quot;);
+    StringValue(service);
+    StringValue(proto);
+
+    sp = getservbyname(StringValueCStr(service),  StringValueCStr(proto));
+    if (sp) {
+        port = ntohs(sp-&gt;s_port);
+    }
+    else {
+        char *s = RSTRING(service)-&gt;ptr;
+        char *end;
+
+        port = strtoul(s, &amp;end, 0);
+        if (*end != '\0') {
+            rb_raise(rb_eSocket, &quot;no such service %s/%s&quot;, s, RSTRING(proto)-&gt;ptr);
+        }
+    }
+    return INT2FIX(port);
+}</pre>
+</body>
+</html>

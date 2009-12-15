@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: OpenURI::OpenRead</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">OpenURI::OpenRead</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/open-uri_rb.html">
+                open-uri.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Mixin for HTTP and FTP URIs.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000832">open</a>&nbsp;&nbsp;
+      <a href="#M000833">read</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000832" class="method-detail">
+        <a name="M000832"></a>
+
+        <div class="method-heading">
+          <a href="#M000832" class="method-signature">
+          <span class="method-name">open</span><span class="method-args">(*rest, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="OpenRead.html#M000832">OpenURI::OpenRead#open</a> provides `<a
+href="OpenRead.html#M000832">open</a>&#8217; for <a
+href="../URI/HTTP.html">URI::HTTP</a> and <a
+href="../URI/FTP.html">URI::FTP</a>.
+</p>
+<p>
+<a href="OpenRead.html#M000832">OpenURI::OpenRead#open</a> takes optional 3
+arguments as: <a
+href="OpenRead.html#M000832">OpenURI::OpenRead#open</a>([mode [, perm]] [,
+options]) [{|io| &#8230; }]
+</p>
+<p>
+`mode&#8217;, `perm&#8217; is same as <a
+href="../Kernel.html#M000839">Kernel#open</a>.
+</p>
+<p>
+However, `mode&#8217; must be <a href="OpenRead.html#M000833">read</a> mode
+because <a href="OpenRead.html#M000832">OpenURI::OpenRead#open</a>
+doesn&#8216;t support write mode (yet). Also `perm&#8217; is just ignored
+because it is meaningful only for file creation.
+</p>
+<p>
+`options&#8217; must be a hash.
+</p>
+<p>
+Each pairs which key is a string in the hash specify a extra header field
+for HTTP. I.e. it is ignored for FTP without HTTP proxy.
+</p>
+<p>
+The hash may include other options which key is a symbol:
+</p>
+<dl>
+<dt>:proxy</dt><dd>Synopsis:
+
+<pre>
+  :proxy =&gt; &quot;http://proxy.foo.com:8000/&quot;
+  :proxy =&gt; URI.parse(&quot;http://proxy.foo.com:8000/&quot;)
+  :proxy =&gt; true
+  :proxy =&gt; false
+  :proxy =&gt; nil
+</pre>
+<p>
+If :proxy option is specified, the value should be String, <a
+href="../URI.html">URI</a>, boolean or nil. When String or <a
+href="../URI.html">URI</a> is given, it is treated as proxy <a
+href="../URI.html">URI</a>. When true is given or the option itself is not
+specified, environment variable `scheme_proxy&#8217; is examined.
+`scheme&#8217; is replaced by `http&#8217;, `https&#8217; or `ftp&#8217;.
+When false or nil is given, the environment variables are ignored and
+connection will be made to a server directly.
+</p>
+</dd>
+<dt>:http_basic_authentication</dt><dd>Synopsis:
+
+<pre>
+  :http_basic_authentication=&gt;[user, password]
+</pre>
+<p>
+If :http_basic_authentication is specified, the value should be an array
+which contains 2 strings: username and password. It is used for HTTP Basic
+authentication defined by RFC 2617.
+</p>
+</dd>
+<dt>:content_length_proc</dt><dd>Synopsis:
+
+<pre>
+  :content_length_proc =&gt; lambda {|content_length| ... }
+</pre>
+<p>
+If :content_length_proc option is specified, the option value procedure is
+called before actual transfer is started. It takes one argument which is
+expected content length in bytes.
+</p>
+<p>
+If two or more transfer is done by HTTP redirection, the procedure is
+called only one for a last transfer.
+</p>
+<p>
+When expected content length is unknown, the procedure is called with nil.
+It is happen when HTTP response has no Content-Length header.
+</p>
+</dd>
+<dt>:progress_proc</dt><dd>Synopsis:
+
+<pre>
+  :progress_proc =&gt; lambda {|size| ...}
+</pre>
+<p>
+If :progress_proc option is specified, the proc is called with one argument
+each time when `<a href="OpenRead.html#M000832">open</a>&#8217; gets
+content fragment from network. The argument `size&#8217; `size&#8217; is a
+accumulated transfered size in bytes.
+</p>
+<p>
+If two or more transfer is done by HTTP redirection, the procedure is
+called only one for a last transfer.
+</p>
+<p>
+:progress_proc and :content_length_proc are intended to be used for
+progress bar. For example, it can be implemented as follows using
+Ruby/ProgressBar.
+</p>
+<pre>
+  pbar = nil
+  open(&quot;http://...&quot;,
+    :content_length_proc =&gt; lambda {|t|
+      if t &amp;&amp; 0 &lt; t
+        pbar = ProgressBar.new(&quot;...&quot;, t)
+        pbar.file_transfer_mode
+      end
+    },
+    :progress_proc =&gt; lambda {|s|
+      pbar.set s if pbar
+    }) {|f| ... }
+</pre>
+</dd>
+</dl>
+<p>
+<a href="OpenRead.html#M000832">OpenURI::OpenRead#open</a> returns an IO
+like object if block is not given. Otherwise it yields the IO object and
+return the value of the block. The IO object is extended with <a
+href="Meta.html">OpenURI::Meta</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000832-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000832-source">
+<pre>
+<span class="ruby-comment cmt"># File open-uri.rb, line 517</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">open</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">rest</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-constant">OpenURI</span>.<span class="ruby-identifier">open_uri</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">rest</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000833" class="method-detail">
+        <a name="M000833"></a>
+
+        <div class="method-heading">
+          <a href="#M000833" class="method-signature">
+          <span class="method-name">read</span><span class="method-args">(options={})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="OpenRead.html#M000833">OpenURI::OpenRead#read</a>([options]) reads
+a content referenced by self and returns the content as string. The string
+is extended with <a href="Meta.html">OpenURI::Meta</a>. The argument
+`options&#8217; is same as <a
+href="OpenRead.html#M000832">OpenURI::OpenRead#open</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000833-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000833-source">
+<pre>
+<span class="ruby-comment cmt"># File open-uri.rb, line 525</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">read</span>(<span class="ruby-identifier">options</span>={})
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">options</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">str</span> = <span class="ruby-identifier">f</span>.<span class="ruby-identifier">read</span>
+        <span class="ruby-constant">Meta</span>.<span class="ruby-identifier">init</span> <span class="ruby-identifier">str</span>, <span class="ruby-identifier">f</span>
+        <span class="ruby-identifier">str</span>
+      }
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

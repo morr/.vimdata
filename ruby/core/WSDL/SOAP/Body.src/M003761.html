@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>parse_attr (WSDL::SOAP::Body)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/wsdl/soap/body.rb, line 34</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_attr</span>(<span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">attr</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">PartsAttrName</span>
+      <span class="ruby-ivar">@parts</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">source</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">UseAttrName</span>
+      <span class="ruby-keyword kw">if</span> [<span class="ruby-value str">'literal'</span>, <span class="ruby-value str">'encoded'</span>].<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">value</span>.<span class="ruby-identifier">source</span>)
+        <span class="ruby-ivar">@use</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">source</span>.<span class="ruby-identifier">intern</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;unknown use of soap:body: #{value.source}&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">EncodingStyleAttrName</span>
+      <span class="ruby-ivar">@encodingstyle</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">source</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">NamespaceAttrName</span>
+      <span class="ruby-ivar">@namespace</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">source</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

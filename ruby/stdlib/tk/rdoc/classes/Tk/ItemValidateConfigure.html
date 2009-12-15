@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Tk::ItemValidateConfigure</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Tk::ItemValidateConfigure</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/tk/lib/tk/validation_rb.html">
+                tk/lib/tk/validation.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M006202">__conv_item_vcmd_on_hash_kv</a>&nbsp;&nbsp;
+      <a href="#M006198">__def_validcmd</a>&nbsp;&nbsp;
+      <a href="#M006201">__get_item_validate_key2class</a>&nbsp;&nbsp;
+      <a href="#M006200">__item_validation_class_list</a>&nbsp;&nbsp;
+      <a href="#M006199">__item_validcmd_call</a>&nbsp;&nbsp;
+      <a href="#M006203">itemconfigure</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M006198" class="m-detail">
+        <a name="M006198"></a>
+
+        <div class="method-heading">
+          <a href="#M006198" class="method-signature">
+          <span class="method-name">__def_validcmd</span><span class="method-args">(scope, klass, keys=nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M006198-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M006198-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/validation.rb, line 110</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">__def_validcmd</span>(<span class="ruby-identifier">scope</span>, <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">keys</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">keys</span> = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">_config_keys</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">keys</span>
+      <span class="ruby-identifier">keys</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">eval</span>(<span class="ruby-node">&quot;def item_#{key}(id, *args, &amp;b)
+                 __item_validcmd_call(#{klass.name}, '#{key}', id, *args, &amp;b)
+              end&quot;</span>, <span class="ruby-identifier">scope</span>)
+      }
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M006202" class="m-detail">
+        <a name="M006202"></a>
+
+        <div class="method-heading">
+          <a href="#M006202" class="method-signature">
+          <span class="method-name">__conv_item_vcmd_on_hash_kv</span><span class="method-args">(keys)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M006202-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M006202-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/validation.rb, line 147</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">__conv_item_vcmd_on_hash_kv</span>(<span class="ruby-identifier">keys</span>)
+      <span class="ruby-identifier">key2class</span> = <span class="ruby-identifier">__get_item_validate_key2class</span>(<span class="ruby-identifier">tagid</span>(<span class="ruby-identifier">tagOrId</span>))
+
+      <span class="ruby-identifier">keys</span> = <span class="ruby-identifier">_symbolkey2str</span>(<span class="ruby-identifier">keys</span>)
+      <span class="ruby-identifier">key2class</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">klass</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">keys</span>[<span class="ruby-identifier">key</span>].<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Array</span>)
+          <span class="ruby-identifier">cmd</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> = <span class="ruby-identifier">keys</span>[<span class="ruby-identifier">key</span>]
+          <span class="ruby-identifier">keys</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">cmd</span>, <span class="ruby-identifier">args</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">' '</span>))
+        <span class="ruby-comment cmt"># elsif keys[key].kind_of?(Proc) || keys[key].kind_of?(Method)</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">TkComm</span>.<span class="ruby-identifier">_callback_entry?</span>(<span class="ruby-identifier">keys</span>[<span class="ruby-identifier">key</span>])
+          <span class="ruby-identifier">keys</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">keys</span>[<span class="ruby-identifier">key</span>])
+        <span class="ruby-keyword kw">end</span>
+      }
+      <span class="ruby-identifier">keys</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M006201" class="m-detail">
+        <a name="M006201"></a>
+
+        <div class="method-heading">
+          <a href="#M006201" class="method-signature">
+          <span class="method-name">__get_item_validate_key2class</span><span class="method-args">(id)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M006201-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M006201-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/validation.rb, line 138</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">__get_item_validate_key2class</span>(<span class="ruby-identifier">id</span>)
+      <span class="ruby-identifier">k2c</span> = {}
+      <span class="ruby-identifier">__item_validation_class_list</span>(<span class="ruby-identifier">id</span>).<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">klass</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">_config_keys</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">k2c</span>[<span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>] = <span class="ruby-identifier">klass</span>
+        }
+      }
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M006200" class="m-detail">
+        <a name="M006200"></a>
+
+        <div class="method-heading">
+          <a href="#M006200" class="method-signature">
+          <span class="method-name">__item_validation_class_list</span><span class="method-args">(id)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M006200-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M006200-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/validation.rb, line 133</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">__item_validation_class_list</span>(<span class="ruby-identifier">id</span>)
+      <span class="ruby-comment cmt"># maybe need to override</span>
+      []
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M006199" class="m-detail">
+        <a name="M006199"></a>
+
+        <div class="method-heading">
+          <a href="#M006199" class="method-signature">
+          <span class="method-name">__item_validcmd_call</span><span class="method-args">(tagOrId, klass, key, *args, &amp;b)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M006199-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M006199-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/validation.rb, line 119</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">__item_validcmd_call</span>(<span class="ruby-identifier">tagOrId</span>, <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">key</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">itemcget</span>(<span class="ruby-identifier">tagid</span>(<span class="ruby-identifier">tagOrId</span>), <span class="ruby-identifier">key</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">b</span>
+
+      <span class="ruby-identifier">cmd</span> = (<span class="ruby-identifier">b</span>)<span class="ruby-operator">?</span> <span class="ruby-identifier">proc</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-identifier">klass</span>)
+        <span class="ruby-identifier">itemconfigure</span>(<span class="ruby-identifier">tagid</span>(<span class="ruby-identifier">tagOrId</span>), <span class="ruby-identifier">key</span>, <span class="ruby-identifier">cmd</span>)
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-operator">!</span><span class="ruby-identifier">args</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">itemconfigure</span>(<span class="ruby-identifier">tagid</span>(<span class="ruby-identifier">tagOrId</span>), <span class="ruby-identifier">key</span>, [<span class="ruby-identifier">cmd</span>, <span class="ruby-identifier">args</span>])
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">itemconfigure</span>(<span class="ruby-identifier">tagid</span>(<span class="ruby-identifier">tagOrId</span>), <span class="ruby-identifier">key</span>, <span class="ruby-identifier">cmd</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M006203" class="m-detail">
+        <a name="M006203"></a>
+
+        <div class="method-heading">
+          <a href="#M006203" class="method-signature">
+          <span class="method-name">itemconfigure</span><span class="method-args">(tagOrId, slot, value=TkComm::None)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M006203-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M006203-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/validation.rb, line 163</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">itemconfigure</span>(<span class="ruby-identifier">tagOrId</span>, <span class="ruby-identifier">slot</span>, <span class="ruby-identifier">value</span>=<span class="ruby-constant">TkComm</span><span class="ruby-operator">::</span><span class="ruby-constant">None</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">slot</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Hash</span>)
+        <span class="ruby-keyword kw">super</span>(<span class="ruby-identifier">__conv_item_vcmd_on_hash_kv</span>(<span class="ruby-identifier">slot</span>))
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">super</span>(<span class="ruby-identifier">__conv_item_vcmd_on_hash_kv</span>(<span class="ruby-identifier">slot</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">value</span>))
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">self</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 4 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>initialize_copy (StringScanner)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   dup
+ *   clone
+ *
+ * Duplicates a StringScanner object.
+ */
+static VALUE
+strscan_init_copy(VALUE vself, VALUE vorig)
+{
+    struct strscanner *self, *orig;
+
+    Data_Get_Struct(vself, struct strscanner, self);
+    check_strscan(vorig);
+    Data_Get_Struct(vorig, struct strscanner, orig);
+    if (self != orig) {
+        self-&gt;flags = orig-&gt;flags;
+        self-&gt;str = orig-&gt;str;
+        self-&gt;prev = orig-&gt;prev;
+        self-&gt;curr = orig-&gt;curr;
+        re_copy_registers(&amp;self-&gt;regs, &amp;orig-&gt;regs);
+    }
+    return vself;
+}</pre>
+</body>
+</html>

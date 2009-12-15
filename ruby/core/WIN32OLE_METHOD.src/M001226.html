@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>event? (WIN32OLE_METHOD)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE_METHOD#event?
+ * 
+ *  Returns true if the method is event.
+ *     tobj = WIN32OLE_TYPE.new('Microsoft Excel 9.0 Object Library', 'Workbook')
+ *     method = WIN32OLE_METHOD.new(tobj, 'SheetActivate')
+ *     puts method.event? # =&gt; true
+ *
+ */
+static VALUE
+folemethod_event(self)
+    VALUE self;
+{
+    struct olemethoddata *pmethod;
+    Data_Get_Struct(self, struct olemethoddata, pmethod);
+    if (!pmethod-&gt;pOwnerTypeInfo)
+        return Qfalse;
+    return ole_method_event(pmethod-&gt;pOwnerTypeInfo, 
+                            pmethod-&gt;index,
+                            rb_ivar_get(self, rb_intern(&quot;name&quot;)));
+}</pre>
+</body>
+</html>

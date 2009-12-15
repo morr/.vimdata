@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>convert_html (SM::AttributeManager)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/markup/simple_markup/inline.rb, line 170</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">convert_html</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">attrs</span>)
+      <span class="ruby-identifier">tags</span> = <span class="ruby-constant">HTML_TAGS</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;|&quot;</span>)
+      <span class="ruby-identifier">re</span> = <span class="ruby-node">&quot;&lt;(#{tags})&gt;(.*?)&lt;/\\1&gt;&quot;</span>
+      <span class="ruby-value">1</span> <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">re</span>, <span class="ruby-constant">Regexp</span><span class="ruby-operator">::</span><span class="ruby-constant">IGNORECASE</span>)) {
+        <span class="ruby-identifier">attr</span> = <span class="ruby-constant">HTML_TAGS</span>[<span class="ruby-identifier">$1</span>.<span class="ruby-identifier">downcase</span>]
+        <span class="ruby-identifier">html_length</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-value">2</span>
+        <span class="ruby-identifier">seq</span> = <span class="ruby-constant">NULL</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">html_length</span>
+        <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">set_attrs</span>(<span class="ruby-identifier">$`</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">html_length</span>, <span class="ruby-identifier">$2</span>.<span class="ruby-identifier">length</span>, <span class="ruby-identifier">attr</span>)
+        <span class="ruby-identifier">seq</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$2</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">seq</span> <span class="ruby-operator">+</span> <span class="ruby-constant">NULL</span>
+      }
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

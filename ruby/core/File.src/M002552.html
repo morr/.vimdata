@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>truncate (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     file.truncate(integer)    =&gt; 0
+ *  
+ *  Truncates &lt;i&gt;file&lt;/i&gt; to at most &lt;i&gt;integer&lt;/i&gt; bytes. The file
+ *  must be opened for writing. Not available on all platforms.
+ *     
+ *     f = File.new(&quot;out&quot;, &quot;w&quot;)
+ *     f.syswrite(&quot;1234567890&quot;)   #=&gt; 10
+ *     f.truncate(5)              #=&gt; 0
+ *     f.close()                  #=&gt; nil
+ *     File.size(&quot;out&quot;)           #=&gt; 5
+ */
+
+static VALUE
+rb_file_truncate(obj, len)
+    VALUE obj, len;
+{
+    OpenFile *fptr;
+    FILE *f;
+    off_t pos;
+
+    rb_secure(2);
+    pos = NUM2OFFT(len);
+    GetOpenFile(obj, fptr);
+    if (!(fptr-&gt;mode &amp; FMODE_WRITABLE)) {
+        rb_raise(rb_eIOError, &quot;not opened for writing&quot;);
+    }
+    f = GetWriteFile(fptr);
+    fflush(f);
+    fseeko(f, (off_t)0, SEEK_CUR);
+#ifdef HAVE_FTRUNCATE
+    if (ftruncate(fileno(f), pos) &lt; 0)
+        rb_sys_fail(fptr-&gt;path);
+#else
+# ifdef HAVE_CHSIZE
+    if (chsize(fileno(f), pos) &lt; 0)
+        rb_sys_fail(fptr-&gt;path);
+# else
+    rb_notimplement();
+# endif
+#endif
+    return INT2FIX(0);
+}</pre>
+</body>
+</html>

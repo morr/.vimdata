@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>trace_func (DEBUGGER__::Context)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/debug.rb, line 710</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">trace_func</span>(<span class="ruby-identifier">event</span>, <span class="ruby-identifier">file</span>, <span class="ruby-identifier">line</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">binding</span>, <span class="ruby-identifier">klass</span>)
+    <span class="ruby-constant">Tracer</span>.<span class="ruby-identifier">trace_func</span>(<span class="ruby-identifier">event</span>, <span class="ruby-identifier">file</span>, <span class="ruby-identifier">line</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">binding</span>, <span class="ruby-identifier">klass</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">trace?</span>
+    <span class="ruby-identifier">context</span>(<span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>).<span class="ruby-identifier">check_suspend</span>
+    <span class="ruby-ivar">@file</span> = <span class="ruby-identifier">file</span>
+    <span class="ruby-ivar">@line</span> = <span class="ruby-identifier">line</span>
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">event</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'line'</span>
+      <span class="ruby-identifier">frame_set_pos</span>(<span class="ruby-identifier">file</span>, <span class="ruby-identifier">line</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@no_step</span> <span class="ruby-keyword kw">or</span> <span class="ruby-ivar">@frames</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@no_step</span>
+        <span class="ruby-ivar">@stop_next</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span>
+        <span class="ruby-ivar">@stop_next</span> = <span class="ruby-value">-1</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@stop_next</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@frames</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&lt;</span> <span class="ruby-ivar">@no_step</span>
+        <span class="ruby-ivar">@stop_next</span> = <span class="ruby-value">0</span>         <span class="ruby-comment cmt"># break here before leaving...</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-comment cmt"># nothing to do. skipped.</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@stop_next</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">check_break_points</span>(<span class="ruby-identifier">file</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">line</span>, <span class="ruby-identifier">binding</span>, <span class="ruby-identifier">id</span>)
+        <span class="ruby-ivar">@no_step</span> = <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-identifier">suspend_all</span>
+        <span class="ruby-identifier">debug_command</span>(<span class="ruby-identifier">file</span>, <span class="ruby-identifier">line</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">binding</span>)
+      <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'call'</span>
+      <span class="ruby-ivar">@frames</span>.<span class="ruby-identifier">unshift</span> [<span class="ruby-identifier">binding</span>, <span class="ruby-identifier">file</span>, <span class="ruby-identifier">line</span>, <span class="ruby-identifier">id</span>]
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">check_break_points</span>(<span class="ruby-identifier">file</span>, <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">id</span>.<span class="ruby-identifier">id2name</span>, <span class="ruby-identifier">binding</span>, <span class="ruby-identifier">id</span>)
+        <span class="ruby-identifier">suspend_all</span>
+        <span class="ruby-identifier">debug_command</span>(<span class="ruby-identifier">file</span>, <span class="ruby-identifier">line</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">binding</span>)
+      <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'c-call'</span>
+      <span class="ruby-identifier">frame_set_pos</span>(<span class="ruby-identifier">file</span>, <span class="ruby-identifier">line</span>)
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'class'</span>
+      <span class="ruby-ivar">@frames</span>.<span class="ruby-identifier">unshift</span> [<span class="ruby-identifier">binding</span>, <span class="ruby-identifier">file</span>, <span class="ruby-identifier">line</span>, <span class="ruby-identifier">id</span>]
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'return'</span>, <span class="ruby-value str">'end'</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@frames</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@finish_pos</span>
+        <span class="ruby-ivar">@stop_next</span> = <span class="ruby-value">1</span>
+        <span class="ruby-ivar">@finish_pos</span> = <span class="ruby-value">0</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@frames</span>.<span class="ruby-identifier">shift</span>
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'end'</span>
+      <span class="ruby-ivar">@frames</span>.<span class="ruby-identifier">shift</span>
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'raise'</span> 
+      <span class="ruby-identifier">excn_handle</span>(<span class="ruby-identifier">file</span>, <span class="ruby-identifier">line</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">binding</span>)
+
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@last_file</span> = <span class="ruby-identifier">file</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

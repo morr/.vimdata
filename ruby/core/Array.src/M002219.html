@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>flatten! (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.flatten! -&gt; array or nil
+ *  
+ *  Flattens _self_ in place.
+ *  Returns &lt;code&gt;nil&lt;/code&gt; if no modifications were made (i.e.,
+ *  &lt;i&gt;array&lt;/i&gt; contains no subarrays.)
+ *     
+ *     a = [ 1, 2, [3, [4, 5] ] ]
+ *     a.flatten!   #=&gt; [1, 2, 3, 4, 5]
+ *     a.flatten!   #=&gt; nil
+ *     a            #=&gt; [1, 2, 3, 4, 5]
+ */
+
+static VALUE
+rb_ary_flatten_bang(ary)
+    VALUE ary;
+{
+    long i = 0;
+    int mod = 0;
+    VALUE memo = Qnil;
+
+    while (i&lt;RARRAY(ary)-&gt;len) {
+        VALUE ary2 = RARRAY(ary)-&gt;ptr[i];
+        VALUE tmp;
+
+        tmp = rb_check_array_type(ary2);
+        if (!NIL_P(tmp)) {
+            if (NIL_P(memo)) {
+                memo = rb_ary_new();
+            }
+            i += flatten(ary, i, tmp, memo);
+            mod = 1;
+        }
+        i++;
+    }
+    if (mod == 0) return Qnil;
+    return ary;
+}</pre>
+</body>
+</html>

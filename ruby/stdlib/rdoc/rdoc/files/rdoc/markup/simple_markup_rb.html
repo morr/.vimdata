@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: simple_markup.rb</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>simple_markup.rb</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>rdoc/markup/simple_markup.rb
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Tue Mar 13 02:06:33 -0500 2007</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1>Introduction</h1>
+<p>
+SimpleMarkup parses plain text documents and attempts to decompose them
+into their constituent parts. Some of these parts are high-level:
+paragraphs, chunks of verbatim text, list entries and the like. Other parts
+happen at the character level: a piece of bold text, a word in code font.
+This markup is similar in spirit to that used on WikiWiki webs, where folks
+create web pages using a simple set of formatting rules.
+</p>
+<p>
+SimpleMarkup itself does no output formatting: this is left to a different
+set of classes.
+</p>
+<p>
+SimpleMarkup is extendable at runtime: you can add new markup elements to
+be recognised in the documents that SimpleMarkup parses.
+</p>
+<p>
+SimpleMarkup is intended to be the basis for a family of tools which share
+the common requirement that simple, plain-text should be rendered in a
+variety of different output formats and media. It is envisaged that
+SimpleMarkup could be the basis for formating <a
+href="../../../classes/RDoc.html">RDoc</a> style comment blocks, Wiki
+entries, and online FAQs.
+</p>
+<h1>Basic Formatting</h1>
+<ul>
+<li>SimpleMarkup looks for a document&#8216;s natural left margin. This is used
+as the initial margin for the document.
+
+</li>
+<li>Consecutive lines starting at this margin are considered to be a paragraph.
+
+</li>
+<li>If a paragraph starts with a &quot;*&quot;, &quot;-&quot;, or with
+&quot;&lt;digit&gt;.&quot;, then it is taken to be the start of a list. The
+margin in increased to be the first non-space following the list start
+flag. Subsequent lines should be indented to this new margin until the list
+ends. For example:
+
+<pre>
+   * this is a list with three paragraphs in
+     the first item. This is the first paragraph.
+
+     And this is the second paragraph.
+
+     1. This is an indented, numbered list.
+     2. This is the second item in that list
+
+     This is the third conventional paragraph in the
+     first list item.
+
+   * This is the second item in the original list
+</pre>
+</li>
+<li>You can also construct labeled lists, sometimes called description or
+definition lists. Do this by putting the label in square brackets and
+indenting the list body:
+
+<pre>
+    [cat]  a small furry mammal
+           that seems to sleep a lot
+
+    [ant]  a little insect that is known
+           to enjoy picnics
+</pre>
+<p>
+A minor variation on labeled lists uses two colons to separate the label
+from the list body:
+</p>
+<pre>
+    cat::  a small furry mammal
+           that seems to sleep a lot
+
+    ant::  a little insect that is known
+           to enjoy picnics
+</pre>
+<p>
+This latter style guarantees that the list bodies&#8217; left margins are
+aligned: think of them as a two column table.
+</p>
+</li>
+<li>Any line that starts to the right of the current margin is treated as
+verbatim text. This is useful for code listings. The example of a list
+above is also verbatim text.
+
+</li>
+<li>A line starting with an equals sign (=) is treated as a heading. Level one
+headings have one equals sign, level two headings have two,and so on.
+
+</li>
+<li>A line starting with three or more hyphens (at the current indent)
+generates a horizontal rule. THe more hyphens, the thicker the rule (within
+reason, and if supported by the output device)
+
+</li>
+<li>You can use markup within text (except verbatim) to change the appearance
+of parts of that text. Out of the box, SimpleMarkup supports word-based and
+general markup.
+
+<p>
+Word-based markup uses flag characters around individual words:
+</p>
+<dl>
+<dt>*word*</dt><dd>displays word in a <b>bold</b> font
+
+</dd>
+<dt>_word_</dt><dd>displays word in an <em>emphasized</em> font
+
+</dd>
+<dt>+word+</dt><dd>displays word in a <tt>code</tt> font
+
+</dd>
+</dl>
+<p>
+General markup affects text between a start delimiter and and end
+delimiter. Not surprisingly, these delimiters look like HTML markup.
+</p>
+<dl>
+<dt>&lt;b&gt;text&#8230;&lt;/b&gt;</dt><dd>displays word in a <b>bold</b> font
+
+</dd>
+<dt>&lt;em&gt;text&#8230;&lt;/em&gt;</dt><dd>displays word in an <em>emphasized</em> font
+
+</dd>
+<dt>&lt;i&gt;text&#8230;&lt;/i&gt;</dt><dd>displays word in an <em>emphasized</em> font
+
+</dd>
+<dt>&lt;tt&gt;text&#8230;&lt;/tt&gt;</dt><dd>displays word in a <tt>code</tt> font
+
+</dd>
+</dl>
+<p>
+Unlike conventional Wiki markup, general markup can cross line boundaries.
+You can turn off the interpretation of markup by preceding the first
+character with a backslash, so \&lt;b&gt;bold text&lt;/b&gt; and \*bold*
+produce &lt;b&gt;bold text&lt;/b&gt; and *bold respectively.
+</p>
+</li>
+</ul>
+<h1>Using SimpleMarkup</h1>
+<p>
+For information on using SimpleMarkup programatically, see <a
+href="../../../classes/SM/SimpleMarkup.html">SM::SimpleMarkup</a>.
+</p>
+<table>
+<tr><td valign="top">Author:</td><td>Dave Thomas, dave@pragmaticprogrammer.com
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>0.0
+
+</td></tr>
+<tr><td valign="top">License:</td><td>Ruby license
+
+</td></tr>
+</table>
+
+    </div>
+
+    <div id="requires-list">
+      <h3 class="section-bar">Required files</h3>
+
+      <div class="name-list">
+      <a href="simple_markup/fragments_rb.html">rdoc/markup/simple_markup/fragments</a>&nbsp;&nbsp;
+      rdoc/markup/simple_markup/lines.rb&nbsp;&nbsp;
+      </div>
+    </div>
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+<!-- 1  --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and maintained by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. The site was created in 2002 as part of the Ruby Documentation Project to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

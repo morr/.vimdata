@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>entries (Dir)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Dir.entries( dirname ) =&gt; array
+ *
+ *  Returns an array containing all of the filenames in the given
+ *  directory. Will raise a &lt;code&gt;SystemCallError&lt;/code&gt; if the named
+ *  directory doesn't exist.
+ *
+ *     Dir.entries(&quot;testdir&quot;)   #=&gt; [&quot;.&quot;, &quot;..&quot;, &quot;config.h&quot;, &quot;main.rb&quot;]
+ *
+ */
+static VALUE
+dir_entries(io, dirname)
+    VALUE io, dirname;
+{
+    VALUE dir;
+
+    dir = dir_open_dir(dirname);
+    return rb_ensure(rb_Array, dir, dir_close, dir);
+}</pre>
+</body>
+</html>

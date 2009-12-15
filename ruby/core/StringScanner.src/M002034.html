@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>beginning_of_line? (StringScanner)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Returns +true+ iff the scan pointer is at the beginning of the line.
+ *
+ *   s = StringScanner.new(&quot;test\ntest\n&quot;)
+ *   s.bol?           # =&gt; true
+ *   s.scan(/te/)
+ *   s.bol?           # =&gt; false
+ *   s.scan(/st\n/)
+ *   s.bol?           # =&gt; true
+ *   s.terminate
+ *   s.bol?           # =&gt; true
+ */
+static VALUE
+strscan_bol_p(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    if (CURPTR(p) &gt; S_PEND(p)) return Qnil;
+    if (p-&gt;curr == 0) return Qtrue;
+    return (*(CURPTR(p) - 1) == '\n') ? Qtrue : Qfalse;
+}</pre>
+</body>
+</html>

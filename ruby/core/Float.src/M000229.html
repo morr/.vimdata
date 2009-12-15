@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>== (Float)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     flt == obj   =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; only if &lt;i&gt;obj&lt;/i&gt; has the same value
+ *  as &lt;i&gt;flt&lt;/i&gt;. Contrast this with &lt;code&gt;Float#eql?&lt;/code&gt;, which
+ *  requires &lt;i&gt;obj&lt;/i&gt; to be a &lt;code&gt;Float&lt;/code&gt;.
+ *     
+ *     1.0 == 1   #=&gt; true
+ *     
+ */
+
+static VALUE
+flo_eq(x, y)
+    VALUE x, y;
+{
+    volatile double a, b;
+
+    switch (TYPE(y)) {
+      case T_FIXNUM:
+        b = FIX2LONG(y);
+        break;
+      case T_BIGNUM:
+        b = rb_big2dbl(y);
+        break;
+      case T_FLOAT:
+        b = RFLOAT(y)-&gt;value;
+        if (isnan(b)) return Qfalse;
+        break;
+      default:
+        return num_equal(x, y);
+    }
+    a = RFLOAT(x)-&gt;value;
+    if (isnan(a)) return Qfalse;
+    return (a == b)?Qtrue:Qfalse;
+}</pre>
+</body>
+</html>

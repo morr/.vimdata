@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>fetch (Hash)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     hsh.fetch(key [, default] )       =&gt; obj
+ *     hsh.fetch(key) {| key | block }   =&gt; obj
+ *  
+ *  Returns a value from the hash for the given key. If the key can't be
+ *  found, there are several options: With no other arguments, it will
+ *  raise an &lt;code&gt;IndexError&lt;/code&gt; exception; if &lt;i&gt;default&lt;/i&gt; is
+ *  given, then that will be returned; if the optional code block is
+ *  specified, then that will be run and its result returned.
+ *     
+ *     h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+ *     h.fetch(&quot;a&quot;)                            #=&gt; 100
+ *     h.fetch(&quot;z&quot;, &quot;go fish&quot;)                 #=&gt; &quot;go fish&quot;
+ *     h.fetch(&quot;z&quot;) { |el| &quot;go fish, #{el}&quot;}   #=&gt; &quot;go fish, z&quot;
+ *     
+ *  The following example shows that an exception is raised if the key
+ *  is not found and a default value is not supplied.
+ *     
+ *     h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+ *     h.fetch(&quot;z&quot;)
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     prog.rb:2:in `fetch': key not found (IndexError)
+ *      from prog.rb:2
+ *     
+ */
+
+static VALUE
+rb_hash_fetch(argc, argv, hash)
+    int argc;
+    VALUE *argv;
+    VALUE hash;
+{
+    VALUE key, if_none;
+    VALUE val;
+    long block_given;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;key, &amp;if_none);
+
+    block_given = rb_block_given_p();
+    if (block_given &amp;&amp; argc == 2) {
+        rb_warn(&quot;block supersedes default value argument&quot;);
+    }
+    if (!st_lookup(RHASH(hash)-&gt;tbl, key, &amp;val)) {
+        if (block_given) return rb_yield(key);
+        if (argc == 1) {
+            rb_raise(rb_eIndexError, &quot;key not found&quot;);
+        }
+        return if_none;
+    }
+    return val;
+}</pre>
+</body>
+</html>

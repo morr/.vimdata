@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>setrlimit (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.setrlimit(resource, cur_limit, max_limit)        =&gt; nil
+ *     Process.setrlimit(resource, cur_limit)                   =&gt; nil
+ *
+ *  Sets the resource limit of the process.
+ *  _cur_limit_ means current (soft) limit and
+ *  _max_limit_ means maximum (hard) limit.
+ *
+ *  If _max_limit_ is not given, _cur_limit_ is used.
+ *
+ *  _resource_ indicates the kind of resource to limit.
+ *  The list of resources are OS dependent.
+ *  Ruby may support following resources.
+ *
+ *  [Process::RLIMIT_CORE] core size (bytes) (SUSv3)
+ *  [Process::RLIMIT_CPU] CPU time (seconds) (SUSv3)
+ *  [Process::RLIMIT_DATA] data segment (bytes) (SUSv3)
+ *  [Process::RLIMIT_FSIZE] file size (bytes) (SUSv3)
+ *  [Process::RLIMIT_NOFILE] file descriptors (number) (SUSv3)
+ *  [Process::RLIMIT_STACK] stack size (bytes) (SUSv3)
+ *  [Process::RLIMIT_AS] total available memory (bytes) (SUSv3, NetBSD, FreeBSD, OpenBSD but 4.4BSD-Lite)
+ *  [Process::RLIMIT_MEMLOCK] total size for mlock(2) (bytes) (4.4BSD, GNU/Linux)
+ *  [Process::RLIMIT_NPROC] number of processes for the user (number) (4.4BSD, GNU/Linux)
+ *  [Process::RLIMIT_RSS] resident memory size (bytes) (4.2BSD, GNU/Linux)
+ *  [Process::RLIMIT_SBSIZE] all socket buffers (bytes) (NetBSD, FreeBSD)
+ *
+ *  Other &lt;code&gt;Process::RLIMIT_???&lt;/code&gt; constants may be defined.
+ *
+ *  _cur_limit_ and _max_limit_ may be &lt;code&gt;Process::RLIM_INFINITY&lt;/code&gt;,
+ *  which means that the resource is not limited.
+ *  They may be &lt;code&gt;Process::RLIM_SAVED_MAX&lt;/code&gt; or
+ *  &lt;code&gt;Process::RLIM_SAVED_CUR&lt;/code&gt; too.
+ *  See system setrlimit(2) manual for details.
+ *
+ */
+
+static VALUE
+proc_setrlimit(int argc, VALUE *argv, VALUE obj)
+{
+#if defined(HAVE_SETRLIMIT) &amp;&amp; defined(NUM2RLIM)
+    VALUE resource, rlim_cur, rlim_max;
+    struct rlimit rlim;
+
+    rb_secure(2);
+
+    rb_scan_args(argc, argv, &quot;21&quot;, &amp;resource, &amp;rlim_cur, &amp;rlim_max);
+    if (rlim_max == Qnil)
+        rlim_max = rlim_cur;
+
+    rlim.rlim_cur = NUM2RLIM(rlim_cur);
+    rlim.rlim_max = NUM2RLIM(rlim_max);
+
+    if (setrlimit(NUM2INT(resource), &amp;rlim) &lt; 0) {
+        rb_sys_fail(&quot;setrlimit&quot;);
+    }
+    return Qnil;
+#else
+    rb_notimplement();
+#endif
+}</pre>
+</body>
+</html>

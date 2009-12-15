@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>inspect (Exception)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   exception.inspect   =&gt; string
+ *
+ * Return this exception's class name an message
+ */
+
+static VALUE
+exc_inspect(exc)
+    VALUE exc;
+{
+    VALUE str, klass;
+
+    klass = CLASS_OF(exc);
+    exc = rb_obj_as_string(exc);
+    if (RSTRING(exc)-&gt;len == 0) {
+        return rb_str_dup(rb_class_name(klass));
+    }
+
+    str = rb_str_buf_new2(&quot;#&lt;&quot;);
+    klass = rb_class_name(klass);
+    rb_str_buf_append(str, klass);
+    rb_str_buf_cat(str, &quot;: &quot;, 2);
+    rb_str_buf_append(str, exc);
+    rb_str_buf_cat(str, &quot;&gt;&quot;, 1);
+
+    return str;
+}</pre>
+</body>
+</html>

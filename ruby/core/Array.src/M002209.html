@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>+ (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* 
+ *  call-seq:
+ *     array + other_array   -&gt; an_array
+ *
+ *  Concatenation---Returns a new array built by concatenating the
+ *  two arrays together to produce a third array.
+ * 
+ *     [ 1, 2, 3 ] + [ 4, 5 ]    #=&gt; [ 1, 2, 3, 4, 5 ]
+ */
+
+VALUE
+rb_ary_plus(x, y)
+    VALUE x, y;
+{
+    VALUE z;
+    long len;
+
+    y = to_ary(y);
+    len = RARRAY(x)-&gt;len + RARRAY(y)-&gt;len;
+    z = rb_ary_new2(len);
+    MEMCPY(RARRAY(z)-&gt;ptr, RARRAY(x)-&gt;ptr, VALUE, RARRAY(x)-&gt;len);
+    MEMCPY(RARRAY(z)-&gt;ptr + RARRAY(x)-&gt;len, RARRAY(y)-&gt;ptr, VALUE, RARRAY(y)-&gt;len);
+    RARRAY(z)-&gt;len = len;
+    return z;
+}</pre>
+</body>
+</html>

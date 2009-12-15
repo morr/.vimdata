@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>divmod (Numeric)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     num.divmod( aNumeric ) -&gt; anArray
+ *  
+ *  Returns an array containing the quotient and modulus obtained by
+ *  dividing &lt;i&gt;num&lt;/i&gt; by &lt;i&gt;aNumeric&lt;/i&gt;. If &lt;code&gt;q, r =
+ *  x.divmod(y)&lt;/code&gt;, then
+ *
+ *      q = floor(float(x)/float(y))
+ *      x = q*y + r
+ *     
+ *  The quotient is rounded toward -infinity, as shown in the following table:
+ *     
+ *     a    |  b  |  a.divmod(b)  |   a/b   | a.modulo(b) | a.remainder(b)
+ *    ------+-----+---------------+---------+-------------+---------------
+ *     13   |  4  |   3,    1     |   3     |    1        |     1
+ *    ------+-----+---------------+---------+-------------+---------------
+ *     13   | -4  |  -4,   -3     |  -3     |   -3        |     1
+ *    ------+-----+---------------+---------+-------------+---------------
+ *    -13   |  4  |  -4,    3     |  -4     |    3        |    -1
+ *    ------+-----+---------------+---------+-------------+---------------
+ *    -13   | -4  |   3,   -1     |   3     |   -1        |    -1
+ *    ------+-----+---------------+---------+-------------+---------------
+ *     11.5 |  4  |   2,    3.5   |   2.875 |    3.5      |     3.5
+ *    ------+-----+---------------+---------+-------------+---------------
+ *     11.5 | -4  |  -3,   -0.5   |  -2.875 |   -0.5      |     3.5
+ *    ------+-----+---------------+---------+-------------+---------------
+ *    -11.5 |  4  |  -3,    0.5   |  -2.875 |    0.5      |    -3.5
+ *    ------+-----+---------------+---------+-------------+---------------
+ *    -11.5 | -4  |   2    -3.5   |   2.875 |   -3.5      |    -3.5
+ *
+ *
+ *  Examples
+ *     11.divmod(3)         #=&gt; [3, 2]
+ *     11.divmod(-3)        #=&gt; [-4, -1]
+ *     11.divmod(3.5)       #=&gt; [3, 0.5]
+ *     (-11).divmod(3.5)    #=&gt; [-4, 3.0]
+ *     (11.5).divmod(3.5)   #=&gt; [3, 1.0]
+ */
+
+static VALUE
+num_divmod(x, y)
+    VALUE x, y;
+{
+    return rb_assoc_new(num_div(x, y), rb_funcall(x, '%', 1, y));
+}</pre>
+</body>
+</html>

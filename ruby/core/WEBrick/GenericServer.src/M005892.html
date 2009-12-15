@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>setup_ssl_context (WEBrick::GenericServer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/ssl.rb, line 102</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">setup_ssl_context</span>(<span class="ruby-identifier">config</span>)
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLCertificate</span>]
+        <span class="ruby-identifier">cn</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLCertName</span>]
+        <span class="ruby-identifier">comment</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLCertComment</span>]
+        <span class="ruby-identifier">cert</span>, <span class="ruby-identifier">key</span> = <span class="ruby-constant">Utils</span><span class="ruby-operator">::</span><span class="ruby-identifier">create_self_signed_cert</span>(<span class="ruby-value">1024</span>, <span class="ruby-identifier">cn</span>, <span class="ruby-identifier">comment</span>)
+        <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLCertificate</span>] = <span class="ruby-identifier">cert</span>
+        <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLPrivateKey</span>] = <span class="ruby-identifier">key</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">ctx</span> = <span class="ruby-constant">OpenSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">SSL</span><span class="ruby-operator">::</span><span class="ruby-constant">SSLContext</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">key</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLPrivateKey</span>]
+      <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">cert</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLCertificate</span>]
+      <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">client_ca</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLClientCA</span>]
+      <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">extra_chain_cert</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLExtraChainCert</span>]
+      <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">ca_file</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLCACertificateFile</span>]
+      <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">ca_path</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLCACertificatePath</span>]
+      <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">cert_store</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLCertificateStore</span>]
+      <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">verify_mode</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLVerifyClient</span>]
+      <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">verify_depth</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLVerifyDepth</span>]
+      <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">verify_callback</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLVerifyCallback</span>]
+      <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">timeout</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLTimeout</span>]
+      <span class="ruby-identifier">ctx</span>.<span class="ruby-identifier">options</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:SSLOptions</span>]
+      <span class="ruby-identifier">ctx</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

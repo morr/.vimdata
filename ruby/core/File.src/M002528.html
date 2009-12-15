@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>chmod (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.chmod(mode_int, file_name, ... ) -&gt; integer
+ *  
+ *  Changes permission bits on the named file(s) to the bit pattern
+ *  represented by &lt;i&gt;mode_int&lt;/i&gt;. Actual effects are operating system
+ *  dependent (see the beginning of this section). On Unix systems, see
+ *  &lt;code&gt;chmod(2)&lt;/code&gt; for details. Returns the number of files
+ *  processed.
+ *     
+ *     File.chmod(0644, &quot;testfile&quot;, &quot;out&quot;)   #=&gt; 2
+ */
+
+static VALUE
+rb_file_s_chmod(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE vmode;
+    VALUE rest;
+    int mode;
+    long n;
+
+    rb_secure(2);
+    rb_scan_args(argc, argv, &quot;1*&quot;, &amp;vmode, &amp;rest);
+    mode = NUM2INT(vmode);
+
+    n = apply2files(chmod_internal, rest, &amp;mode);
+    return LONG2FIX(n);
+}</pre>
+</body>
+</html>

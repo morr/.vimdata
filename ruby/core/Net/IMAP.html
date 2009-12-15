@@ -1,0 +1,2212 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Net::IMAP</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Net::IMAP</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/net/imap_rb.html">
+                lib/net/imap.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="IMAP.html">Net::IMAP</a> implements Internet Message Access
+Protocol (<a href="IMAP.html">IMAP</a>) client functionality. The protocol
+is described in [<a href="IMAP.html">IMAP</a>].
+</p>
+<h2><a href="IMAP.html">IMAP</a> Overview</h2>
+<p>
+An <a href="IMAP.html">IMAP</a> client connects to a server, and then
+authenticates itself using either <a
+href="IMAP.html#M004190">authenticate</a>() or <a
+href="IMAP.html#M004191">login</a>(). Having authenticated itself, there is
+a range of commands available to it. Most work with mailboxes, which may be
+arranged in an hierarchical namespace, and each of which contains zero or
+more messages. How this is implemented on the server is
+implementation-dependent; on a UNIX server, it will frequently be
+implemented as a files in mailbox format within a hierarchy of directories.
+</p>
+<p>
+To work on the messages within a mailbox, the client must first <a
+href="IMAP.html#M004192">select</a> that mailbox, using either <a
+href="IMAP.html#M004192">select</a>() or (for read-only access) <a
+href="IMAP.html#M004193">examine</a>(). Once the client has successfully
+selected a mailbox, they enter <em>selected</em> state, and that mailbox
+becomes the <em>current</em> mailbox, on which mail-item related commands
+implicitly operate.
+</p>
+<p>
+Messages have two sorts of identifiers: message sequence numbers, and UIDs.
+</p>
+<p>
+Message sequence numbers number messages within a mail box from 1 up to the
+number of items in the mail box. If <a href="IMAP.html#M004227">new</a>
+message arrives during a session, it receives a sequence number equal to
+the <a href="IMAP.html#M004227">new</a> size of the mail box. If messages
+are expunged from the mailbox, remaining messages have their sequence
+numbers &quot;shuffled down&quot; to fill the gaps.
+</p>
+<p>
+UIDs, on the other hand, are permanently guaranteed not to identify another
+message within the same mailbox, even if the existing message is deleted.
+UIDs are required to be assigned in ascending (but not necessarily
+sequential) order within a mailbox; this means that if a non-<a
+href="IMAP.html">IMAP</a> client rearranges the order of mailitems within a
+mailbox, the UIDs have to be reassigned. An <a href="IMAP.html">IMAP</a>
+client cannot thus rearrange message orders.
+</p>
+<h2>Examples of Usage</h2>
+<h3><a href="../List.html">List</a> sender and subject of all recent messages in the default mailbox</h3>
+<pre>
+  imap = Net::IMAP.new('mail.example.com')
+  imap.authenticate('LOGIN', 'joe_user', 'joes_password')
+  imap.examine('INBOX')
+  imap.search([&quot;RECENT&quot;]).each do |message_id|
+    envelope = imap.fetch(message_id, &quot;ENVELOPE&quot;)[0].attr[&quot;ENVELOPE&quot;]
+    puts &quot;#{envelope.from[0].name}: \t#{envelope.subject}&quot;
+  end
+</pre>
+<h3>Move all messages from April 2003 from &quot;<a href="../Mail.html">Mail</a>/sent-mail&quot; to &quot;<a href="../Mail.html">Mail</a>/sent-apr03&quot;</h3>
+<pre>
+  imap = Net::IMAP.new('mail.example.com')
+  imap.authenticate('LOGIN', 'joe_user', 'joes_password')
+  imap.select('Mail/sent-mail')
+  if not imap.list('Mail/', 'sent-apr03')
+    imap.create('Mail/sent-apr03')
+  end
+  imap.search([&quot;BEFORE&quot;, &quot;30-Apr-2003&quot;, &quot;SINCE&quot;, &quot;1-Apr-2003&quot;]).each do |message_id|
+    imap.copy(message_id, &quot;Mail/sent-apr03&quot;)
+    imap.store(message_id, &quot;+FLAGS&quot;, [:Deleted])
+  end
+  imap.expunge
+</pre>
+<h2><a href="../Thread.html">Thread</a> Safety</h2>
+<p>
+<a href="IMAP.html">Net::IMAP</a> supports concurrent threads. For example,
+</p>
+<pre>
+  imap = Net::IMAP.new(&quot;imap.foo.net&quot;, &quot;imap2&quot;)
+  imap.authenticate(&quot;cram-md5&quot;, &quot;bar&quot;, &quot;password&quot;)
+  imap.select(&quot;inbox&quot;)
+  fetch_thread = Thread.start { imap.fetch(1..-1, &quot;UID&quot;) }
+  search_result = imap.search([&quot;BODY&quot;, &quot;hello&quot;])
+  fetch_result = fetch_thread.value
+  imap.disconnect
+</pre>
+<p>
+This script invokes the FETCH command and the SEARCH command concurrently.
+</p>
+<h2>Errors</h2>
+<p>
+An <a href="IMAP.html">IMAP</a> server can send three different types of
+responses to indicate failure:
+</p>
+<table>
+<tr><td valign="top">NO:</td><td>the attempted command could not be successfully completed. For instance,
+the username/password used for logging in are incorrect; the selected
+mailbox does not exists; etc.
+
+</td></tr>
+<tr><td valign="top">BAD:</td><td>the request from the client does not follow the server&#8216;s
+understanding of the <a href="IMAP.html">IMAP</a> protocol. This includes
+attempting commands from the wrong client state; for instance, attempting
+to perform a SEARCH command without having SELECTed a current mailbox. It
+can also signal an internal server failure (such as a disk crash) has
+occurred.
+
+</td></tr>
+<tr><td valign="top">BYE:</td><td>the server is saying goodbye. This can be part of a normal <a
+href="IMAP.html#M004189">logout</a> sequence, and can be used as part of a
+<a href="IMAP.html#M004191">login</a> sequence to indicate that the server
+is (for some reason) unwilling to accept our connection. As a response to
+any other command, it indicates either that the server is shutting down, or
+that the server is timing out the client connection due to inactivity.
+
+</td></tr>
+</table>
+<p>
+These three error response are represented by the errors <a
+href="IMAP/NoResponseError.html">Net::IMAP::NoResponseError</a>, <a
+href="IMAP/BadResponseError.html">Net::IMAP::BadResponseError</a>, and <a
+href="IMAP/ByeResponseError.html">Net::IMAP::ByeResponseError</a>, all of
+which are subclasses of <a
+href="IMAP/ResponseError.html">Net::IMAP::ResponseError</a>. Essentially,
+all methods that involve sending a request to the server can generate one
+of these errors. Only the most pertinent instances have been documented
+below.
+</p>
+<p>
+Because the <a href="IMAP.html">IMAP</a> class uses Sockets for
+communication, its methods are also susceptible to the various errors that
+can occur when working with sockets. These are generally represented as <a
+href="../Errno.html">Errno</a> errors. For instance, any method that
+involves sending a request to the server and/or receiving a response from
+it could raise an Errno::EPIPE error if the network connection unexpectedly
+goes down. See the socket(7), ip(7), tcp(7), socket(2), connect(2), and
+associated man pages.
+</p>
+<p>
+Finally, a <a
+href="IMAP/DataFormatError.html">Net::IMAP::DataFormatError</a> is thrown
+if low-level data is found to be in an incorrect format (for instance, when
+converting between UTF-8 and UTF-16), and <a
+href="IMAP/ResponseParseError.html">Net::IMAP::ResponseParseError</a> is
+thrown if a server response is non-parseable.
+</p>
+<h2>References</h2>
+<dl>
+<dt>[<a href="IMAP.html">IMAP</a>]</dt><dd>M. Crispin, &quot;INTERNET MESSAGE ACCESS PROTOCOL - VERSION 4rev1&quot;,
+RFC 2060, December 1996. (Note: since obsoleted by RFC 3501)
+
+</dd>
+<dt>[LANGUAGE-TAGS]</dt><dd>Alvestrand, H., &quot;Tags for the Identification of Languages&quot;, RFC
+1766, March 1995.
+
+</dd>
+<dt>[MD5]</dt><dd>Myers, J., and M. Rose, &quot;The Content-MD5 Header Field&quot;, RFC 1864,
+October 1995.
+
+</dd>
+<dt>[MIME-IMB]</dt><dd>Freed, N., and N. Borenstein, &quot;MIME (Multipurpose Internet <a
+href="../Mail.html">Mail</a> Extensions) Part One: Format of Internet
+Message Bodies&quot;, RFC 2045, November 1996.
+
+</dd>
+<dt>[RFC-822]</dt><dd>Crocker, D., &quot;Standard for the Format of ARPA Internet Text
+Messages&quot;, STD 11, RFC 822, University of Delaware, August 1982.
+
+</dd>
+<dt>[RFC-2087]</dt><dd>Myers, J., &quot;IMAP4 QUOTA extension&quot;, RFC 2087, January 1997.
+
+</dd>
+<dt>[RFC-2086]</dt><dd>Myers, J., &quot;IMAP4 <a href="../ACL.html">ACL</a> extension&quot;, RFC
+2086, January 1997.
+
+</dd>
+<dt>[RFC-2195]</dt><dd>Klensin, J., Catoe, R., and Krumviede, P., &quot;<a
+href="IMAP.html">IMAP</a>/POP AUTHorize Extension for Simple
+Challenge/Response&quot;, RFC 2195, September 1997.
+
+</dd>
+<dt>[SORT-THREAD-EXT]</dt><dd>Crispin, M., &quot;INTERNET MESSAGE ACCESS PROTOCOL - SORT and THREAD
+Extensions&quot;, draft-ietf-imapext-<a href="IMAP.html#M004219">sort</a>,
+May 2003.
+
+</dd>
+<dt>[OSSL]</dt><dd><a href="http://www.openssl.org">www.openssl.org</a>
+
+</dd>
+<dt>[RSSL]</dt><dd><a
+href="http://savannah.gnu.org/projects/rubypki">savannah.gnu.org/projects/rubypki</a>
+
+</dd>
+<dt>[UTF7]</dt><dd>Goldsmith, D. and Davis, M., &quot;UTF-7: A <a
+href="../Mail.html">Mail</a>-Safe Transformation Format of Unicode&quot;,
+RFC 2152, May 1997.
+
+</dd>
+</dl>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004184">add_authenticator</a>&nbsp;&nbsp;
+      <a href="#M004221">add_response_handler</a>&nbsp;&nbsp;
+      <a href="#M004207">append</a>&nbsp;&nbsp;
+      <a href="#M004190">authenticate</a>&nbsp;&nbsp;
+      <a href="#M004187">capability</a>&nbsp;&nbsp;
+      <a href="#M004208">check</a>&nbsp;&nbsp;
+      <a href="#M004209">close</a>&nbsp;&nbsp;
+      <a href="#M004217">copy</a>&nbsp;&nbsp;
+      <a href="#M004194">create</a>&nbsp;&nbsp;
+      <a href="#M004182">debug</a>&nbsp;&nbsp;
+      <a href="#M004183">debug=</a>&nbsp;&nbsp;
+      <a href="#M004225">decode_utf7</a>&nbsp;&nbsp;
+      <a href="#M004195">delete</a>&nbsp;&nbsp;
+      <a href="#M004185">disconnect</a>&nbsp;&nbsp;
+      <a href="#M004186">disconnected?</a>&nbsp;&nbsp;
+      <a href="#M004226">encode_utf7</a>&nbsp;&nbsp;
+      <a href="#M004193">examine</a>&nbsp;&nbsp;
+      <a href="#M004210">expunge</a>&nbsp;&nbsp;
+      <a href="#M004213">fetch</a>&nbsp;&nbsp;
+      <a href="#M004204">getacl</a>&nbsp;&nbsp;
+      <a href="#M004201">getquota</a>&nbsp;&nbsp;
+      <a href="#M004200">getquotaroot</a>&nbsp;&nbsp;
+      <a href="#M004199">list</a>&nbsp;&nbsp;
+      <a href="#M004191">login</a>&nbsp;&nbsp;
+      <a href="#M004189">logout</a>&nbsp;&nbsp;
+      <a href="#M004205">lsub</a>&nbsp;&nbsp;
+      <a href="#M004227">new</a>&nbsp;&nbsp;
+      <a href="#M004188">noop</a>&nbsp;&nbsp;
+      <a href="#M004222">remove_response_handler</a>&nbsp;&nbsp;
+      <a href="#M004196">rename</a>&nbsp;&nbsp;
+      <a href="#M004211">search</a>&nbsp;&nbsp;
+      <a href="#M004192">select</a>&nbsp;&nbsp;
+      <a href="#M004203">setacl</a>&nbsp;&nbsp;
+      <a href="#M004202">setquota</a>&nbsp;&nbsp;
+      <a href="#M004219">sort</a>&nbsp;&nbsp;
+      <a href="#M004206">status</a>&nbsp;&nbsp;
+      <a href="#M004215">store</a>&nbsp;&nbsp;
+      <a href="#M004197">subscribe</a>&nbsp;&nbsp;
+      <a href="#M004223">thread</a>&nbsp;&nbsp;
+      <a href="#M004218">uid_copy</a>&nbsp;&nbsp;
+      <a href="#M004214">uid_fetch</a>&nbsp;&nbsp;
+      <a href="#M004212">uid_search</a>&nbsp;&nbsp;
+      <a href="#M004220">uid_sort</a>&nbsp;&nbsp;
+      <a href="#M004216">uid_store</a>&nbsp;&nbsp;
+      <a href="#M004224">uid_thread</a>&nbsp;&nbsp;
+      <a href="#M004198">unsubscribe</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="../MonitorMixin.html">MonitorMixin</a></span>
+        <span class="include-name">OpenSSL</span>
+        <span class="include-name">SSL</span>
+      </div>
+    </div>
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="IMAP/BadResponseError.html" class="link">Net::IMAP::BadResponseError</a><br />
+Class <a href="IMAP/BodyTypeBasic.html" class="link">Net::IMAP::BodyTypeBasic</a><br />
+Class <a href="IMAP/BodyTypeMessage.html" class="link">Net::IMAP::BodyTypeMessage</a><br />
+Class <a href="IMAP/BodyTypeMultipart.html" class="link">Net::IMAP::BodyTypeMultipart</a><br />
+Class <a href="IMAP/BodyTypeText.html" class="link">Net::IMAP::BodyTypeText</a><br />
+Class <a href="IMAP/ByeResponseError.html" class="link">Net::IMAP::ByeResponseError</a><br />
+Class <a href="IMAP/CramMD5Authenticator.html" class="link">Net::IMAP::CramMD5Authenticator</a><br />
+Class <a href="IMAP/DataFormatError.html" class="link">Net::IMAP::DataFormatError</a><br />
+Class <a href="IMAP/Error.html" class="link">Net::IMAP::Error</a><br />
+Class <a href="IMAP/LoginAuthenticator.html" class="link">Net::IMAP::LoginAuthenticator</a><br />
+Class <a href="IMAP/NoResponseError.html" class="link">Net::IMAP::NoResponseError</a><br />
+Class <a href="IMAP/ResponseError.html" class="link">Net::IMAP::ResponseError</a><br />
+Class <a href="IMAP/ResponseParseError.html" class="link">Net::IMAP::ResponseParseError</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SEEN</td>
+          <td>=</td>
+          <td class="context-item-value">:Seen</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Flag indicating a message has been seen
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ANSWERED</td>
+          <td>=</td>
+          <td class="context-item-value">:Answered</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Flag indicating a message has been answered
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FLAGGED</td>
+          <td>=</td>
+          <td class="context-item-value">:Flagged</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Flag indicating a message has been flagged for special or urgent attention
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DELETED</td>
+          <td>=</td>
+          <td class="context-item-value">:Deleted</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Flag indicating a message has been marked for deletion. This will occur
+when the mailbox is closed or expunged.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DRAFT</td>
+          <td>=</td>
+          <td class="context-item-value">:Draft</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Flag indicating a message is only a draft or work-in-progress version.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RECENT</td>
+          <td>=</td>
+          <td class="context-item-value">:Recent</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Flag indicating that the message is &quot;recent&quot;, meaning that this
+session is the first session in which the client has been notified of this
+message.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NOINFERIORS</td>
+          <td>=</td>
+          <td class="context-item-value">:Noinferiors</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Flag indicating that a mailbox context name cannot contain children.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NOSELECT</td>
+          <td>=</td>
+          <td class="context-item-value">:Noselect</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Flag indicating that a mailbox is not selected.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">MARKED</td>
+          <td>=</td>
+          <td class="context-item-value">:Marked</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Flag indicating that a mailbox has been marked &quot;interesting&quot; by
+the server; this commonly indicates that the mailbox contains <a
+href="IMAP.html#M004227">new</a> messages.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">UNMARKED</td>
+          <td>=</td>
+          <td class="context-item-value">:Unmarked</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Flag indicating that the mailbox does not contains <a
+href="IMAP.html#M004227">new</a> messages.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DATE_MONTH</td>
+          <td>=</td>
+          <td class="context-item-value">%w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ContinuationRequest</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:data, :raw_data)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::ContinuationRequest represents command continuation requests.
+
+<p>
+The command continuation request response is indicated by a &quot;+&quot;
+token instead of a tag. This form of response indicates that the server is
+ready to accept the continuation of a command from the client. The
+remainder of this response is a line of text.
+</p>
+<pre>
+  continue_req    ::= &quot;+&quot; SPACE (resp_text / base64)
+</pre>
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">data:</td><td>Returns the data (Net::IMAP::ResponseText).
+
+</td></tr>
+<tr><td valign="top">raw_data:</td><td>Returns the raw data string.
+
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">UntaggedResponse</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:name, :data, :raw_data)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::UntaggedResponse represents untagged responses.
+
+<p>
+<a href="../Data.html">Data</a> transmitted by the server to the client and
+<a href="IMAP.html#M004206">status</a> responses that do not indicate
+command completion are prefixed with the token &quot;*&quot;, and are
+called untagged responses.
+</p>
+<pre>
+  response_data   ::= &quot;*&quot; SPACE (resp_cond_state / resp_cond_bye /
+                      mailbox_data / message_data / capability_data)
+</pre>
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">name:</td><td>Returns the name such as &quot;FLAGS&quot;, &quot;LIST&quot;,
+&quot;FETCH&quot;.&#8230;
+
+</td></tr>
+<tr><td valign="top">data:</td><td>Returns the data such as an array of flag symbols,
+
+<pre>
+ a ((&lt;Net::IMAP::MailboxList&gt;)) object....
+</pre>
+</td></tr>
+<tr><td valign="top">raw_data:</td><td>Returns the raw data string.
+
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">TaggedResponse</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:tag, :name, :data, :raw_data)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::TaggedResponse represents tagged responses.
+
+<p>
+The server completion result response indicates the success or failure of
+the operation. It is tagged with the same tag as the client command which
+began the operation.
+</p>
+<pre>
+  response_tagged ::= tag SPACE resp_cond_state CRLF
+
+  tag             ::= 1*&lt;any ATOM_CHAR except &quot;+&quot;&gt;
+
+  resp_cond_state ::= (&quot;OK&quot; / &quot;NO&quot; / &quot;BAD&quot;) SPACE resp_text
+</pre>
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">tag:</td><td>Returns the tag.
+
+</td></tr>
+<tr><td valign="top">name:</td><td>Returns the name. the name is one of &quot;OK&quot;, &quot;NO&quot;,
+&quot;BAD&quot;.
+
+</td></tr>
+<tr><td valign="top">data:</td><td>Returns the data. See ((&lt;Net::IMAP::ResponseText&gt;)).
+
+</td></tr>
+<tr><td valign="top">raw_data:</td><td>Returns the raw data string.
+
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ResponseText</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:code, :text)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::ResponseText represents texts of responses. The text may be
+prefixed by the response code.
+
+<pre>
+  resp_text       ::= [&quot;[&quot; resp_text_code &quot;]&quot; SPACE] (text_mime2 / text)
+                      ;; text SHOULD NOT begin with &quot;[&quot; or &quot;=&quot;
+</pre>
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">code:</td><td>Returns the response code. See ((&lt;Net::IMAP::ResponseCode&gt;)).
+
+</td></tr>
+<tr><td valign="top">text:</td><td>Returns the text.
+
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ResponseCode</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:name, :data)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::ResponseCode represents response codes.
+
+<pre>
+  resp_text_code  ::= &quot;ALERT&quot; / &quot;PARSE&quot; /
+                      &quot;PERMANENTFLAGS&quot; SPACE &quot;(&quot; #(flag / &quot;\*&quot;) &quot;)&quot; /
+                      &quot;READ-ONLY&quot; / &quot;READ-WRITE&quot; / &quot;TRYCREATE&quot; /
+                      &quot;UIDVALIDITY&quot; SPACE nz_number /
+                      &quot;UNSEEN&quot; SPACE nz_number /
+                      atom [SPACE 1*&lt;any TEXT_CHAR except &quot;]&quot;&gt;]
+</pre>
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">name:</td><td>Returns the name such as &quot;ALERT&quot;, &quot;PERMANENTFLAGS&quot;,
+&quot;UIDVALIDITY&quot;.&#8230;
+
+</td></tr>
+<tr><td valign="top">data:</td><td>Returns the data if it exists.
+
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">MailboxList</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:attr, :delim, :name)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::MailboxList represents contents of the LIST response.
+
+<pre>
+  mailbox_list    ::= &quot;(&quot; #(&quot;\Marked&quot; / &quot;\Noinferiors&quot; /
+                      &quot;\Noselect&quot; / &quot;\Unmarked&quot; / flag_extension) &quot;)&quot;
+                      SPACE (&lt;&quot;&gt; QUOTED_CHAR &lt;&quot;&gt; / nil) SPACE mailbox
+</pre>
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">attr:</td><td>Returns the name attributes. Each name attribute is a symbol capitalized by
+<a href="../String.html#M000795">String#capitalize</a>, such as :Noselect
+(not :NoSelect).
+
+</td></tr>
+<tr><td valign="top">delim:</td><td>Returns the hierarchy delimiter
+
+</td></tr>
+<tr><td valign="top">name:</td><td>Returns the mailbox name.
+
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">MailboxQuota</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:mailbox, :usage, :quota)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::MailboxQuota represents contents of GETQUOTA response. This
+object can also be a response to GETQUOTAROOT. In the syntax specification
+below, the delimiter used with the &quot;#&quot; construct is a single
+space (SPACE).
+
+<pre>
+   quota_list      ::= &quot;(&quot; #quota_resource &quot;)&quot;
+
+   quota_resource  ::= atom SPACE number SPACE number
+
+   quota_response  ::= &quot;QUOTA&quot; SPACE astring SPACE quota_list
+</pre>
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">mailbox:</td><td>The mailbox with the associated quota.
+
+</td></tr>
+<tr><td valign="top">usage:</td><td>Current storage usage of mailbox.
+
+</td></tr>
+<tr><td valign="top">quota:</td><td>Quota limit imposed on mailbox.
+
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">MailboxQuotaRoot</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:mailbox, :quotaroots)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::MailboxQuotaRoot represents part of the GETQUOTAROOT response.
+(GETQUOTAROOT can also return Net::IMAP::MailboxQuota.)
+
+<pre>
+   quotaroot_response ::= &quot;QUOTAROOT&quot; SPACE astring *(SPACE astring)
+</pre>
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">mailbox:</td><td>The mailbox with the associated quota.
+
+</td></tr>
+<tr><td valign="top">quotaroots:</td><td>Zero or more quotaroots that effect the quota on the specified mailbox.
+
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">MailboxACLItem</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:user, :rights)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::MailboxACLItem represents response from GETACL.
+
+<pre>
+   acl_data        ::= &quot;ACL&quot; SPACE mailbox *(SPACE identifier SPACE rights)
+
+   identifier      ::= astring
+
+   rights          ::= astring
+</pre>
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">user:</td><td>Login name that has certain rights to the mailbox that was specified with
+the <a href="IMAP.html#M004204">getacl</a> command.
+
+</td></tr>
+<tr><td valign="top">rights:</td><td>The access rights the indicated user has to the mailbox.
+
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">StatusData</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:mailbox, :attr)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::StatusData represents contents of the STATUS response.
+
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">mailbox:</td><td>Returns the mailbox name.
+
+</td></tr>
+<tr><td valign="top">attr:</td><td>Returns a hash. Each key is one of &quot;MESSAGES&quot;,
+&quot;RECENT&quot;, &quot;UIDNEXT&quot;, &quot;UIDVALIDITY&quot;,
+&quot;UNSEEN&quot;. Each value is a number.
+
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FetchData</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:seqno, :attr)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::FetchData represents contents of the FETCH response.
+
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">seqno:</td><td>Returns the message sequence number. (Note: not the unique identifier, even
+for the UID command response.)
+
+</td></tr>
+<tr><td valign="top">attr:</td><td>Returns a hash. Each key is a data item name, and each value is its value.
+
+<p>
+The current data items are:
+</p>
+<dl>
+<dt>BODY</dt><dd>A form of BODYSTRUCTURE without extension data.
+
+</dd>
+<dt>BODY[&lt;section&gt;]&lt;&lt;origin_octet&gt;&gt;</dt><dd>A string expressing the body contents of the specified section.
+
+</dd>
+<dt>BODYSTRUCTURE</dt><dd>An object that describes the [MIME-IMB] body structure of a message. See <a
+href="IMAP/BodyTypeBasic.html">Net::IMAP::BodyTypeBasic</a>, <a
+href="IMAP/BodyTypeText.html">Net::IMAP::BodyTypeText</a>, <a
+href="IMAP/BodyTypeMessage.html">Net::IMAP::BodyTypeMessage</a>, <a
+href="IMAP/BodyTypeMultipart.html">Net::IMAP::BodyTypeMultipart</a>.
+
+</dd>
+<dt>ENVELOPE</dt><dd>A Net::IMAP::Envelope object that describes the envelope structure of a
+message.
+
+</dd>
+<dt>FLAGS</dt><dd>A array of flag symbols that are set for this message. flag symbols are
+capitalized by <a href="../String.html#M000795">String#capitalize</a>.
+
+</dd>
+<dt>INTERNALDATE</dt><dd>A string representing the internal date of the message.
+
+</dd>
+<dt>RFC822</dt><dd>Equivalent to BODY[].
+
+</dd>
+<dt>RFC822.HEADER</dt><dd>Equivalent to BODY.PEEK[HEADER].
+
+</dd>
+<dt>RFC822.SIZE</dt><dd>A number expressing the [RFC-822] size of the message.
+
+</dd>
+<dt>RFC822.TEXT</dt><dd>Equivalent to BODY[TEXT].
+
+</dd>
+<dt>UID</dt><dd>A number expressing the unique identifier of the message.
+
+</dd>
+</dl>
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Envelope</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:date, :subject, :from, :sender, :reply_to,                           :to, :cc, :bcc, :in_reply_to, :message_id)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::Envelope represents envelope structures of messages.
+
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">date:</td><td>Returns a string that represents the date.
+
+</td></tr>
+<tr><td valign="top">subject:</td><td>Returns a string that represents the subject.
+
+</td></tr>
+<tr><td valign="top">from:</td><td>Returns an array of Net::IMAP::Address that represents the from.
+
+</td></tr>
+<tr><td valign="top">sender:</td><td>Returns an array of Net::IMAP::Address that represents the sender.
+
+</td></tr>
+<tr><td valign="top">reply_to:</td><td>Returns an array of Net::IMAP::Address that represents the reply-to.
+
+</td></tr>
+<tr><td valign="top">to:</td><td>Returns an array of Net::IMAP::Address that represents the to.
+
+</td></tr>
+<tr><td valign="top">cc:</td><td>Returns an array of Net::IMAP::Address that represents the cc.
+
+</td></tr>
+<tr><td valign="top">bcc:</td><td>Returns an array of Net::IMAP::Address that represents the bcc.
+
+</td></tr>
+<tr><td valign="top">in_reply_to:</td><td>Returns a string that represents the in-reply-to.
+
+</td></tr>
+<tr><td valign="top">message_id:</td><td>Returns a string that represents the message-id.
+
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Address</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:name, :route, :mailbox, :host)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::Address represents electronic mail addresses.
+
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">name:</td><td>Returns the phrase from [RFC-822] mailbox.
+
+</td></tr>
+<tr><td valign="top">route:</td><td>Returns the route from [RFC-822] route-addr.
+
+</td></tr>
+<tr><td valign="top">mailbox:</td><td>nil indicates end of [RFC-822] group. If non-nil and host is nil, returns
+[RFC-822] group name. Otherwise, returns [RFC-822] local-part
+
+</td></tr>
+<tr><td valign="top">host:</td><td>nil indicates [RFC-822] group syntax. Otherwise, returns [RFC-822] domain
+name.
+
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ContentDisposition</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:dsp_type, :param)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::ContentDisposition represents Content-Disposition fields.
+
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">dsp_type:</td><td>Returns the disposition type.
+
+</td></tr>
+<tr><td valign="top">param:</td><td>Returns a hash that represents parameters of the Content-Disposition field.
+
+</td></tr>
+</table>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ThreadMember</td>
+          <td>=</td>
+          <td class="context-item-value">Struct.new(:seqno, :children)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Net::IMAP::ThreadMember represents a <a
+href="IMAP.html#M004223">thread</a>-node returned by <a
+href="IMAP.html#M004223">Net::IMAP#thread</a>
+
+<h4>Fields:</h4>
+<table>
+<tr><td valign="top">seqno:</td><td>The sequence number of this message.
+
+</td></tr>
+<tr><td valign="top">children:</td><td>an array of Net::IMAP::ThreadMember objects for mail
+
+</td></tr>
+</table>
+<p>
+items that are children of this in the <a
+href="IMAP.html#M004223">thread</a>.
+</p>
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">client_thread</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+The <a href="IMAP.html#M004223">thread</a> to receive exceptions.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">greeting</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Returns an initial greeting response from the server.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">response_handlers</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Returns all response handlers.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">responses</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Returns recorded untagged responses. For example:
+
+<pre>
+  imap.select(&quot;inbox&quot;)
+  p imap.responses[&quot;EXISTS&quot;][-1]
+  #=&gt; 2
+  p imap.responses[&quot;UIDVALIDITY&quot;][-1]
+  #=&gt; 968263756
+</pre>
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M004184" class="method-detail">
+        <a name="M004184"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004184.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004184.html');return false;">
+          <span class="method-name">add_authenticator</span><span class="method-args">(auth_type, authenticator)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Adds an authenticator for <a
+href="IMAP.html#M004190">Net::IMAP#authenticate</a>. <tt>auth_type</tt> is
+the type of authentication this authenticator supports (for instance,
+&quot;LOGIN&quot;). The <tt>authenticator</tt> is an object which defines a
+process() method to handle authentication with the server. See <a
+href="IMAP/LoginAuthenticator.html">Net::IMAP::LoginAuthenticator</a> and
+<a
+href="IMAP/CramMD5Authenticator.html">Net::IMAP::CramMD5Authenticator</a>
+for examples.
+</p>
+<p>
+If <tt>auth_type</tt> refers to an existing authenticator, it will be
+replaced by the <a href="IMAP.html#M004227">new</a> one.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004182" class="method-detail">
+        <a name="M004182"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004182.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004182.html');return false;">
+          <span class="method-name">debug</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="IMAP.html#M004182">debug</a> mode.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004183" class="method-detail">
+        <a name="M004183"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004183.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004183.html');return false;">
+          <span class="method-name">debug=</span><span class="method-args">(val)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the <a href="IMAP.html#M004182">debug</a> mode.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004225" class="method-detail">
+        <a name="M004225"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004225.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004225.html');return false;">
+          <span class="method-name">decode_utf7</span><span class="method-args">(s)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Decode a string from modified UTF-7 format to UTF-8.
+</p>
+<p>
+UTF-7 is a 7-bit encoding of Unicode [UTF7]. <a href="IMAP.html">IMAP</a>
+uses a slightly modified version of this to encode mailbox names containing
+non-ASCII characters; see [<a href="IMAP.html">IMAP</a>] section 5.1.3.
+</p>
+<p>
+<a href="IMAP.html">Net::IMAP</a> does <em>not</em> automatically encode
+and decode mailbox names to and from utf7.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004226" class="method-detail">
+        <a name="M004226"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004226.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004226.html');return false;">
+          <span class="method-name">encode_utf7</span><span class="method-args">(s)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Encode a string from UTF-8 format to modified UTF-7.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004227" class="method-detail">
+        <a name="M004227"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004227.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004227.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(host, port = PORT, usessl = false, certs = nil, verify = false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="IMAP.html#M004227">new</a> <a
+href="IMAP.html">Net::IMAP</a> object and connects it to the specified
+<tt>port</tt> (143 by default) on the named <tt>host</tt>. If
+<tt>usessl</tt> is true, then an attempt will be made to use SSL (now TLS)
+to connect to the server. For this to work OpenSSL [OSSL] and the Ruby
+OpenSSL [RSSL] extensions need to be installed. The <tt>certs</tt>
+parameter indicates the path or file containing the CA cert of the server,
+and the <tt>verify</tt> parameter is for the OpenSSL verification callback.
+</p>
+<p>
+The most common errors are:
+</p>
+<table>
+<tr><td valign="top">Errno::ECONNREFUSED:</td><td>connection refused by <tt>host</tt> or an intervening firewall.
+
+</td></tr>
+<tr><td valign="top">Errno::ETIMEDOUT:</td><td>connection timed out (possibly due to packets being dropped by an
+intervening firewall).
+
+</td></tr>
+<tr><td valign="top">Errno::ENETUNREACH:</td><td>there is no route to that network.
+
+</td></tr>
+<tr><td valign="top"><a href="../SocketError.html">SocketError</a>:</td><td>hostname not known or other socket error.
+
+</td></tr>
+<tr><td valign="top"><a href="IMAP/ByeResponseError.html">Net::IMAP::ByeResponseError</a>:</td><td>we connected to the host, but they immediately said goodbye to us.
+
+</td></tr>
+</table>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004221" class="method-detail">
+        <a name="M004221"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004221.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004221.html');return false;">
+          <span class="method-name">add_response_handler</span><span class="method-args">(handler = Proc.new)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Adds a response handler. For example, to detect when the server sends us a
+<a href="IMAP.html#M004227">new</a> EXISTS response (which normally
+indicates <a href="IMAP.html#M004227">new</a> messages being added to the
+mail box), you could add the following handler after selecting the mailbox.
+</p>
+<pre>
+  imap.add_response_handler { |resp|
+    if resp.kind_of?(Net::IMAP::UntaggedResponse) and resp.name == &quot;EXISTS&quot;
+      puts &quot;Mailbox now has #{resp.data} messages&quot;
+    end
+  }
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004207" class="method-detail">
+        <a name="M004207"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004207.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004207.html');return false;">
+          <span class="method-name">append</span><span class="method-args">(mailbox, message, flags = nil, date_time = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a APPEND command to <a href="IMAP.html#M004207">append</a> the
+<tt>message</tt> to the end of the <tt>mailbox</tt>. The optional
+<tt>flags</tt> argument is an array of flags to initially passing to the <a
+href="IMAP.html#M004227">new</a> message. The optional <tt>date_time</tt>
+argument specifies the creation time to assign to the <a
+href="IMAP.html#M004227">new</a> message; it defaults to the current time.
+For example:
+</p>
+<pre>
+  imap.append(&quot;inbox&quot;, &lt;&lt;EOF.gsub(/\n/, &quot;\r\n&quot;), [:Seen], Time.now)
+  Subject: hello
+  From: shugo@ruby-lang.org
+  To: shugo@ruby-lang.org
+
+  hello world
+  EOF
+</pre>
+<p>
+A <a href="IMAP/NoResponseError.html">Net::IMAP::NoResponseError</a> is
+raised if the mailbox does not exist (it is not created automatically), or
+if the flags, date_time, or message arguments contain errors.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004190" class="method-detail">
+        <a name="M004190"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004190.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004190.html');return false;">
+          <span class="method-name">authenticate</span><span class="method-args">(auth_type, *args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends an AUTHENTICATE command to <a
+href="IMAP.html#M004190">authenticate</a> the client. The
+<tt>auth_type</tt> parameter is a string that represents the authentication
+mechanism to be used. Currently <a href="IMAP.html">Net::IMAP</a> supports
+authentication mechanisms:
+</p>
+<pre>
+  LOGIN:: login using cleartext user and password.
+  CRAM-MD5:: login with cleartext user and encrypted password
+             (see [RFC-2195] for a full description).  This
+             mechanism requires that the server have the user's
+             password stored in clear-text password.
+</pre>
+<p>
+For both these mechanisms, there should be two <tt>args</tt>: username and
+(cleartext) password. A server may not support one or other of these
+mechanisms; <a href="IMAP.html#M004208">check</a> <a
+href="IMAP.html#M004187">capability</a>() for a <a
+href="IMAP.html#M004187">capability</a> of the form &quot;AUTH=LOGIN&quot;
+or &quot;AUTH=CRAM-MD5&quot;.
+</p>
+<p>
+Authentication is done using the appropriate authenticator object: see
+@@authenticators for more information on plugging in your own
+authenticator.
+</p>
+<p>
+For example:
+</p>
+<pre>
+   imap.authenticate('LOGIN', user, password)
+</pre>
+<p>
+A <a href="IMAP/NoResponseError.html">Net::IMAP::NoResponseError</a> is
+raised if authentication fails.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004187" class="method-detail">
+        <a name="M004187"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004187.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004187.html');return false;">
+          <span class="method-name">capability</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a CAPABILITY command, and returns an array of capabilities that the
+server supports. Each <a href="IMAP.html#M004187">capability</a> is a
+string. See [<a href="IMAP.html">IMAP</a>] for a <a
+href="IMAP.html#M004199">list</a> of possible capabilities.
+</p>
+<p>
+Note that the <a href="IMAP.html">Net::IMAP</a> class does not modify its
+behaviour according to the capabilities of the server; it is up to the user
+of the class to ensure that a certain <a
+href="IMAP.html#M004187">capability</a> is supported by a server before
+using it.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004208" class="method-detail">
+        <a name="M004208"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004208.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004208.html');return false;">
+          <span class="method-name">check</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a CHECK command to request a checkpoint of the currently selected
+mailbox. This performs implementation-specific housekeeping, for instance,
+reconciling the mailbox&#8216;s in-memory and on-disk state.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004209" class="method-detail">
+        <a name="M004209"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004209.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004209.html');return false;">
+          <span class="method-name">close</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a CLOSE command to <a href="IMAP.html#M004209">close</a> the
+currently selected mailbox. The CLOSE command permanently removes from the
+mailbox all messages that have the \Deleted flag set.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004217" class="method-detail">
+        <a name="M004217"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004217.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004217.html');return false;">
+          <span class="method-name">copy</span><span class="method-args">(set, mailbox)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a COPY command to <a href="IMAP.html#M004217">copy</a> the specified
+message(s) to the end of the specified destination <tt>mailbox</tt>. The
+<tt>set</tt> parameter is a number or an array of numbers or a <a
+href="../Range.html">Range</a> object. The number is a message sequence
+number.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004194" class="method-detail">
+        <a name="M004194"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004194.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004194.html');return false;">
+          <span class="method-name">create</span><span class="method-args">(mailbox)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a CREATE command to <a href="IMAP.html#M004194">create</a> a <a
+href="IMAP.html#M004227">new</a> <tt>mailbox</tt>.
+</p>
+<p>
+A <a href="IMAP/NoResponseError.html">Net::IMAP::NoResponseError</a> is
+raised if a mailbox with that name cannot be created.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004195" class="method-detail">
+        <a name="M004195"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004195.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004195.html');return false;">
+          <span class="method-name">delete</span><span class="method-args">(mailbox)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a DELETE command to remove the <tt>mailbox</tt>.
+</p>
+<p>
+A <a href="IMAP/NoResponseError.html">Net::IMAP::NoResponseError</a> is
+raised if a mailbox with that name cannot be deleted, either because it
+does not exist or because the client does not have permission to <a
+href="IMAP.html#M004195">delete</a> it.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004185" class="method-detail">
+        <a name="M004185"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004185.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004185.html');return false;">
+          <span class="method-name">disconnect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Disconnects from the server.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004186" class="method-detail">
+        <a name="M004186"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004186.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004186.html');return false;">
+          <span class="method-name">disconnected?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if disconnected from the server.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004193" class="method-detail">
+        <a name="M004193"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004193.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004193.html');return false;">
+          <span class="method-name">examine</span><span class="method-args">(mailbox)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a EXAMINE command to <a href="IMAP.html#M004192">select</a> a
+<tt>mailbox</tt> so that messages in the <tt>mailbox</tt> can be accessed.
+Behaves the same as <a href="IMAP.html#M004192">select</a>(), except that
+the selected <tt>mailbox</tt> is identified as read-only.
+</p>
+<p>
+A <a href="IMAP/NoResponseError.html">Net::IMAP::NoResponseError</a> is
+raised if the mailbox does not exist or is for some reason non-examinable.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004210" class="method-detail">
+        <a name="M004210"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004210.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004210.html');return false;">
+          <span class="method-name">expunge</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a EXPUNGE command to permanently remove from the currently selected
+mailbox all messages that have the \Deleted flag set.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004213" class="method-detail">
+        <a name="M004213"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004213.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004213.html');return false;">
+          <span class="method-name">fetch</span><span class="method-args">(set, attr)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a FETCH command to retrieve data associated with a message in the
+mailbox. The <tt>set</tt> parameter is a number or an array of numbers or a
+<a href="../Range.html">Range</a> object. The number is a message sequence
+number. <tt>attr</tt> is a <a href="IMAP.html#M004199">list</a> of
+attributes to <a href="IMAP.html#M004213">fetch</a>; see the documentation
+for Net::IMAP::FetchData for a <a href="IMAP.html#M004199">list</a> of
+valid attributes. The return value is an array of Net::IMAP::FetchData. For
+example:
+</p>
+<pre>
+  p imap.fetch(6..8, &quot;UID&quot;)
+  #=&gt; [#&lt;Net::IMAP::FetchData seqno=6, attr={&quot;UID&quot;=&gt;98}&gt;, \\
+       #&lt;Net::IMAP::FetchData seqno=7, attr={&quot;UID&quot;=&gt;99}&gt;, \\
+       #&lt;Net::IMAP::FetchData seqno=8, attr={&quot;UID&quot;=&gt;100}&gt;]
+  p imap.fetch(6, &quot;BODY[HEADER.FIELDS (SUBJECT)]&quot;)
+  #=&gt; [#&lt;Net::IMAP::FetchData seqno=6, attr={&quot;BODY[HEADER.FIELDS (SUBJECT)]&quot;=&gt;&quot;Subject: test\r\n\r\n&quot;}&gt;]
+  data = imap.uid_fetch(98, [&quot;RFC822.SIZE&quot;, &quot;INTERNALDATE&quot;])[0]
+  p data.seqno
+  #=&gt; 6
+  p data.attr[&quot;RFC822.SIZE&quot;]
+  #=&gt; 611
+  p data.attr[&quot;INTERNALDATE&quot;]
+  #=&gt; &quot;12-Oct-2000 22:40:59 +0900&quot;
+  p data.attr[&quot;UID&quot;]
+  #=&gt; 98
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004204" class="method-detail">
+        <a name="M004204"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004204.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004204.html');return false;">
+          <span class="method-name">getacl</span><span class="method-args">(mailbox)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Send the GETACL command along with specified <tt>mailbox</tt>. If this
+mailbox exists, an array containing objects of Net::IMAP::MailboxACLItem
+will be returned.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004201" class="method-detail">
+        <a name="M004201"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004201.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004201.html');return false;">
+          <span class="method-name">getquota</span><span class="method-args">(mailbox)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends the GETQUOTA command along with specified <tt>mailbox</tt>. If this
+mailbox exists, then an array containing a Net::IMAP::MailboxQuota object
+is returned. This command generally is only available to server admin.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004200" class="method-detail">
+        <a name="M004200"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004200.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004200.html');return false;">
+          <span class="method-name">getquotaroot</span><span class="method-args">(mailbox)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends the GETQUOTAROOT command along with specified <tt>mailbox</tt>. This
+command is generally available to both admin and user. If mailbox exists,
+returns an array containing objects of Net::IMAP::MailboxQuotaRoot and
+Net::IMAP::MailboxQuota.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004199" class="method-detail">
+        <a name="M004199"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004199.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004199.html');return false;">
+          <span class="method-name">list</span><span class="method-args">(refname, mailbox)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a LIST command, and returns a subset of names from the complete set
+of all names available to the client. <tt>refname</tt> provides a context
+(for instance, a base directory in a directory-based mailbox hierarchy).
+<tt>mailbox</tt> specifies a mailbox or (via wildcards) mailboxes under
+that context. Two wildcards may be used in <tt>mailbox</tt>:
+&#8217;*&#8217;, which matches all characters <b>including</b> the
+hierarchy delimiter (for instance, &#8217;/&#8217; on a UNIX-hosted
+directory-based mailbox hierarchy); and &#8217;%&#8217;, which matches all
+characters <b>except</b> the hierarchy delimiter.
+</p>
+<p>
+If <tt>refname</tt> is empty, <tt>mailbox</tt> is used directly to
+determine which mailboxes to match. If <tt>mailbox</tt> is empty, the root
+name of <tt>refname</tt> and the hierarchy delimiter are returned.
+</p>
+<p>
+The return value is an array of +Net::IMAP::MailboxList+. For example:
+</p>
+<pre>
+  imap.create(&quot;foo/bar&quot;)
+  imap.create(&quot;foo/baz&quot;)
+  p imap.list(&quot;&quot;, &quot;foo/%&quot;)
+  #=&gt; [#&lt;Net::IMAP::MailboxList attr=[:Noselect], delim=&quot;/&quot;, name=&quot;foo/&quot;&gt;, \\
+       #&lt;Net::IMAP::MailboxList attr=[:Noinferiors, :Marked], delim=&quot;/&quot;, name=&quot;foo/bar&quot;&gt;, \\
+       #&lt;Net::IMAP::MailboxList attr=[:Noinferiors], delim=&quot;/&quot;, name=&quot;foo/baz&quot;&gt;]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004191" class="method-detail">
+        <a name="M004191"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004191.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004191.html');return false;">
+          <span class="method-name">login</span><span class="method-args">(user, password)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a LOGIN command to identify the client and carries the plaintext
+<tt>password</tt> authenticating this <tt>user</tt>. Note that, unlike
+calling <a href="IMAP.html#M004190">authenticate</a>() with an
+<tt>auth_type</tt> of &quot;LOGIN&quot;, <a
+href="IMAP.html#M004191">login</a>() does <b>not</b> use the <a
+href="IMAP.html#M004191">login</a> authenticator.
+</p>
+<p>
+A <a href="IMAP/NoResponseError.html">Net::IMAP::NoResponseError</a> is
+raised if authentication fails.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004189" class="method-detail">
+        <a name="M004189"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004189.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004189.html');return false;">
+          <span class="method-name">logout</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a LOGOUT command to inform the server that the client is done with
+the connection.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004205" class="method-detail">
+        <a name="M004205"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004205.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004205.html');return false;">
+          <span class="method-name">lsub</span><span class="method-args">(refname, mailbox)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a LSUB command, and returns a subset of names from the set of names
+that the user has declared as being &quot;active&quot; or
+&quot;subscribed&quot;. <tt>refname</tt> and <tt>mailbox</tt> are
+interpreted as for <a href="IMAP.html#M004199">list</a>(). The return value
+is an array of +Net::IMAP::MailboxList+.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004188" class="method-detail">
+        <a name="M004188"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004188.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004188.html');return false;">
+          <span class="method-name">noop</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a NOOP command to the server. It does nothing.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004222" class="method-detail">
+        <a name="M004222"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004222.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004222.html');return false;">
+          <span class="method-name">remove_response_handler</span><span class="method-args">(handler)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Removes the response handler.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004196" class="method-detail">
+        <a name="M004196"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004196.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004196.html');return false;">
+          <span class="method-name">rename</span><span class="method-args">(mailbox, newname)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a RENAME command to change the name of the <tt>mailbox</tt> to
+<tt>newname</tt>.
+</p>
+<p>
+A <a href="IMAP/NoResponseError.html">Net::IMAP::NoResponseError</a> is
+raised if a mailbox with the name <tt>mailbox</tt> cannot be renamed to
+<tt>newname</tt> for whatever reason; for instance, because
+<tt>mailbox</tt> does not exist, or because there is already a mailbox with
+the name <tt>newname</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004211" class="method-detail">
+        <a name="M004211"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004211.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004211.html');return false;">
+          <span class="method-name">search</span><span class="method-args">(keys, charset = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a SEARCH command to <a href="IMAP.html#M004211">search</a> the
+mailbox for messages that match the given searching criteria, and returns
+message sequence numbers. <tt>keys</tt> can either be a string holding the
+entire <a href="IMAP.html#M004211">search</a> string, or a single-dimension
+array of <a href="IMAP.html#M004211">search</a> keywords and arguments. The
+following are some common <a href="IMAP.html#M004211">search</a> criteria;
+see [<a href="IMAP.html">IMAP</a>] section 6.4.4 for a full <a
+href="IMAP.html#M004199">list</a>.
+</p>
+<table>
+<tr><td valign="top">&lt;message set&gt;:</td><td>a set of message sequence numbers. &#8217;,&#8217; indicates an interval,
+&#8217;:&#8217; indicates a range. For instance, &#8216;2,10:12,15&#8217;
+means &quot;2,10,11,12,15&quot;.
+
+</td></tr>
+<tr><td valign="top">BEFORE &lt;date&gt;:</td><td>messages with an internal date strictly before &lt;date&gt;. The date
+argument has a format similar to 8-Aug-2002.
+
+</td></tr>
+<tr><td valign="top">BODY &lt;string&gt;:</td><td>messages that contain &lt;string&gt; within their body.
+
+</td></tr>
+<tr><td valign="top">CC &lt;string&gt;:</td><td>messages containing &lt;string&gt; in their CC field.
+
+</td></tr>
+<tr><td valign="top">FROM &lt;string&gt;:</td><td>messages that contain &lt;string&gt; in their FROM field.
+
+</td></tr>
+<tr><td valign="top">NEW:</td><td>messages with the \Recent, but not the \Seen, flag set.
+
+</td></tr>
+<tr><td valign="top">NOT &lt;<a href="IMAP.html#M004211">search</a>-key&gt;:</td><td>negate the following <a href="IMAP.html#M004211">search</a> key.
+
+</td></tr>
+<tr><td valign="top">OR &lt;<a href="IMAP.html#M004211">search</a>-key&gt; &lt;<a href="IMAP.html#M004211">search</a>-key&gt;:</td><td>&quot;or&quot; two <a href="IMAP.html#M004211">search</a> keys together.
+
+</td></tr>
+<tr><td valign="top">ON &lt;date&gt;:</td><td>messages with an internal date exactly equal to &lt;date&gt;, which has a
+format similar to 8-Aug-2002.
+
+</td></tr>
+<tr><td valign="top">SINCE &lt;date&gt;:</td><td>messages with an internal date on or after &lt;date&gt;.
+
+</td></tr>
+<tr><td valign="top">SUBJECT &lt;string&gt;:</td><td>messages with &lt;string&gt; in their subject.
+
+</td></tr>
+<tr><td valign="top">TO &lt;string&gt;:</td><td>messages with &lt;string&gt; in their TO field.
+
+</td></tr>
+</table>
+<p>
+For example:
+</p>
+<pre>
+  p imap.search([&quot;SUBJECT&quot;, &quot;hello&quot;, &quot;NOT&quot;, &quot;NEW&quot;])
+  #=&gt; [1, 6, 7, 8]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004192" class="method-detail">
+        <a name="M004192"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004192.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004192.html');return false;">
+          <span class="method-name">select</span><span class="method-args">(mailbox)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a SELECT command to <a href="IMAP.html#M004192">select</a> a
+<tt>mailbox</tt> so that messages in the <tt>mailbox</tt> can be accessed.
+</p>
+<p>
+After you have selected a mailbox, you may retrieve the number of items in
+that mailbox from @responses[&quot;EXISTS&quot;][-1], and the number of
+recent messages from @responses[&quot;RECENT&quot;][-1]. Note that these
+values can change if <a href="IMAP.html#M004227">new</a> messages arrive
+during a session; see <a
+href="IMAP.html#M004221">add_response_handler</a>() for a way of detecting
+this event.
+</p>
+<p>
+A <a href="IMAP/NoResponseError.html">Net::IMAP::NoResponseError</a> is
+raised if the mailbox does not exist or is for some reason non-selectable.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004203" class="method-detail">
+        <a name="M004203"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004203.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004203.html');return false;">
+          <span class="method-name">setacl</span><span class="method-args">(mailbox, user, rights)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends the SETACL command along with <tt>mailbox</tt>, <tt>user</tt> and the
+<tt>rights</tt> that user is to have on that mailbox. If <tt>rights</tt> is
+nil, then that user will be stripped of any rights to that mailbox. The <a
+href="IMAP.html">IMAP</a> <a href="../ACL.html">ACL</a> commands are
+described in [RFC-2086].
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004202" class="method-detail">
+        <a name="M004202"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004202.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004202.html');return false;">
+          <span class="method-name">setquota</span><span class="method-args">(mailbox, quota)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a SETQUOTA command along with the specified <tt>mailbox</tt> and
+<tt>quota</tt>. If <tt>quota</tt> is nil, then quota will be unset for that
+mailbox. Typically one needs to be logged in as server admin for this to
+work. The <a href="IMAP.html">IMAP</a> quota commands are described in
+[RFC-2087].
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004219" class="method-detail">
+        <a name="M004219"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004219.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004219.html');return false;">
+          <span class="method-name">sort</span><span class="method-args">(sort_keys, search_keys, charset)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a SORT command to <a href="IMAP.html#M004219">sort</a> messages in
+the mailbox. Returns an array of message sequence numbers. For example:
+</p>
+<pre>
+  p imap.sort([&quot;FROM&quot;], [&quot;ALL&quot;], &quot;US-ASCII&quot;)
+  #=&gt; [1, 2, 3, 5, 6, 7, 8, 4, 9]
+  p imap.sort([&quot;DATE&quot;], [&quot;SUBJECT&quot;, &quot;hello&quot;], &quot;US-ASCII&quot;)
+  #=&gt; [6, 7, 8, 1]
+</pre>
+<p>
+See [SORT-THREAD-EXT] for more details.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004206" class="method-detail">
+        <a name="M004206"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004206.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004206.html');return false;">
+          <span class="method-name">status</span><span class="method-args">(mailbox, attr)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a STATUS command, and returns the <a
+href="IMAP.html#M004206">status</a> of the indicated <tt>mailbox</tt>.
+<tt>attr</tt> is a <a href="IMAP.html#M004199">list</a> of one or more
+attributes that we are request the <a href="IMAP.html#M004206">status</a>
+of. Supported attributes include:
+</p>
+<pre>
+  MESSAGES:: the number of messages in the mailbox.
+  RECENT:: the number of recent messages in the mailbox.
+  UNSEEN:: the number of unseen messages in the mailbox.
+</pre>
+<p>
+The return value is a hash of attributes. For example:
+</p>
+<pre>
+  p imap.status(&quot;inbox&quot;, [&quot;MESSAGES&quot;, &quot;RECENT&quot;])
+  #=&gt; {&quot;RECENT&quot;=&gt;0, &quot;MESSAGES&quot;=&gt;44}
+</pre>
+<p>
+A <a href="IMAP/NoResponseError.html">Net::IMAP::NoResponseError</a> is
+raised if <a href="IMAP.html#M004206">status</a> values for
+<tt>mailbox</tt> cannot be returned, for instance because it does not
+exist.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004215" class="method-detail">
+        <a name="M004215"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004215.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004215.html');return false;">
+          <span class="method-name">store</span><span class="method-args">(set, attr, flags)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a STORE command to alter data associated with messages in the
+mailbox, in particular their flags. The <tt>set</tt> parameter is a number
+or an array of numbers or a <a href="../Range.html">Range</a> object. Each
+number is a message sequence number. <tt>attr</tt> is the name of a data
+item to <a href="IMAP.html#M004215">store</a>: &#8216;FLAGS&#8217; means to
+replace the message&#8216;s flag <a href="IMAP.html#M004199">list</a> with
+the provided one; &#8217;+FLAGS&#8217; means to add the provided flags; and
+&#8217;-FLAGS&#8217; means to remove them. <tt>flags</tt> is a <a
+href="IMAP.html#M004199">list</a> of flags.
+</p>
+<p>
+The return value is an array of Net::IMAP::FetchData. For example:
+</p>
+<pre>
+  p imap.store(6..8, &quot;+FLAGS&quot;, [:Deleted])
+  #=&gt; [#&lt;Net::IMAP::FetchData seqno=6, attr={&quot;FLAGS&quot;=&gt;[:Seen, :Deleted]}&gt;, \\
+       #&lt;Net::IMAP::FetchData seqno=7, attr={&quot;FLAGS&quot;=&gt;[:Seen, :Deleted]}&gt;, \\
+       #&lt;Net::IMAP::FetchData seqno=8, attr={&quot;FLAGS&quot;=&gt;[:Seen, :Deleted]}&gt;]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M004197" class="method-detail">
+        <a name="M004197"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004197.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004197.html');return false;">
+          <span class="method-name">subscribe</span><span class="method-args">(mailbox)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a SUBSCRIBE command to add the specified <tt>mailbox</tt> name to the
+server&#8216;s set of &quot;active&quot; or &quot;subscribed&quot;
+mailboxes as returned by <a href="IMAP.html#M004205">lsub</a>().
+</p>
+<p>
+A <a href="IMAP/NoResponseError.html">Net::IMAP::NoResponseError</a> is
+raised if <tt>mailbox</tt> cannot be subscribed to, for instance because it
+does not exist.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004223" class="method-detail">
+        <a name="M004223"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004223.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004223.html');return false;">
+          <span class="method-name">thread</span><span class="method-args">(algorithm, search_keys, charset)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+As for <a href="IMAP.html#M004211">search</a>(), but returns message
+sequence numbers in threaded format, as a Net::IMAP::ThreadMember tree. The
+supported algorithms are:
+</p>
+<table>
+<tr><td valign="top">ORDEREDSUBJECT:</td><td>split into single-level threads according to subject, ordered by date.
+
+</td></tr>
+<tr><td valign="top">REFERENCES:</td><td>split into threads by parent/child relationships determined by which
+message is a reply to which.
+
+</td></tr>
+</table>
+<p>
+Unlike <a href="IMAP.html#M004211">search</a>(), <tt>charset</tt> is a
+required argument. US-ASCII and UTF-8 are sample values.
+</p>
+<p>
+See [SORT-THREAD-EXT] for more details.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004218" class="method-detail">
+        <a name="M004218"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004218.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004218.html');return false;">
+          <span class="method-name">uid_copy</span><span class="method-args">(set, mailbox)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+As for <a href="IMAP.html#M004217">copy</a>(), but <tt>set</tt> contains
+unique identifiers.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004214" class="method-detail">
+        <a name="M004214"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004214.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004214.html');return false;">
+          <span class="method-name">uid_fetch</span><span class="method-args">(set, attr)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+As for <a href="IMAP.html#M004213">fetch</a>(), but <tt>set</tt> contains
+unique identifiers.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004212" class="method-detail">
+        <a name="M004212"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004212.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004212.html');return false;">
+          <span class="method-name">uid_search</span><span class="method-args">(keys, charset = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+As for <a href="IMAP.html#M004211">search</a>(), but returns unique
+identifiers.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004220" class="method-detail">
+        <a name="M004220"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004220.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004220.html');return false;">
+          <span class="method-name">uid_sort</span><span class="method-args">(sort_keys, search_keys, charset)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+As for <a href="IMAP.html#M004219">sort</a>(), but returns an array of
+unique identifiers.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004216" class="method-detail">
+        <a name="M004216"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004216.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004216.html');return false;">
+          <span class="method-name">uid_store</span><span class="method-args">(set, attr, flags)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+As for <a href="IMAP.html#M004215">store</a>(), but <tt>set</tt> contains
+unique identifiers.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004224" class="method-detail">
+        <a name="M004224"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004224.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004224.html');return false;">
+          <span class="method-name">uid_thread</span><span class="method-args">(algorithm, search_keys, charset)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+As for <a href="IMAP.html#M004223">thread</a>(), but returns unique
+identifiers instead of message sequence numbers.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004198" class="method-detail">
+        <a name="M004198"></a>
+
+        <div class="method-heading">
+          <a href="IMAP.src/M004198.html" target="Code" class="method-signature"
+            onclick="popupCode('IMAP.src/M004198.html');return false;">
+          <span class="method-name">unsubscribe</span><span class="method-args">(mailbox)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a UNSUBSCRIBE command to remove the specified <tt>mailbox</tt> name
+from the server&#8216;s set of &quot;active&quot; or &quot;subscribed&quot;
+mailboxes.
+</p>
+<p>
+A <a href="IMAP/NoResponseError.html">Net::IMAP::NoResponseError</a> is
+raised if <tt>mailbox</tt> cannot be unsubscribed from, for instance
+because the client is not currently subscribed to it.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

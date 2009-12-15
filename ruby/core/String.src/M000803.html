@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>split (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.split(pattern=$;, [limit])   =&gt; anArray
+ *  
+ *  Divides &lt;i&gt;str&lt;/i&gt; into substrings based on a delimiter, returning an array
+ *  of these substrings.
+ *     
+ *  If &lt;i&gt;pattern&lt;/i&gt; is a &lt;code&gt;String&lt;/code&gt;, then its contents are used as
+ *  the delimiter when splitting &lt;i&gt;str&lt;/i&gt;. If &lt;i&gt;pattern&lt;/i&gt; is a single
+ *  space, &lt;i&gt;str&lt;/i&gt; is split on whitespace, with leading whitespace and runs
+ *  of contiguous whitespace characters ignored.
+ *     
+ *  If &lt;i&gt;pattern&lt;/i&gt; is a &lt;code&gt;Regexp&lt;/code&gt;, &lt;i&gt;str&lt;/i&gt; is divided where the
+ *  pattern matches. Whenever the pattern matches a zero-length string,
+ *  &lt;i&gt;str&lt;/i&gt; is split into individual characters.
+ *     
+ *  If &lt;i&gt;pattern&lt;/i&gt; is omitted, the value of &lt;code&gt;$;&lt;/code&gt; is used.  If
+ *  &lt;code&gt;$;&lt;/code&gt; is &lt;code&gt;nil&lt;/code&gt; (which is the default), &lt;i&gt;str&lt;/i&gt; is
+ *  split on whitespace as if ` ' were specified.
+ *     
+ *  If the &lt;i&gt;limit&lt;/i&gt; parameter is omitted, trailing null fields are
+ *  suppressed. If &lt;i&gt;limit&lt;/i&gt; is a positive number, at most that number of
+ *  fields will be returned (if &lt;i&gt;limit&lt;/i&gt; is &lt;code&gt;1&lt;/code&gt;, the entire
+ *  string is returned as the only entry in an array). If negative, there is no
+ *  limit to the number of fields returned, and trailing null fields are not
+ *  suppressed.
+ *     
+ *     &quot; now's  the time&quot;.split        #=&gt; [&quot;now's&quot;, &quot;the&quot;, &quot;time&quot;]
+ *     &quot; now's  the time&quot;.split(' ')   #=&gt; [&quot;now's&quot;, &quot;the&quot;, &quot;time&quot;]
+ *     &quot; now's  the time&quot;.split(/ /)   #=&gt; [&quot;&quot;, &quot;now's&quot;, &quot;&quot;, &quot;the&quot;, &quot;time&quot;]
+ *     &quot;1, 2.34,56, 7&quot;.split(%r{,\s*}) #=&gt; [&quot;1&quot;, &quot;2.34&quot;, &quot;56&quot;, &quot;7&quot;]
+ *     &quot;hello&quot;.split(//)               #=&gt; [&quot;h&quot;, &quot;e&quot;, &quot;l&quot;, &quot;l&quot;, &quot;o&quot;]
+ *     &quot;hello&quot;.split(//, 3)            #=&gt; [&quot;h&quot;, &quot;e&quot;, &quot;llo&quot;]
+ *     &quot;hi mom&quot;.split(%r{\s*})         #=&gt; [&quot;h&quot;, &quot;i&quot;, &quot;m&quot;, &quot;o&quot;, &quot;m&quot;]
+ *     
+ *     &quot;mellow yellow&quot;.split(&quot;ello&quot;)   #=&gt; [&quot;m&quot;, &quot;w y&quot;, &quot;w&quot;]
+ *     &quot;1,2,,3,4,,&quot;.split(',')         #=&gt; [&quot;1&quot;, &quot;2&quot;, &quot;&quot;, &quot;3&quot;, &quot;4&quot;]
+ *     &quot;1,2,,3,4,,&quot;.split(',', 4)      #=&gt; [&quot;1&quot;, &quot;2&quot;, &quot;&quot;, &quot;3,4,,&quot;]
+ *     &quot;1,2,,3,4,,&quot;.split(',', -4)     #=&gt; [&quot;1&quot;, &quot;2&quot;, &quot;&quot;, &quot;3&quot;, &quot;4&quot;, &quot;&quot;, &quot;&quot;]
+ */
+
+static VALUE
+rb_str_split_m(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    VALUE spat;
+    VALUE limit;
+    int awk_split = Qfalse;
+    long beg, end, i = 0;
+    int lim = 0;
+    VALUE result, tmp;
+
+    if (rb_scan_args(argc, argv, &quot;02&quot;, &amp;spat, &amp;limit) == 2) {
+        lim = NUM2INT(limit);
+        if (lim &lt;= 0) limit = Qnil;
+        else if (lim == 1) {
+            if (RSTRING(str)-&gt;len == 0)
+                return rb_ary_new2(0);
+            return rb_ary_new3(1, str);
+        }
+        i = 1;
+    }
+
+    if (NIL_P(spat)) {
+        if (!NIL_P(rb_fs)) {
+            spat = rb_fs;
+            goto fs_set;
+        }
+        awk_split = Qtrue;
+    }
+    else {
+      fs_set:
+        if (TYPE(spat) == T_STRING &amp;&amp; RSTRING(spat)-&gt;len == 1) {
+            if (RSTRING(spat)-&gt;ptr[0] == ' ') {
+                awk_split = Qtrue;
+            }
+            else {
+                spat = rb_reg_regcomp(rb_reg_quote(spat));
+            }
+        }
+        else {
+            spat = get_pat(spat, 1);
+        }
+    }
+
+    result = rb_ary_new();
+    beg = 0;
+    if (awk_split) {
+        char *ptr = RSTRING(str)-&gt;ptr;
+        long len = RSTRING(str)-&gt;len;
+        char *eptr = ptr + len;
+        int skip = 1;
+
+        for (end = beg = 0; ptr&lt;eptr; ptr++) {
+            if (skip) {
+                if (ISSPACE(*ptr)) {
+                    beg++;
+                }
+                else {
+                    end = beg+1;
+                    skip = 0;
+                    if (!NIL_P(limit) &amp;&amp; lim &lt;= i) break;
+                }
+            }
+            else {
+                if (ISSPACE(*ptr)) {
+                    rb_ary_push(result, rb_str_substr(str, beg, end-beg));
+                    skip = 1;
+                    beg = end + 1;
+                    if (!NIL_P(limit)) ++i;
+                }
+                else {
+                    end++;
+                }
+            }
+        }
+    }
+    else {
+        long start = beg;
+        long idx;
+        int last_null = 0;
+        struct re_registers *regs;
+
+        while ((end = rb_reg_search(spat, str, start, 0)) &gt;= 0) {
+            regs = RMATCH(rb_backref_get())-&gt;regs;
+            if (start == end &amp;&amp; BEG(0) == END(0)) {
+                if (!RSTRING(str)-&gt;ptr) {
+                    rb_ary_push(result, rb_str_new(&quot;&quot;, 0));
+                    break;
+                }
+                else if (last_null == 1) {
+                    rb_ary_push(result, rb_str_substr(str, beg, mbclen2(RSTRING(str)-&gt;ptr[beg],spat)));
+                    beg = start;
+                }
+                else {
+                    start += mbclen2(RSTRING(str)-&gt;ptr[start],spat);
+                    last_null = 1;
+                    continue;
+                }
+            }
+            else {
+                rb_ary_push(result, rb_str_substr(str, beg, end-beg));
+                beg = start = END(0);
+            }
+            last_null = 0;
+
+            for (idx=1; idx &lt; regs-&gt;num_regs; idx++) {
+                if (BEG(idx) == -1) continue;
+                if (BEG(idx) == END(idx))
+                    tmp = rb_str_new5(str, 0, 0);
+                else
+                    tmp = rb_str_substr(str, BEG(idx), END(idx)-BEG(idx));
+                rb_ary_push(result, tmp);
+            }
+            if (!NIL_P(limit) &amp;&amp; lim &lt;= ++i) break;
+        }
+    }
+    if (RSTRING(str)-&gt;len &gt; 0 &amp;&amp; (!NIL_P(limit) || RSTRING(str)-&gt;len &gt; beg || lim &lt; 0)) {
+        if (RSTRING(str)-&gt;len == beg)
+            tmp = rb_str_new5(str, 0, 0);
+        else
+            tmp = rb_str_substr(str, beg, RSTRING(str)-&gt;len-beg);
+        rb_ary_push(result, tmp);
+    }
+    if (NIL_P(limit) &amp;&amp; lim == 0) {
+        while (RARRAY(result)-&gt;len &gt; 0 &amp;&amp;
+               RSTRING(RARRAY(result)-&gt;ptr[RARRAY(result)-&gt;len-1])-&gt;len == 0)
+            rb_ary_pop(result);
+    }
+
+    return result;
+}</pre>
+</body>
+</html>

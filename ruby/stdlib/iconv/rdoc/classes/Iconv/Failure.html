@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Iconv::Failure</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Iconv::Failure</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/iconv/iconv_c.html">
+                iconv/iconv.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Base attributes for <a href="../Iconv.html">Iconv</a> exceptions.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000360">failed</a>&nbsp;&nbsp;
+      <a href="#M000361">inspect</a>&nbsp;&nbsp;
+      <a href="#M000358">new</a>&nbsp;&nbsp;
+      <a href="#M000359">success</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000358" class="method-detail">
+        <a name="M000358"></a>
+
+        <div class="method-heading">
+          <span class="method-name"> Iconv.new(to, from)<br />
+</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates <a href="Failure.html#M000358">new</a> code converter from a
+coding-system designated with <tt>from</tt> to another one designated with
+<tt>to</tt>.
+</p>
+<h3>Parameters</h3>
+<table>
+<tr><td valign="top"><tt>to</tt>:</td><td>encoding name for destination
+
+</td></tr>
+<tr><td valign="top"><tt>from</tt>:</td><td>encoding name for source
+
+</td></tr>
+</table>
+<h3>Exceptions</h3>
+<table>
+<tr><td valign="top">TypeError:</td><td>if <tt>to</tt> or <tt>from</tt> aren&#8216;t String
+
+</td></tr>
+<tr><td valign="top"><a href="InvalidEncoding.html">InvalidEncoding</a>:</td><td>if designated converter couldn&#8216;t find out
+
+</td></tr>
+<tr><td valign="top">SystemCallError:</td><td>if <tt>iconv_open(3)</tt> fails
+
+</td></tr>
+</table>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000360" class="method-detail">
+        <a name="M000360"></a>
+
+        <div class="method-heading">
+          <a href="#M000360" class="method-signature">
+          <span class="method-name"> failed<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns substring of the original string passed to <a
+href="../Iconv.html">Iconv</a> that starts at the character caused the
+exception.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000360-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000360-source">
+<pre>
+/*
+ * Document-method: failed
+ * call-seq: failed
+ *
+ * Returns substring of the original string passed to Iconv that starts at the
+ * character caused the exception. 
+ */
+static VALUE
+iconv_failure_failed
+    (self)
+    VALUE self;
+{
+    return rb_attr_get(self, rb_failed);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000361" class="method-detail">
+        <a name="M000361"></a>
+
+        <div class="method-heading">
+          <a href="#M000361" class="method-signature">
+          <span class="method-name"> inspect<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns inspected string like as: #&lt;<em>class</em>: <em><a
+href="Failure.html#M000359">success</a></em>, <em><a
+href="Failure.html#M000360">failed</a></em>&gt;
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000361-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000361-source">
+<pre>
+/*
+ * Document-method: inspect
+ * call-seq: inspect
+ *
+ * Returns inspected string like as: #&lt;_class_: _success_, _failed_&gt;
+ */
+static VALUE
+iconv_failure_inspect
+    (self)
+    VALUE self;
+{
+    const char *cname = rb_class2name(CLASS_OF(self));
+    VALUE success = rb_attr_get(self, rb_success);
+    VALUE failed = rb_attr_get(self, rb_failed);
+    VALUE str = rb_str_buf_cat2(rb_str_new2(&quot;#&lt;&quot;), cname);
+    str = rb_str_buf_cat(str, &quot;: &quot;, 2);
+    str = rb_str_buf_append(str, rb_inspect(success));
+    str = rb_str_buf_cat(str, &quot;, &quot;, 2);
+    str = rb_str_buf_append(str, rb_inspect(failed));
+    return rb_str_buf_cat(str, &quot;&gt;&quot;, 1);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000359" class="method-detail">
+        <a name="M000359"></a>
+
+        <div class="method-heading">
+          <a href="#M000359" class="method-signature">
+          <span class="method-name"> success<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns string(s) translated successfully until the exception occurred.
+</p>
+<ul>
+<li>In the case of failure occurred within <a
+href="../Iconv.html#M000352">Iconv.iconv</a>, returned value is an array of
+strings translated successfully preceding failure and the last element is
+string on the way.
+
+</li>
+</ul>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000359-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000359-source">
+<pre>
+/*
+ * Document-method: success
+ * call-seq: success
+ *
+ * Returns string(s) translated successfully until the exception occurred.
+ * * In the case of failure occurred within Iconv.iconv, returned
+ *   value is an array of strings translated successfully preceding
+ *   failure and the last element is string on the way.
+ */
+static VALUE
+iconv_failure_success
+    (self)
+    VALUE self;
+{
+    return rb_attr_get(self, rb_success);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

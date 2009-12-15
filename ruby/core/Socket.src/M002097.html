@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>recvfrom (Socket)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *      socket.recvfrom(maxlen) =&gt; [mesg, sender_sockaddr]
+ *      socket.recvfrom(maxlen, flags) =&gt; [mesg, sender_sockaddr]
+ * 
+ * Receives up to _maxlen_ bytes from +socket+. _flags_ is zero or more
+ * of the +MSG_+ options. The first element of the results, _mesg_, is the data
+ * received. The second element, _sender_sockaddr_, contains protocol-specific information
+ * on the sender.
+ * 
+ * === Parameters
+ * * +maxlen+ - the number of bytes to receive from the socket
+ * * +flags+ - zero or more of the +MSG_+ options 
+ * 
+ * === Example
+ *      # In one file, start this first
+ *      require 'socket'
+ *      include Socket::Constants
+ *      socket = Socket.new( AF_INET, SOCK_STREAM, 0 )
+ *      sockaddr = Socket.pack_sockaddr_in( 2200, 'localhost' )
+ *      socket.bind( sockaddr )
+ *      socket.listen( 5 )
+ *      client, client_sockaddr = socket.accept
+ *      data = client.recvfrom( 20 )[0].chomp
+ *      puts &quot;I only received 20 bytes '#{data}'&quot;
+ *      sleep 1
+ *      socket.close
+ * 
+ *      # In another file, start this second
+ *      require 'socket'
+ *      include Socket::Constants
+ *      socket = Socket.new( AF_INET, SOCK_STREAM, 0 )
+ *      sockaddr = Socket.pack_sockaddr_in( 2200, 'localhost' )
+ *      socket.connect( sockaddr )
+ *      socket.puts &quot;Watch this get cut short!&quot;
+ *      socket.close 
+ * 
+ * === Unix-based Exceptions
+ * On unix-based based systems the following system exceptions may be raised if the
+ * call to _recvfrom_ fails:
+ * * Errno::EAGAIN - the +socket+ file descriptor is marked as O_NONBLOCK and no
+ *   data is waiting to be received; or MSG_OOB is set and no out-of-band data
+ *   is available and either the +socket+ file descriptor is marked as 
+ *   O_NONBLOCK or the +socket+ does not support blocking to wait for 
+ *   out-of-band-data
+ * * Errno::EWOULDBLOCK - see Errno::EAGAIN
+ * * Errno::EBADF - the +socket+ is not a valid file descriptor
+ * * Errno::ECONNRESET - a connection was forcibly closed by a peer
+ * * Errno::EFAULT - the socket's internal buffer, address or address length 
+ *   cannot be accessed or written
+ * * Errno::EINTR - a signal interupted _recvfrom_ before any data was available
+ * * Errno::EINVAL - the MSG_OOB flag is set and no out-of-band data is available
+ * * Errno::EIO - an i/o error occurred while reading from or writing to the 
+ *   filesystem
+ * * Errno::ENOBUFS - insufficient resources were available in the system to 
+ *   perform the operation
+ * * Errno::ENOMEM - insufficient memory was available to fulfill the request
+ * * Errno::ENOSR - there were insufficient STREAMS resources available to 
+ *   complete the operation
+ * * Errno::ENOTCONN - a receive is attempted on a connection-mode socket that
+ *   is not connected
+ * * Errno::ENOTSOCK - the +socket+ does not refer to a socket
+ * * Errno::EOPNOTSUPP - the specified flags are not supported for this socket type
+ * * Errno::ETIMEDOUT - the connection timed out during connection establishment
+ *   or due to a transmission timeout on an active connection
+ * 
+ * === Windows Exceptions
+ * On Windows systems the following system exceptions may be raised if 
+ * the call to _recvfrom_ fails:
+ * * Errno::ENETDOWN - the network is down
+ * * Errno::EFAULT - the internal buffer and from parameters on +socket+ are not
+ *   part of the user address space, or the internal fromlen parameter is
+ *   too small to accomodate the peer address
+ * * Errno::EINTR - the (blocking) call was cancelled by an internal call to
+ *   the WinSock function WSACancelBlockingCall
+ * * Errno::EINPROGRESS - a blocking Windows Sockets 1.1 call is in progress or 
+ *   the service provider is still processing a callback function
+ * * Errno::EINVAL - +socket+ has not been bound with a call to _bind_, or an
+ *   unknown flag was specified, or MSG_OOB was specified for a socket with
+ *   SO_OOBINLINE enabled, or (for byte stream-style sockets only) the internal
+ *   len parameter on +socket+ was zero or negative
+ * * Errno::EISCONN - +socket+ is already connected. The call to _recvfrom_ is
+ *   not permitted with a connected socket on a socket that is connetion 
+ *   oriented or connectionless.
+ * * Errno::ENETRESET - the connection has been broken due to the keep-alive 
+ *   activity detecting a failure while the operation was in progress.
+ * * Errno::EOPNOTSUPP - MSG_OOB was specified, but +socket+ is not stream-style
+ *   such as type SOCK_STREAM. OOB data is not supported in the communication
+ *   domain associated with +socket+, or +socket+ is unidirectional and 
+ *   supports only send operations
+ * * Errno::ESHUTDOWN - +socket+ has been shutdown. It is not possible to 
+ *   call _recvfrom_ on a socket after _shutdown_ has been invoked.
+ * * Errno::EWOULDBLOCK - +socket+ is marked as nonblocking and a  call to 
+ *   _recvfrom_ would block.
+ * * Errno::EMSGSIZE - the message was too large to fit into the specified buffer
+ *   and was truncated.
+ * * Errno::ETIMEDOUT - the connection has been dropped, because of a network
+ *   failure or because the system on the other end went down without
+ *   notice
+ * * Errno::ECONNRESET - the virtual circuit was reset by the remote side 
+ *   executing a hard or abortive close. The application should close the
+ *   socket; it is no longer usable. On a UDP-datagram socket this error
+ *   indicates a previous send operation resulted in an ICMP Port Unreachable
+ *   message.
+ */
+static VALUE
+sock_recvfrom(argc, argv, sock)
+    int argc;
+    VALUE *argv;
+    VALUE sock;
+{
+    return s_recvfrom(sock, argc, argv, RECV_SOCKET);
+}</pre>
+</body>
+</html>

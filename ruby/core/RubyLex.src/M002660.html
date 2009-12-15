@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>identify_string (RubyLex)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb/ruby-lex.rb, line 1046</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">identify_string</span>(<span class="ruby-identifier">ltype</span>, <span class="ruby-identifier">quoted</span> = <span class="ruby-identifier">ltype</span>)
+    <span class="ruby-ivar">@ltype</span> = <span class="ruby-identifier">ltype</span>
+    <span class="ruby-ivar">@quoted</span> = <span class="ruby-identifier">quoted</span>
+    <span class="ruby-identifier">subtype</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">nest</span> = <span class="ruby-value">0</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">getc</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@quoted</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">ch</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">nest</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+          <span class="ruby-keyword kw">break</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@ltype</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;'&quot;</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@ltype</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;]&quot;</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@ltype</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;:&quot;</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">ch</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;#&quot;</span>
+          <span class="ruby-identifier">subtype</span> = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">ch</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'\\'</span> <span class="ruby-comment cmt">#'</span>
+          <span class="ruby-identifier">read_escape</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-constant">PERCENT_PAREN</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-ivar">@quoted</span>) 
+          <span class="ruby-keyword kw">if</span> <span class="ruby-constant">PERCENT_PAREN</span>[<span class="ruby-identifier">ch</span>] <span class="ruby-operator">==</span> <span class="ruby-ivar">@quoted</span>
+            <span class="ruby-identifier">nest</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">ch</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@quoted</span>
+            <span class="ruby-identifier">nest</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@ltype</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;/&quot;</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">peek</span>(<span class="ruby-value">0</span>) <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/i|m|x|o|e|s|u|n/</span>
+          <span class="ruby-identifier">getc</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">subtype</span>
+        <span class="ruby-constant">Token</span>(<span class="ruby-constant">DLtype2Token</span>[<span class="ruby-identifier">ltype</span>])
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">Token</span>(<span class="ruby-constant">Ltype2Token</span>[<span class="ruby-identifier">ltype</span>])
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">ensure</span>
+      <span class="ruby-ivar">@ltype</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@quoted</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@lex_state</span> = <span class="ruby-constant">EXPR_END</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

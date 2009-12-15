@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (WIN32OLE_TYPE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE_TYPE.new(typelib, ole_class) -&gt; WIN32OLE_TYPE object
+ *
+ *  Returns a new WIN32OLE_TYPE object.
+ *  The first argument &lt;i&gt;typelib&lt;/i&gt; specifies OLE type library name.
+ *  The second argument specifies OLE class name.
+ *
+ *      WIN32OLE_TYPE.new('Microsoft Excel 9.0 Object Library', 'Application') 
+ *          # =&gt; WIN32OLE_TYPE object of Application class of Excel. 
+ */
+static VALUE
+foletype_initialize(self, typelib, oleclass)
+    VALUE self;
+    VALUE typelib;
+    VALUE oleclass;
+{
+    VALUE file;
+    OLECHAR * pbuf;
+    ITypeLib *pTypeLib;
+    HRESULT hr;
+
+    Check_SafeStr(oleclass);
+    Check_SafeStr(typelib);
+    file = typelib_file(typelib);
+    if (file == Qnil) {
+        file = typelib;
+    }
+    pbuf = ole_mb2wc(StringValuePtr(file), -1);
+    hr = LoadTypeLibEx(pbuf, REGKIND_NONE, &amp;pTypeLib);
+    if (FAILED(hr))
+        ole_raise(hr, eWIN32OLE_RUNTIME_ERROR, &quot;failed to LoadTypeLibEx&quot;);
+    SysFreeString(pbuf);
+    if (oleclass_from_typelib(self, pTypeLib, oleclass) == Qfalse) {
+        OLE_RELEASE(pTypeLib);
+        rb_raise(eWIN32OLE_RUNTIME_ERROR, &quot;not found `%s` in `%s`&quot;,
+                 StringValuePtr(oleclass), StringValuePtr(typelib));
+    }
+    OLE_RELEASE(pTypeLib);
+    return self;
+}</pre>
+</body>
+</html>

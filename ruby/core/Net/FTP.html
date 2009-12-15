@@ -1,0 +1,1108 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Net::FTP</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Net::FTP</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/net/ftp_rb.html">
+                lib/net/ftp.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+This class implements the <a href="../File.html">File</a> Transfer
+Protocol. If you have used a command-line <a href="FTP.html">FTP</a>
+program, and are familiar with the commands, you will be able to use this
+class easily. Some extra features are included to take advantage of
+Ruby&#8216;s style and strengths.
+</p>
+<h2>Example</h2>
+<pre>
+  require 'net/ftp'
+</pre>
+<h3>Example 1</h3>
+<pre>
+  ftp = Net::FTP.new('ftp.netlab.co.jp')
+  ftp.login
+  files = ftp.chdir('pub/lang/ruby/contrib')
+  files = ftp.list('n*')
+  ftp.getbinaryfile('nif.rb-0.91.gz', 'nif.gz', 1024)
+  ftp.close
+</pre>
+<h3>Example 2</h3>
+<pre>
+  Net::FTP.open('ftp.netlab.co.jp') do |ftp|
+    ftp.login
+    files = ftp.chdir('pub/lang/ruby/contrib')
+    files = ftp.list('n*')
+    ftp.getbinaryfile('nif.rb-0.91.gz', 'nif.gz', 1024)
+  end
+</pre>
+<h2>Major Methods</h2>
+<p>
+The following are the methods most likely to be useful to users:
+</p>
+<ul>
+<li><a href="FTP.html#M004085">FTP.open</a>
+
+</li>
+<li><a href="FTP.html#M004098">getbinaryfile</a>
+
+</li>
+<li><a href="FTP.html#M004099">gettextfile</a>
+
+</li>
+<li><a href="FTP.html#M004101">putbinaryfile</a>
+
+</li>
+<li><a href="FTP.html#M004102">puttextfile</a>
+
+</li>
+<li><a href="FTP.html#M004111">chdir</a>
+
+</li>
+<li><a href="FTP.html#M004105">nlst</a>
+
+</li>
+<li><a href="FTP.html#M004112">size</a>
+
+</li>
+<li><a href="FTP.html#M004109">rename</a>
+
+</li>
+<li><a href="FTP.html#M004110">delete</a>
+
+</li>
+</ul>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M004119">abort</a>&nbsp;&nbsp;
+      <a href="#M004104">acct</a>&nbsp;&nbsp;
+      <a href="#M004111">chdir</a>&nbsp;&nbsp;
+      <a href="#M004126">close</a>&nbsp;&nbsp;
+      <a href="#M004127">closed?</a>&nbsp;&nbsp;
+      <a href="#M004089">connect</a>&nbsp;&nbsp;
+      <a href="#M004110">delete</a>&nbsp;&nbsp;
+      <a href="#M004108">dir</a>&nbsp;&nbsp;
+      <a href="#M004100">get</a>&nbsp;&nbsp;
+      <a href="#M004098">getbinaryfile</a>&nbsp;&nbsp;
+      <a href="#M004117">getdir</a>&nbsp;&nbsp;
+      <a href="#M004099">gettextfile</a>&nbsp;&nbsp;
+      <a href="#M004122">help</a>&nbsp;&nbsp;
+      <a href="#M004106">list</a>&nbsp;&nbsp;
+      <a href="#M004093">login</a>&nbsp;&nbsp;
+      <a href="#M004107">ls</a>&nbsp;&nbsp;
+      <a href="#M004121">mdtm</a>&nbsp;&nbsp;
+      <a href="#M004114">mkdir</a>&nbsp;&nbsp;
+      <a href="#M004113">mtime</a>&nbsp;&nbsp;
+      <a href="#M004086">new</a>&nbsp;&nbsp;
+      <a href="#M004105">nlst</a>&nbsp;&nbsp;
+      <a href="#M004124">noop</a>&nbsp;&nbsp;
+      <a href="#M004085">open</a>&nbsp;&nbsp;
+      <a href="#M004103">put</a>&nbsp;&nbsp;
+      <a href="#M004101">putbinaryfile</a>&nbsp;&nbsp;
+      <a href="#M004102">puttextfile</a>&nbsp;&nbsp;
+      <a href="#M004116">pwd</a>&nbsp;&nbsp;
+      <a href="#M004123">quit</a>&nbsp;&nbsp;
+      <a href="#M004109">rename</a>&nbsp;&nbsp;
+      <a href="#M004094">retrbinary</a>&nbsp;&nbsp;
+      <a href="#M004095">retrlines</a>&nbsp;&nbsp;
+      <a href="#M004087">return_code</a>&nbsp;&nbsp;
+      <a href="#M004088">return_code=</a>&nbsp;&nbsp;
+      <a href="#M004115">rmdir</a>&nbsp;&nbsp;
+      <a href="#M004091">sendcmd</a>&nbsp;&nbsp;
+      <a href="#M004090">set_socket</a>&nbsp;&nbsp;
+      <a href="#M004125">site</a>&nbsp;&nbsp;
+      <a href="#M004112">size</a>&nbsp;&nbsp;
+      <a href="#M004120">status</a>&nbsp;&nbsp;
+      <a href="#M004096">storbinary</a>&nbsp;&nbsp;
+      <a href="#M004097">storlines</a>&nbsp;&nbsp;
+      <a href="#M004118">system</a>&nbsp;&nbsp;
+      <a href="#M004092">voidcmd</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="../MonitorMixin.html">MonitorMixin</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">last_response_code</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">lastresp</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">binary</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+When <tt>true</tt>, transfers are performed in binary mode. Default:
+<tt>true</tt>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">debug_mode</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+When <tt>true</tt>, all traffic to and from the server is written to
++$stdout+. Default: <tt>false</tt>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">last_response</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The server&#8216;s last response.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">last_response_code</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The server&#8216;s last response code.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">passive</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+When <tt>true</tt>, the connection is in passive mode. Default:
+<tt>false</tt>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">resume</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+Sets or retrieves the <tt>resume</tt> <a
+href="FTP.html#M004120">status</a>, which decides whether incomplete
+transfers are resumed or restarted. Default: <tt>false</tt>.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">welcome</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The server&#8216;s welcome message.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M004086" class="method-detail">
+        <a name="M004086"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004086.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004086.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(host = nil, user = nil, passwd = nil, acct = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates and returns a <a href="FTP.html#M004086">new</a> <tt><a
+href="FTP.html">FTP</a></tt> object. If a <tt>host</tt> is given, a
+connection is made. Additionally, if the <tt>user</tt> is given, the given
+user name, password, and (optionally) account are used to log in. See <a
+href="FTP.html#M004093">login</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004085" class="method-detail">
+        <a name="M004085"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004085.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004085.html');return false;">
+          <span class="method-name">open</span><span class="method-args">(host, user = nil, passwd = nil, acct = nil) {|ftp| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+A synonym for <tt><a href="FTP.html#M004086">FTP.new</a></tt>, but with a
+mandatory host parameter.
+</p>
+<p>
+If a block is given, it is passed the <tt><a href="FTP.html">FTP</a></tt>
+object, which will be closed when the block finishes, or when an exception
+is raised.
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M004119" class="method-detail">
+        <a name="M004119"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004119.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004119.html');return false;">
+          <span class="method-name">abort</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Aborts the previous command (ABOR command).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004104" class="method-detail">
+        <a name="M004104"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004104.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004104.html');return false;">
+          <span class="method-name">acct</span><span class="method-args">(account)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends the ACCT command. TODO: more info.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004111" class="method-detail">
+        <a name="M004111"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004111.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004111.html');return false;">
+          <span class="method-name">chdir</span><span class="method-args">(dirname)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Changes the (remote) directory.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004126" class="method-detail">
+        <a name="M004126"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004126.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004126.html');return false;">
+          <span class="method-name">close</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Closes the connection. Further operations are impossible until you <a
+href="FTP.html#M004085">open</a> a <a href="FTP.html#M004086">new</a>
+connection with <a href="FTP.html#M004089">connect</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004127" class="method-detail">
+        <a name="M004127"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004127.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004127.html');return false;">
+          <span class="method-name">closed?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> iff the connection is closed.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004089" class="method-detail">
+        <a name="M004089"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004089.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004089.html');return false;">
+          <span class="method-name">connect</span><span class="method-args">(host, port = FTP_PORT)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Establishes an <a href="FTP.html">FTP</a> connection to host, optionally
+overriding the default port. If the environment variable
+<tt>SOCKS_SERVER</tt> is set, sets up the connection through a SOCKS proxy.
+Raises an exception (typically <tt>Errno::ECONNREFUSED</tt>) if the
+connection cannot be established.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004110" class="method-detail">
+        <a name="M004110"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004110.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004110.html');return false;">
+          <span class="method-name">delete</span><span class="method-args">(filename)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Deletes a file on the server.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004108" class="method-detail">
+        <a name="M004108"></a>
+
+        <div class="method-heading">
+          <span class="method-name">dir</span><span class="method-args">(*args)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FTP.html#M004106">list</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004100" class="method-detail">
+        <a name="M004100"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004100.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004100.html');return false;">
+          <span class="method-name">get</span><span class="method-args">(remotefile, localfile = File.basename(remotefile), blocksize = DEFAULT_BLOCKSIZE) {|data| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Retrieves <tt>remotefile</tt> in whatever mode the session is set (text or
+binary). See <a href="FTP.html#M004099">gettextfile</a> and <a
+href="FTP.html#M004098">getbinaryfile</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004098" class="method-detail">
+        <a name="M004098"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004098.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004098.html');return false;">
+          <span class="method-name">getbinaryfile</span><span class="method-args">(remotefile, localfile = File.basename(remotefile), blocksize = DEFAULT_BLOCKSIZE) {|data| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Retrieves <tt>remotefile</tt> in binary mode, storing the result in
+<tt>localfile</tt>. If a block is supplied, it is passed the retrieved data
+in <tt>blocksize</tt> chunks.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004117" class="method-detail">
+        <a name="M004117"></a>
+
+        <div class="method-heading">
+          <span class="method-name">getdir</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FTP.html#M004116">pwd</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004099" class="method-detail">
+        <a name="M004099"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004099.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004099.html');return false;">
+          <span class="method-name">gettextfile</span><span class="method-args">(remotefile, localfile = File.basename(remotefile)) {|line| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Retrieves <tt>remotefile</tt> in ASCII (text) mode, storing the result in
+<tt>localfile</tt>. If a block is supplied, it is passed the retrieved data
+one line at a time.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004122" class="method-detail">
+        <a name="M004122"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004122.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004122.html');return false;">
+          <span class="method-name">help</span><span class="method-args">(arg = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Issues the HELP command.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004106" class="method-detail">
+        <a name="M004106"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004106.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004106.html');return false;">
+          <span class="method-name">list</span><span class="method-args">(*args) {|line| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array of file information in the directory (the output is like
+`<a href="FTP.html#M004107">ls</a> -l`). If a block is given, it iterates
+through the listing.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004093" class="method-detail">
+        <a name="M004093"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004093.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004093.html');return false;">
+          <span class="method-name">login</span><span class="method-args">(user = &quot;anonymous&quot;, passwd = nil, acct = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Logs in to the remote host. The session must have been previously
+connected. If <tt>user</tt> is the string &quot;anonymous&quot; and the
+<tt>password</tt> is <tt>nil</tt>, a password of <tt>user@host</tt> is
+synthesized. If the <tt><a href="FTP.html#M004104">acct</a></tt> parameter
+is not <tt>nil</tt>, an <a href="FTP.html">FTP</a> ACCT command is sent
+following the successful <a href="FTP.html#M004093">login</a>. Raises an
+exception on error (typically <tt>Net::FTPPermError</tt>).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004107" class="method-detail">
+        <a name="M004107"></a>
+
+        <div class="method-heading">
+          <span class="method-name">ls</span><span class="method-args">(*args)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="FTP.html#M004106">list</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004121" class="method-detail">
+        <a name="M004121"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004121.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004121.html');return false;">
+          <span class="method-name">mdtm</span><span class="method-args">(filename)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Issues the MDTM command. TODO: more info.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004114" class="method-detail">
+        <a name="M004114"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004114.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004114.html');return false;">
+          <span class="method-name">mkdir</span><span class="method-args">(dirname)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a remote directory.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004113" class="method-detail">
+        <a name="M004113"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004113.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004113.html');return false;">
+          <span class="method-name">mtime</span><span class="method-args">(filename, local = false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the last modification time of the (remote) file. If <tt>local</tt>
+is <tt>true</tt>, it is returned as a local time, otherwise it&#8216;s a
+UTC time.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004105" class="method-detail">
+        <a name="M004105"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004105.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004105.html');return false;">
+          <span class="method-name">nlst</span><span class="method-args">(dir = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array of filenames in the remote directory.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004124" class="method-detail">
+        <a name="M004124"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004124.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004124.html');return false;">
+          <span class="method-name">noop</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Issues a NOOP command.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004103" class="method-detail">
+        <a name="M004103"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004103.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004103.html');return false;">
+          <span class="method-name">put</span><span class="method-args">(localfile, remotefile = File.basename(localfile), blocksize = DEFAULT_BLOCKSIZE, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Transfers <tt>localfile</tt> to the server in whatever mode the session is
+set (text or binary). See <a href="FTP.html#M004102">puttextfile</a> and <a
+href="FTP.html#M004101">putbinaryfile</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004101" class="method-detail">
+        <a name="M004101"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004101.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004101.html');return false;">
+          <span class="method-name">putbinaryfile</span><span class="method-args">(localfile, remotefile = File.basename(localfile), blocksize = DEFAULT_BLOCKSIZE) {|data| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Transfers <tt>localfile</tt> to the server in binary mode, storing the
+result in <tt>remotefile</tt>. If a block is supplied, calls it, passing in
+the transmitted data in <tt>blocksize</tt> chunks.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004102" class="method-detail">
+        <a name="M004102"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004102.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004102.html');return false;">
+          <span class="method-name">puttextfile</span><span class="method-args">(localfile, remotefile = File.basename(localfile)) {|line| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Transfers <tt>localfile</tt> to the server in ASCII (text) mode, storing
+the result in <tt>remotefile</tt>. If callback or an associated block is
+supplied, calls it, passing in the transmitted data one line at a time.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004116" class="method-detail">
+        <a name="M004116"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004116.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004116.html');return false;">
+          <span class="method-name">pwd</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the current remote directory.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004123" class="method-detail">
+        <a name="M004123"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004123.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004123.html');return false;">
+          <span class="method-name">quit</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Exits the <a href="FTP.html">FTP</a> session.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004109" class="method-detail">
+        <a name="M004109"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004109.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004109.html');return false;">
+          <span class="method-name">rename</span><span class="method-args">(fromname, toname)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Renames a file on the server.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004094" class="method-detail">
+        <a name="M004094"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004094.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004094.html');return false;">
+          <span class="method-name">retrbinary</span><span class="method-args">(cmd, blocksize, rest_offset = nil) {|data| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Puts the connection into binary (image) mode, issues the given command, and
+fetches the data returned, passing it to the associated block in chunks of
+<tt>blocksize</tt> characters. Note that <tt>cmd</tt> is a server command
+(such as &quot;RETR myfile&quot;).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004095" class="method-detail">
+        <a name="M004095"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004095.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004095.html');return false;">
+          <span class="method-name">retrlines</span><span class="method-args">(cmd) {|line| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Puts the connection into ASCII (text) mode, issues the given command, and
+passes the resulting data, one line at a time, to the associated block. If
+no block is given, prints the lines. Note that <tt>cmd</tt> is a server
+command (such as &quot;RETR myfile&quot;).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004087" class="method-detail">
+        <a name="M004087"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004087.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004087.html');return false;">
+          <span class="method-name">return_code</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Obsolete
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004088" class="method-detail">
+        <a name="M004088"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004088.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004088.html');return false;">
+          <span class="method-name">return_code=</span><span class="method-args">(s)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Obsolete
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004115" class="method-detail">
+        <a name="M004115"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004115.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004115.html');return false;">
+          <span class="method-name">rmdir</span><span class="method-args">(dirname)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Removes a remote directory.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004091" class="method-detail">
+        <a name="M004091"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004091.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004091.html');return false;">
+          <span class="method-name">sendcmd</span><span class="method-args">(cmd)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a command and returns the response.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004090" class="method-detail">
+        <a name="M004090"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004090.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004090.html');return false;">
+          <span class="method-name">set_socket</span><span class="method-args">(sock, get_greeting = true)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+WRITEME or make private
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004125" class="method-detail">
+        <a name="M004125"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004125.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004125.html');return false;">
+          <span class="method-name">site</span><span class="method-args">(arg)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Issues a SITE command.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004112" class="method-detail">
+        <a name="M004112"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004112.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004112.html');return false;">
+          <span class="method-name">size</span><span class="method-args">(filename)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="FTP.html#M004112">size</a> of the given (remote)
+filename.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004120" class="method-detail">
+        <a name="M004120"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004120.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004120.html');return false;">
+          <span class="method-name">status</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="FTP.html#M004120">status</a> (STAT command).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004096" class="method-detail">
+        <a name="M004096"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004096.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004096.html');return false;">
+          <span class="method-name">storbinary</span><span class="method-args">(cmd, file, blocksize, rest_offset = nil) {|data| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Puts the connection into binary (image) mode, issues the given server-side
+command (such as &quot;STOR myfile&quot;), and sends the contents of the
+file named <tt>file</tt> to the server. If the optional block is given, it
+also passes it the data, in chunks of <tt>blocksize</tt> characters.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004097" class="method-detail">
+        <a name="M004097"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004097.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004097.html');return false;">
+          <span class="method-name">storlines</span><span class="method-args">(cmd, file) {|line| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Puts the connection into ASCII (text) mode, issues the given server-side
+command (such as &quot;STOR myfile&quot;), and sends the contents of the
+file named <tt>file</tt> to the server, one line at a time. If the optional
+block is given, it also passes it the lines.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004118" class="method-detail">
+        <a name="M004118"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004118.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004118.html');return false;">
+          <span class="method-name">system</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <a href="FTP.html#M004118">system</a> information.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M004092" class="method-detail">
+        <a name="M004092"></a>
+
+        <div class="method-heading">
+          <a href="FTP.src/M004092.html" target="Code" class="method-signature"
+            onclick="popupCode('FTP.src/M004092.html');return false;">
+          <span class="method-name">voidcmd</span><span class="method-args">(cmd)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a command and expect a response beginning with &#8216;2&#8217;.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

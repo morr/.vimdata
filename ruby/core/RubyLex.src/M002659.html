@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>identify_number (RubyLex)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb/ruby-lex.rb, line 949</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">identify_number</span>
+    <span class="ruby-ivar">@lex_state</span> = <span class="ruby-constant">EXPR_END</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">peek</span>(<span class="ruby-value">0</span>) <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;0&quot;</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">peek</span>(<span class="ruby-value">1</span>) <span class="ruby-operator">!~</span> <span class="ruby-regexp re">/[.eE]/</span>
+      <span class="ruby-identifier">getc</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">peek</span>(<span class="ruby-value">0</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/[xX]/</span>
+        <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">getc</span>
+        <span class="ruby-identifier">match</span> = <span class="ruby-regexp re">/[0-9a-fA-F_]/</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/[bB]/</span>
+        <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">getc</span>
+        <span class="ruby-identifier">match</span> = <span class="ruby-regexp re">/[01_]/</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/[oO]/</span>
+        <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">getc</span>
+        <span class="ruby-identifier">match</span> = <span class="ruby-regexp re">/[0-7_]/</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/[dD]/</span>
+        <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">getc</span>
+        <span class="ruby-identifier">match</span> = <span class="ruby-regexp re">/[0-9_]/</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/[0-7]/</span>
+        <span class="ruby-identifier">match</span> = <span class="ruby-regexp re">/[0-7_]/</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/[89]/</span>
+        <span class="ruby-constant">RubyLex</span>.<span class="ruby-identifier">fail</span> <span class="ruby-constant">SyntaxError</span>, <span class="ruby-value str">&quot;Illegal octal digit&quot;</span>
+      <span class="ruby-keyword kw">else</span> 
+        <span class="ruby-keyword kw">return</span> <span class="ruby-constant">Token</span>(<span class="ruby-constant">TkINTEGER</span>)
+      <span class="ruby-keyword kw">end</span>
+      
+      <span class="ruby-identifier">len0</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-identifier">non_digit</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">getc</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">match</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">ch</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ch</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;_&quot;</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">non_digit</span>
+              <span class="ruby-constant">RubyLex</span>.<span class="ruby-identifier">fail</span> <span class="ruby-constant">SyntaxError</span>, <span class="ruby-node">&quot;trailing `#{ch}' in number&quot;</span>
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">non_digit</span> = <span class="ruby-identifier">ch</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">non_digit</span> = <span class="ruby-keyword kw">false</span>
+            <span class="ruby-identifier">len0</span> = <span class="ruby-keyword kw">false</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">ungetc</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">len0</span>
+            <span class="ruby-constant">RubyLex</span>.<span class="ruby-identifier">fail</span> <span class="ruby-constant">SyntaxError</span>, <span class="ruby-value str">&quot;numeric literal without digits&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">non_digit</span>
+            <span class="ruby-constant">RubyLex</span>.<span class="ruby-identifier">fail</span> <span class="ruby-constant">SyntaxError</span>, <span class="ruby-node">&quot;trailing `#{non_digit}' in number&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">break</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-constant">Token</span>(<span class="ruby-constant">TkINTEGER</span>)
+    <span class="ruby-keyword kw">end</span>
+    
+    <span class="ruby-identifier">type</span> = <span class="ruby-constant">TkINTEGER</span>
+    <span class="ruby-identifier">allow_point</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-identifier">allow_e</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-identifier">non_digit</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">getc</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">ch</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/[0-9]/</span>
+        <span class="ruby-identifier">non_digit</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;_&quot;</span>
+        <span class="ruby-identifier">non_digit</span> = <span class="ruby-identifier">ch</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">allow_point</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-value str">&quot;.&quot;</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">non_digit</span>
+          <span class="ruby-constant">RubyLex</span>.<span class="ruby-identifier">fail</span> <span class="ruby-constant">SyntaxError</span>, <span class="ruby-node">&quot;trailing `#{non_digit}' in number&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">type</span> = <span class="ruby-constant">TkFLOAT</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">peek</span>(<span class="ruby-value">0</span>) <span class="ruby-operator">!~</span> <span class="ruby-regexp re">/[0-9]/</span>
+          <span class="ruby-identifier">type</span> = <span class="ruby-constant">TkINTEGER</span>
+          <span class="ruby-identifier">ungetc</span>
+          <span class="ruby-keyword kw">break</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">allow_point</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">allow_e</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-value str">&quot;e&quot;</span>, <span class="ruby-identifier">allow_e</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-value str">&quot;E&quot;</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">non_digit</span>
+          <span class="ruby-constant">RubyLex</span>.<span class="ruby-identifier">fail</span> <span class="ruby-constant">SyntaxError</span>, <span class="ruby-node">&quot;trailing `#{non_digit}' in number&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">type</span> = <span class="ruby-constant">TkFLOAT</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">peek</span>(<span class="ruby-value">0</span>) <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/[+-]/</span>
+          <span class="ruby-identifier">getc</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">allow_e</span> = <span class="ruby-keyword kw">false</span>
+        <span class="ruby-identifier">allow_point</span> = <span class="ruby-keyword kw">false</span>
+        <span class="ruby-identifier">non_digit</span> = <span class="ruby-identifier">ch</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">non_digit</span>
+          <span class="ruby-constant">RubyLex</span>.<span class="ruby-identifier">fail</span> <span class="ruby-constant">SyntaxError</span>, <span class="ruby-node">&quot;trailing `#{non_digit}' in number&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">ungetc</span>
+        <span class="ruby-keyword kw">break</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-constant">Token</span>(<span class="ruby-identifier">type</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

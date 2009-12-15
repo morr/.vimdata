@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_sym (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.intern   =&gt; symbol
+ *     str.to_sym   =&gt; symbol
+ *  
+ *  Returns the &lt;code&gt;Symbol&lt;/code&gt; corresponding to &lt;i&gt;str&lt;/i&gt;, creating the
+ *  symbol if it did not previously exist. See &lt;code&gt;Symbol#id2name&lt;/code&gt;.
+ *     
+ *     &quot;Koala&quot;.intern         #=&gt; :Koala
+ *     s = 'cat'.to_sym       #=&gt; :cat
+ *     s == :cat              #=&gt; true
+ *     s = '@cat'.to_sym      #=&gt; :@cat
+ *     s == :@cat             #=&gt; true
+ *
+ *  This can also be used to create symbols that cannot be represented using the
+ *  &lt;code&gt;:xxx&lt;/code&gt; notation.
+ *     
+ *     'cat and dog'.to_sym   #=&gt; :&quot;cat and dog&quot;
+ */
+
+VALUE
+rb_str_intern(s)
+    VALUE s;
+{
+    volatile VALUE str = s;
+    ID id;
+
+    if (!RSTRING(str)-&gt;ptr || RSTRING(str)-&gt;len == 0) {
+        rb_raise(rb_eArgError, &quot;interning empty string&quot;);
+    }
+    if (strlen(RSTRING(str)-&gt;ptr) != RSTRING(str)-&gt;len)
+        rb_raise(rb_eArgError, &quot;symbol string may not contain `\\0'&quot;);
+    if (OBJ_TAINTED(str) &amp;&amp; rb_safe_level() &gt;= 1 &amp;&amp; !rb_sym_interned_p(str)) {
+        rb_raise(rb_eSecurityError, &quot;Insecure: can't intern tainted string&quot;);
+    }
+    id = rb_intern(RSTRING(str)-&gt;ptr);
+    return ID2SYM(id);
+}</pre>
+</body>
+</html>

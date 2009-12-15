@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>test (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     test(int_cmd, file1 [, file2] ) =&gt; obj
+ *  
+ *  Uses the integer &lt;i&gt;aCmd&lt;/i&gt; to perform various tests on
+ *  &lt;i&gt;file1&lt;/i&gt; (first table below) or on &lt;i&gt;file1&lt;/i&gt; and
+ *  &lt;i&gt;file2&lt;/i&gt; (second table).
+ *     
+ *  File tests on a single file:
+ *
+ *    Test   Returns   Meaning
+ *     ?A  | Time    | Last access time for file1
+ *     ?b  | boolean | True if file1 is a block device
+ *     ?c  | boolean | True if file1 is a character device
+ *     ?C  | Time    | Last change time for file1
+ *     ?d  | boolean | True if file1 exists and is a directory
+ *     ?e  | boolean | True if file1 exists
+ *     ?f  | boolean | True if file1 exists and is a regular file
+ *     ?g  | boolean | True if file1 has the \CF{setgid} bit
+ *         |         | set (false under NT)
+ *     ?G  | boolean | True if file1 exists and has a group
+ *         |         | ownership equal to the caller's group
+ *     ?k  | boolean | True if file1 exists and has the sticky bit set
+ *     ?l  | boolean | True if file1 exists and is a symbolic link
+ *     ?M  | Time    | Last modification time for file1
+ *     ?o  | boolean | True if file1 exists and is owned by 
+ *         |         | the caller's effective uid
+ *     ?O  | boolean | True if file1 exists and is owned by
+ *         |         | the caller's real uid
+ *     ?p  | boolean | True if file1 exists and is a fifo
+ *     ?r  | boolean | True if file1 is readable by the effective
+ *         |         | uid/gid of the caller
+ *     ?R  | boolean | True if file is readable by the real
+ *         |         | uid/gid of the caller
+ *     ?s  | int/nil | If file1 has nonzero size, return the size,
+ *         |         | otherwise return nil
+ *     ?S  | boolean | True if file1 exists and is a socket
+ *     ?u  | boolean | True if file1 has the setuid bit set
+ *     ?w  | boolean | True if file1 exists and is writable by
+ *         |         | the effective uid/gid
+ *     ?W  | boolean | True if file1 exists and is writable by
+ *         |         | the real uid/gid
+ *     ?x  | boolean | True if file1 exists and is executable by
+ *         |         | the effective uid/gid
+ *     ?X  | boolean | True if file1 exists and is executable by
+ *         |         | the real uid/gid
+ *     ?z  | boolean | True if file1 exists and has a zero length
+ *
+ * Tests that take two files:
+ *
+ *     ?-  | boolean | True if file1 and file2 are identical
+ *     ?=  | boolean | True if the modification times of file1
+ *         |         | and file2 are equal
+ *     ?&lt;  | boolean | True if the modification time of file1
+ *         |         | is prior to that of file2
+ *     ?&gt;  | boolean | True if the modification time of file1
+ *         |         | is after that of file2
+ */
+
+static VALUE
+rb_f_test(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    int cmd;
+
+    if (argc == 0) rb_raise(rb_eArgError, &quot;wrong number of arguments&quot;);
+#if 0 /* 1.7 behavior? */
+    if (argc == 1) {
+        return RTEST(argv[0]) ? Qtrue : Qfalse;
+    }
+#endif
+    cmd = NUM2CHR(argv[0]);
+    if (cmd == 0) return Qfalse;
+    if (strchr(&quot;bcdefgGkloOprRsSuwWxXz&quot;, cmd)) {
+        CHECK(1);
+        switch (cmd) {
+          case 'b':
+            return test_b(0, argv[1]);
+
+          case 'c':
+            return test_c(0, argv[1]);
+
+          case 'd':
+            return test_d(0, argv[1]);
+
+          case 'a':
+          case 'e':
+            return test_e(0, argv[1]);
+
+          case 'f':
+            return test_f(0, argv[1]);
+
+          case 'g':
+            return test_sgid(0, argv[1]);
+
+          case 'G':
+            return test_grpowned(0, argv[1]);
+
+          case 'k':
+            return test_sticky(0, argv[1]);
+
+          case 'l':
+            return test_l(0, argv[1]);
+
+          case 'o':
+            return test_owned(0, argv[1]);
+
+          case 'O':
+            return test_rowned(0, argv[1]);
+
+          case 'p':
+            return test_p(0, argv[1]);
+
+          case 'r':
+            return test_r(0, argv[1]);
+
+          case 'R':
+            return test_R(0, argv[1]);
+
+          case 's':
+            return test_s(0, argv[1]);
+
+          case 'S':
+            return test_S(0, argv[1]);
+
+          case 'u':
+            return test_suid(0, argv[1]);
+
+          case 'w':
+            return test_w(0, argv[1]);
+
+          case 'W':
+            return test_W(0, argv[1]);
+
+          case 'x':
+            return test_x(0, argv[1]);
+
+          case 'X':
+            return test_X(0, argv[1]);
+
+          case 'z':
+            return test_z(0, argv[1]);
+        }
+    }
+
+    if (strchr(&quot;MAC&quot;, cmd)) {
+        struct stat st;
+
+        CHECK(1);
+        if (rb_stat(argv[1], &amp;st) == -1) {
+            rb_sys_fail(RSTRING(argv[1])-&gt;ptr);
+        }
+
+        switch (cmd) {
+          case 'A':
+            return rb_time_new(st.st_atime, 0);
+          case 'M':
+            return rb_time_new(st.st_mtime, 0);
+          case 'C':
+            return rb_time_new(st.st_ctime, 0);
+        }
+    }
+
+    if (cmd == '-') {
+        CHECK(2);
+        return test_identical(0, argv[1], argv[2]);
+    }
+
+    if (strchr(&quot;=&lt;&gt;&quot;, cmd)) {
+        struct stat st1, st2;
+
+        CHECK(2);
+        if (rb_stat(argv[1], &amp;st1) &lt; 0) return Qfalse;
+        if (rb_stat(argv[2], &amp;st2) &lt; 0) return Qfalse;
+
+        switch (cmd) {
+          case '=':
+            if (st1.st_mtime == st2.st_mtime) return Qtrue;
+            return Qfalse;
+
+          case '&gt;':
+            if (st1.st_mtime &gt; st2.st_mtime) return Qtrue;
+            return Qfalse;
+
+          case '&lt;':
+            if (st1.st_mtime &lt; st2.st_mtime) return Qtrue;
+            return Qfalse;
+        }
+    }
+    /* unknown command */
+    rb_raise(rb_eArgError, &quot;unknown command ?%c&quot;, cmd);
+    return Qnil;                /* not reached */
+}</pre>
+</body>
+</html>

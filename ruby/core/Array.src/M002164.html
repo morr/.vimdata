@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>first (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.first   -&gt;   obj or nil
+ *     array.first(n) -&gt; an_array
+ *
+ *  Returns the first element, or the first +n+ elements, of the array.
+ *  If the array is empty, the first form returns &lt;code&gt;nil&lt;/code&gt;, and the
+ *  second form returns an empty array.
+ *
+ *     a = [ &quot;q&quot;, &quot;r&quot;, &quot;s&quot;, &quot;t&quot; ]
+ *     a.first    #=&gt; &quot;q&quot;
+ *     a.first(1) #=&gt; [&quot;q&quot;]
+ *     a.first(3) #=&gt; [&quot;q&quot;, &quot;r&quot;, &quot;s&quot;]
+ */
+
+static VALUE
+rb_ary_first(argc, argv, ary)
+    int argc;
+    VALUE *argv;
+    VALUE ary;
+{
+    if (argc == 0) {
+        if (RARRAY(ary)-&gt;len == 0) return Qnil;
+        return RARRAY(ary)-&gt;ptr[0];
+    }
+    else {
+        VALUE nv, result;
+        long n, i;
+
+        rb_scan_args(argc, argv, &quot;01&quot;, &amp;nv);
+        n = NUM2LONG(nv);
+        if (n &gt; RARRAY(ary)-&gt;len) n = RARRAY(ary)-&gt;len;
+        result = rb_ary_new2(n);
+        for (i=0; i&lt;n; i++) {
+            rb_ary_push(result, RARRAY(ary)-&gt;ptr[i]);
+        }
+        return result;
+    }
+}</pre>
+</body>
+</html>

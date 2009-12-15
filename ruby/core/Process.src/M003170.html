@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>uid= (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.uid= integer   =&gt; numeric
+ *
+ *  Sets the (integer) user ID for this process. Not available on all
+ *  platforms.
+ */
+
+static VALUE
+proc_setuid(obj, id)
+    VALUE obj, id;
+{
+    int uid = NUM2INT(id);
+
+    check_uid_switch();
+#if defined(HAVE_SETRESUID) &amp;&amp;  !defined(__CHECKER__)
+    if (setresuid(uid, -1, -1) &lt; 0) rb_sys_fail(0);
+#elif defined HAVE_SETREUID
+    if (setreuid(uid, -1) &lt; 0) rb_sys_fail(0);
+#elif defined HAVE_SETRUID
+    if (setruid(uid) &lt; 0) rb_sys_fail(0);
+#elif defined HAVE_SETUID
+    {
+        if (geteuid() == uid) {
+            if (setuid(uid) &lt; 0) rb_sys_fail(0);
+        }
+        else {
+            rb_notimplement();
+        }
+    }
+#else
+    rb_notimplement();
+#endif
+    return INT2FIX(uid);
+}</pre>
+</body>
+</html>

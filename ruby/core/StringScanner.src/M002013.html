@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>&lt;&lt; (StringScanner)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   concat(str)
+ *   &lt;&lt;(str)
+ *
+ * Appends +str+ to the string being scanned.
+ * This method does not affect scan pointer.
+ *
+ *   s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+ *   s.scan(/Fri /)
+ *   s &lt;&lt; &quot; +1000 GMT&quot;
+ *   s.string            # -&gt; &quot;Fri Dec 12 1975 14:39 +1000 GMT&quot;
+ *   s.scan(/Dec/)       # -&gt; &quot;Dec&quot;
+ */
+static VALUE
+strscan_concat(VALUE self, VALUE str)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    StringValue(str);
+    rb_str_append(p-&gt;str, str);
+    return self;
+}</pre>
+</body>
+</html>

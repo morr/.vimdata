@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>popup_menu (CGI::HtmlExtension)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/cgi.rb, line 1837</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">popup_menu</span>(<span class="ruby-identifier">name</span> = <span class="ruby-value str">&quot;&quot;</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Hash</span>)
+        <span class="ruby-identifier">values</span>   = <span class="ruby-identifier">name</span>[<span class="ruby-value str">&quot;VALUES&quot;</span>]
+        <span class="ruby-identifier">size</span>     = <span class="ruby-identifier">name</span>[<span class="ruby-value str">&quot;SIZE&quot;</span>].<span class="ruby-identifier">to_s</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>[<span class="ruby-value str">&quot;SIZE&quot;</span>]
+        <span class="ruby-identifier">multiple</span> = <span class="ruby-identifier">name</span>[<span class="ruby-value str">&quot;MULTIPLE&quot;</span>]
+        <span class="ruby-identifier">name</span>     = <span class="ruby-identifier">name</span>[<span class="ruby-value str">&quot;NAME&quot;</span>]
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">size</span> = <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-identifier">multiple</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">select</span>({ <span class="ruby-value str">&quot;NAME&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">name</span>, <span class="ruby-value str">&quot;SIZE&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">size</span>,
+               <span class="ruby-value str">&quot;MULTIPLE&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">multiple</span> }){
+        <span class="ruby-identifier">values</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">String</span>)
+            <span class="ruby-identifier">option</span>({ <span class="ruby-value str">&quot;VALUE&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">value</span> }){ <span class="ruby-identifier">value</span> }
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span>[<span class="ruby-identifier">value</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-keyword kw">true</span>
+              <span class="ruby-identifier">option</span>({ <span class="ruby-value str">&quot;VALUE&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">value</span>[<span class="ruby-value">0</span>], <span class="ruby-value str">&quot;SELECTED&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span> }){
+                <span class="ruby-identifier">value</span>[<span class="ruby-identifier">value</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">-</span> <span class="ruby-value">2</span>]
+              }
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">option</span>({ <span class="ruby-value str">&quot;VALUE&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">value</span>[<span class="ruby-value">0</span>] }){
+                <span class="ruby-identifier">value</span>[<span class="ruby-identifier">value</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>]
+              }
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        }.<span class="ruby-identifier">to_s</span>
+      }
+
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

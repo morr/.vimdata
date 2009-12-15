@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>taint (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.taint -&gt; obj
+ *  
+ *  Marks &lt;i&gt;obj&lt;/i&gt; as tainted---if the &lt;code&gt;$SAFE&lt;/code&gt; level is
+ *  set appropriately, many method calls which might alter the running
+ *  programs environment will refuse to accept tainted strings.
+ */
+
+VALUE
+rb_obj_taint(obj)
+    VALUE obj;
+{
+    rb_secure(4);
+    if (!OBJ_TAINTED(obj)) {
+        if (OBJ_FROZEN(obj)) {
+            rb_error_frozen(&quot;object&quot;);
+        }
+        OBJ_TAINT(obj);
+    }
+    return obj;
+}</pre>
+</body>
+</html>

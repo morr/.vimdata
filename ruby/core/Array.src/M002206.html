@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>slice! (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.slice!(index)         -&gt; obj or nil
+ *     array.slice!(start, length) -&gt; sub_array or nil
+ *     array.slice!(range)         -&gt; sub_array or nil 
+ *  
+ *  Deletes the element(s) given by an index (optionally with a length)
+ *  or by a range. Returns the deleted object, subarray, or
+ *  &lt;code&gt;nil&lt;/code&gt; if the index is out of range. Equivalent to:
+ *     
+ *     def slice!(*args)
+ *       result = self[*args]
+ *       self[*args] = nil
+ *       result
+ *     end
+ *     
+ *     a = [ &quot;a&quot;, &quot;b&quot;, &quot;c&quot; ]
+ *     a.slice!(1)     #=&gt; &quot;b&quot;
+ *     a               #=&gt; [&quot;a&quot;, &quot;c&quot;]
+ *     a.slice!(-1)    #=&gt; &quot;c&quot;
+ *     a               #=&gt; [&quot;a&quot;]
+ *     a.slice!(100)   #=&gt; nil
+ *     a               #=&gt; [&quot;a&quot;]
+ */
+
+static VALUE
+rb_ary_slice_bang(argc, argv, ary)
+    int argc;
+    VALUE *argv;
+    VALUE ary;
+{
+    VALUE arg1, arg2;
+    long pos, len;
+
+    if (rb_scan_args(argc, argv, &quot;11&quot;, &amp;arg1, &amp;arg2) == 2) {
+        pos = NUM2LONG(arg1);
+        len = NUM2LONG(arg2);
+      delete_pos_len:
+        if (pos &lt; 0) {
+            pos = RARRAY(ary)-&gt;len + pos;
+        }
+        arg2 = rb_ary_subseq(ary, pos, len);
+        rb_ary_splice(ary, pos, len, Qnil);    /* Qnil/rb_ary_new2(0) */
+        return arg2;
+    }
+
+    if (!FIXNUM_P(arg1) &amp;&amp; rb_range_beg_len(arg1, &amp;pos, &amp;len, RARRAY(ary)-&gt;len, 1)) {
+        goto delete_pos_len;
+    }
+
+    return rb_ary_delete_at(ary, NUM2LONG(arg1));
+}</pre>
+</body>
+</html>

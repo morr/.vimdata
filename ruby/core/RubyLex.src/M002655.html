@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>identify_gvar (RubyLex)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb/ruby-lex.rb, line 746</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">identify_gvar</span>
+    <span class="ruby-ivar">@lex_state</span> = <span class="ruby-constant">EXPR_END</span>
+    
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">getc</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/[~_*$?!@\/\\;,=:&lt;&gt;&quot;.]/</span>   <span class="ruby-comment cmt">#&quot;</span>
+      <span class="ruby-constant">Token</span>(<span class="ruby-constant">TkGVAR</span>, <span class="ruby-value str">&quot;$&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ch</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;-&quot;</span>
+      <span class="ruby-constant">Token</span>(<span class="ruby-constant">TkGVAR</span>, <span class="ruby-value str">&quot;$-&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">getc</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;&amp;&quot;</span>, <span class="ruby-value str">&quot;`&quot;</span>, <span class="ruby-value str">&quot;'&quot;</span>, <span class="ruby-value str">&quot;+&quot;</span>
+      <span class="ruby-constant">Token</span>(<span class="ruby-constant">TkBACK_REF</span>, <span class="ruby-value str">&quot;$&quot;</span><span class="ruby-operator">+</span><span class="ruby-identifier">ch</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/[1-9]/</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">getc</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/[0-9]/</span>; <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">ungetc</span>
+      <span class="ruby-constant">Token</span>(<span class="ruby-constant">TkNTH_REF</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\w/</span>
+      <span class="ruby-identifier">ungetc</span>
+      <span class="ruby-identifier">ungetc</span>
+      <span class="ruby-identifier">identify_identifier</span>
+    <span class="ruby-keyword kw">else</span> 
+      <span class="ruby-identifier">ungetc</span>
+      <span class="ruby-constant">Token</span>(<span class="ruby-value str">&quot;$&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

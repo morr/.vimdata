@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>slice (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str[fixnum]                 =&gt; fixnum or nil
+ *     str[fixnum, fixnum]         =&gt; new_str or nil
+ *     str[range]                  =&gt; new_str or nil
+ *     str[regexp]                 =&gt; new_str or nil
+ *     str[regexp, fixnum]         =&gt; new_str or nil
+ *     str[other_str]              =&gt; new_str or nil
+ *     str.slice(fixnum)           =&gt; fixnum or nil
+ *     str.slice(fixnum, fixnum)   =&gt; new_str or nil
+ *     str.slice(range)            =&gt; new_str or nil
+ *     str.slice(regexp)           =&gt; new_str or nil
+ *     str.slice(regexp, fixnum)   =&gt; new_str or nil
+ *     str.slice(other_str)        =&gt; new_str or nil
+ *  
+ *  Element Reference---If passed a single &lt;code&gt;Fixnum&lt;/code&gt;, returns the code
+ *  of the character at that position. If passed two &lt;code&gt;Fixnum&lt;/code&gt;
+ *  objects, returns a substring starting at the offset given by the first, and
+ *  a length given by the second. If given a range, a substring containing
+ *  characters at offsets given by the range is returned. In all three cases, if
+ *  an offset is negative, it is counted from the end of &lt;i&gt;str&lt;/i&gt;. Returns
+ *  &lt;code&gt;nil&lt;/code&gt; if the initial offset falls outside the string, the length
+ *  is negative, or the beginning of the range is greater than the end.
+ *     
+ *  If a &lt;code&gt;Regexp&lt;/code&gt; is supplied, the matching portion of &lt;i&gt;str&lt;/i&gt; is
+ *  returned. If a numeric parameter follows the regular expression, that
+ *  component of the &lt;code&gt;MatchData&lt;/code&gt; is returned instead. If a
+ *  &lt;code&gt;String&lt;/code&gt; is given, that string is returned if it occurs in
+ *  &lt;i&gt;str&lt;/i&gt;. In both cases, &lt;code&gt;nil&lt;/code&gt; is returned if there is no
+ *  match.
+ *     
+ *     a = &quot;hello there&quot;
+ *     a[1]                   #=&gt; 101
+ *     a[1,3]                 #=&gt; &quot;ell&quot;
+ *     a[1..3]                #=&gt; &quot;ell&quot;
+ *     a[-3,2]                #=&gt; &quot;er&quot;
+ *     a[-4..-2]              #=&gt; &quot;her&quot;
+ *     a[12..-1]              #=&gt; nil
+ *     a[-2..-4]              #=&gt; &quot;&quot;
+ *     a[/[aeiou](.)\1/]      #=&gt; &quot;ell&quot;
+ *     a[/[aeiou](.)\1/, 0]   #=&gt; &quot;ell&quot;
+ *     a[/[aeiou](.)\1/, 1]   #=&gt; &quot;l&quot;
+ *     a[/[aeiou](.)\1/, 2]   #=&gt; nil
+ *     a[&quot;lo&quot;]                #=&gt; &quot;lo&quot;
+ *     a[&quot;bye&quot;]               #=&gt; nil
+ */
+
+static VALUE
+rb_str_aref_m(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    if (argc == 2) {
+        if (TYPE(argv[0]) == T_REGEXP) {
+            return rb_str_subpat(str, argv[0], NUM2INT(argv[1]));
+        }
+        return rb_str_substr(str, NUM2LONG(argv[0]), NUM2LONG(argv[1]));
+    }
+    if (argc != 1) {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments (%d for 1)&quot;, argc);
+    }
+    return rb_str_aref(str, argv[0]);
+}</pre>
+</body>
+</html>

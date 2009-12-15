@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>readlines (StringIO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   strio.readlines(sep_string=$/)  -&gt;   array
+ *
+ * See IO#readlines.
+ */
+static VALUE
+strio_readlines(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    struct StringIO *ptr = StringIO(self);
+    VALUE ary = rb_ary_new(), line;
+    while (!NIL_P(line = strio_getline(argc, argv, readable(ptr)))) {
+        rb_ary_push(ary, line);
+    }
+    return ary;
+}</pre>
+</body>
+</html>

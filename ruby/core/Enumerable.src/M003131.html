@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>all? (Enumerable)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     enum.all? [{|obj| block } ]   =&gt; true or false
+ *  
+ *  Passes each element of the collection to the given block. The method
+ *  returns &lt;code&gt;true&lt;/code&gt; if the block never returns
+ *  &lt;code&gt;false&lt;/code&gt; or &lt;code&gt;nil&lt;/code&gt;. If the block is not given,
+ *  Ruby adds an implicit block of &lt;code&gt;{|obj| obj}&lt;/code&gt; (that is
+ *  &lt;code&gt;all?&lt;/code&gt; will return &lt;code&gt;true&lt;/code&gt; only if none of the
+ *  collection members are &lt;code&gt;false&lt;/code&gt; or &lt;code&gt;nil&lt;/code&gt;.)
+ *     
+ *     %w{ ant bear cat}.all? {|word| word.length &gt;= 3}   #=&gt; true
+ *     %w{ ant bear cat}.all? {|word| word.length &gt;= 4}   #=&gt; false
+ *     [ nil, true, 99 ].all?                             #=&gt; false
+ *     
+ */
+
+static VALUE
+enum_all(obj)
+    VALUE obj;
+{
+    VALUE result = Qtrue;
+
+    rb_iterate(rb_each, obj, rb_block_given_p() ? all_iter_i : all_i, (VALUE)&amp;result);
+    return result;
+}</pre>
+</body>
+</html>

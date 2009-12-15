@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: CSV::StreamBuf</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">CSV::StreamBuf</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/csv_rb.html">
+                lib/csv.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Buffered stream.
+</p>
+<p>
+EXAMPLE 1 &#8212; an <a href="../IO.html">IO</a>.
+</p>
+<pre>
+  class MyBuf &lt; StreamBuf
+    # Do initialize myself before a super class.  Super class might call my
+    # method 'read'. (Could be awful for C++ user. :-)
+    def initialize(s)
+      @s = s
+      super()
+    end
+
+    # define my own 'read' method.
+    # CAUTION: Returning nil means EnfOfStream.
+    def read(size)
+      @s.read(size)
+    end
+
+    # release buffers. in Ruby which has GC, you do not have to call this...
+    def terminate
+      @s = nil
+      super()
+    end
+  end
+
+  buf = MyBuf.new(STDIN)
+  my_str = ''
+  p buf[0, 0]               # =&gt; '' (null string)
+  p buf[0]                  # =&gt; 97 (char code of 'a')
+  p buf[0, 1]               # =&gt; 'a'
+  my_str = buf[0, 5]
+  p my_str                  # =&gt; 'abcde' (5 chars)
+  p buf[0, 6]               # =&gt; &quot;abcde\n&quot; (6 chars)
+  p buf[0, 7]               # =&gt; &quot;abcde\n&quot; (6 chars)
+  p buf.drop(3)             # =&gt; 3 (dropped chars)
+  p buf.get(0, 2)           # =&gt; 'de' (2 chars)
+  p buf.is_eos?             # =&gt; false (is not EOS here)
+  p buf.drop(5)             # =&gt; 3 (dropped chars)
+  p buf.is_eos?             # =&gt; true (is EOS here)
+  p buf[0]                  # =&gt; nil (is EOS here)
+</pre>
+<p>
+EXAMPLE 2 &#8212; <a href="../String.html">String</a>.
+</p>
+<pre>
+  This is a conceptual example.  No pros with this.
+
+  class StrBuf &lt; StreamBuf
+    def initialize(s)
+      @str = s
+      @idx = 0
+      super()
+    end
+
+    def read(size)
+      str = @str[@idx, size]
+      @idx += str.size
+      str
+    end
+  end
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002124">[]</a>&nbsp;&nbsp;
+      <a href="#M002126">drop</a>&nbsp;&nbsp;
+      <a href="#M002125">get</a>&nbsp;&nbsp;
+      <a href="#M002127">is_eos?</a>&nbsp;&nbsp;
+      <a href="#M002128">new</a>&nbsp;&nbsp;
+      <a href="#M002130">read</a>&nbsp;&nbsp;
+      <a href="#M002129">terminate</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BufSize</td>
+          <td>=</td>
+          <td class="context-item-value">1024 * 8</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M002128" class="method-detail">
+        <a name="M002128"></a>
+
+        <div class="method-heading">
+          <a href="StreamBuf.src/M002128.html" target="Code" class="method-signature"
+            onclick="popupCode('StreamBuf.src/M002128.html');return false;">
+          <span class="method-name">new</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+WARN: Do not instantiate this class directly. Define your own class which
+derives this class and define &#8216;<a
+href="StreamBuf.html#M002130">read</a>&#8217; instance method.
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002124" class="method-detail">
+        <a name="M002124"></a>
+
+        <div class="method-heading">
+          <a href="StreamBuf.src/M002124.html" target="Code" class="method-signature"
+            onclick="popupCode('StreamBuf.src/M002124.html');return false;">
+          <span class="method-name">[]</span><span class="method-args">(idx, n = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="StreamBuf.html#M002125">get</a> a char or a partial string from
+the stream. idx: index of a string to specify a start point of a string to
+<a href="StreamBuf.html#M002125">get</a>. unlike <a
+href="../String.html">String</a> instance, idx &lt; 0 returns nil. n: size
+of a string to <a href="StreamBuf.html#M002125">get</a>. returns char at
+idx if n == nil. returns a partial string, from idx to (idx + n) if n !=
+nil. at EOF, the string size could not equal to arg n.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002126" class="method-detail">
+        <a name="M002126"></a>
+
+        <div class="method-heading">
+          <a href="StreamBuf.src/M002126.html" target="Code" class="method-signature"
+            onclick="popupCode('StreamBuf.src/M002126.html');return false;">
+          <span class="method-name">drop</span><span class="method-args">(n)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="StreamBuf.html#M002126">drop</a> a string from the stream. returns
+dropped size. at EOF, dropped size might not equals to arg n. Once you <a
+href="StreamBuf.html#M002126">drop</a> the head of the stream, access to
+the dropped part via [] or <a href="StreamBuf.html#M002125">get</a> returns
+nil.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002125" class="method-detail">
+        <a name="M002125"></a>
+
+        <div class="method-heading">
+          <span class="method-name">get</span><span class="method-args">(idx, n = nil)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for #[]
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002127" class="method-detail">
+        <a name="M002127"></a>
+
+        <div class="method-heading">
+          <a href="StreamBuf.src/M002127.html" target="Code" class="method-signature"
+            onclick="popupCode('StreamBuf.src/M002127.html');return false;">
+          <span class="method-name">is_eos?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M002130" class="method-detail">
+        <a name="M002130"></a>
+
+        <div class="method-heading">
+          <a href="StreamBuf.src/M002130.html" target="Code" class="method-signature"
+            onclick="popupCode('StreamBuf.src/M002130.html');return false;">
+          <span class="method-name">read</span><span class="method-args">(size)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+protected method &#8216;<a href="StreamBuf.html#M002130">read</a>&#8217;
+must be defined in derived classes. CAUTION: Returning a string which size
+is not equal to &#8216;size&#8217; means EnfOfStream. When it is not at
+EOS, you must block the callee, try to <a
+href="StreamBuf.html#M002130">read</a> and return the sized string.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002129" class="method-detail">
+        <a name="M002129"></a>
+
+        <div class="method-heading">
+          <a href="StreamBuf.src/M002129.html" target="Code" class="method-signature"
+            onclick="popupCode('StreamBuf.src/M002129.html');return false;">
+          <span class="method-name">terminate</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

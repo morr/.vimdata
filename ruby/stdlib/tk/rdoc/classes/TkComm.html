@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: TkComm</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">TkComm</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/tk/lib/tk_rb.html">
+                tk/lib/tk.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+define <a href="TkComm.html">TkComm</a> module (step 2: event binding)
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M009024">_at</a>&nbsp;&nbsp;
+      <a href="#M009029">bind</a>&nbsp;&nbsp;
+      <a href="#M009033">bind_all</a>&nbsp;&nbsp;
+      <a href="#M009030">bind_append</a>&nbsp;&nbsp;
+      <a href="#M009034">bind_append_all</a>&nbsp;&nbsp;
+      <a href="#M009031">bind_remove</a>&nbsp;&nbsp;
+      <a href="#M009035">bind_remove_all</a>&nbsp;&nbsp;
+      <a href="#M009032">bindinfo</a>&nbsp;&nbsp;
+      <a href="#M009036">bindinfo_all</a>&nbsp;&nbsp;
+      <a href="#M009025">image_obj</a>&nbsp;&nbsp;
+      <a href="#M009027">install_cmd</a>&nbsp;&nbsp;
+      <a href="#M009026">subst</a>&nbsp;&nbsp;
+      <a href="#M009028">uninstall_cmd</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="TkUtil.html">TkUtil</a></span>
+        <span class="include-name"><a href="TkEvent.html">TkEvent</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="TkComm/Tk_CMDTBL.html" class="link">TkComm::Tk_CMDTBL</a><br />
+Module <a href="TkComm/Tk_WINDOWS.html" class="link">TkComm::Tk_WINDOWS</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">WidgetClassNames</td>
+          <td>=</td>
+          <td class="context-item-value">{}.taint</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">TkExtlibAutoloadModule</td>
+          <td>=</td>
+          <td class="context-item-value">[].taint</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Tk_IDs</td>
+          <td>=</td>
+          <td class="context-item-value">[&quot;00000&quot;.taint, &quot;00000&quot;.taint].freeze  # [0]-cmdid, [1]-winid</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Tk_CMDTBL = {} Tk_WINDOWS = {}
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Tk_CMDTBL</td>
+          <td>=</td>
+          <td class="context-item-value">Object.new</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+for backward compatibility
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Tk_WINDOWS</td>
+          <td>=</td>
+          <td class="context-item-value">Object.new</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">GET_CONFIGINFO_AS_ARRAY</td>
+          <td>=</td>
+          <td class="context-item-value">true</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+GET_CONFIGINFO_AS_ARRAY = false =&gt; returns a Hash { opt =&gt;val,
+&#8230; }
+
+<pre>
+                          true  =&gt; returns an Array [[opt,val], ... ]
+</pre>
+<p>
+val is a list which includes resource info.
+</p>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">GET_CONFIGINFOwoRES_AS_ARRAY</td>
+          <td>=</td>
+          <td class="context-item-value">true</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+for configinfo without resource info; list of [opt, value] pair
+
+<pre>
+          false =&gt; returns a Hash { opt=&gt;val, ... }
+          true  =&gt; returns an Array [[opt,val], ... ]
+</pre>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">USE_TCLs_LIST_FUNCTIONS</td>
+          <td>=</td>
+          <td class="context-item-value">true</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M009024" class="m-detail">
+        <a name="M009024"></a>
+
+        <div class="method-heading">
+          <a href="#M009024" class="method-signature">
+          <span class="method-name">_at</span><span class="method-args">(x,y=nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009024-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009024-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk.rb, line 183</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">_at</span>(<span class="ruby-identifier">x</span>,<span class="ruby-identifier">y</span>=<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">y</span>
+      <span class="ruby-node">&quot;@#{Integer(x)},#{Integer(y)}&quot;</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-node">&quot;@#{Integer(x)}&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009029" class="m-detail">
+        <a name="M009029"></a>
+
+        <div class="method-heading">
+          <a href="#M009029" class="method-signature">
+          <span class="method-name">bind</span><span class="method-args">(tagOrClass, context, *args)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+def <a href="TkComm.html#M009029">bind</a>(tagOrClass, context,
+cmd=Proc.new, *args)
+</p>
+<pre>
+  _bind([&quot;bind&quot;, tagOrClass], context, cmd, *args)
+  tagOrClass
+</pre>
+<p>
+end
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009029-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009029-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk.rb, line 1005</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bind</span>(<span class="ruby-identifier">tagOrClass</span>, <span class="ruby-identifier">context</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-comment cmt"># if args[0].kind_of?(Proc) || args[0].kind_of?(Method)</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-constant">TkComm</span>.<span class="ruby-identifier">_callback_entry?</span>(<span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>]) <span class="ruby-operator">||</span> <span class="ruby-operator">!</span><span class="ruby-identifier">block_given?</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">_bind</span>([<span class="ruby-value str">&quot;bind&quot;</span>, <span class="ruby-identifier">tagOrClass</span>], <span class="ruby-identifier">context</span>, <span class="ruby-identifier">cmd</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-identifier">tagOrClass</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009033" class="m-detail">
+        <a name="M009033"></a>
+
+        <div class="method-heading">
+          <a href="#M009033" class="method-signature">
+          <span class="method-name">bind_all</span><span class="method-args">(context, *args)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+def <a href="TkComm.html#M009033">bind_all</a>(context, cmd=Proc.new,
+*args)
+</p>
+<pre>
+  _bind(['bind', 'all'], context, cmd, *args)
+  TkBindTag::ALL
+</pre>
+<p>
+end
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009033-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009033-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk.rb, line 1044</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bind_all</span>(<span class="ruby-identifier">context</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-comment cmt"># if args[0].kind_of?(Proc) || args[0].kind_of?(Method)</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-constant">TkComm</span>.<span class="ruby-identifier">_callback_entry?</span>(<span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>]) <span class="ruby-operator">||</span> <span class="ruby-operator">!</span><span class="ruby-identifier">block_given?</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">_bind</span>([<span class="ruby-value str">'bind'</span>, <span class="ruby-value str">'all'</span>], <span class="ruby-identifier">context</span>, <span class="ruby-identifier">cmd</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-constant">TkBindTag</span><span class="ruby-operator">::</span><span class="ruby-constant">ALL</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009030" class="m-detail">
+        <a name="M009030"></a>
+
+        <div class="method-heading">
+          <a href="#M009030" class="method-signature">
+          <span class="method-name">bind_append</span><span class="method-args">(tagOrClass, context, *args)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+def <a href="TkComm.html#M009030">bind_append</a>(tagOrClass, context,
+cmd=Proc.new, *args)
+</p>
+<pre>
+  _bind_append([&quot;bind&quot;, tagOrClass], context, cmd, *args)
+  tagOrClass
+</pre>
+<p>
+end
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009030-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009030-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk.rb, line 1020</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bind_append</span>(<span class="ruby-identifier">tagOrClass</span>, <span class="ruby-identifier">context</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-comment cmt"># if args[0].kind_of?(Proc) || args[0].kind_of?(Method)</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-constant">TkComm</span>.<span class="ruby-identifier">_callback_entry?</span>(<span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>]) <span class="ruby-operator">||</span> <span class="ruby-operator">!</span><span class="ruby-identifier">block_given?</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">_bind_append</span>([<span class="ruby-value str">&quot;bind&quot;</span>, <span class="ruby-identifier">tagOrClass</span>], <span class="ruby-identifier">context</span>, <span class="ruby-identifier">cmd</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-identifier">tagOrClass</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009034" class="m-detail">
+        <a name="M009034"></a>
+
+        <div class="method-heading">
+          <a href="#M009034" class="method-signature">
+          <span class="method-name">bind_append_all</span><span class="method-args">(context, *args)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+def <a href="TkComm.html#M009034">bind_append_all</a>(context,
+cmd=Proc.new, *args)
+</p>
+<pre>
+  _bind_append(['bind', 'all'], context, cmd, *args)
+  TkBindTag::ALL
+</pre>
+<p>
+end
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009034-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009034-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk.rb, line 1059</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bind_append_all</span>(<span class="ruby-identifier">context</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-comment cmt"># if args[0].kind_of?(Proc) || args[0].kind_of?(Method)</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-constant">TkComm</span>.<span class="ruby-identifier">_callback_entry?</span>(<span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>]) <span class="ruby-operator">||</span> <span class="ruby-operator">!</span><span class="ruby-identifier">block_given?</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">_bind_append</span>([<span class="ruby-value str">'bind'</span>, <span class="ruby-value str">'all'</span>], <span class="ruby-identifier">context</span>, <span class="ruby-identifier">cmd</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-constant">TkBindTag</span><span class="ruby-operator">::</span><span class="ruby-constant">ALL</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009031" class="m-detail">
+        <a name="M009031"></a>
+
+        <div class="method-heading">
+          <a href="#M009031" class="method-signature">
+          <span class="method-name">bind_remove</span><span class="method-args">(tagOrClass, context)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009031-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009031-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk.rb, line 1031</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bind_remove</span>(<span class="ruby-identifier">tagOrClass</span>, <span class="ruby-identifier">context</span>)
+    <span class="ruby-identifier">_bind_remove</span>([<span class="ruby-value str">'bind'</span>, <span class="ruby-identifier">tagOrClass</span>], <span class="ruby-identifier">context</span>)
+    <span class="ruby-identifier">tagOrClass</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009035" class="m-detail">
+        <a name="M009035"></a>
+
+        <div class="method-heading">
+          <a href="#M009035" class="method-signature">
+          <span class="method-name">bind_remove_all</span><span class="method-args">(context)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009035-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009035-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk.rb, line 1070</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bind_remove_all</span>(<span class="ruby-identifier">context</span>)
+    <span class="ruby-identifier">_bind_remove</span>([<span class="ruby-value str">'bind'</span>, <span class="ruby-value str">'all'</span>], <span class="ruby-identifier">context</span>)
+    <span class="ruby-constant">TkBindTag</span><span class="ruby-operator">::</span><span class="ruby-constant">ALL</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009032" class="m-detail">
+        <a name="M009032"></a>
+
+        <div class="method-heading">
+          <a href="#M009032" class="method-signature">
+          <span class="method-name">bindinfo</span><span class="method-args">(tagOrClass, context=nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009032-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009032-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk.rb, line 1036</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bindinfo</span>(<span class="ruby-identifier">tagOrClass</span>, <span class="ruby-identifier">context</span>=<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-identifier">_bindinfo</span>([<span class="ruby-value str">'bind'</span>, <span class="ruby-identifier">tagOrClass</span>], <span class="ruby-identifier">context</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009036" class="m-detail">
+        <a name="M009036"></a>
+
+        <div class="method-heading">
+          <a href="#M009036" class="method-signature">
+          <span class="method-name">bindinfo_all</span><span class="method-args">(context=nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009036-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009036-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk.rb, line 1075</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bindinfo_all</span>(<span class="ruby-identifier">context</span>=<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-identifier">_bindinfo</span>([<span class="ruby-value str">'bind'</span>, <span class="ruby-value str">'all'</span>], <span class="ruby-identifier">context</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009025" class="m-detail">
+        <a name="M009025"></a>
+
+        <div class="method-heading">
+          <a href="#M009025" class="method-signature">
+          <span class="method-name">image_obj</span><span class="method-args">(val)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009025-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009025-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk.rb, line 602</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">image_obj</span>(<span class="ruby-identifier">val</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">val</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^i(_\d+_)?\d+$/</span>
+      <span class="ruby-constant">TkImage</span><span class="ruby-operator">::</span><span class="ruby-constant">Tk_IMGTBL</span>[<span class="ruby-identifier">val</span>]<span class="ruby-operator">?</span> <span class="ruby-constant">TkImage</span><span class="ruby-operator">::</span><span class="ruby-constant">Tk_IMGTBL</span>[<span class="ruby-identifier">val</span>] <span class="ruby-operator">:</span> <span class="ruby-identifier">val</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">val</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009027" class="m-detail">
+        <a name="M009027"></a>
+
+        <div class="method-heading">
+          <a href="#M009027" class="method-signature">
+          <span class="method-name">install_cmd</span><span class="method-args">(cmd)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009027-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009027-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk.rb, line 794</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">install_cmd</span>(<span class="ruby-identifier">cmd</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">''</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cmd</span> <span class="ruby-operator">==</span> <span class="ruby-value str">''</span>
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">ns</span> = <span class="ruby-constant">TkCore</span><span class="ruby-operator">::</span><span class="ruby-constant">INTERP</span>.<span class="ruby-identifier">_invoke_without_enc</span>(<span class="ruby-value str">'namespace'</span>, <span class="ruby-value str">'current'</span>)
+      <span class="ruby-identifier">ns</span> = <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ns</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'::'</span> <span class="ruby-comment cmt"># for backward compatibility</span>
+    <span class="ruby-keyword kw">rescue</span>
+      <span class="ruby-comment cmt"># probably, Tcl7.6</span>
+      <span class="ruby-identifier">ns</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">id</span> = <span class="ruby-identifier">_next_cmd_id</span>
+    <span class="ruby-comment cmt">#Tk_CMDTBL[id] = cmd</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">TkCallbackEntry</span>)
+      <span class="ruby-constant">TkCore</span><span class="ruby-operator">::</span><span class="ruby-constant">INTERP</span>.<span class="ruby-identifier">tk_cmd_tbl</span>[<span class="ruby-identifier">id</span>] = <span class="ruby-identifier">cmd</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-constant">TkCore</span><span class="ruby-operator">::</span><span class="ruby-constant">INTERP</span>.<span class="ruby-identifier">tk_cmd_tbl</span>[<span class="ruby-identifier">id</span>] = <span class="ruby-constant">TkCore</span><span class="ruby-operator">::</span><span class="ruby-constant">INTERP</span>.<span class="ruby-identifier">get_cb_entry</span>(<span class="ruby-identifier">cmd</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@cmdtbl</span> = [] <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@cmdtbl</span>
+    <span class="ruby-ivar">@cmdtbl</span>.<span class="ruby-identifier">taint</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@cmdtbl</span>.<span class="ruby-identifier">tainted?</span>
+    <span class="ruby-ivar">@cmdtbl</span>.<span class="ruby-identifier">push</span> <span class="ruby-identifier">id</span>
+    <span class="ruby-comment cmt">#return Kernel.format(&quot;rb_out %s&quot;, id);</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ns</span>
+      <span class="ruby-value str">'rb_out'</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">TkCore</span><span class="ruby-operator">::</span><span class="ruby-constant">INTERP</span>.<span class="ruby-identifier">_ip_id_</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">ns</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">id</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-value str">'rb_out'</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">TkCore</span><span class="ruby-operator">::</span><span class="ruby-constant">INTERP</span>.<span class="ruby-identifier">_ip_id_</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">id</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009026" class="m-detail">
+        <a name="M009026"></a>
+
+        <div class="method-heading">
+          <a href="#M009026" class="method-signature">
+          <span class="method-name">subst</span><span class="method-args">(str, *opts)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009026-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009026-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk.rb, line 628</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">subst</span>(<span class="ruby-identifier">str</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">opts</span>)
+    <span class="ruby-comment cmt"># opts := :nobackslashes | :nocommands | novariables</span>
+    <span class="ruby-identifier">tk_call</span>(<span class="ruby-value str">'subst'</span>, 
+            <span class="ruby-operator">*</span>(<span class="ruby-identifier">opts</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">opt</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">opt</span> = <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">to_s</span>
+                (<span class="ruby-identifier">opt</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?-</span>)<span class="ruby-operator">?</span> <span class="ruby-identifier">opt</span><span class="ruby-operator">:</span> <span class="ruby-value str">'-'</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">opt</span>
+              } <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">str</span>))
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009028" class="m-detail">
+        <a name="M009028"></a>
+
+        <div class="method-heading">
+          <a href="#M009028" class="method-signature">
+          <span class="method-name">uninstall_cmd</span><span class="method-args">(id)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009028-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009028-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk.rb, line 820</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">uninstall_cmd</span>(<span class="ruby-identifier">id</span>)
+    <span class="ruby-comment cmt">#id = $1 if /rb_out\S* (c(_\d+_)?\d+)/ =~ id</span>
+    <span class="ruby-identifier">id</span> = <span class="ruby-identifier">$4</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">id</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/rb_out\S*(?:\s+(::\S*|[{](::.*)[}]|[&quot;](::.*)[&quot;]))? (c(_\d+_)?(\d+))/</span>
+    <span class="ruby-comment cmt">#Tk_CMDTBL.delete(id)</span>
+    <span class="ruby-constant">TkCore</span><span class="ruby-operator">::</span><span class="ruby-constant">INTERP</span>.<span class="ruby-identifier">tk_cmd_tbl</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">id</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 2 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a service of <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, AZ</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>[] (Bignum)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     big[n] -&gt; 0, 1
+ *  
+ *  Bit Reference---Returns the &lt;em&gt;n&lt;/em&gt;th bit in the (assumed) binary
+ *  representation of &lt;i&gt;big&lt;/i&gt;, where &lt;i&gt;big&lt;/i&gt;[0] is the least
+ *  significant bit.
+ *     
+ *     a = 9**15
+ *     50.downto(0) do |n|
+ *       print a[n]
+ *     end
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     000101110110100000111000011110010100111100010111001
+ *     
+ */
+
+static VALUE
+rb_big_aref(x, y)
+    VALUE x, y;
+{
+    BDIGIT *xds;
+    BDIGIT_DBL num;
+    unsigned long shift;
+    long i, s1, s2;
+
+    if (TYPE(y) == T_BIGNUM) {
+        if (!RBIGNUM(y)-&gt;sign)
+            return INT2FIX(0);
+        if (RBIGNUM(bigtrunc(y))-&gt;len &gt; SIZEOF_LONG/SIZEOF_BDIGITS) {
+          out_of_range:
+            return RBIGNUM(x)-&gt;sign ? INT2FIX(0) : INT2FIX(1);
+        }
+        shift = big2ulong(y, &quot;long&quot;, Qfalse);
+    }
+    else {
+        i = NUM2LONG(y);
+        if (i &lt; 0) return INT2FIX(0);
+        shift = (VALUE)i;
+    }
+    s1 = shift/BITSPERDIG;
+    s2 = shift%BITSPERDIG;
+
+    if (s1 &gt;= RBIGNUM(x)-&gt;len) goto out_of_range;
+    if (!RBIGNUM(x)-&gt;sign) {
+        xds = BDIGITS(x);
+        i = 0; num = 1;
+        while (num += ~xds[i], ++i &lt;= s1) {
+            num = BIGDN(num);
+        }
+    }
+    else {
+        num = BDIGITS(x)[s1];
+    }
+    if (num &amp; ((BDIGIT_DBL)1&lt;&lt;s2))
+        return INT2FIX(1);
+    return INT2FIX(0);
+}</pre>
+</body>
+</html>

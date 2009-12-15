@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>display (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.display(port=$&gt;)    =&gt; nil
+ *  
+ *  Prints &lt;i&gt;obj&lt;/i&gt; on the given port (default &lt;code&gt;$&gt;&lt;/code&gt;).
+ *  Equivalent to:
+ *     
+ *     def display(port=$&gt;)
+ *       port.write self
+ *     end
+ *     
+ *  For example:
+ *     
+ *     1.display
+ *     &quot;cat&quot;.display
+ *     [ 4, 5, 6 ].display
+ *     puts
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     1cat456
+ */
+
+static VALUE
+rb_obj_display(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE out;
+
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;out) == 0) {
+        out = rb_stdout;
+    }
+
+    rb_io_write(out, self);
+
+    return Qnil;
+}</pre>
+</body>
+</html>

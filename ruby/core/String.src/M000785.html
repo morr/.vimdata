@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>rindex (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.rindex(substring [, fixnum])   =&gt; fixnum or nil
+ *     str.rindex(fixnum [, fixnum])   =&gt; fixnum or nil
+ *     str.rindex(regexp [, fixnum])   =&gt; fixnum or nil
+ *  
+ *  Returns the index of the last occurrence of the given &lt;i&gt;substring&lt;/i&gt;,
+ *  character (&lt;i&gt;fixnum&lt;/i&gt;), or pattern (&lt;i&gt;regexp&lt;/i&gt;) in &lt;i&gt;str&lt;/i&gt;. Returns
+ *  &lt;code&gt;nil&lt;/code&gt; if not found. If the second parameter is present, it
+ *  specifies the position in the string to end the search---characters beyond
+ *  this point will not be considered.
+ *     
+ *     &quot;hello&quot;.rindex('e')             #=&gt; 1
+ *     &quot;hello&quot;.rindex('l')             #=&gt; 3
+ *     &quot;hello&quot;.rindex('a')             #=&gt; nil
+ *     &quot;hello&quot;.rindex(101)             #=&gt; 1
+ *     &quot;hello&quot;.rindex(/[aeiou]/, -2)   #=&gt; 1
+ */
+
+static VALUE
+rb_str_rindex_m(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    VALUE sub;
+    VALUE position;
+    long pos;
+
+    if (rb_scan_args(argc, argv, &quot;11&quot;, &amp;sub, &amp;position) == 2) {
+        pos = NUM2LONG(position);
+        if (pos &lt; 0) {
+            pos += RSTRING(str)-&gt;len;
+            if (pos &lt; 0) {
+                if (TYPE(sub) == T_REGEXP) {
+                    rb_backref_set(Qnil);
+                }
+                return Qnil;
+            }
+        }
+        if (pos &gt; RSTRING(str)-&gt;len) pos = RSTRING(str)-&gt;len;
+    }
+    else {
+        pos = RSTRING(str)-&gt;len;
+    }
+
+    switch (TYPE(sub)) {
+      case T_REGEXP:
+        if (RREGEXP(sub)-&gt;len) {
+            pos = rb_reg_adjust_startpos(sub, str, pos, 1);
+            pos = rb_reg_search(sub, str, pos, 1);
+        }
+        if (pos &gt;= 0) return LONG2NUM(pos);
+        break;
+
+      case T_STRING:
+        pos = rb_str_rindex(str, sub, pos);
+        if (pos &gt;= 0) return LONG2NUM(pos);
+        break;
+
+      case T_FIXNUM:
+      {
+          int c = FIX2INT(sub);
+          unsigned char *p = (unsigned char*)RSTRING(str)-&gt;ptr + pos;
+          unsigned char *pbeg = (unsigned char*)RSTRING(str)-&gt;ptr;
+
+          if (pos == RSTRING(str)-&gt;len) {
+              if (pos == 0) return Qnil;
+              --p;
+          }
+          while (pbeg &lt;= p) {
+              if (*p == c) return LONG2NUM((char*)p - RSTRING(str)-&gt;ptr);
+              p--;
+          }
+          return Qnil;
+      }
+
+      default:
+        rb_raise(rb_eTypeError, &quot;type mismatch: %s given&quot;,
+                 rb_obj_classname(sub));
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

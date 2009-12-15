@@ -1,0 +1,910 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Digest::Instance</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Digest::Instance</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/digest/digest_c.html">
+                digest/digest.c
+                </a>
+        <br />
+                <a href="../../files/digest/lib/digest_rb.html">
+                digest/lib/digest.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+This module provides instance methods for a <a
+href="Instance.html#M000434">digest</a> implementation object to calculate
+message <a href="Instance.html#M000434">digest</a> values.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000426">&lt;&lt;</a>&nbsp;&nbsp;
+      <a href="#M000431">==</a>&nbsp;&nbsp;
+      <a href="#M000430">block_length</a>&nbsp;&nbsp;
+      <a href="#M000434">digest</a>&nbsp;&nbsp;
+      <a href="#M000435">digest!</a>&nbsp;&nbsp;
+      <a href="#M000429">digest_length</a>&nbsp;&nbsp;
+      <a href="#M000441">file</a>&nbsp;&nbsp;
+      <a href="#M000427">finish</a>&nbsp;&nbsp;
+      <a href="#M000436">hexdigest</a>&nbsp;&nbsp;
+      <a href="#M000437">hexdigest!</a>&nbsp;&nbsp;
+      <a href="#M000432">inspect</a>&nbsp;&nbsp;
+      <a href="#M000439">length</a>&nbsp;&nbsp;
+      <a href="#M000433">new</a>&nbsp;&nbsp;
+      <a href="#M000428">reset</a>&nbsp;&nbsp;
+      <a href="#M000440">size</a>&nbsp;&nbsp;
+      <a href="#M000438">to_s</a>&nbsp;&nbsp;
+      <a href="#M000425">update</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000426" class="m-detail">
+        <a name="M000426"></a>
+
+        <div class="method-heading">
+          <a href="#M000426" class="method-signature">
+          <span class="method-name">digest_obj.update(string) &rarr; digest_obj<br />
+digest_obj << string &rarr; digest_obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Updates the <a href="Instance.html#M000434">digest</a> using a given
+<em>string</em> and returns self.
+</p>
+<p>
+The <a href="Instance.html#M000425">update</a>() method and the left-shift
+operator are overridden by each implementation subclass. (One should be an
+alias for the other)
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000426-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000426-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.update(string) -&gt; digest_obj
+ *     digest_obj &lt;&lt; string -&gt; digest_obj
+ *
+ * Updates the digest using a given _string_ and returns self.
+ *
+ * The update() method and the left-shift operator are overridden by
+ * each implementation subclass. (One should be an alias for the
+ * other)
+ */
+static VALUE
+rb_digest_instance_update(VALUE self, VALUE str)
+{
+    rb_raise(rb_eRuntimeError, &quot;%s does not implement update()&quot;, RSTRING_PTR(rb_inspect(self)));
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000431" class="m-detail">
+        <a name="M000431"></a>
+
+        <div class="method-heading">
+          <a href="#M000431" class="method-signature">
+          <span class="method-name">digest_obj == another_digest_obj &rarr; boolean<br />
+digest_obj == string &rarr; boolean<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+If a string is given, checks whether it is equal to the hex-encoded hash
+value of the <a href="Instance.html#M000434">digest</a> object. If another
+<a href="Instance.html#M000434">digest</a> instance is given, checks
+whether they have the same hash value. Otherwise returns false.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000431-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000431-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj == another_digest_obj -&gt; boolean
+ *     digest_obj == string -&gt; boolean
+ *
+ * If a string is given, checks whether it is equal to the hex-encoded
+ * hash value of the digest object.  If another digest instance is
+ * given, checks whether they have the same hash value.  Otherwise
+ * returns false.
+ */
+static VALUE
+rb_digest_instance_equal(VALUE self, VALUE other)
+{
+    VALUE str1, str2;
+
+    if (rb_obj_is_kind_of(other, rb_mDigest_Instance) == Qtrue) {
+        str1 = rb_digest_instance_digest(0, 0, self);
+        str2 = rb_digest_instance_digest(0, 0, other);
+    } else {
+        str1 = rb_digest_instance_to_s(self);
+        str2 = other;
+    }
+
+    /* never blindly assume that subclass methods return strings */
+    StringValue(str1);
+    StringValue(str2);
+
+    if (RSTRING_LEN(str1) == RSTRING_LEN(str2) &amp;&amp;
+        rb_str_cmp(str1, str2) == 0) {
+        return Qtrue;
+    }
+    return Qfalse;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000430" class="m-detail">
+        <a name="M000430"></a>
+
+        <div class="method-heading">
+          <a href="#M000430" class="method-signature">
+          <span class="method-name">digest_obj.block_length &rarr; integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the block <a href="Instance.html#M000439">length</a> of the <a
+href="Instance.html#M000434">digest</a>.
+</p>
+<p>
+This method is overridden by each implementation subclass.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000430-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000430-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.block_length -&gt; integer
+ *
+ * Returns the block length of the digest.
+ *
+ * This method is overridden by each implementation subclass.
+ */
+static VALUE
+rb_digest_instance_block_length(VALUE self)
+{
+    rb_raise(rb_eRuntimeError, &quot;%s does not implement block_length()&quot;, RSTRING_PTR(rb_inspect(self)));
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000434" class="m-detail">
+        <a name="M000434"></a>
+
+        <div class="method-heading">
+          <a href="#M000434" class="method-signature">
+          <span class="method-name">digest_obj.digest &rarr; string<br />
+digest_obj.digest(string) &rarr; string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+If none is given, returns the resulting hash value of the <a
+href="Instance.html#M000434">digest</a>, keeping the <a
+href="Instance.html#M000434">digest</a>&#8216;s state.
+</p>
+<p>
+If a <em>string</em> is given, returns the hash value for the given
+<em>string</em>, resetting the <a href="Instance.html#M000434">digest</a>
+to the initial state before and after the process.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000434-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000434-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.digest -&gt; string
+ *     digest_obj.digest(string) -&gt; string
+ *
+ * If none is given, returns the resulting hash value of the digest,
+ * keeping the digest's state.
+ *
+ * If a _string_ is given, returns the hash value for the given
+ * _string_, resetting the digest to the initial state before and
+ * after the process.
+ */
+static VALUE
+rb_digest_instance_digest(int argc, VALUE *argv, VALUE self)
+{
+    VALUE str, value;
+
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;str) &gt; 0) {
+        rb_funcall(self, id_reset, 0);
+        rb_funcall(self, id_update, 1, str);
+        value = rb_funcall(self, id_finish, 0);
+        rb_funcall(self, id_reset, 0);
+    } else {
+        VALUE clone = rb_obj_clone(self);
+
+        value = rb_funcall(clone, id_finish, 0);
+        rb_funcall(clone, id_reset, 0);
+    }
+
+    return value;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000435" class="m-detail">
+        <a name="M000435"></a>
+
+        <div class="method-heading">
+          <a href="#M000435" class="method-signature">
+          <span class="method-name">digest_obj.digest! &rarr; string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the resulting hash value and resets the <a
+href="Instance.html#M000434">digest</a> to the initial state.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000435-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000435-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.digest! -&gt; string
+ *
+ * Returns the resulting hash value and resets the digest to the
+ * initial state.
+ */
+static VALUE
+rb_digest_instance_digest_bang(VALUE self)
+{
+    VALUE value = rb_funcall(self, id_finish, 0);
+    rb_funcall(self, id_reset, 0);
+
+    return value;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000429" class="m-detail">
+        <a name="M000429"></a>
+
+        <div class="method-heading">
+          <a href="#M000429" class="method-signature">
+          <span class="method-name">digest_obj.digest_length &rarr; integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the <a href="Instance.html#M000439">length</a> of the hash value of
+the <a href="Instance.html#M000434">digest</a>.
+</p>
+<p>
+This method should be overridden by each implementation subclass. If not,
+digest_obj.digest().<a href="Instance.html#M000439">length</a>() is
+returned.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000429-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000429-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.digest_length -&gt; integer
+ *
+ * Returns the length of the hash value of the digest.
+ *
+ * This method should be overridden by each implementation subclass.
+ * If not, digest_obj.digest().length() is returned.
+ */
+static VALUE
+rb_digest_instance_digest_length(VALUE self)
+{
+    /* subclasses really should redefine this method */
+    VALUE digest = rb_digest_instance_digest(0, 0, self);
+
+    /* never blindly assume that #digest() returns a string */
+    StringValue(digest);
+    return INT2NUM(RSTRING_LEN(digest));
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000441" class="m-detail">
+        <a name="M000441"></a>
+
+        <div class="method-heading">
+          <a href="#M000441" class="method-signature">
+          <span class="method-name">file</span><span class="method-args">(name)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+updates the <a href="Instance.html#M000434">digest</a> with the contents of
+a given <a href="Instance.html#M000441">file</a> <em>name</em> and returns
+self.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000441-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000441-source">
+<pre>
+<span class="ruby-comment cmt"># File digest/lib/digest.rb, line 36</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">file</span>(<span class="ruby-identifier">name</span>)
+      <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">name</span>, <span class="ruby-value str">&quot;rb&quot;</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">buf</span> = <span class="ruby-value str">&quot;&quot;</span>
+        <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">read</span>(<span class="ruby-value">16384</span>, <span class="ruby-identifier">buf</span>)
+          <span class="ruby-identifier">update</span> <span class="ruby-identifier">buf</span>
+        <span class="ruby-keyword kw">end</span>
+      }
+      <span class="ruby-keyword kw">self</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000427" class="m-detail">
+        <a name="M000427"></a>
+
+        <div class="method-heading">
+          <a href="#M000427" class="method-signature">
+          <span class="method-name">digest_obj.instance_eval { finish } &rarr; digest_obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Finishes the <a href="Instance.html#M000434">digest</a> and returns the
+resulting hash value.
+</p>
+<p>
+This method is overridden by each implementation subclass and often made
+private, because some of those subclasses may leave internal data
+uninitialized. Do not call this method from outside. Use <a
+href="Instance.html#M000434">digest</a>!() instead, which ensures that
+internal data be <a href="Instance.html#M000428">reset</a> for security
+reasons.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000427-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000427-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.instance_eval { finish } -&gt; digest_obj
+ *
+ * Finishes the digest and returns the resulting hash value.
+ *
+ * This method is overridden by each implementation subclass and often
+ * made private, because some of those subclasses may leave internal
+ * data uninitialized.  Do not call this method from outside.  Use
+ * #digest!() instead, which ensures that internal data be reset for
+ * security reasons.
+ */
+static VALUE
+rb_digest_instance_finish(VALUE self)
+{
+    rb_raise(rb_eRuntimeError, &quot;%s does not implement finish()&quot;, RSTRING_PTR(rb_inspect(self)));
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000436" class="m-detail">
+        <a name="M000436"></a>
+
+        <div class="method-heading">
+          <a href="#M000436" class="method-signature">
+          <span class="method-name">digest_obj.hexdigest &rarr; string<br />
+digest_obj.hexdigest(string) &rarr; string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+If none is given, returns the resulting hash value of the <a
+href="Instance.html#M000434">digest</a> in a hex-encoded form, keeping the
+<a href="Instance.html#M000434">digest</a>&#8216;s state.
+</p>
+<p>
+If a <em>string</em> is given, returns the hash value for the given
+<em>string</em> in a hex-encoded form, resetting the <a
+href="Instance.html#M000434">digest</a> to the initial state before and
+after the process.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000436-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000436-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.hexdigest -&gt; string
+ *     digest_obj.hexdigest(string) -&gt; string
+ *
+ * If none is given, returns the resulting hash value of the digest in
+ * a hex-encoded form, keeping the digest's state.
+ *
+ * If a _string_ is given, returns the hash value for the given
+ * _string_ in a hex-encoded form, resetting the digest to the initial
+ * state before and after the process.
+ */
+static VALUE
+rb_digest_instance_hexdigest(int argc, VALUE *argv, VALUE self)
+{
+    VALUE str, value;
+
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;str) &gt; 0) {
+        rb_funcall(self, id_reset, 0);
+        rb_funcall(self, id_update, 1, str);
+        value = rb_funcall(self, id_finish, 0);
+        rb_funcall(self, id_reset, 0);
+    } else {
+        VALUE clone = rb_obj_clone(self);
+
+        value = rb_funcall(clone, id_finish, 0);
+        rb_funcall(clone, id_reset, 0);
+    }
+
+    return hexencode_str_new(value);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000437" class="m-detail">
+        <a name="M000437"></a>
+
+        <div class="method-heading">
+          <a href="#M000437" class="method-signature">
+          <span class="method-name">digest_obj.hexdigest! &rarr; string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns the resulting hash value and resets the <a
+href="Instance.html#M000434">digest</a> to the initial state.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000437-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000437-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.hexdigest! -&gt; string
+ *
+ * Returns the resulting hash value and resets the digest to the
+ * initial state.
+ */
+static VALUE
+rb_digest_instance_hexdigest_bang(VALUE self)
+{
+    VALUE value = rb_funcall(self, id_finish, 0);
+    rb_funcall(self, id_reset, 0);
+
+    return hexencode_str_new(value);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000432" class="m-detail">
+        <a name="M000432"></a>
+
+        <div class="method-heading">
+          <a href="#M000432" class="method-signature">
+          <span class="method-name">digest_obj.inspect &rarr; string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Creates a printable version of the <a
+href="Instance.html#M000434">digest</a> object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000432-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000432-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.inspect -&gt; string
+ *
+ * Creates a printable version of the digest object.
+ */
+static VALUE
+rb_digest_instance_inspect(VALUE self)
+{
+    VALUE str;
+    size_t digest_len = 32;     /* about this size at least */
+    char *cname;
+
+    cname = rb_obj_classname(self);
+
+    /* #&lt;Digest::ClassName: xxxxx...xxxx&gt; */
+    str = rb_str_buf_new(2 + strlen(cname) + 2 + digest_len * 2 + 1);
+    rb_str_buf_cat2(str, &quot;#&lt;&quot;);
+    rb_str_buf_cat2(str, cname);
+    rb_str_buf_cat2(str, &quot;: &quot;);
+    rb_str_buf_append(str, rb_digest_instance_hexdigest(0, 0, self));
+    rb_str_buf_cat2(str, &quot;&gt;&quot;);
+    return str;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000439" class="m-detail">
+        <a name="M000439"></a>
+
+        <div class="method-heading">
+          <a href="#M000439" class="method-signature">
+          <span class="method-name">digest_obj.length &rarr; integer<br />
+digest_obj.size &rarr; integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns digest_obj.digest_length().
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000439-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000439-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.length -&gt; integer
+ *     digest_obj.size -&gt; integer
+ *
+ * Returns digest_obj.digest_length().
+ */
+static VALUE
+rb_digest_instance_length(VALUE self)
+{
+    return rb_funcall(self, id_digest_length, 0);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000433" class="m-detail">
+        <a name="M000433"></a>
+
+        <div class="method-heading">
+          <a href="#M000433" class="method-signature">
+          <span class="method-name">digest_obj.new &rarr; another_digest_obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns a <a href="Instance.html#M000433">new</a>, initialized copy of the
+<a href="Instance.html#M000434">digest</a> object. Equivalent to
+digest_obj.clone().<a href="Instance.html#M000428">reset</a>().
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000433-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000433-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.new -&gt; another_digest_obj
+ *
+ * Returns a new, initialized copy of the digest object.  Equivalent
+ * to digest_obj.clone().reset().
+ */
+static VALUE
+rb_digest_instance_new(VALUE self)
+{
+    VALUE clone = rb_obj_clone(self);
+    rb_funcall(clone, id_reset, 0);
+    return clone;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000428" class="m-detail">
+        <a name="M000428"></a>
+
+        <div class="method-heading">
+          <a href="#M000428" class="method-signature">
+          <span class="method-name">digest_obj.reset &rarr; digest_obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Resets the <a href="Instance.html#M000434">digest</a> to the initial state
+and returns self.
+</p>
+<p>
+This method is overridden by each implementation subclass.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000428-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000428-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.reset -&gt; digest_obj
+ *
+ * Resets the digest to the initial state and returns self.
+ *
+ * This method is overridden by each implementation subclass.
+ */
+static VALUE
+rb_digest_instance_reset(VALUE self)
+{
+    rb_raise(rb_eRuntimeError, &quot;%s does not implement reset()&quot;, RSTRING_PTR(rb_inspect(self)));
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000440" class="m-detail">
+        <a name="M000440"></a>
+
+        <div class="method-heading">
+          <a href="#M000440" class="method-signature">
+          <span class="method-name">digest_obj.length &rarr; integer<br />
+digest_obj.size &rarr; integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns digest_obj.digest_length().
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000440-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000440-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.length -&gt; integer
+ *     digest_obj.size -&gt; integer
+ *
+ * Returns digest_obj.digest_length().
+ */
+static VALUE
+rb_digest_instance_length(VALUE self)
+{
+    return rb_funcall(self, id_digest_length, 0);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000438" class="m-detail">
+        <a name="M000438"></a>
+
+        <div class="method-heading">
+          <a href="#M000438" class="method-signature">
+          <span class="method-name">digest_obj.to_s &rarr; string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns digest_obj.hexdigest().
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000438-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000438-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.to_s -&gt; string
+ *
+ * Returns digest_obj.hexdigest().
+ */
+static VALUE
+rb_digest_instance_to_s(VALUE self)
+{
+    return rb_funcall(self, id_hexdigest, 0);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000425" class="m-detail">
+        <a name="M000425"></a>
+
+        <div class="method-heading">
+          <a href="#M000425" class="method-signature">
+          <span class="method-name">digest_obj.update(string) &rarr; digest_obj<br />
+digest_obj << string &rarr; digest_obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Updates the <a href="Instance.html#M000434">digest</a> using a given
+<em>string</em> and returns self.
+</p>
+<p>
+The <a href="Instance.html#M000425">update</a>() method and the left-shift
+operator are overridden by each implementation subclass. (One should be an
+alias for the other)
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000425-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000425-source">
+<pre>
+/*
+ * call-seq:
+ *     digest_obj.update(string) -&gt; digest_obj
+ *     digest_obj &lt;&lt; string -&gt; digest_obj
+ *
+ * Updates the digest using a given _string_ and returns self.
+ *
+ * The update() method and the left-shift operator are overridden by
+ * each implementation subclass. (One should be an alias for the
+ * other)
+ */
+static VALUE
+rb_digest_instance_update(VALUE self, VALUE str)
+{
+    rb_raise(rb_eRuntimeError, &quot;%s does not implement update()&quot;, RSTRING_PTR(rb_inspect(self)));
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 4 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

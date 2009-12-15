@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>exit! (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     thr.exit!        =&gt; thr
+ *     thr.kill!        =&gt; thr
+ *     thr.terminate!   =&gt; thr
+ *  
+ *  Terminates &lt;i&gt;thr&lt;/i&gt; without calling ensure clauses and schedules
+ *  another thread to be run, returning the terminated &lt;code&gt;Thread&lt;/code&gt;.
+ *  If this is the main thread, or the last thread, exits the process.
+ *
+ *  See &lt;code&gt;Thread#exit&lt;/code&gt; for the safer version.
+ */
+
+static VALUE
+rb_thread_kill_bang(thread)
+    VALUE thread;
+{
+    rb_thread_t th = rb_thread_check(thread);
+    rb_kill_thread(th, THREAD_NO_ENSURE);
+    return thread;
+}</pre>
+</body>
+</html>

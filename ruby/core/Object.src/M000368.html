@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>instance_variable_set (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.instance_variable_set(symbol, obj)    =&gt; obj
+ *  
+ *  Sets the instance variable names by &lt;i&gt;symbol&lt;/i&gt; to
+ *  &lt;i&gt;object&lt;/i&gt;, thereby frustrating the efforts of the class's
+ *  author to attempt to provide proper encapsulation. The variable
+ *  did not have to exist prior to this call.
+ *     
+ *     class Fred
+ *       def initialize(p1, p2)
+ *         @a, @b = p1, p2
+ *       end
+ *     end
+ *     fred = Fred.new('cat', 99)
+ *     fred.instance_variable_set(:@a, 'dog')   #=&gt; &quot;dog&quot;
+ *     fred.instance_variable_set(:@c, 'cat')   #=&gt; &quot;cat&quot;
+ *     fred.inspect                             #=&gt; &quot;#&lt;Fred:0x401b3da8 @a=\&quot;dog\&quot;, @b=99, @c=\&quot;cat\&quot;&gt;&quot;
+ */
+
+static VALUE
+rb_obj_ivar_set(obj, iv, val)
+    VALUE obj, iv, val;
+{
+    ID id = rb_to_id(iv);
+
+    if (!rb_is_instance_id(id)) {
+        rb_name_error(id, &quot;`%s' is not allowed as an instance variable name&quot;, rb_id2name(id));
+    }
+    return rb_ivar_set(obj, id, val);
+}</pre>
+</body>
+</html>

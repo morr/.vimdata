@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>remove_class_variable (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     remove_class_variable(sym)    =&gt; obj
+ *  
+ *  Removes the definition of the &lt;i&gt;sym&lt;/i&gt;, returning that
+ *  constant's value.
+ *     
+ *     class Dummy
+ *       @@var = 99
+ *       puts @@var
+ *       remove_class_variable(:@@var)
+ *       puts(defined? @@var)
+ *     end
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     99
+ *     nil
+ */
+
+VALUE
+rb_mod_remove_cvar(mod, name)
+    VALUE mod, name;
+{
+    ID id = rb_to_id(name);
+    VALUE val;
+
+    if (!rb_is_class_id(id)) {
+	rb_name_error(id, &quot;wrong class variable name %s&quot;, rb_id2name(id));
+    }
+    if (!OBJ_TAINTED(mod) &amp;&amp; rb_safe_level() &gt;= 4)
+	rb_raise(rb_eSecurityError, &quot;Insecure: can't remove class variable&quot;);
+    if (OBJ_FROZEN(mod)) rb_error_frozen(&quot;class/module&quot;);
+
+    if (RCLASS(mod)-&gt;iv_tbl &amp;&amp; st_delete(ROBJECT(mod)-&gt;iv_tbl, (st_data_t*)&amp;id, &amp;val)) {
+	return val;
+    }
+    if (rb_cvar_defined(mod, id)) {
+	rb_name_error(id, &quot;cannot remove %s for %s&quot;,
+		 rb_id2name(id), rb_class2name(mod));
+    }
+    rb_name_error(id, &quot;class variable %s not defined for %s&quot;,
+		  rb_id2name(id), rb_class2name(mod));
+    return Qnil;		/* not reached */
+}</pre>
+</body>
+</html>

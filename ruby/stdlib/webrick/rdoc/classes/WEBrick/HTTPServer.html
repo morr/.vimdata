@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: WEBrick::HTTPServer</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">WEBrick::HTTPServer</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/webrick/httpserver_rb.html">
+                webrick/httpserver.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                ::WEBrick::GenericServer
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M009628">access_log</a>&nbsp;&nbsp;
+      <a href="#M009620">do_OPTIONS</a>&nbsp;&nbsp;
+      <a href="#M009627">lookup_server</a>&nbsp;&nbsp;
+      <a href="#M009621">mount</a>&nbsp;&nbsp;
+      <a href="#M009622">mount_proc</a>&nbsp;&nbsp;
+      <a href="#M009617">new</a>&nbsp;&nbsp;
+      <a href="#M009618">run</a>&nbsp;&nbsp;
+      <a href="#M009625">search_servlet</a>&nbsp;&nbsp;
+      <a href="#M009619">service</a>&nbsp;&nbsp;
+      <a href="#M009624">umount</a>&nbsp;&nbsp;
+      <a href="#M009623">unmount</a>&nbsp;&nbsp;
+      <a href="#M009626">virtual_host</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="HTTPServer/MountTable.html" class="link">WEBrick::HTTPServer::MountTable</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M009617" class="m-detail">
+        <a name="M009617"></a>
+
+        <div class="method-heading">
+          <a href="#M009617" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(config={}, default=Config::HTTP)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009617-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009617-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpserver.rb, line 23</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">config</span>={}, <span class="ruby-identifier">default</span>=<span class="ruby-constant">Config</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTP</span>)
+      <span class="ruby-keyword kw">super</span>
+      <span class="ruby-ivar">@http_version</span> = <span class="ruby-constant">HTTPVersion</span><span class="ruby-operator">::</span><span class="ruby-identifier">convert</span>(<span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:HTTPVersion</span>])
+
+      <span class="ruby-ivar">@mount_tab</span> = <span class="ruby-constant">MountTable</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:DocumentRoot</span>]
+        <span class="ruby-identifier">mount</span>(<span class="ruby-value str">&quot;/&quot;</span>, <span class="ruby-constant">HTTPServlet</span><span class="ruby-operator">::</span><span class="ruby-constant">FileHandler</span>, <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:DocumentRoot</span>],
+              <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:DocumentRootOptions</span>])
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:AccessLog</span>]
+        <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:AccessLog</span>] = [
+          [ <span class="ruby-identifier">$stderr</span>, <span class="ruby-constant">AccessLog</span><span class="ruby-operator">::</span><span class="ruby-constant">COMMON_LOG_FORMAT</span> ],
+          [ <span class="ruby-identifier">$stderr</span>, <span class="ruby-constant">AccessLog</span><span class="ruby-operator">::</span><span class="ruby-constant">REFERER_LOG_FORMAT</span> ]
+        ]
+      <span class="ruby-keyword kw">end</span>
+ 
+      <span class="ruby-ivar">@virtual_hosts</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M009628" class="m-detail">
+        <a name="M009628"></a>
+
+        <div class="method-heading">
+          <a href="#M009628" class="method-signature">
+          <span class="method-name">access_log</span><span class="method-args">(config, req, res)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009628-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009628-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpserver.rb, line 156</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">access_log</span>(<span class="ruby-identifier">config</span>, <span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+      <span class="ruby-identifier">param</span> = <span class="ruby-constant">AccessLog</span><span class="ruby-operator">::</span><span class="ruby-identifier">setup_params</span>(<span class="ruby-identifier">config</span>, <span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+      <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:AccessLog</span>].<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">logger</span>, <span class="ruby-identifier">fmt</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">logger</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">AccessLog</span><span class="ruby-operator">::</span><span class="ruby-identifier">format</span>(<span class="ruby-identifier">fmt</span><span class="ruby-operator">+</span><span class="ruby-value str">&quot;\n&quot;</span>, <span class="ruby-identifier">param</span>)
+      }
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009620" class="m-detail">
+        <a name="M009620"></a>
+
+        <div class="method-heading">
+          <a href="#M009620" class="method-signature">
+          <span class="method-name">do_OPTIONS</span><span class="method-args">(req, res)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009620-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009620-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpserver.rb, line 107</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">do_OPTIONS</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+      <span class="ruby-identifier">res</span>[<span class="ruby-value str">&quot;allow&quot;</span>] = <span class="ruby-value str">&quot;GET,HEAD,POST,OPTIONS&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009627" class="m-detail">
+        <a name="M009627"></a>
+
+        <div class="method-heading">
+          <a href="#M009627" class="method-signature">
+          <span class="method-name">lookup_server</span><span class="method-args">(req)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009627-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009627-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpserver.rb, line 147</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">lookup_server</span>(<span class="ruby-identifier">req</span>)
+      <span class="ruby-ivar">@virtual_hosts</span>.<span class="ruby-identifier">find</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span>
+        (<span class="ruby-identifier">s</span>[<span class="ruby-identifier">:BindAddress</span>].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">addr</span>[<span class="ruby-value">3</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">s</span>[<span class="ruby-identifier">:BindAddress</span>]) <span class="ruby-operator">&amp;&amp;</span>
+        (<span class="ruby-identifier">s</span>[<span class="ruby-identifier">:Port</span>].<span class="ruby-identifier">nil?</span>        <span class="ruby-operator">||</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">port</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">s</span>[<span class="ruby-identifier">:Port</span>])           <span class="ruby-operator">&amp;&amp;</span>
+        ((<span class="ruby-identifier">s</span>[<span class="ruby-identifier">:ServerName</span>].<span class="ruby-identifier">nil?</span>  <span class="ruby-operator">||</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">host</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">s</span>[<span class="ruby-identifier">:ServerName</span>]) <span class="ruby-operator">||</span>
+         (<span class="ruby-operator">!</span><span class="ruby-identifier">s</span>[<span class="ruby-identifier">:ServerAlias</span>].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">s</span>[<span class="ruby-identifier">:ServerAlias</span>].<span class="ruby-identifier">find</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">h</span><span class="ruby-operator">|</span> <span class="ruby-identifier">h</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">host</span>}))
+      }
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009621" class="m-detail">
+        <a name="M009621"></a>
+
+        <div class="method-heading">
+          <a href="#M009621" class="method-signature">
+          <span class="method-name">mount</span><span class="method-args">(dir, servlet, *options)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009621-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009621-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpserver.rb, line 111</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mount</span>(<span class="ruby-identifier">dir</span>, <span class="ruby-identifier">servlet</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">options</span>)
+      <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;%s is mounted on %s.&quot;</span>, <span class="ruby-identifier">servlet</span>.<span class="ruby-identifier">inspect</span>, <span class="ruby-identifier">dir</span>))
+      <span class="ruby-ivar">@mount_tab</span>[<span class="ruby-identifier">dir</span>] = [ <span class="ruby-identifier">servlet</span>, <span class="ruby-identifier">options</span> ]
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009622" class="m-detail">
+        <a name="M009622"></a>
+
+        <div class="method-heading">
+          <a href="#M009622" class="method-signature">
+          <span class="method-name">mount_proc</span><span class="method-args">(dir, proc=nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009622-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009622-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpserver.rb, line 116</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mount_proc</span>(<span class="ruby-identifier">dir</span>, <span class="ruby-identifier">proc</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-identifier">proc</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">block</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPServerError</span>, <span class="ruby-value str">&quot;must pass a proc or block&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">proc</span>
+      <span class="ruby-identifier">mount</span>(<span class="ruby-identifier">dir</span>, <span class="ruby-constant">HTTPServlet</span><span class="ruby-operator">::</span><span class="ruby-constant">ProcHandler</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">proc</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009618" class="m-detail">
+        <a name="M009618"></a>
+
+        <div class="method-heading">
+          <a href="#M009618" class="method-signature">
+          <span class="method-name">run</span><span class="method-args">(sock)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009618-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009618-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpserver.rb, line 43</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run</span>(<span class="ruby-identifier">sock</span>)
+      <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span> 
+        <span class="ruby-identifier">res</span> = <span class="ruby-constant">HTTPResponse</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@config</span>)
+        <span class="ruby-identifier">req</span> = <span class="ruby-constant">HTTPRequest</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@config</span>)
+        <span class="ruby-identifier">server</span> = <span class="ruby-keyword kw">self</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">timeout</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:RequestTimeout</span>]
+          <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">timeout</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+            <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">IO</span>.<span class="ruby-identifier">select</span>([<span class="ruby-identifier">sock</span>], <span class="ruby-keyword kw">nil</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-value">0</span><span class="ruby-value">.5</span>)
+            <span class="ruby-identifier">timeout</span> = <span class="ruby-value">0</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@status</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">:Running</span>
+            <span class="ruby-identifier">timeout</span> <span class="ruby-operator">-=</span> <span class="ruby-value">0</span><span class="ruby-value">.5</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">EOFError</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">timeout</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">0</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">sock</span>.<span class="ruby-identifier">eof?</span>
+          <span class="ruby-identifier">req</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">sock</span>)
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">request_method</span> = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">request_method</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">request_uri</span> = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">request_uri</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">request_http_version</span> = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">http_version</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">keep_alive</span> = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">keep_alive?</span>
+          <span class="ruby-identifier">server</span> = <span class="ruby-identifier">lookup_server</span>(<span class="ruby-identifier">req</span>) <span class="ruby-operator">||</span> <span class="ruby-keyword kw">self</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">callback</span> = <span class="ruby-identifier">server</span>[<span class="ruby-identifier">:RequestCallback</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">server</span>[<span class="ruby-identifier">:RequestHandler</span>]
+            <span class="ruby-identifier">callback</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">server</span>.<span class="ruby-identifier">service</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">EOFError</span>, <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">RequestTimeout</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">set_error</span>(<span class="ruby-identifier">ex</span>)
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+          <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">error</span>(<span class="ruby-identifier">ex</span>.<span class="ruby-identifier">message</span>)
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">set_error</span>(<span class="ruby-identifier">ex</span>)
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">Status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">status</span> = <span class="ruby-identifier">ex</span>.<span class="ruby-identifier">code</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">StandardError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+          <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">error</span>(<span class="ruby-identifier">ex</span>)
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">set_error</span>(<span class="ruby-identifier">ex</span>, <span class="ruby-keyword kw">true</span>)
+        <span class="ruby-keyword kw">ensure</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">request_line</span>
+            <span class="ruby-identifier">req</span>.<span class="ruby-identifier">fixup</span>()
+            <span class="ruby-identifier">res</span>.<span class="ruby-identifier">send_response</span>(<span class="ruby-identifier">sock</span>)
+            <span class="ruby-identifier">server</span>.<span class="ruby-identifier">access_log</span>(<span class="ruby-ivar">@config</span>, <span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@http_version</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value str">&quot;1.1&quot;</span>
+        <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">keep_alive?</span>
+        <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">res</span>.<span class="ruby-identifier">keep_alive?</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009625" class="m-detail">
+        <a name="M009625"></a>
+
+        <div class="method-heading">
+          <a href="#M009625" class="method-signature">
+          <span class="method-name">search_servlet</span><span class="method-args">(path)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009625-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009625-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpserver.rb, line 128</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">search_servlet</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-identifier">script_name</span>, <span class="ruby-identifier">path_info</span> = <span class="ruby-ivar">@mount_tab</span>.<span class="ruby-identifier">scan</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-identifier">servlet</span>, <span class="ruby-identifier">options</span> = <span class="ruby-ivar">@mount_tab</span>[<span class="ruby-identifier">script_name</span>]
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">servlet</span>
+        [ <span class="ruby-identifier">servlet</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">script_name</span>, <span class="ruby-identifier">path_info</span> ]
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009619" class="m-detail">
+        <a name="M009619"></a>
+
+        <div class="method-heading">
+          <a href="#M009619" class="method-signature">
+          <span class="method-name">service</span><span class="method-args">(req, res)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009619-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009619-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpserver.rb, line 89</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">service</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">unparsed_uri</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;*&quot;</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">request_method</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;OPTIONS&quot;</span>
+          <span class="ruby-identifier">do_OPTIONS</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">OK</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">NotFound</span>, <span class="ruby-node">&quot;`#{req.unparsed_uri}' not found.&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">servlet</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">script_name</span>, <span class="ruby-identifier">path_info</span> = <span class="ruby-identifier">search_servlet</span>(<span class="ruby-identifier">req</span>.<span class="ruby-identifier">path</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">NotFound</span>, <span class="ruby-node">&quot;`#{req.path}' not found.&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">servlet</span>
+      <span class="ruby-identifier">req</span>.<span class="ruby-identifier">script_name</span> = <span class="ruby-identifier">script_name</span>
+      <span class="ruby-identifier">req</span>.<span class="ruby-identifier">path_info</span> = <span class="ruby-identifier">path_info</span>
+      <span class="ruby-identifier">si</span> = <span class="ruby-identifier">servlet</span>.<span class="ruby-identifier">get_instance</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">options</span>)
+      <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-identifier">format</span>(<span class="ruby-value str">&quot;%s is invoked.&quot;</span>, <span class="ruby-identifier">si</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>))
+      <span class="ruby-identifier">si</span>.<span class="ruby-identifier">service</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009624" class="m-detail">
+        <a name="M009624"></a>
+
+        <div class="method-heading">
+          <span class="method-name">umount</span><span class="method-args">(dir)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="HTTPServer.html#M009623">unmount</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M009623" class="m-detail">
+        <a name="M009623"></a>
+
+        <div class="method-heading">
+          <a href="#M009623" class="method-signature">
+          <span class="method-name">unmount</span><span class="method-args">(dir)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009623-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009623-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpserver.rb, line 122</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">unmount</span>(<span class="ruby-identifier">dir</span>)
+      <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;unmount %s.&quot;</span>, <span class="ruby-identifier">dir</span>))
+      <span class="ruby-ivar">@mount_tab</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">dir</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009626" class="m-detail">
+        <a name="M009626"></a>
+
+        <div class="method-heading">
+          <a href="#M009626" class="method-signature">
+          <span class="method-name">virtual_host</span><span class="method-args">(server)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009626-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009626-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpserver.rb, line 136</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">virtual_host</span>(<span class="ruby-identifier">server</span>)
+      <span class="ruby-ivar">@virtual_hosts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">server</span>
+      <span class="ruby-ivar">@virtual_hosts</span> = <span class="ruby-ivar">@virtual_hosts</span>.<span class="ruby-identifier">sort_by</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">num</span> = <span class="ruby-value">0</span>
+        <span class="ruby-identifier">num</span> <span class="ruby-operator">-=</span> <span class="ruby-value">4</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">s</span>[<span class="ruby-identifier">:BindAddress</span>]
+        <span class="ruby-identifier">num</span> <span class="ruby-operator">-=</span> <span class="ruby-value">2</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">s</span>[<span class="ruby-identifier">:Port</span>]
+        <span class="ruby-identifier">num</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">s</span>[<span class="ruby-identifier">:ServerName</span>]
+        <span class="ruby-identifier">num</span>
+      }
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 0 --> <p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and run  by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. Ruby-doc.org was created in 2002 to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

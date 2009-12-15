@@ -1,0 +1,840 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: YAML</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">YAML</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/lib/yaml_rb.html">
+                lib/yaml.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h2><a href="YAML.html">YAML</a></h2>
+<p>
+<a href="YAML.html">YAML</a>(tm) (rhymes with &#8216;camel&#8217;) is a
+straightforward machine parsable data serialization format designed for
+human readability and interaction with scripting languages such as Perl and
+Python. <a href="YAML.html">YAML</a> is optimized for data serialization,
+formatted dumping, configuration files, log files, Internet messaging and
+filtering. This specification describes the <a href="YAML.html">YAML</a>
+information model and serialization format. Together with the Unicode
+standard for characters, it provides all the information necessary to
+understand <a href="YAML.html">YAML</a> Version 1.0 and construct computer
+programs to process it.
+</p>
+<p>
+See <a href="http://yaml.org">yaml.org</a>/ for more information. For a
+quick tutorial, please visit <a href="YAML.html">YAML</a> In Five Minutes
+(<a
+href="http://yaml.kwiki.org/?YamlInFiveMinutes">yaml.kwiki.org/?YamlInFiveMinutes</a>).
+</p>
+<h2>About This Library</h2>
+<p>
+The <a href="YAML.html">YAML</a> 1.0 specification outlines four stages of
+<a href="YAML.html">YAML</a> loading and dumping. This library honors all
+four of those stages, although data is really only available to you in
+three stages.
+</p>
+<p>
+The four stages are: native, representation, serialization, and
+presentation.
+</p>
+<p>
+The native stage refers to data which has been loaded completely into
+Ruby&#8216;s own types. (See +YAML::load+.)
+</p>
+<p>
+The representation stage means data which has been composed into
++YAML::BaseNode+ objects. In this stage, the document is available as a
+tree of node objects. You can perform YPath queries and transformations at
+this level. (See +YAML::parse+.)
+</p>
+<p>
+The serialization stage happens inside the <a
+href="YAML.html#M007371">parser</a>. The <a href="YAML.html">YAML</a> <a
+href="YAML.html#M007371">parser</a> used in Ruby is called Syck. Serialized
+nodes are available in the extension as SyckNode structs.
+</p>
+<p>
+The presentation stage is the <a href="YAML.html">YAML</a> document itself.
+This is accessible to you as a string. (See +YAML::dump+.)
+</p>
+<p>
+For more information about the various information models, see Chapter 3 of
+the <a href="YAML.html">YAML</a> 1.0 Specification (<a
+href="http://yaml.org/spec/#id2491269">yaml.org/spec/#id2491269</a>).
+</p>
+<p>
+The <a href="YAML.html">YAML</a> module provides quick access to the most
+common loading (YAML::load) and dumping (YAML::dump) tasks. This module
+also provides an API for registering global types (YAML::add_domain_type).
+</p>
+<h2>Example</h2>
+<p>
+A simple round-trip (<a href="YAML.html#M007376">load</a> and <a
+href="YAML.html#M007375">dump</a>) of an object.
+</p>
+<pre>
+    require &quot;yaml&quot;
+
+    test_obj = [&quot;dogs&quot;, &quot;cats&quot;, &quot;badgers&quot;]
+
+    yaml_obj = YAML::dump( test_obj )
+                        # -&gt; ---
+                             - dogs
+                             - cats
+                             - badgers
+    ruby_obj = YAML::load( yaml_obj )
+                        # =&gt; [&quot;dogs&quot;, &quot;cats&quot;, &quot;badgers&quot;]
+    ruby_obj == test_obj
+                        # =&gt; true
+</pre>
+<p>
+To register your custom types with the global <a
+href="YAML.html#M007373">resolver</a>, use <tt><a
+href="YAML.html#M007386">add_domain_type</a></tt>.
+</p>
+<pre>
+    YAML::add_domain_type( &quot;your-site.com,2004&quot;, &quot;widget&quot; ) do |type, val|
+        Widget.new( val )
+    end
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M007387">add_builtin_type</a>&nbsp;&nbsp;
+      <a href="#M007386">add_domain_type</a>&nbsp;&nbsp;
+      <a href="#M007389">add_private_type</a>&nbsp;&nbsp;
+      <a href="#M007388">add_ruby_type</a>&nbsp;&nbsp;
+      <a href="#M007390">detect_implicit</a>&nbsp;&nbsp;
+      <a href="#M007375">dump</a>&nbsp;&nbsp;
+      <a href="#M007385">dump_stream</a>&nbsp;&nbsp;
+      <a href="#M007380">each_document</a>&nbsp;&nbsp;
+      <a href="#M007382">each_node</a>&nbsp;&nbsp;
+      <a href="#M007374">emitter</a>&nbsp;&nbsp;
+      <a href="#M007372">generic_parser</a>&nbsp;&nbsp;
+      <a href="#M007376">load</a>&nbsp;&nbsp;
+      <a href="#M007381">load_documents</a>&nbsp;&nbsp;
+      <a href="#M007377">load_file</a>&nbsp;&nbsp;
+      <a href="#M007384">load_stream</a>&nbsp;&nbsp;
+      <a href="#M007395">object_maker</a>&nbsp;&nbsp;
+      <a href="#M007378">parse</a>&nbsp;&nbsp;
+      <a href="#M007383">parse_documents</a>&nbsp;&nbsp;
+      <a href="#M007379">parse_file</a>&nbsp;&nbsp;
+      <a href="#M007371">parser</a>&nbsp;&nbsp;
+      <a href="#M007396">quick_emit</a>&nbsp;&nbsp;
+      <a href="#M007394">read_type_class</a>&nbsp;&nbsp;
+      <a href="#M007373">resolver</a>&nbsp;&nbsp;
+      <a href="#M007391">tagurize</a>&nbsp;&nbsp;
+      <a href="#M007392">transfer</a>&nbsp;&nbsp;
+      <a href="#M007393">try_implicit</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Resolver</td>
+          <td>=</td>
+          <td class="context-item-value">YAML::Syck::Resolver</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DefaultResolver</td>
+          <td>=</td>
+          <td class="context-item-value">YAML::Syck::DefaultResolver</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">GenericResolver</td>
+          <td>=</td>
+          <td class="context-item-value">YAML::Syck::GenericResolver</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Parser</td>
+          <td>=</td>
+          <td class="context-item-value">YAML::Syck::Parser</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Emitter</td>
+          <td>=</td>
+          <td class="context-item-value">YAML::Syck::Emitter</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M007387" class="method-detail">
+        <a name="M007387"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007387.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007387.html');return false;">
+          <span class="method-name">add_builtin_type</span><span class="method-args">( type_tag, &amp;transfer_proc )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add a <a href="YAML.html#M007392">transfer</a> method for a builtin type
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007386" class="method-detail">
+        <a name="M007386"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007386.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007386.html');return false;">
+          <span class="method-name">add_domain_type</span><span class="method-args">( domain, type_tag, &amp;transfer_proc )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add a global handler for a <a href="YAML.html">YAML</a> domain type.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007389" class="method-detail">
+        <a name="M007389"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007389.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007389.html');return false;">
+          <span class="method-name">add_private_type</span><span class="method-args">( type_re, &amp;transfer_proc )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add a private document type
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007388" class="method-detail">
+        <a name="M007388"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007388.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007388.html');return false;">
+          <span class="method-name">add_ruby_type</span><span class="method-args">( type_tag, &amp;transfer_proc )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add a <a href="YAML.html#M007392">transfer</a> method for a builtin type
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007390" class="method-detail">
+        <a name="M007390"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007390.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007390.html');return false;">
+          <span class="method-name">detect_implicit</span><span class="method-args">( val )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Detect typing of a string
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007375" class="method-detail">
+        <a name="M007375"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007375.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007375.html');return false;">
+          <span class="method-name">dump</span><span class="method-args">( obj, io = nil )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts <em>obj</em> to <a href="YAML.html">YAML</a> and writes the <a
+href="YAML.html">YAML</a> result to <em>io</em>.
+</p>
+<pre>
+  File.open( 'animals.yaml', 'w' ) do |out|
+    YAML.dump( ['badger', 'elephant', 'tiger'], out )
+  end
+</pre>
+<p>
+If no <em>io</em> is provided, a string containing the dumped <a
+href="YAML.html">YAML</a> is returned.
+</p>
+<pre>
+  YAML.dump( :locked )
+     #=&gt; &quot;--- :locked&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M007385" class="method-detail">
+        <a name="M007385"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007385.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007385.html');return false;">
+          <span class="method-name">dump_stream</span><span class="method-args">( *objs )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="YAML.html">YAML</a> stream containing each of the items
+in <tt>objs</tt>, each having their own document.
+</p>
+<pre>
+  YAML.dump_stream( 0, [], {} )
+    #=&gt; --- 0
+        --- []
+        --- {}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M007380" class="method-detail">
+        <a name="M007380"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007380.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007380.html');return false;">
+          <span class="method-name">each_document</span><span class="method-args">( io, &amp;block )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Calls <em>block</em> with each consecutive document in the <a
+href="YAML.html">YAML</a> stream contained in <em>io</em>.
+</p>
+<pre>
+  File.open( 'many-docs.yaml' ) do |yf|
+    YAML.each_document( yf ) do |ydoc|
+      ## ydoc contains the single object
+      ## from the YAML document
+    end
+  end
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M007382" class="method-detail">
+        <a name="M007382"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007382.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007382.html');return false;">
+          <span class="method-name">each_node</span><span class="method-args">( io, &amp;doc_proc )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Calls <em>block</em> with a tree of +YAML::BaseNodes+, one tree for each
+consecutive document in the <a href="YAML.html">YAML</a> stream contained
+in <em>io</em>.
+</p>
+<pre>
+  File.open( 'many-docs.yaml' ) do |yf|
+    YAML.each_node( yf ) do |ydoc|
+      ## ydoc contains a tree of nodes
+      ## from the YAML document
+    end
+  end
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M007374" class="method-detail">
+        <a name="M007374"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007374.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007374.html');return false;">
+          <span class="method-name">emitter</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a new default <a href="YAML.html#M007374">emitter</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007372" class="method-detail">
+        <a name="M007372"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007372.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007372.html');return false;">
+          <span class="method-name">generic_parser</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a new generic <a href="YAML.html#M007371">parser</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007376" class="method-detail">
+        <a name="M007376"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007376.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007376.html');return false;">
+          <span class="method-name">load</span><span class="method-args">( io )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Load a document from the current <em>io</em> stream.
+</p>
+<pre>
+  File.open( 'animals.yaml' ) { |yf| YAML::load( yf ) }
+     #=&gt; ['badger', 'elephant', 'tiger']
+</pre>
+<p>
+Can also <a href="YAML.html#M007376">load</a> from a string.
+</p>
+<pre>
+  YAML.load( &quot;--- :locked&quot; )
+     #=&gt; :locked
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M007381" class="method-detail">
+        <a name="M007381"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007381.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007381.html');return false;">
+          <span class="method-name">load_documents</span><span class="method-args">( io, &amp;doc_proc )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Calls <em>block</em> with each consecutive document in the <a
+href="YAML.html">YAML</a> stream contained in <em>io</em>.
+</p>
+<pre>
+  File.open( 'many-docs.yaml' ) do |yf|
+    YAML.load_documents( yf ) do |ydoc|
+      ## ydoc contains the single object
+      ## from the YAML document
+    end
+  end
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M007377" class="method-detail">
+        <a name="M007377"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007377.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007377.html');return false;">
+          <span class="method-name">load_file</span><span class="method-args">( filepath )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Load a document from the file located at <em>filepath</em>.
+</p>
+<pre>
+  YAML.load_file( 'animals.yaml' )
+     #=&gt; ['badger', 'elephant', 'tiger']
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M007384" class="method-detail">
+        <a name="M007384"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007384.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007384.html');return false;">
+          <span class="method-name">load_stream</span><span class="method-args">( io )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Loads all documents from the current <em>io</em> stream, returning a
++YAML::Stream+ object containing all loaded documents.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007395" class="method-detail">
+        <a name="M007395"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007395.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007395.html');return false;">
+          <span class="method-name">object_maker</span><span class="method-args">( obj_class, val )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Allocate blank object
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007378" class="method-detail">
+        <a name="M007378"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007378.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007378.html');return false;">
+          <span class="method-name">parse</span><span class="method-args">( io )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Parse the first document from the current <em>io</em> stream
+</p>
+<pre>
+  File.open( 'animals.yaml' ) { |yf| YAML::load( yf ) }
+     #=&gt; #&lt;YAML::Syck::Node:0x82ccce0
+          @kind=:seq,
+          @value=
+           [#&lt;YAML::Syck::Node:0x82ccd94
+             @kind=:scalar,
+             @type_id=&quot;str&quot;,
+             @value=&quot;badger&quot;&gt;,
+            #&lt;YAML::Syck::Node:0x82ccd58
+             @kind=:scalar,
+             @type_id=&quot;str&quot;,
+             @value=&quot;elephant&quot;&gt;,
+            #&lt;YAML::Syck::Node:0x82ccd1c
+             @kind=:scalar,
+             @type_id=&quot;str&quot;,
+             @value=&quot;tiger&quot;&gt;]&gt;
+</pre>
+<p>
+Can also <a href="YAML.html#M007376">load</a> from a string.
+</p>
+<pre>
+  YAML.parse( &quot;--- :locked&quot; )
+     #=&gt; #&lt;YAML::Syck::Node:0x82edddc
+           @type_id=&quot;tag:ruby.yaml.org,2002:sym&quot;,
+           @value=&quot;:locked&quot;, @kind=:scalar&gt;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M007383" class="method-detail">
+        <a name="M007383"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007383.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007383.html');return false;">
+          <span class="method-name">parse_documents</span><span class="method-args">( io, &amp;doc_proc )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Calls <em>block</em> with a tree of +YAML::BaseNodes+, one tree for each
+consecutive document in the <a href="YAML.html">YAML</a> stream contained
+in <em>io</em>.
+</p>
+<pre>
+  File.open( 'many-docs.yaml' ) do |yf|
+    YAML.parse_documents( yf ) do |ydoc|
+      ## ydoc contains a tree of nodes
+      ## from the YAML document
+    end
+  end
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M007379" class="method-detail">
+        <a name="M007379"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007379.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007379.html');return false;">
+          <span class="method-name">parse_file</span><span class="method-args">( filepath )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Parse a document from the file located at <em>filepath</em>.
+</p>
+<pre>
+  YAML.parse_file( 'animals.yaml' )
+     #=&gt; #&lt;YAML::Syck::Node:0x82ccce0
+          @kind=:seq,
+          @value=
+           [#&lt;YAML::Syck::Node:0x82ccd94
+             @kind=:scalar,
+             @type_id=&quot;str&quot;,
+             @value=&quot;badger&quot;&gt;,
+            #&lt;YAML::Syck::Node:0x82ccd58
+             @kind=:scalar,
+             @type_id=&quot;str&quot;,
+             @value=&quot;elephant&quot;&gt;,
+            #&lt;YAML::Syck::Node:0x82ccd1c
+             @kind=:scalar,
+             @type_id=&quot;str&quot;,
+             @value=&quot;tiger&quot;&gt;]&gt;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M007371" class="method-detail">
+        <a name="M007371"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007371.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007371.html');return false;">
+          <span class="method-name">parser</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a new default <a href="YAML.html#M007371">parser</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007396" class="method-detail">
+        <a name="M007396"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007396.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007396.html');return false;">
+          <span class="method-name">quick_emit</span><span class="method-args">( oid, opts = {}, &amp;e )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Allocate an Emitter if needed
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007394" class="method-detail">
+        <a name="M007394"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007394.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007394.html');return false;">
+          <span class="method-name">read_type_class</span><span class="method-args">( type, obj_class )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Method.html">Method</a> to extract colon-seperated type and class,
+returning the type and the constant of the class
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007373" class="method-detail">
+        <a name="M007373"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007373.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007373.html');return false;">
+          <span class="method-name">resolver</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the default <a href="YAML.html#M007373">resolver</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007391" class="method-detail">
+        <a name="M007391"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007391.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007391.html');return false;">
+          <span class="method-name">tagurize</span><span class="method-args">( val )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a type_id to a taguri
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007392" class="method-detail">
+        <a name="M007392"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007392.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007392.html');return false;">
+          <span class="method-name">transfer</span><span class="method-args">( type_id, obj )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Apply a <a href="YAML.html#M007392">transfer</a> method to a Ruby object
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007393" class="method-detail">
+        <a name="M007393"></a>
+
+        <div class="method-heading">
+          <a href="YAML.src/M007393.html" target="Code" class="method-signature"
+            onclick="popupCode('YAML.src/M007393.html');return false;">
+          <span class="method-name">try_implicit</span><span class="method-args">( obj )</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Apply any implicit a node may qualify for
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

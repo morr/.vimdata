@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>markup_code (Generators::HtmlMethod)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/generators/html_generator.rb, line 1057</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">markup_code</span>(<span class="ruby-identifier">tokens</span>)
+      <span class="ruby-identifier">src</span> = <span class="ruby-value str">&quot;&quot;</span>
+      <span class="ruby-identifier">tokens</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">t</span>
+        <span class="ruby-comment cmt">#    p t.class</span>
+<span class="ruby-comment cmt">#        style = STYLE_MAP[t.class]</span>
+        <span class="ruby-identifier">style</span> = <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">t</span>
+                <span class="ruby-keyword kw">when</span> <span class="ruby-constant">RubyToken</span><span class="ruby-operator">::</span><span class="ruby-constant">TkCONSTANT</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;ruby-constant&quot;</span>
+                <span class="ruby-keyword kw">when</span> <span class="ruby-constant">RubyToken</span><span class="ruby-operator">::</span><span class="ruby-constant">TkKW</span>       <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;ruby-keyword kw&quot;</span>
+                <span class="ruby-keyword kw">when</span> <span class="ruby-constant">RubyToken</span><span class="ruby-operator">::</span><span class="ruby-constant">TkIVAR</span>     <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;ruby-ivar&quot;</span>
+                <span class="ruby-keyword kw">when</span> <span class="ruby-constant">RubyToken</span><span class="ruby-operator">::</span><span class="ruby-constant">TkOp</span>       <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;ruby-operator&quot;</span>
+                <span class="ruby-keyword kw">when</span> <span class="ruby-constant">RubyToken</span><span class="ruby-operator">::</span><span class="ruby-constant">TkId</span>       <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;ruby-identifier&quot;</span>
+                <span class="ruby-keyword kw">when</span> <span class="ruby-constant">RubyToken</span><span class="ruby-operator">::</span><span class="ruby-constant">TkNode</span>     <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;ruby-node&quot;</span>
+                <span class="ruby-keyword kw">when</span> <span class="ruby-constant">RubyToken</span><span class="ruby-operator">::</span><span class="ruby-constant">TkCOMMENT</span>  <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;ruby-comment cmt&quot;</span>
+                <span class="ruby-keyword kw">when</span> <span class="ruby-constant">RubyToken</span><span class="ruby-operator">::</span><span class="ruby-constant">TkREGEXP</span>   <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;ruby-regexp re&quot;</span>
+                <span class="ruby-keyword kw">when</span> <span class="ruby-constant">RubyToken</span><span class="ruby-operator">::</span><span class="ruby-constant">TkSTRING</span>   <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;ruby-value str&quot;</span>
+                <span class="ruby-keyword kw">when</span> <span class="ruby-constant">RubyToken</span><span class="ruby-operator">::</span><span class="ruby-constant">TkVal</span>      <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;ruby-value&quot;</span>
+                <span class="ruby-keyword kw">else</span>
+                    <span class="ruby-keyword kw">nil</span>
+                <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-identifier">text</span> = <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">escapeHTML</span>(<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>)
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">style</span>
+          <span class="ruby-identifier">src</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;&lt;span class=\&quot;#{style}\&quot;&gt;#{text}&lt;/span&gt;&quot;</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">src</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">text</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">add_line_numbers</span>(<span class="ruby-identifier">src</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Options</span>.<span class="ruby-identifier">instance</span>.<span class="ruby-identifier">include_line_numbers</span>
+      <span class="ruby-identifier">src</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

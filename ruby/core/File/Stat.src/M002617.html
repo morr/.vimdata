@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>executable_real? (File::Stat)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     stat.executable_real?    =&gt; true or false
+ *  
+ *  Same as &lt;code&gt;executable?&lt;/code&gt;, but tests using the real owner of
+ *  the process.
+ */
+
+static VALUE
+rb_stat_X(obj)
+    VALUE obj;
+{
+    struct stat *st = get_stat(obj);
+
+#ifdef USE_GETEUID
+    if (getuid() == 0) {
+        return st-&gt;st_mode &amp; S_IXUGO ? Qtrue : Qfalse;
+    }
+#endif
+#ifdef S_IXUSR
+    if (rb_stat_rowned(obj))
+        return st-&gt;st_mode &amp; S_IXUSR ? Qtrue : Qfalse;
+#endif
+#ifdef S_IXGRP
+    if (group_member(get_stat(obj)-&gt;st_gid))
+        return st-&gt;st_mode &amp; S_IXGRP ? Qtrue : Qfalse;
+#endif
+#ifdef S_IXOTH
+    if (!(st-&gt;st_mode &amp; S_IXOTH)) return Qfalse;
+#endif
+    return Qtrue;
+}</pre>
+</body>
+</html>

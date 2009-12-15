@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>getc (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.getc   =&gt; fixnum or nil
+ *  
+ *  Gets the next 8-bit byte (0..255) from &lt;em&gt;ios&lt;/em&gt;. Returns
+ *  &lt;code&gt;nil&lt;/code&gt; if called at end of file.
+ *     
+ *     f = File.new(&quot;testfile&quot;)
+ *     f.getc   #=&gt; 84
+ *     f.getc   #=&gt; 104
+ */
+
+VALUE
+rb_io_getc(io)
+    VALUE io;
+{
+    OpenFile *fptr;
+    FILE *f;
+    int c;
+
+    GetOpenFile(io, fptr);
+    rb_io_check_readable(fptr);
+    f = fptr-&gt;f;
+
+  retry:
+    READ_CHECK(f);
+    clearerr(f);
+    TRAP_BEG;
+    c = getc(f);
+    TRAP_END;
+
+    if (c == EOF) {
+        if (ferror(f)) {
+            clearerr(f);
+            if (!rb_io_wait_readable(fileno(f)))
+                rb_sys_fail(fptr-&gt;path);
+            goto retry;
+        }
+        return Qnil;
+    }
+    return INT2FIX(c &amp; 0xff);
+}</pre>
+</body>
+</html>

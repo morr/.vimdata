@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_s (MatchData)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mtch.to_s   =&gt; str
+ *  
+ *  Returns the entire matched string.
+ *     
+ *     m = /(.)(.)(\d+)(\d)/.match(&quot;THX1138.&quot;)
+ *     m.to_s   #=&gt; &quot;HX1138&quot;
+ */
+
+static VALUE
+match_to_s(match)
+    VALUE match;
+{
+    VALUE str = rb_reg_last_match(match);
+
+    if (NIL_P(str)) str = rb_str_new(0,0);
+    if (OBJ_TAINTED(match)) OBJ_TAINT(str);
+    if (OBJ_TAINTED(RMATCH(match)-&gt;str)) OBJ_TAINT(str);
+    return str;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>remainder (Numeric)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     num.remainder(numeric)    =&gt; result
+ *  
+ *  If &lt;i&gt;num&lt;/i&gt; and &lt;i&gt;numeric&lt;/i&gt; have different signs, returns
+ *  &lt;em&gt;mod&lt;/em&gt;-&lt;i&gt;numeric&lt;/i&gt;; otherwise, returns &lt;em&gt;mod&lt;/em&gt;. In
+ *  both cases &lt;em&gt;mod&lt;/em&gt; is the value
+ *  &lt;i&gt;num&lt;/i&gt;.&lt;code&gt;modulo(&lt;/code&gt;&lt;i&gt;numeric&lt;/i&gt;&lt;code&gt;)&lt;/code&gt;. The
+ *  differences between &lt;code&gt;remainder&lt;/code&gt; and modulo
+ *  (&lt;code&gt;%&lt;/code&gt;) are shown in the table under &lt;code&gt;Numeric#divmod&lt;/code&gt;.
+ */
+
+static VALUE
+num_remainder(x, y)
+    VALUE x, y;
+{
+    VALUE z = rb_funcall(x, '%', 1, y);
+
+    if ((!rb_equal(z, INT2FIX(0))) &amp;&amp;
+        ((RTEST(rb_funcall(x, '&lt;', 1, INT2FIX(0))) &amp;&amp;
+          RTEST(rb_funcall(y, '&gt;', 1, INT2FIX(0)))) ||
+         (RTEST(rb_funcall(x, '&gt;', 1, INT2FIX(0))) &amp;&amp;
+          RTEST(rb_funcall(y, '&lt;', 1, INT2FIX(0)))))) {
+        return rb_funcall(z, '-', 1, y);
+    }
+    return z;
+}</pre>
+</body>
+</html>

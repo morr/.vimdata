@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>union (Regexp)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Regexp.union([pattern]*)   =&gt; new_str
+ *  
+ *  Return a &lt;code&gt;Regexp&lt;/code&gt; object that is the union of the given
+ *  &lt;em&gt;pattern&lt;/em&gt;s, i.e., will match any of its parts. The &lt;em&gt;pattern&lt;/em&gt;s
+ *  can be Regexp objects, in which case their options will be preserved, or
+ *  Strings. If no arguments are given, returns &lt;code&gt;/(?!)/&lt;/code&gt;.
+ *     
+ *     Regexp.union                         #=&gt; /(?!)/
+ *     Regexp.union(&quot;penzance&quot;)             #=&gt; /penzance/
+ *     Regexp.union(&quot;skiing&quot;, &quot;sledding&quot;)   #=&gt; /skiing|sledding/
+ *     Regexp.union(/dogs/, /cats/i)        #=&gt; /(?-mix:dogs)|(?i-mx:cats)/
+ */
+static VALUE
+rb_reg_s_union(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    if (argc == 0) {
+        VALUE args[1];
+        args[0] = rb_str_new2(&quot;(?!)&quot;);
+        return rb_class_new_instance(1, args, rb_cRegexp);
+    }
+    else if (argc == 1) {
+        VALUE v;
+        v = rb_check_convert_type(argv[0], T_REGEXP, &quot;Regexp&quot;, &quot;to_regexp&quot;);
+        if (!NIL_P(v))
+            return v;
+        else {
+            VALUE args[1];
+            args[0] = rb_reg_s_quote(argc, argv);
+            return rb_class_new_instance(1, args, rb_cRegexp);
+        }
+    }
+    else {
+        int i, kcode = -1;
+        VALUE kcode_re = Qnil;
+        VALUE source = rb_str_buf_new(0);
+        VALUE args[3];
+        for (i = 0; i &lt; argc; i++) {
+            volatile VALUE v;
+            if (0 &lt; i)
+                rb_str_buf_cat2(source, &quot;|&quot;);
+            v = rb_check_convert_type(argv[i], T_REGEXP, &quot;Regexp&quot;, &quot;to_regexp&quot;);
+            if (!NIL_P(v)) {
+                if (FL_TEST(v, KCODE_FIXED)) {
+                    if (kcode == -1) {
+                        kcode_re = v;
+                        kcode = RBASIC(v)-&gt;flags &amp; KCODE_MASK;
+                    }
+                    else if ((RBASIC(v)-&gt;flags &amp; KCODE_MASK) != kcode) {
+                        volatile VALUE str1, str2;
+                        str1 = rb_inspect(kcode_re);
+                        str2 = rb_inspect(v);
+                        rb_raise(rb_eArgError, &quot;mixed kcode: %s and %s&quot;,
+                            RSTRING(str1)-&gt;ptr, RSTRING(str2)-&gt;ptr);
+                    }
+                }
+                v = rb_reg_to_s(v);
+            }
+            else {
+                args[0] = argv[i];
+                v = rb_reg_s_quote(1, args);
+            }
+            rb_str_buf_append(source, v);
+        }
+        args[0] = source;
+        args[1] = Qnil;
+        switch (kcode) {
+          case -1:
+            args[2] = Qnil;
+            break;
+          case KCODE_NONE:
+            args[2] = rb_str_new2(&quot;n&quot;);
+            break;
+          case KCODE_EUC:
+            args[2] = rb_str_new2(&quot;e&quot;);
+            break;
+          case KCODE_SJIS:
+            args[2] = rb_str_new2(&quot;s&quot;);
+            break;
+          case KCODE_UTF8:
+            args[2] = rb_str_new2(&quot;u&quot;);
+            break;
+        }
+        return rb_class_new_instance(3, args, rb_cRegexp);
+    }
+}</pre>
+</body>
+</html>

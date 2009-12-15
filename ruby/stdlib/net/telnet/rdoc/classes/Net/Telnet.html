@@ -1,0 +1,1110 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Net::Telnet</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Net::Telnet</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/net/telnet_rb.html">
+                net/telnet.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                SimpleDelegator
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h2><a href="Telnet.html">Net::Telnet</a></h2>
+<p>
+Provides telnet client functionality.
+</p>
+<p>
+This class also has, through delegation, all the methods of a socket object
+(by default, a <tt>TCPSocket</tt>, but can be set by the <tt>Proxy</tt>
+option to <tt><a href="Telnet.html#M000819">new</a>()</tt>). This provides
+methods such as <tt>close()</tt> to end the session and <tt>sysread()</tt>
+to read data directly from the host, instead of via the <tt><a
+href="Telnet.html#M000825">waitfor</a>()</tt> mechanism. Note that if you
+do use <tt>sysread()</tt> directly when in telnet mode, you should probably
+pass the output through <tt><a
+href="Telnet.html#M000824">preprocess</a>()</tt> to extract telnet command
+sequences.
+</p>
+<h2>Overview</h2>
+<p>
+The telnet protocol allows a client to <a
+href="Telnet.html#M000830">login</a> remotely to a user account on a server
+and execute commands via a shell. The equivalent is done by creating a <a
+href="Telnet.html">Net::Telnet</a> class with the <tt>Host</tt> option set
+to your host, calling <a href="Telnet.html#M000830">login</a>() with your
+user and password, issuing one or more <a
+href="Telnet.html#M000829">cmd</a>() calls, and then calling close() to end
+the session. The <a href="Telnet.html#M000825">waitfor</a>(), <a
+href="Telnet.html#M000827">print</a>(), <a
+href="Telnet.html#M000828">puts</a>(), and <a
+href="Telnet.html#M000826">write</a>() methods, which <a
+href="Telnet.html#M000829">cmd</a>() is implemented on top of, are only
+needed if you are doing something more complicated.
+</p>
+<p>
+A <a href="Telnet.html">Net::Telnet</a> object can also be used to connect
+to non-telnet services, such as SMTP or HTTP. In this case, you normally
+want to provide the <tt>Port</tt> option to specify the port to connect to,
+and set the <tt>Telnetmode</tt> option to false to prevent the client from
+attempting to interpret telnet command sequences. Generally, <a
+href="Telnet.html#M000830">login</a>() will not work with other protocols,
+and you have to handle authentication yourself.
+</p>
+<p>
+For some protocols, it will be possible to specify the <tt>Prompt</tt>
+option once when you create the <a href="Telnet.html">Telnet</a> object and
+use <a href="Telnet.html#M000829">cmd</a>() calls; for others, you will
+have to specify the response sequence to look for as the Match option to
+every <a href="Telnet.html#M000829">cmd</a>() call, or call <a
+href="Telnet.html#M000828">puts</a>() and <a
+href="Telnet.html#M000825">waitfor</a>() directly; for yet others, you will
+have to use sysread() instead of <a
+href="Telnet.html#M000825">waitfor</a>() and parse server responses
+yourself.
+</p>
+<p>
+It is worth noting that when you create a <a
+href="Telnet.html#M000819">new</a> <a href="Telnet.html">Net::Telnet</a>
+object, you can supply a proxy IO channel via the Proxy option. This can be
+used to attach the <a href="Telnet.html">Telnet</a> object to other <a
+href="Telnet.html">Telnet</a> objects, to already open sockets, or to any
+read-<a href="Telnet.html#M000826">write</a> IO object. This can be useful,
+for instance, for setting up a test fixture for unit testing.
+</p>
+<h2>Examples</h2>
+<h3>Log in and send a command, echoing all output to stdout</h3>
+<pre>
+  localhost = Net::Telnet::new(&quot;Host&quot; =&gt; &quot;localhost&quot;,
+                               &quot;Timeout&quot; =&gt; 10,
+                               &quot;Prompt&quot; =&gt; /[$%#&gt;] \z/n)
+  localhost.login(&quot;username&quot;, &quot;password&quot;) { |c| print c }
+  localhost.cmd(&quot;command&quot;) { |c| print c }
+  localhost.close
+</pre>
+<h3>Check a POP server to see if you have mail</h3>
+<pre>
+  pop = Net::Telnet::new(&quot;Host&quot; =&gt; &quot;your_destination_host_here&quot;,
+                         &quot;Port&quot; =&gt; 110,
+                         &quot;Telnetmode&quot; =&gt; false,
+                         &quot;Prompt&quot; =&gt; /^\+OK/n)
+  pop.cmd(&quot;user &quot; + &quot;your_username_here&quot;) { |c| print c }
+  pop.cmd(&quot;pass &quot; + &quot;your_password_here&quot;) { |c| print c }
+  pop.cmd(&quot;list&quot;) { |c| print c }
+</pre>
+<h2>References</h2>
+<p>
+There are a large number of RFCs relevant to the <a
+href="Telnet.html">Telnet</a> protocol. RFCs 854-861 define the base
+protocol. For a complete listing of relevant RFCs, see <a
+href="http://www.omnifarious.org/~hopper/technical/telnet-rfc.html">www.omnifarious.org/~hopper/technical/telnet-rfc.html</a>
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000822">binmode</a>&nbsp;&nbsp;
+      <a href="#M000823">binmode=</a>&nbsp;&nbsp;
+      <a href="#M000829">cmd</a>&nbsp;&nbsp;
+      <a href="#M000830">login</a>&nbsp;&nbsp;
+      <a href="#M000819">new</a>&nbsp;&nbsp;
+      <a href="#M000824">preprocess</a>&nbsp;&nbsp;
+      <a href="#M000827">print</a>&nbsp;&nbsp;
+      <a href="#M000828">puts</a>&nbsp;&nbsp;
+      <a href="#M000820">telnetmode</a>&nbsp;&nbsp;
+      <a href="#M000821">telnetmode=</a>&nbsp;&nbsp;
+      <a href="#M000825">waitfor</a>&nbsp;&nbsp;
+      <a href="#M000826">write</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">sock</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The socket the <a href="Telnet.html">Telnet</a> object is using. Note that
+this object becomes a delegate of the <a href="Telnet.html">Telnet</a>
+object, so normally you invoke its methods directly on the <a
+href="Telnet.html">Telnet</a> object.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000819" class="method-detail">
+        <a name="M000819"></a>
+
+        <div class="method-heading">
+          <a href="#M000819" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(options) {|mesg| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="Telnet.html#M000819">new</a> <a
+href="Telnet.html">Net::Telnet</a> object.
+</p>
+<p>
+Attempts to connect to the host (unless the Proxy option is provided: see
+below). If a block is provided, it is yielded status messages on the
+attempt to connect to the server, of the form:
+</p>
+<pre>
+  Trying localhost...
+  Connected to localhost.
+</pre>
+<p>
+<tt>options</tt> is a hash of options. The following example lists all
+options and their default values.
+</p>
+<pre>
+  host = Net::Telnet::new(
+           &quot;Host&quot;       =&gt; &quot;localhost&quot;,  # default: &quot;localhost&quot;
+           &quot;Port&quot;       =&gt; 23,           # default: 23
+           &quot;Binmode&quot;    =&gt; false,        # default: false
+           &quot;Output_log&quot; =&gt; &quot;output_log&quot;, # default: nil (no output)
+           &quot;Dump_log&quot;   =&gt; &quot;dump_log&quot;,   # default: nil (no output)
+           &quot;Prompt&quot;     =&gt; /[$%#&gt;] \z/n, # default: /[$%#&gt;] \z/n
+           &quot;Telnetmode&quot; =&gt; true,         # default: true
+           &quot;Timeout&quot;    =&gt; 10,           # default: 10
+             # if ignore timeout then set &quot;Timeout&quot; to false.
+           &quot;Waittime&quot;   =&gt; 0,            # default: 0
+           &quot;Proxy&quot;      =&gt; proxy         # default: nil
+                           # proxy is Net::Telnet or IO object
+         )
+</pre>
+<p>
+The options have the following meanings:
+</p>
+<table>
+<tr><td valign="top">Host:</td><td>the hostname or IP address of the host to connect to, as a String. Defaults
+to &quot;localhost&quot;.
+
+</td></tr>
+<tr><td valign="top">Port:</td><td>the port to connect to. Defaults to 23.
+
+</td></tr>
+<tr><td valign="top">Binmode:</td><td>if false (the default), newline substitution is performed. Outgoing LF is
+converted to CRLF, and incoming CRLF is converted to LF. If true, this
+substitution is not performed. This value can also be set with the <a
+href="Telnet.html#M000822">binmode</a>() method. The outgoing conversion
+only applies to the <a href="Telnet.html#M000828">puts</a>() and <a
+href="Telnet.html#M000827">print</a>() methods, not the <a
+href="Telnet.html#M000826">write</a>() method. The precise nature of the
+newline conversion is also affected by the telnet options SGA and BIN.
+
+</td></tr>
+<tr><td valign="top">Output_log:</td><td>the name of the file to <a href="Telnet.html#M000826">write</a> connection
+status messages and all received traffic to. In the case of a proper <a
+href="Telnet.html">Telnet</a> session, this will include the client input
+as echoed by the host; otherwise, it only includes server responses. Output
+is appended verbatim to this file. By default, no output log is kept.
+
+</td></tr>
+<tr><td valign="top">Dump_log:</td><td>as for Output_log, except that output is written in hexdump format (16
+bytes per line as hex pairs, followed by their printable equivalent), with
+connection status messages preceded by &#8217;#&#8217;, sent traffic
+preceded by &#8217;&gt;&#8217;, and received traffic preceded by
+&#8217;&lt;&#8217;. By default, not dump log is kept.
+
+</td></tr>
+<tr><td valign="top">Prompt:</td><td>a regular expression matching the host&#8216;s command-line prompt
+sequence. This is needed by the <a href="Telnet.html">Telnet</a> class to
+determine when the output from a command has finished and the host is ready
+to receive a <a href="Telnet.html#M000819">new</a> command. By default,
+this regular expression is /[$%#&gt;] \z/n.
+
+</td></tr>
+<tr><td valign="top">Telnetmode:</td><td>a boolean value, true by default. In telnet mode, traffic received from the
+host is parsed for special command sequences, and these sequences are
+escaped in outgoing traffic sent using <a
+href="Telnet.html#M000828">puts</a>() or <a
+href="Telnet.html#M000827">print</a>() (but not <a
+href="Telnet.html#M000826">write</a>()). If you are using the <a
+href="Telnet.html">Net::Telnet</a> object to connect to a non-telnet
+service (such as SMTP or POP), this should be set to &quot;false&quot; to
+prevent undesired data corruption. This value can also be set by the <a
+href="Telnet.html#M000820">telnetmode</a>() method.
+
+</td></tr>
+<tr><td valign="top">Timeout:</td><td>the number of seconds to wait before timing out both the initial attempt to
+connect to host (in this constructor), and all attempts to read data from
+the host (in <a href="Telnet.html#M000825">waitfor</a>(), <a
+href="Telnet.html#M000829">cmd</a>(), and <a
+href="Telnet.html#M000830">login</a>()). Exceeding this timeout causes a
+TimeoutError to be raised. The default value is 10 seconds. You can disable
+the timeout by setting this value to false. In this case, the connect
+attempt will eventually timeout on the underlying connect(2) socket call
+with an Errno::ETIMEDOUT error (but generally only after a few minutes),
+but other attempts to read data from the host will hand indefinitely if no
+data is forthcoming.
+
+</td></tr>
+<tr><td valign="top">Waittime:</td><td>the amount of time to wait after seeing what looks like a prompt (that is,
+received data that matches the Prompt option regular expression) to see if
+more data arrives. If more data does arrive in this time, <a
+href="Telnet.html">Net::Telnet</a> assumes that what it saw was not really
+a prompt. This is to try to avoid false matches, but it can also lead to
+missing real prompts (if, for instance, a background process writes to the
+terminal soon after the prompt is displayed). By default, set to 0, meaning
+not to wait for more data.
+
+</td></tr>
+<tr><td valign="top">Proxy:</td><td>a proxy object to used instead of opening a direct connection to the host.
+Must be either another <a href="Telnet.html">Net::Telnet</a> object or an
+IO object. If it is another <a href="Telnet.html">Net::Telnet</a> object,
+this instance will use that one&#8216;s socket for communication. If an IO
+object, it is used directly for communication. Any other kind of object
+will cause an error to be raised.
+
+</td></tr>
+</table>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000819-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000819-source">
+<pre>
+<span class="ruby-comment cmt"># File net/telnet.rb, line 275</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">options</span>) <span class="ruby-comment cmt"># :yield: mesg </span>
+      <span class="ruby-ivar">@options</span> = <span class="ruby-identifier">options</span>
+      <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Host&quot;</span>]       = <span class="ruby-value str">&quot;localhost&quot;</span>   <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Host&quot;</span>)
+      <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Port&quot;</span>]       = <span class="ruby-value">23</span>            <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Port&quot;</span>)
+      <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Prompt&quot;</span>]     = <span class="ruby-regexp re">/[$%#&gt;] \z/n</span>  <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Prompt&quot;</span>)
+      <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Timeout&quot;</span>]    = <span class="ruby-value">10</span>            <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Timeout&quot;</span>)
+      <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Waittime&quot;</span>]   = <span class="ruby-value">0</span>             <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Waittime&quot;</span>)
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Binmode&quot;</span>)
+        <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Binmode&quot;</span>]    = <span class="ruby-keyword kw">false</span>         
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">unless</span> (<span class="ruby-keyword kw">true</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Binmode&quot;</span>] <span class="ruby-keyword kw">or</span> <span class="ruby-keyword kw">false</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Binmode&quot;</span>])
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;Binmode option must be true or false&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Telnetmode&quot;</span>)
+        <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Telnetmode&quot;</span>] = <span class="ruby-keyword kw">true</span>          
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">unless</span> (<span class="ruby-keyword kw">true</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Telnetmode&quot;</span>] <span class="ruby-keyword kw">or</span> <span class="ruby-keyword kw">false</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Telnetmode&quot;</span>])
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;Telnetmode option must be true or false&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@telnet_option</span> = { <span class="ruby-value str">&quot;SGA&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">false</span>, <span class="ruby-value str">&quot;BINARY&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">false</span> }
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Output_log&quot;</span>)
+        <span class="ruby-ivar">@log</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Output_log&quot;</span>], <span class="ruby-value str">'a+'</span>)
+        <span class="ruby-ivar">@log</span>.<span class="ruby-identifier">sync</span> = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-ivar">@log</span>.<span class="ruby-identifier">binmode</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Dump_log&quot;</span>)
+        <span class="ruby-ivar">@dumplog</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Dump_log&quot;</span>], <span class="ruby-value str">'a+'</span>)
+        <span class="ruby-ivar">@dumplog</span>.<span class="ruby-identifier">sync</span> = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-ivar">@dumplog</span>.<span class="ruby-identifier">binmode</span>
+        <span class="ruby-keyword kw">def</span> <span class="ruby-ivar">@dumplog</span>.<span class="ruby-identifier">log_dump</span>(<span class="ruby-identifier">dir</span>, <span class="ruby-identifier">x</span>)  <span class="ruby-comment cmt"># :nodoc:</span>
+          <span class="ruby-identifier">len</span> = <span class="ruby-identifier">x</span>.<span class="ruby-identifier">length</span>
+          <span class="ruby-identifier">addr</span> = <span class="ruby-value">0</span>
+          <span class="ruby-identifier">offset</span> = <span class="ruby-value">0</span>
+          <span class="ruby-keyword kw">while</span> <span class="ruby-value">0</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">len</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">len</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">16</span>
+              <span class="ruby-identifier">line</span> = <span class="ruby-identifier">x</span>[<span class="ruby-identifier">offset</span>, <span class="ruby-identifier">len</span>]
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">line</span> = <span class="ruby-identifier">x</span>[<span class="ruby-identifier">offset</span>, <span class="ruby-value">16</span>]
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-identifier">hexvals</span> = <span class="ruby-identifier">line</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">'H*'</span>)[<span class="ruby-value">0</span>]
+            <span class="ruby-identifier">hexvals</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">*</span> (<span class="ruby-value">32</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">hexvals</span>.<span class="ruby-identifier">length</span>)
+            <span class="ruby-identifier">hexvals</span> = <span class="ruby-identifier">format</span>(<span class="ruby-value str">&quot;%s %s %s %s  &quot;</span> <span class="ruby-operator">*</span> <span class="ruby-value">4</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">hexvals</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">'a2'</span> <span class="ruby-operator">*</span> <span class="ruby-value">16</span>))
+            <span class="ruby-identifier">line</span> = <span class="ruby-identifier">line</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/[\000-\037\177-\377]/n</span>, <span class="ruby-value str">'.'</span>)
+            <span class="ruby-identifier">printf</span> <span class="ruby-value str">&quot;%s 0x%5.5x: %s%s\n&quot;</span>, <span class="ruby-identifier">dir</span>, <span class="ruby-identifier">addr</span>, <span class="ruby-identifier">hexvals</span>, <span class="ruby-identifier">line</span>
+            <span class="ruby-identifier">addr</span> <span class="ruby-operator">+=</span> <span class="ruby-value">16</span>
+            <span class="ruby-identifier">offset</span> <span class="ruby-operator">+=</span> <span class="ruby-value">16</span>
+            <span class="ruby-identifier">len</span> <span class="ruby-operator">-=</span> <span class="ruby-value">16</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;\n&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Proxy&quot;</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Proxy&quot;</span>].<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">Telnet</span>)
+          <span class="ruby-ivar">@sock</span> = <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Proxy&quot;</span>].<span class="ruby-identifier">sock</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Proxy&quot;</span>].<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">IO</span>)
+          <span class="ruby-ivar">@sock</span> = <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Proxy&quot;</span>]
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;Error: Proxy must be an instance of Net::Telnet or IO.&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">message</span> = <span class="ruby-value str">&quot;Trying &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Host&quot;</span>] <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;...\n&quot;</span>
+        <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">message</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+        <span class="ruby-ivar">@log</span>.<span class="ruby-identifier">write</span>(<span class="ruby-identifier">message</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Output_log&quot;</span>)
+        <span class="ruby-ivar">@dumplog</span>.<span class="ruby-identifier">log_dump</span>(<span class="ruby-value str">'#'</span>, <span class="ruby-identifier">message</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Dump_log&quot;</span>)
+
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Timeout&quot;</span>] <span class="ruby-operator">==</span> <span class="ruby-keyword kw">false</span>
+            <span class="ruby-ivar">@sock</span> = <span class="ruby-constant">TCPSocket</span>.<span class="ruby-identifier">open</span>(<span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Host&quot;</span>], <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Port&quot;</span>])
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">timeout</span>(<span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Timeout&quot;</span>]) <span class="ruby-keyword kw">do</span>
+              <span class="ruby-ivar">@sock</span> = <span class="ruby-constant">TCPSocket</span>.<span class="ruby-identifier">open</span>(<span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Host&quot;</span>], <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Port&quot;</span>])
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">TimeoutError</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">TimeoutError</span>, <span class="ruby-value str">&quot;timed out while opening a connection to the host&quot;</span>
+        <span class="ruby-keyword kw">rescue</span>
+          <span class="ruby-ivar">@log</span>.<span class="ruby-identifier">write</span>(<span class="ruby-identifier">$ERROR_INFO</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\n&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Output_log&quot;</span>)
+          <span class="ruby-ivar">@dumplog</span>.<span class="ruby-identifier">log_dump</span>(<span class="ruby-value str">'#'</span>, <span class="ruby-identifier">$ERROR_INFO</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\n&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Dump_log&quot;</span>)
+          <span class="ruby-identifier">raise</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-ivar">@sock</span>.<span class="ruby-identifier">sync</span> = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-ivar">@sock</span>.<span class="ruby-identifier">binmode</span>
+
+        <span class="ruby-identifier">message</span> = <span class="ruby-value str">&quot;Connected to &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Host&quot;</span>] <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;.\n&quot;</span>
+        <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">message</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+        <span class="ruby-ivar">@log</span>.<span class="ruby-identifier">write</span>(<span class="ruby-identifier">message</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Output_log&quot;</span>)
+        <span class="ruby-ivar">@dumplog</span>.<span class="ruby-identifier">log_dump</span>(<span class="ruby-value str">'#'</span>, <span class="ruby-identifier">message</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Dump_log&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">super</span>(<span class="ruby-ivar">@sock</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000822" class="method-detail">
+        <a name="M000822"></a>
+
+        <div class="method-heading">
+          <a href="#M000822" class="method-signature">
+          <span class="method-name">binmode</span><span class="method-args">(mode = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Turn newline conversion on (<tt>mode</tt> == false) or off (<tt>mode</tt>
+== true), or return the current value (<tt>mode</tt> is not specified).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000822-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000822-source">
+<pre>
+<span class="ruby-comment cmt"># File net/telnet.rb, line 408</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">binmode</span>(<span class="ruby-identifier">mode</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">mode</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Binmode&quot;</span>] 
+      <span class="ruby-keyword kw">when</span> <span class="ruby-keyword kw">true</span>, <span class="ruby-keyword kw">false</span>
+        <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Binmode&quot;</span>] = <span class="ruby-identifier">mode</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;argument must be true or false&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000823" class="method-detail">
+        <a name="M000823"></a>
+
+        <div class="method-heading">
+          <a href="#M000823" class="method-signature">
+          <span class="method-name">binmode=</span><span class="method-args">(mode)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Turn newline conversion on (false) or off (true).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000823-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000823-source">
+<pre>
+<span class="ruby-comment cmt"># File net/telnet.rb, line 420</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">binmode=</span>(<span class="ruby-identifier">mode</span>)
+      <span class="ruby-keyword kw">if</span> (<span class="ruby-keyword kw">true</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">mode</span> <span class="ruby-keyword kw">or</span> <span class="ruby-keyword kw">false</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">mode</span>)
+        <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Binmode&quot;</span>] = <span class="ruby-identifier">mode</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;argument must be true or false&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000829" class="method-detail">
+        <a name="M000829"></a>
+
+        <div class="method-heading">
+          <a href="#M000829" class="method-signature">
+          <span class="method-name">cmd</span><span class="method-args">(options) {|recvdata| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Send a command to the host.
+</p>
+<p>
+More exactly, sends a string to the host, and reads in all received data
+until is sees the prompt or other matched sequence.
+</p>
+<p>
+If a block is given, the received data will be yielded to it as it is read
+in. Whether a block is given or not, the received data will be return as a
+string. Note that the received data includes the prompt and in most cases
+the host&#8216;s echo of our command.
+</p>
+<p>
+<tt>options</tt> is either a String, specified the string or command to
+send to the host; or it is a hash of options. If a hash, the following
+options can be specified:
+</p>
+<table>
+<tr><td valign="top">String:</td><td>the command or other string to send to the host.
+
+</td></tr>
+<tr><td valign="top">Match:</td><td>a regular expression, the sequence to look for in the received data before
+returning. If not specified, the Prompt option value specified when this
+instance was created will be used, or, failing that, the default prompt of
+/[$%#&gt;] \z/n.
+
+</td></tr>
+<tr><td valign="top">Timeout:</td><td>the seconds to wait for data from the host before raising a Timeout error.
+If not specified, the Timeout option value specified when this instance was
+created will be used, or, failing that, the default value of 10 seconds.
+
+</td></tr>
+</table>
+<p>
+The command or other string will have the newline sequence appended to it.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000829-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000829-source">
+<pre>
+<span class="ruby-comment cmt"># File net/telnet.rb, line 671</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">cmd</span>(<span class="ruby-identifier">options</span>) <span class="ruby-comment cmt"># :yield: recvdata</span>
+      <span class="ruby-identifier">match</span>    = <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Prompt&quot;</span>]
+      <span class="ruby-identifier">time_out</span> = <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Timeout&quot;</span>]
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Hash</span>)
+        <span class="ruby-identifier">string</span>   = <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;String&quot;</span>]
+        <span class="ruby-identifier">match</span>    = <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;Match&quot;</span>]   <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Match&quot;</span>)
+        <span class="ruby-identifier">time_out</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;Timeout&quot;</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Timeout&quot;</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">string</span> = <span class="ruby-identifier">options</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-identifier">string</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+        <span class="ruby-identifier">waitfor</span>({<span class="ruby-value str">&quot;Prompt&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">match</span>, <span class="ruby-value str">&quot;Timeout&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">time_out</span>}){<span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">c</span> }
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">waitfor</span>({<span class="ruby-value str">&quot;Prompt&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">match</span>, <span class="ruby-value str">&quot;Timeout&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">time_out</span>})
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000830" class="method-detail">
+        <a name="M000830"></a>
+
+        <div class="method-heading">
+          <a href="#M000830" class="method-signature">
+          <span class="method-name">login</span><span class="method-args">(options, password = nil) {|recvdata| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Login to the host with a given username and password.
+</p>
+<p>
+The username and password can either be provided as two string arguments in
+that order, or as a hash with keys &quot;Name&quot; and
+&quot;Password&quot;.
+</p>
+<p>
+This method looks for the strings &quot;<a
+href="Telnet.html#M000830">login</a>&quot; and &quot;Password&quot; from
+the host to determine when to send the username and password. If the <a
+href="Telnet.html#M000830">login</a> sequence does not follow this pattern
+(for instance, you are connecting to a service other than telnet), you will
+need to handle <a href="Telnet.html#M000830">login</a> yourself.
+</p>
+<p>
+The password can be omitted, either by only provided one String argument,
+which will be used as the username, or by providing a has that has no
+&quot;Password&quot; key. In this case, the method will not look for the
+&quot;Password:&quot; prompt; if it is sent, it will have to be dealt with
+by later calls.
+</p>
+<p>
+The method returns all data received during the <a
+href="Telnet.html#M000830">login</a> process from the host, including the
+echoed username but not the password (which the host should not echo). If a
+block is passed in, this received data is also yielded to the block as it
+is received.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000830-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000830-source">
+<pre>
+<span class="ruby-comment cmt"># File net/telnet.rb, line 713</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">login</span>(<span class="ruby-identifier">options</span>, <span class="ruby-identifier">password</span> = <span class="ruby-keyword kw">nil</span>) <span class="ruby-comment cmt"># :yield: recvdata</span>
+      <span class="ruby-identifier">login_prompt</span> = <span class="ruby-regexp re">/[Ll]ogin[: ]*\z/n</span>
+      <span class="ruby-identifier">password_prompt</span> = <span class="ruby-regexp re">/[Pp]ass(?:word|phrase)[: ]*\z/n</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Hash</span>)
+        <span class="ruby-identifier">username</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;Name&quot;</span>]
+        <span class="ruby-identifier">password</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;Password&quot;</span>]
+        <span class="ruby-identifier">login_prompt</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;LoginPrompt&quot;</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;LoginPrompt&quot;</span>]
+        <span class="ruby-identifier">password_prompt</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;PasswordPrompt&quot;</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;PasswordPrompt&quot;</span>]
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">username</span> = <span class="ruby-identifier">options</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+        <span class="ruby-identifier">line</span> = <span class="ruby-identifier">waitfor</span>(<span class="ruby-identifier">login_prompt</span>){<span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">c</span> }
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">password</span>
+          <span class="ruby-identifier">line</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">cmd</span>({<span class="ruby-value str">&quot;String&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">username</span>,
+                       <span class="ruby-value str">&quot;Match&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">password_prompt</span>}){<span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">c</span> }
+          <span class="ruby-identifier">line</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">cmd</span>(<span class="ruby-identifier">password</span>){<span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">c</span> }
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">line</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">cmd</span>(<span class="ruby-identifier">username</span>){<span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">c</span> }
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">line</span> = <span class="ruby-identifier">waitfor</span>(<span class="ruby-identifier">login_prompt</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">password</span>
+          <span class="ruby-identifier">line</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">cmd</span>({<span class="ruby-value str">&quot;String&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">username</span>,
+                       <span class="ruby-value str">&quot;Match&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">password_prompt</span>})
+          <span class="ruby-identifier">line</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">cmd</span>(<span class="ruby-identifier">password</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">line</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">cmd</span>(<span class="ruby-identifier">username</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">line</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000824" class="method-detail">
+        <a name="M000824"></a>
+
+        <div class="method-heading">
+          <a href="#M000824" class="method-signature">
+          <span class="method-name">preprocess</span><span class="method-args">(string)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Preprocess received data from the host.
+</p>
+<p>
+Performs newline conversion and detects telnet command sequences. Called
+automatically by <a href="Telnet.html#M000825">waitfor</a>(). You should
+only use this method yourself if you have read input directly using
+sysread() or similar, and even then only if in telnet mode.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000824-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000824-source">
+<pre>
+<span class="ruby-comment cmt"># File net/telnet.rb, line 434</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">preprocess</span>(<span class="ruby-identifier">string</span>)
+      <span class="ruby-comment cmt"># combine CR+NULL into CR</span>
+      <span class="ruby-identifier">string</span> = <span class="ruby-identifier">string</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-node">/#{CR}#{NULL}/n</span><span class="ruby-identifier">o</span>, <span class="ruby-constant">CR</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Telnetmode&quot;</span>]
+
+      <span class="ruby-comment cmt"># combine EOL into &quot;\n&quot;</span>
+      <span class="ruby-identifier">string</span> = <span class="ruby-identifier">string</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-node">/#{EOL}/n</span><span class="ruby-identifier">o</span>, <span class="ruby-value str">&quot;\n&quot;</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Binmode&quot;</span>]
+
+      <span class="ruby-identifier">string</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-node">/#{IAC}(
+                   [#{IAC}#{AO}#{AYT}#{DM}#{IP}#{NOP}]|
+                   [#{DO}#{DONT}#{WILL}#{WONT}]
+                     [#{OPT_BINARY}-#{OPT_NEW_ENVIRON}#{OPT_EXOPL}]|
+                   #{SB}[^#{IAC}]*#{IAC}#{SE}
+                 )/</span><span class="ruby-identifier">xno</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-keyword kw">if</span>    <span class="ruby-constant">IAC</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>  <span class="ruby-comment cmt"># handle escaped IAC characters</span>
+          <span class="ruby-constant">IAC</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">AYT</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>  <span class="ruby-comment cmt"># respond to &quot;IAC AYT&quot; (are you there)</span>
+          <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-value str">&quot;nobody here but us pigeons&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>)
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">DO</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">0</span>]  <span class="ruby-comment cmt"># respond to &quot;IAC DO x&quot;</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-constant">OPT_BINARY</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-ivar">@telnet_option</span>[<span class="ruby-value str">&quot;BINARY&quot;</span>] = <span class="ruby-keyword kw">true</span>
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">WILL</span> <span class="ruby-operator">+</span> <span class="ruby-constant">OPT_BINARY</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">WONT</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">1</span>])
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">DONT</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">0</span>]  <span class="ruby-comment cmt"># respond to &quot;IAC DON'T x&quot; with &quot;IAC WON'T x&quot;</span>
+          <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">WONT</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">1</span>])
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">WILL</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">0</span>]  <span class="ruby-comment cmt"># respond to &quot;IAC WILL x&quot;</span>
+          <span class="ruby-keyword kw">if</span>    <span class="ruby-constant">OPT_BINARY</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DO</span> <span class="ruby-operator">+</span> <span class="ruby-constant">OPT_BINARY</span>)
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">OPT_ECHO</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DO</span> <span class="ruby-operator">+</span> <span class="ruby-constant">OPT_ECHO</span>)
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">OPT_SGA</span>[<span class="ruby-value">0</span>]  <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-ivar">@telnet_option</span>[<span class="ruby-value str">&quot;SGA&quot;</span>] = <span class="ruby-keyword kw">true</span>
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DO</span> <span class="ruby-operator">+</span> <span class="ruby-constant">OPT_SGA</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DONT</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">1</span>])
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">WONT</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">0</span>]  <span class="ruby-comment cmt"># respond to &quot;IAC WON'T x&quot;</span>
+          <span class="ruby-keyword kw">if</span>    <span class="ruby-constant">OPT_ECHO</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DONT</span> <span class="ruby-operator">+</span> <span class="ruby-constant">OPT_ECHO</span>)
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">OPT_SGA</span>[<span class="ruby-value">0</span>]  <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-ivar">@telnet_option</span>[<span class="ruby-value str">&quot;SGA&quot;</span>] = <span class="ruby-keyword kw">false</span>
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DONT</span> <span class="ruby-operator">+</span> <span class="ruby-constant">OPT_SGA</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DONT</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">1</span>])
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000827" class="method-detail">
+        <a name="M000827"></a>
+
+        <div class="method-heading">
+          <a href="#M000827" class="method-signature">
+          <span class="method-name">print</span><span class="method-args">(string)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a string to the host.
+</p>
+<p>
+This does <em>not</em> automatically append a newline to the string.
+Embedded newlines may be converted and telnet command sequences escaped
+depending upon the values of <a href="Telnet.html#M000820">telnetmode</a>,
+<a href="Telnet.html#M000822">binmode</a>, and telnet options set by the
+host.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000827-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000827-source">
+<pre>
+<span class="ruby-comment cmt"># File net/telnet.rb, line 618</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">print</span>(<span class="ruby-identifier">string</span>)
+      <span class="ruby-identifier">string</span> = <span class="ruby-identifier">string</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-node">/#{IAC}/n</span><span class="ruby-identifier">o</span>, <span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">IAC</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Telnetmode&quot;</span>]
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Binmode&quot;</span>]
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-identifier">string</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@telnet_option</span>[<span class="ruby-value str">&quot;BINARY&quot;</span>] <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@telnet_option</span>[<span class="ruby-value str">&quot;SGA&quot;</span>]
+          <span class="ruby-comment cmt"># IAC WILL SGA IAC DO BIN send EOL --&gt; CR</span>
+          <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-identifier">string</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\n/n</span>, <span class="ruby-constant">CR</span>))
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@telnet_option</span>[<span class="ruby-value str">&quot;SGA&quot;</span>]
+          <span class="ruby-comment cmt"># IAC WILL SGA send EOL --&gt; CR+NULL</span>
+          <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-identifier">string</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\n/n</span>, <span class="ruby-constant">CR</span> <span class="ruby-operator">+</span> <span class="ruby-constant">NULL</span>))
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-comment cmt"># NONE send EOL --&gt; CR+LF</span>
+          <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-identifier">string</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\n/n</span>, <span class="ruby-constant">EOL</span>))
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000828" class="method-detail">
+        <a name="M000828"></a>
+
+        <div class="method-heading">
+          <a href="#M000828" class="method-signature">
+          <span class="method-name">puts</span><span class="method-args">(string)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a string to the host.
+</p>
+<p>
+Same as <a href="Telnet.html#M000827">print</a>(), but appends a newline to
+the string.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000828-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000828-source">
+<pre>
+<span class="ruby-comment cmt"># File net/telnet.rb, line 640</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">puts</span>(<span class="ruby-identifier">string</span>)
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">print</span>(<span class="ruby-identifier">string</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\n&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000820" class="method-detail">
+        <a name="M000820"></a>
+
+        <div class="method-heading">
+          <a href="#M000820" class="method-signature">
+          <span class="method-name">telnetmode</span><span class="method-args">(mode = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set telnet command interpretation on (<tt>mode</tt> == true) or off
+(<tt>mode</tt> == false), or return the current value (<tt>mode</tt> not
+provided). It should be on for true telnet sessions, off if using <a
+href="Telnet.html">Net::Telnet</a> to connect to a non-telnet service such
+as SMTP.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000820-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000820-source">
+<pre>
+<span class="ruby-comment cmt"># File net/telnet.rb, line 384</span>
+    <span class="ruby-keyword kw">def</span>  <span class="ruby-identifier">telnetmode</span><span class="ruby-identifier">telnetmode</span>(<span class="ruby-identifier">mode</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">mode</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Telnetmode&quot;</span>]
+      <span class="ruby-keyword kw">when</span> <span class="ruby-keyword kw">true</span>, <span class="ruby-keyword kw">false</span>
+        <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Telnetmode&quot;</span>] = <span class="ruby-identifier">mode</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;argument must be true or false, or missing&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000821" class="method-detail">
+        <a name="M000821"></a>
+
+        <div class="method-heading">
+          <a href="#M000821" class="method-signature">
+          <span class="method-name">telnetmode=</span><span class="method-args">(mode)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Turn telnet command interpretation on (true) or off (false). It should be
+on for true telnet sessions, off if using <a
+href="Telnet.html">Net::Telnet</a> to connect to a non-telnet service such
+as SMTP.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000821-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000821-source">
+<pre>
+<span class="ruby-comment cmt"># File net/telnet.rb, line 398</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">telnetmode=</span>(<span class="ruby-identifier">mode</span>)
+      <span class="ruby-keyword kw">if</span> (<span class="ruby-keyword kw">true</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">mode</span> <span class="ruby-keyword kw">or</span> <span class="ruby-keyword kw">false</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">mode</span>)
+        <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Telnetmode&quot;</span>] = <span class="ruby-identifier">mode</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;argument must be true or false&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000825" class="method-detail">
+        <a name="M000825"></a>
+
+        <div class="method-heading">
+          <a href="#M000825" class="method-signature">
+          <span class="method-name">waitfor</span><span class="method-args">(options) {|recvdata| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Read data from the host until a certain sequence is matched.
+</p>
+<p>
+If a block is given, the received data will be yielded as it is read in
+(not necessarily all in one go), or nil if EOF occurs before any data is
+received. Whether a block is given or not, all data read will be returned
+in a single string, or again nil if EOF occurs before any data is received.
+Note that received data includes the matched sequence we were looking for.
+</p>
+<p>
+<tt>options</tt> can be either a regular expression or a hash of options.
+If a regular expression, this specifies the data to wait for. If a hash,
+this can specify the following options:
+</p>
+<table>
+<tr><td valign="top">Match:</td><td>a regular expression, specifying the data to wait for.
+
+</td></tr>
+<tr><td valign="top">Prompt:</td><td>as for Match; used only if Match is not specified.
+
+</td></tr>
+<tr><td valign="top">String:</td><td>as for Match, except a string that will be converted into a regular
+expression. Used only if Match and Prompt are not specified.
+
+</td></tr>
+<tr><td valign="top">Timeout:</td><td>the number of seconds to wait for data from the host before raising a
+TimeoutError. If set to false, no timeout will occur. If not specified, the
+Timeout option value specified when this instance was created will be used,
+or, failing that, the default value of 10 seconds.
+
+</td></tr>
+<tr><td valign="top">Waittime:</td><td>the number of seconds to wait after matching against the input data to see
+if more data arrives. If more data arrives within this time, we will judge
+ourselves not to have matched successfully, and will continue trying to
+match. If not specified, the Waittime option value specified when this
+instance was created will be used, or, failing that, the default value of 0
+seconds, which means not to wait for more input.
+
+</td></tr>
+</table>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000825-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000825-source">
+<pre>
+<span class="ruby-comment cmt"># File net/telnet.rb, line 524</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">waitfor</span>(<span class="ruby-identifier">options</span>) <span class="ruby-comment cmt"># :yield: recvdata</span>
+      <span class="ruby-identifier">time_out</span> = <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Timeout&quot;</span>]
+      <span class="ruby-identifier">waittime</span> = <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Waittime&quot;</span>]
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Hash</span>)
+        <span class="ruby-identifier">prompt</span>   = <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Match&quot;</span>)
+                     <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;Match&quot;</span>]
+                   <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Prompt&quot;</span>)
+                     <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;Prompt&quot;</span>]
+                   <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;String&quot;</span>)
+                     <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">quote</span>(<span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;String&quot;</span>]) )
+                   <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">time_out</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;Timeout&quot;</span>]  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Timeout&quot;</span>)
+        <span class="ruby-identifier">waittime</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;Waittime&quot;</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Waittime&quot;</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">prompt</span> = <span class="ruby-identifier">options</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">time_out</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">false</span>
+        <span class="ruby-identifier">time_out</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">line</span> = <span class="ruby-value str">''</span>
+      <span class="ruby-identifier">buf</span> = <span class="ruby-value str">''</span>
+      <span class="ruby-identifier">rest</span> = <span class="ruby-value str">''</span>
+      <span class="ruby-keyword kw">until</span>(<span class="ruby-identifier">prompt</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">line</span> <span class="ruby-keyword kw">and</span> <span class="ruby-keyword kw">not</span> <span class="ruby-constant">IO</span><span class="ruby-operator">::</span><span class="ruby-identifier">select</span>([<span class="ruby-ivar">@sock</span>], <span class="ruby-keyword kw">nil</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">waittime</span>))
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">IO</span><span class="ruby-operator">::</span><span class="ruby-identifier">select</span>([<span class="ruby-ivar">@sock</span>], <span class="ruby-keyword kw">nil</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">time_out</span>)
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">TimeoutError</span>, <span class="ruby-value str">&quot;timed out while waiting for more data&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">c</span> = <span class="ruby-ivar">@sock</span>.<span class="ruby-identifier">readpartial</span>(<span class="ruby-value">1024</span> <span class="ruby-operator">*</span> <span class="ruby-value">1024</span>)
+          <span class="ruby-ivar">@dumplog</span>.<span class="ruby-identifier">log_dump</span>(<span class="ruby-value str">'&lt;'</span>, <span class="ruby-identifier">c</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Dump_log&quot;</span>)
+          <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Telnetmode&quot;</span>]
+            <span class="ruby-identifier">c</span> = <span class="ruby-identifier">rest</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">c</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Integer</span>(<span class="ruby-identifier">c</span>.<span class="ruby-identifier">rindex</span>(<span class="ruby-node">/#{IAC}#{SE}/n</span><span class="ruby-identifier">o</span>)) <span class="ruby-operator">&lt;</span>
+               <span class="ruby-constant">Integer</span>(<span class="ruby-identifier">c</span>.<span class="ruby-identifier">rindex</span>(<span class="ruby-node">/#{IAC}#{SB}/n</span><span class="ruby-identifier">o</span>))
+              <span class="ruby-identifier">buf</span> = <span class="ruby-identifier">preprocess</span>(<span class="ruby-identifier">c</span>[<span class="ruby-value">0</span> <span class="ruby-operator">...</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">rindex</span>(<span class="ruby-node">/#{IAC}#{SB}/n</span><span class="ruby-identifier">o</span>)])
+              <span class="ruby-identifier">rest</span> = <span class="ruby-identifier">c</span>[<span class="ruby-identifier">c</span>.<span class="ruby-identifier">rindex</span>(<span class="ruby-node">/#{IAC}#{SB}/n</span><span class="ruby-identifier">o</span>) <span class="ruby-operator">..</span> <span class="ruby-value">-1</span>]
+            <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">pt</span> = <span class="ruby-identifier">c</span>.<span class="ruby-identifier">rindex</span>(<span class="ruby-node">/#{IAC}[^#{IAC}#{AO}#{AYT}#{DM}#{IP}#{NOP}]?\z/n</span><span class="ruby-identifier">o</span>) <span class="ruby-operator">||</span>
+                       <span class="ruby-identifier">c</span>.<span class="ruby-identifier">rindex</span>(<span class="ruby-regexp re">/\r\z/n</span><span class="ruby-identifier">o</span>)
+              <span class="ruby-identifier">buf</span> = <span class="ruby-identifier">preprocess</span>(<span class="ruby-identifier">c</span>[<span class="ruby-value">0</span> <span class="ruby-operator">...</span> <span class="ruby-identifier">pt</span>])
+              <span class="ruby-identifier">rest</span> = <span class="ruby-identifier">c</span>[<span class="ruby-identifier">pt</span> <span class="ruby-operator">..</span> <span class="ruby-value">-1</span>]
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">buf</span> = <span class="ruby-identifier">preprocess</span>(<span class="ruby-identifier">c</span>)
+              <span class="ruby-identifier">rest</span> = <span class="ruby-value str">''</span>
+            <span class="ruby-keyword kw">end</span>
+         <span class="ruby-keyword kw">else</span>
+           <span class="ruby-comment cmt"># Not Telnetmode.</span>
+           <span class="ruby-comment cmt">#</span>
+           <span class="ruby-comment cmt"># We cannot use preprocess() on this data, because that</span>
+           <span class="ruby-comment cmt"># method makes some Telnetmode-specific assumptions.</span>
+           <span class="ruby-identifier">buf</span> = <span class="ruby-identifier">rest</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">c</span>
+           <span class="ruby-identifier">rest</span> = <span class="ruby-value str">''</span>
+           <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Binmode&quot;</span>]
+             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">pt</span> = <span class="ruby-identifier">buf</span>.<span class="ruby-identifier">rindex</span>(<span class="ruby-regexp re">/\r\z/n</span><span class="ruby-identifier">o</span>)
+               <span class="ruby-identifier">buf</span> = <span class="ruby-identifier">buf</span>[<span class="ruby-value">0</span> <span class="ruby-operator">...</span> <span class="ruby-identifier">pt</span>]
+               <span class="ruby-identifier">rest</span> = <span class="ruby-identifier">buf</span>[<span class="ruby-identifier">pt</span> <span class="ruby-operator">..</span> <span class="ruby-value">-1</span>]
+             <span class="ruby-keyword kw">end</span>
+             <span class="ruby-identifier">buf</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-node">/#{EOL}/n</span><span class="ruby-identifier">o</span>, <span class="ruby-value str">&quot;\n&quot;</span>)
+           <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-ivar">@log</span>.<span class="ruby-identifier">print</span>(<span class="ruby-identifier">buf</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Output_log&quot;</span>)
+          <span class="ruby-identifier">line</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">buf</span>
+          <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">buf</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">EOFError</span> <span class="ruby-comment cmt"># End of file reached</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">line</span> <span class="ruby-operator">==</span> <span class="ruby-value str">''</span>
+            <span class="ruby-identifier">line</span> = <span class="ruby-keyword kw">nil</span>
+            <span class="ruby-keyword kw">yield</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">break</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">line</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000826" class="method-detail">
+        <a name="M000826"></a>
+
+        <div class="method-heading">
+          <a href="#M000826" class="method-signature">
+          <span class="method-name">write</span><span class="method-args">(string)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Write <tt>string</tt> to the host.
+</p>
+<p>
+Does not perform any conversions on <tt>string</tt>. Will log
+<tt>string</tt> to the dumplog, if the Dump_log option is set.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000826-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000826-source">
+<pre>
+<span class="ruby-comment cmt"># File net/telnet.rb, line 603</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">write</span>(<span class="ruby-identifier">string</span>)
+      <span class="ruby-identifier">length</span> = <span class="ruby-identifier">string</span>.<span class="ruby-identifier">length</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-value">0</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">length</span>
+        <span class="ruby-constant">IO</span><span class="ruby-operator">::</span><span class="ruby-identifier">select</span>(<span class="ruby-keyword kw">nil</span>, [<span class="ruby-ivar">@sock</span>])
+        <span class="ruby-ivar">@dumplog</span>.<span class="ruby-identifier">log_dump</span>(<span class="ruby-value str">'&gt;'</span>, <span class="ruby-identifier">string</span>[<span class="ruby-operator">-</span><span class="ruby-identifier">length</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>]) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;Dump_log&quot;</span>)
+        <span class="ruby-identifier">length</span> <span class="ruby-operator">-=</span> <span class="ruby-ivar">@sock</span>.<span class="ruby-identifier">syswrite</span>(<span class="ruby-identifier">string</span>[<span class="ruby-operator">-</span><span class="ruby-identifier">length</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>])
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

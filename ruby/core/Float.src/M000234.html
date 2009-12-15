@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>&lt;= (Float)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   flt &lt;= other    =&gt;  true or false
+ *
+ * &lt;code&gt;true&lt;/code&gt; if &lt;code&gt;flt&lt;/code&gt; is less than
+ * or equal to &lt;code&gt;other&lt;/code&gt;.
+ */
+
+static VALUE
+flo_le(x, y)
+    VALUE x, y;
+{
+    double a, b;
+
+    a = RFLOAT(x)-&gt;value;
+    switch (TYPE(y)) {
+      case T_FIXNUM:
+        b = (double)FIX2LONG(y);
+        break;
+
+      case T_BIGNUM:
+        b = rb_big2dbl(y);
+        break;
+
+      case T_FLOAT:
+        b = RFLOAT(y)-&gt;value;
+        if (isnan(b)) return Qfalse;
+        break;
+
+      default:
+        return rb_num_coerce_relop(x, y);
+    }
+    if (isnan(a)) return Qfalse;
+    return (a &lt;= b)?Qtrue:Qfalse;
+}</pre>
+</body>
+</html>

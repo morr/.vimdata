@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>unbind (Method)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     meth.unbind    =&gt; unbound_method
+ *  
+ *  Dissociates &lt;i&gt;meth&lt;/i&gt; from it's current receiver. The resulting
+ *  &lt;code&gt;UnboundMethod&lt;/code&gt; can subsequently be bound to a new object
+ *  of the same class (see &lt;code&gt;UnboundMethod&lt;/code&gt;).
+ */
+
+static VALUE
+method_unbind(obj)
+    VALUE obj;
+{
+    VALUE method;
+    struct METHOD *orig, *data;
+
+    Data_Get_Struct(obj, struct METHOD, orig);
+    method = Data_Make_Struct(rb_cUnboundMethod, struct METHOD, bm_mark, free, data);
+    data-&gt;klass = orig-&gt;klass;
+    data-&gt;recv = Qundef;
+    data-&gt;id = orig-&gt;id;
+    data-&gt;body = orig-&gt;body;
+    data-&gt;rklass = orig-&gt;rklass;
+    data-&gt;oid = orig-&gt;oid;
+    OBJ_INFECT(method, obj);
+
+    return method;
+}</pre>
+</body>
+</html>

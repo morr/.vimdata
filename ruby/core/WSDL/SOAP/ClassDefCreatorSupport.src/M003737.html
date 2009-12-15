@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>dump_method_signature (WSDL::SOAP::ClassDefCreatorSupport)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/wsdl/soap/classDefCreatorSupport.rb, line 34</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">dump_method_signature</span>(<span class="ruby-identifier">operation</span>)
+    <span class="ruby-identifier">name</span> = <span class="ruby-identifier">operation</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">name</span>
+    <span class="ruby-identifier">input</span> = <span class="ruby-identifier">operation</span>.<span class="ruby-identifier">input</span>
+    <span class="ruby-identifier">output</span> = <span class="ruby-identifier">operation</span>.<span class="ruby-identifier">output</span>
+    <span class="ruby-identifier">fault</span> = <span class="ruby-identifier">operation</span>.<span class="ruby-identifier">fault</span>
+    <span class="ruby-identifier">signature</span> = <span class="ruby-node">&quot;#{ name }#{ dump_inputparam(input) }&quot;</span>
+    <span class="ruby-identifier">str</span> = <span class="ruby-value str">&quot;# SYNOPSIS\n#   \#{name}\#{dump_inputparam(input)}\n#\n# ARGS\n\#{dump_inout_type(input).chomp}\n#\n# RETURNS\n\#{dump_inout_type(output).chomp}\n#\n&quot;</span>
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">fault</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">faultstr</span> = (<span class="ruby-identifier">fault</span>.<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> <span class="ruby-identifier">dump_inout_type</span>(<span class="ruby-identifier">f</span>).<span class="ruby-identifier">chomp</span> }).<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>)
+      <span class="ruby-identifier">str</span> <span class="ruby-operator">&lt;&lt;</span><span class="ruby-value str">&quot;# RAISES\n#   \#{faultstr}\n#\n&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">str</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

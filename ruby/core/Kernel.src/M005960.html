@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>` (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     `cmd`    =&gt; string
+ *  
+ *  Returns the standard output of running _cmd_ in a subshell.
+ *  The built-in syntax &lt;code&gt;%x{...}&lt;/code&gt; uses
+ *  this method. Sets &lt;code&gt;$?&lt;/code&gt; to the process status.
+ *     
+ *     `date`                   #=&gt; &quot;Wed Apr  9 08:56:30 CDT 2003\n&quot;
+ *     `ls testdir`.split[1]    #=&gt; &quot;main.rb&quot;
+ *     `echo oops &amp;&amp; exit 99`   #=&gt; &quot;oops\n&quot;
+ *     $?.exitstatus            #=&gt; 99
+ */
+
+static VALUE
+rb_f_backquote(obj, str)
+    VALUE obj, str;
+{
+    volatile VALUE port;
+    VALUE result;
+    OpenFile *fptr;
+
+    SafeStringValue(str);
+    port = pipe_open(str, 0, &quot;r&quot;);
+    if (NIL_P(port)) return rb_str_new(0,0);
+
+    GetOpenFile(port, fptr);
+    result = read_all(fptr, remain_size(fptr), Qnil);
+    rb_io_close(port);
+
+    return result;
+}</pre>
+</body>
+</html>

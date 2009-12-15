@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>frexp (Math)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Math.frexp(numeric)    =&gt; [ fraction, exponent ]
+ *  
+ *  Returns a two-element array containing the normalized fraction (a
+ *  &lt;code&gt;Float&lt;/code&gt;) and exponent (a &lt;code&gt;Fixnum&lt;/code&gt;) of
+ *  &lt;i&gt;numeric&lt;/i&gt;.
+ *     
+ *     fraction, exponent = Math.frexp(1234)   #=&gt; [0.6025390625, 11]
+ *     fraction * 2**exponent                  #=&gt; 1234.0
+ */
+
+static VALUE
+math_frexp(obj, x)
+    VALUE obj, x;
+{
+    double d;
+    int exp;
+
+    Need_Float(x);
+    
+    d = frexp(RFLOAT(x)-&gt;value, &amp;exp);
+    return rb_assoc_new(rb_float_new(d), INT2NUM(exp));
+}</pre>
+</body>
+</html>

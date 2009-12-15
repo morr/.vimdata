@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>open (StringIO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: StringIO.open(string=&quot;&quot;[, mode]) {|strio| ...}
+ *
+ * Equivalent to StringIO.new except that when it is called with a block, it
+ * yields with the new instance and closes it, and returns the result which
+ * returned from the block.
+ */
+static VALUE
+strio_s_open(argc, argv, klass)
+    int argc;
+    VALUE *argv;
+    VALUE klass;
+{
+    VALUE obj = rb_class_new_instance(argc, argv, klass);
+    if (!rb_block_given_p()) return obj;
+    return rb_ensure(rb_yield, obj, strio_finalize, obj);
+}</pre>
+</body>
+</html>

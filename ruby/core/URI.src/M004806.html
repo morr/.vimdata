@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>split (URI)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/uri/common.rb, line 380</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">split</span>(<span class="ruby-identifier">uri</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">uri</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">''</span>
+      <span class="ruby-comment cmt"># null uri</span>
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">ABS_URI</span>
+      <span class="ruby-identifier">scheme</span>, <span class="ruby-identifier">opaque</span>, <span class="ruby-identifier">userinfo</span>, <span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span>, 
+        <span class="ruby-identifier">registry</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">query</span>, <span class="ruby-identifier">fragment</span> = <span class="ruby-identifier">$~</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>]
+
+      <span class="ruby-comment cmt"># URI-reference = [ absoluteURI | relativeURI ] [ &quot;#&quot; fragment ]</span>
+
+      <span class="ruby-comment cmt"># absoluteURI   = scheme &quot;:&quot; ( hier_part | opaque_part )</span>
+      <span class="ruby-comment cmt"># hier_part     = ( net_path | abs_path ) [ &quot;?&quot; query ]</span>
+      <span class="ruby-comment cmt"># opaque_part   = uric_no_slash *uric</span>
+
+      <span class="ruby-comment cmt"># abs_path      = &quot;/&quot;  path_segments</span>
+      <span class="ruby-comment cmt"># net_path      = &quot;//&quot; authority [ abs_path ]</span>
+
+      <span class="ruby-comment cmt"># authority     = server | reg_name</span>
+      <span class="ruby-comment cmt"># server        = [ [ userinfo &quot;@&quot; ] hostport ]</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">scheme</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">InvalidURIError</span>, 
+          <span class="ruby-node">&quot;bad URI(absolute but no scheme): #{uri}&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">opaque</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-operator">!</span><span class="ruby-identifier">path</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-operator">!</span><span class="ruby-identifier">host</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">registry</span>))
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">InvalidURIError</span>,
+          <span class="ruby-node">&quot;bad URI(absolute but no path): #{uri}&quot;</span> 
+      <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">REL_URI</span>
+      <span class="ruby-identifier">scheme</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">opaque</span> = <span class="ruby-keyword kw">nil</span>
+
+      <span class="ruby-identifier">userinfo</span>, <span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span>, <span class="ruby-identifier">registry</span>, 
+        <span class="ruby-identifier">rel_segment</span>, <span class="ruby-identifier">abs_path</span>, <span class="ruby-identifier">query</span>, <span class="ruby-identifier">fragment</span> = <span class="ruby-identifier">$~</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>]
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rel_segment</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">abs_path</span>
+        <span class="ruby-identifier">path</span> = <span class="ruby-identifier">rel_segment</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">abs_path</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">rel_segment</span>
+        <span class="ruby-identifier">path</span> = <span class="ruby-identifier">rel_segment</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">abs_path</span>
+        <span class="ruby-identifier">path</span> = <span class="ruby-identifier">abs_path</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-comment cmt"># URI-reference = [ absoluteURI | relativeURI ] [ &quot;#&quot; fragment ]</span>
+
+      <span class="ruby-comment cmt"># relativeURI   = ( net_path | abs_path | rel_path ) [ &quot;?&quot; query ]</span>
+
+      <span class="ruby-comment cmt"># net_path      = &quot;//&quot; authority [ abs_path ]</span>
+      <span class="ruby-comment cmt"># abs_path      = &quot;/&quot;  path_segments</span>
+      <span class="ruby-comment cmt"># rel_path      = rel_segment [ abs_path ]</span>
+
+      <span class="ruby-comment cmt"># authority     = server | reg_name</span>
+      <span class="ruby-comment cmt"># server        = [ [ userinfo &quot;@&quot; ] hostport ]</span>
+
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">InvalidURIError</span>, <span class="ruby-node">&quot;bad URI(is not URI?): #{uri}&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">path</span> = <span class="ruby-value str">''</span> <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">path</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">opaque</span> <span class="ruby-comment cmt"># (see RFC2396 Section 5.2)</span>
+    <span class="ruby-identifier">ret</span> = [
+      <span class="ruby-identifier">scheme</span>, 
+      <span class="ruby-identifier">userinfo</span>, <span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span>,         <span class="ruby-comment cmt"># X</span>
+      <span class="ruby-identifier">registry</span>,                        <span class="ruby-comment cmt"># X</span>
+      <span class="ruby-identifier">path</span>,                         <span class="ruby-comment cmt"># Y</span>
+      <span class="ruby-identifier">opaque</span>,                        <span class="ruby-comment cmt"># Y</span>
+      <span class="ruby-identifier">query</span>,
+      <span class="ruby-identifier">fragment</span>
+    ]
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">ret</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

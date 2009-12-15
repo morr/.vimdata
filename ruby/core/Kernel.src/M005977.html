@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>gsub (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     gsub(pattern, replacement)    =&gt; string
+ *     gsub(pattern) {|...| block }  =&gt; string
+ *  
+ *  Equivalent to &lt;code&gt;$_.gsub...&lt;/code&gt;, except that &lt;code&gt;$_&lt;/code&gt;
+ *  receives the modified result.
+ *     
+ *     $_ = &quot;quick brown fox&quot;
+ *     gsub /[aeiou]/, '*'   #=&gt; &quot;q**ck br*wn f*x&quot;
+ *     $_                    #=&gt; &quot;q**ck br*wn f*x&quot;
+ */
+
+static VALUE
+rb_f_gsub(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE str = rb_str_dup(uscore_get());
+
+    if (NIL_P(rb_str_gsub_bang(argc, argv, str)))
+        return str;
+    rb_lastline_set(str);
+    return str;
+}</pre>
+</body>
+</html>

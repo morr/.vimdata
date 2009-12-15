@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>append_features (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     append_features(mod)   =&gt; mod
+ *  
+ *  When this module is included in another, Ruby calls
+ *  &lt;code&gt;append_features&lt;/code&gt; in this module, passing it the
+ *  receiving module in _mod_. Ruby's default implementation is
+ *  to add the constants, methods, and module variables of this module
+ *  to _mod_ if this module has not already been added to
+ *  _mod_ or one of its ancestors. See also &lt;code&gt;Module#include&lt;/code&gt;.
+ */
+
+static VALUE
+rb_mod_append_features(module, include)
+    VALUE module, include;
+{
+    switch (TYPE(include)) {
+      case T_CLASS:
+      case T_MODULE:
+        break;
+      default:
+        Check_Type(include, T_CLASS);
+        break;
+    }
+    rb_include_module(include, module);
+
+    return module;
+}</pre>
+</body>
+</html>

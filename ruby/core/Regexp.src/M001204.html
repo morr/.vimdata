@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>~ (Regexp)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ~ rxp   =&gt; integer or nil
+ *  
+ *  Match---Matches &lt;i&gt;rxp&lt;/i&gt; against the contents of &lt;code&gt;$_&lt;/code&gt;.
+ *  Equivalent to &lt;code&gt;&lt;i&gt;rxp&lt;/i&gt; =~ $_&lt;/code&gt;.
+ *     
+ *     $_ = &quot;input data&quot;
+ *     ~ /at/   #=&gt; 7
+ */
+
+VALUE
+rb_reg_match2(re)
+    VALUE re;
+{
+    long start;
+    VALUE line = rb_lastline_get();
+
+    if (TYPE(line) != T_STRING) {
+        rb_backref_set(Qnil);
+        return Qnil;
+    }
+
+    start = rb_reg_search(re, line, 0, 0);
+    if (start &lt; 0) {
+        return Qnil;
+    }
+    return LONG2FIX(start);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Process::UID</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Process::UID</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/process_c.html">
+                process.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The <tt><a href="UID.html">Process::UID</a></tt> module contains a
+collection of module functions which can be used to portably get, set, and
+<a href="UID.html#M003213">switch</a> the current process&#8216;s real,
+effective, and saved user IDs.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M003208">change_privilege</a>&nbsp;&nbsp;
+      <a href="#M003207">eid</a>&nbsp;&nbsp;
+      <a href="#M003209">grant_privilege</a>&nbsp;&nbsp;
+      <a href="#M003210">re_exchange</a>&nbsp;&nbsp;
+      <a href="#M003211">re_exchangeable?</a>&nbsp;&nbsp;
+      <a href="#M003206">rid</a>&nbsp;&nbsp;
+      <a href="#M003212">sid_available?</a>&nbsp;&nbsp;
+      <a href="#M003213">switch</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M003208" class="method-detail">
+        <a name="M003208"></a>
+
+        <div class="method-heading">
+          <a href="UID.src/M003208.html" target="Code" class="method-signature"
+            onclick="popupCode('UID.src/M003208.html');return false;">
+          <span class="method-name">Process::UID.change_privilege(integer)   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Change the current process&#8216;s real and effective user ID to that
+specified by <em>integer</em>. Returns the new user ID. Not available on
+all platforms.
+</p>
+<pre>
+   [Process.uid, Process.euid]          #=&gt; [0, 0]
+   Process::UID.change_privilege(31)    #=&gt; 31
+   [Process.uid, Process.euid]          #=&gt; [31, 31]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003207" class="method-detail">
+        <a name="M003207"></a>
+
+        <div class="method-heading">
+          <a href="UID.src/M003207.html" target="Code" class="method-signature"
+            onclick="popupCode('UID.src/M003207.html');return false;">
+          <span class="method-name">Process.euid           => fixnum<br />
+Process::UID.eid       => fixnum<br />
+Process::Sys.geteuid   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the effective user ID for this process.
+</p>
+<pre>
+   Process.euid   #=&gt; 501
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003209" class="method-detail">
+        <a name="M003209"></a>
+
+        <div class="method-heading">
+          <a href="UID.src/M003209.html" target="Code" class="method-signature"
+            onclick="popupCode('UID.src/M003209.html');return false;">
+          <span class="method-name">Process::UID.grant_privilege(integer)   => fixnum<br />
+Process::UID.eid= integer               => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="../Set.html">Set</a> the effective user ID, and if possible, the
+saved user ID of the process to the given <em>integer</em>. Returns the new
+effective user ID. Not available on all platforms.
+</p>
+<pre>
+   [Process.uid, Process.euid]          #=&gt; [0, 0]
+   Process::UID.grant_privilege(31)     #=&gt; 31
+   [Process.uid, Process.euid]          #=&gt; [0, 31]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003210" class="method-detail">
+        <a name="M003210"></a>
+
+        <div class="method-heading">
+          <a href="UID.src/M003210.html" target="Code" class="method-signature"
+            onclick="popupCode('UID.src/M003210.html');return false;">
+          <span class="method-name">Process::UID.re_exchange   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Exchange real and effective user IDs and return the new effective user ID.
+Not available on all platforms.
+</p>
+<pre>
+   [Process.uid, Process.euid]   #=&gt; [0, 31]
+   Process::UID.re_exchange      #=&gt; 0
+   [Process.uid, Process.euid]   #=&gt; [31, 0]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003211" class="method-detail">
+        <a name="M003211"></a>
+
+        <div class="method-heading">
+          <a href="UID.src/M003211.html" target="Code" class="method-signature"
+            onclick="popupCode('UID.src/M003211.html');return false;">
+          <span class="method-name">Process::UID.re_exchangeable?   => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if the real and effective user IDs of a process may
+be exchanged on the current platform.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003206" class="method-detail">
+        <a name="M003206"></a>
+
+        <div class="method-heading">
+          <a href="UID.src/M003206.html" target="Code" class="method-signature"
+            onclick="popupCode('UID.src/M003206.html');return false;">
+          <span class="method-name">Process.uid           => fixnum<br />
+Process::UID.rid      => fixnum<br />
+Process::Sys.getuid   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the (real) user ID of this process.
+</p>
+<pre>
+   Process.uid   #=&gt; 501
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003212" class="method-detail">
+        <a name="M003212"></a>
+
+        <div class="method-heading">
+          <a href="UID.src/M003212.html" target="Code" class="method-signature"
+            onclick="popupCode('UID.src/M003212.html');return false;">
+          <span class="method-name">Process::UID.sid_available?   => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if the current platform has saved user ID
+functionality.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003213" class="method-detail">
+        <a name="M003213"></a>
+
+        <div class="method-heading">
+          <a href="UID.src/M003213.html" target="Code" class="method-signature"
+            onclick="popupCode('UID.src/M003213.html');return false;">
+          <span class="method-name">Process::UID.switch              => fixnum<br />
+Process::UID.switch {|| block}   => object<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Switch the effective and real user IDs of the current process. If a
+<em>block</em> is given, the user IDs will be switched back after the block
+is executed. Returns the new effective user ID if called without a block,
+and the return value of the block if one is given.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>lstat (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.lstat(file_name)   =&gt; stat
+ *  
+ *  Same as &lt;code&gt;File::stat&lt;/code&gt;, but does not follow the last symbolic
+ *  link. Instead, reports on the link itself.
+ *     
+ *     File.symlink(&quot;testfile&quot;, &quot;link2test&quot;)   #=&gt; 0
+ *     File.stat(&quot;testfile&quot;).size              #=&gt; 66
+ *     File.lstat(&quot;link2test&quot;).size            #=&gt; 8
+ *     File.stat(&quot;link2test&quot;).size             #=&gt; 66
+ *     
+ */
+
+static VALUE
+rb_file_s_lstat(klass, fname)
+    VALUE klass, fname;
+{
+#ifdef HAVE_LSTAT
+    struct stat st;
+
+    SafeStringValue(fname);
+    if (lstat(StringValueCStr(fname), &amp;st) == -1) {
+        rb_sys_fail(RSTRING(fname)-&gt;ptr);
+    }
+    return stat_new(&amp;st);
+#else
+    return rb_file_s_stat(klass, fname);
+#endif
+}</pre>
+</body>
+</html>

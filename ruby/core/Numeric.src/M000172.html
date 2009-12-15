@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>coerce (Numeric)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     num.coerce(numeric)   =&gt; array
+ *  
+ *  If &lt;i&gt;aNumeric&lt;/i&gt; is the same type as &lt;i&gt;num&lt;/i&gt;, returns an array
+ *  containing &lt;i&gt;aNumeric&lt;/i&gt; and &lt;i&gt;num&lt;/i&gt;. Otherwise, returns an
+ *  array with both &lt;i&gt;aNumeric&lt;/i&gt; and &lt;i&gt;num&lt;/i&gt; represented as
+ *  &lt;code&gt;Float&lt;/code&gt; objects. This coercion mechanism is used by
+ *  Ruby to handle mixed-type numeric operations: it is intended to
+ *  find a compatible common type between the two operands of the operator.
+ *     
+ *     1.coerce(2.5)   #=&gt; [2.5, 1.0]
+ *     1.2.coerce(3)   #=&gt; [3.0, 1.2]
+ *     1.coerce(2)     #=&gt; [2, 1]
+ */
+
+static VALUE
+num_coerce(x, y)
+    VALUE x, y;
+{
+    if (CLASS_OF(x) == CLASS_OF(y))
+        return rb_assoc_new(y, x);
+    x = rb_Float(x);
+    y = rb_Float(y);
+    return rb_assoc_new(y, x);
+}</pre>
+</body>
+</html>

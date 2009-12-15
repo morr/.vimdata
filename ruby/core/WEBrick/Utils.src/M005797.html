@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>create_listeners (WEBrick::Utils)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/utils.rb, line 59</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">create_listeners</span>(<span class="ruby-identifier">address</span>, <span class="ruby-identifier">port</span>, <span class="ruby-identifier">logger</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">port</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;must specify port&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">res</span> = <span class="ruby-constant">Socket</span><span class="ruby-operator">::</span><span class="ruby-identifier">getaddrinfo</span>(<span class="ruby-identifier">address</span>, <span class="ruby-identifier">port</span>,
+                                <span class="ruby-constant">Socket</span><span class="ruby-operator">::</span><span class="ruby-constant">AF_UNSPEC</span>,   <span class="ruby-comment cmt"># address family</span>
+                                <span class="ruby-constant">Socket</span><span class="ruby-operator">::</span><span class="ruby-constant">SOCK_STREAM</span>, <span class="ruby-comment cmt"># socket type</span>
+                                <span class="ruby-value">0</span>,                   <span class="ruby-comment cmt"># protocol</span>
+                                <span class="ruby-constant">Socket</span><span class="ruby-operator">::</span><span class="ruby-constant">AI_PASSIVE</span>)  <span class="ruby-comment cmt"># flag</span>
+      <span class="ruby-identifier">last_error</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">sockets</span> = []
+      <span class="ruby-identifier">res</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">ai</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-node">&quot;TCPServer.new(#{ai[3]}, #{port})&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">logger</span>
+          <span class="ruby-identifier">sock</span> = <span class="ruby-constant">TCPServer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">ai</span>[<span class="ruby-value">3</span>], <span class="ruby-identifier">port</span>)
+          <span class="ruby-identifier">port</span> = <span class="ruby-identifier">sock</span>.<span class="ruby-identifier">addr</span>[<span class="ruby-value">1</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">port</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+          <span class="ruby-constant">Utils</span><span class="ruby-operator">::</span><span class="ruby-identifier">set_close_on_exec</span>(<span class="ruby-identifier">sock</span>)
+          <span class="ruby-identifier">sockets</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">sock</span>
+        <span class="ruby-keyword kw">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+          <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(<span class="ruby-node">&quot;TCPServer Error: #{ex}&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">logger</span>
+          <span class="ruby-identifier">last_error</span>  = <span class="ruby-identifier">ex</span>
+        <span class="ruby-keyword kw">end</span>
+      }
+      <span class="ruby-identifier">raise</span> <span class="ruby-identifier">last_error</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">sockets</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">sockets</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

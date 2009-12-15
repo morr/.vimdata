@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>pretty_print (File::Stat)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/pp.rb, line 362</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">pretty_print</span>(<span class="ruby-identifier">q</span>)
+      <span class="ruby-identifier">require</span> <span class="ruby-value str">'etc.so'</span>
+      <span class="ruby-identifier">q</span>.<span class="ruby-identifier">object_group</span>(<span class="ruby-keyword kw">self</span>) {
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">breakable</span>
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;dev=0x%x&quot;</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">dev</span>); <span class="ruby-identifier">q</span>.<span class="ruby-identifier">comma_breakable</span>
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-value str">&quot;ino=&quot;</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">pp</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ino</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">comma_breakable</span>
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">group</span> {
+          <span class="ruby-identifier">m</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">mode</span>
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;mode=0%o&quot;</span>, <span class="ruby-identifier">m</span>)
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">breakable</span>
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;(%s %c%c%c%c%c%c%c%c%c)&quot;</span>,
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ftype</span>,
+            (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0400</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value">?-</span> <span class="ruby-operator">:</span> <span class="ruby-value">?r</span>),
+            (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0200</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value">?-</span> <span class="ruby-operator">:</span> <span class="ruby-value">?w</span>),
+            (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0100</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">04000</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value">?-</span> <span class="ruby-operator">:</span> <span class="ruby-value">?S</span>) <span class="ruby-operator">:</span>
+                             (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">04000</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value">?x</span> <span class="ruby-operator">:</span> <span class="ruby-value">?s</span>)),
+            (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0040</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value">?-</span> <span class="ruby-operator">:</span> <span class="ruby-value">?r</span>),
+            (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0020</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value">?-</span> <span class="ruby-operator">:</span> <span class="ruby-value">?w</span>),
+            (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0010</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">02000</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value">?-</span> <span class="ruby-operator">:</span> <span class="ruby-value">?S</span>) <span class="ruby-operator">:</span>
+                             (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">02000</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value">?x</span> <span class="ruby-operator">:</span> <span class="ruby-value">?s</span>)),
+            (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0004</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value">?-</span> <span class="ruby-operator">:</span> <span class="ruby-value">?r</span>),
+            (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0002</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value">?-</span> <span class="ruby-operator">:</span> <span class="ruby-value">?w</span>),
+            (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0001</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">01000</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value">?-</span> <span class="ruby-operator">:</span> <span class="ruby-value">?T</span>) <span class="ruby-operator">:</span>
+                             (<span class="ruby-identifier">m</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">01000</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value">?x</span> <span class="ruby-operator">:</span> <span class="ruby-value">?t</span>)))
+        }
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">comma_breakable</span>
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-value str">&quot;nlink=&quot;</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">pp</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">nlink</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">comma_breakable</span>
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">group</span> {
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-value str">&quot;uid=&quot;</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">pp</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">uid</span>
+          <span class="ruby-keyword kw">begin</span>
+            <span class="ruby-identifier">pw</span> = <span class="ruby-constant">Etc</span>.<span class="ruby-identifier">getpwuid</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">uid</span>)
+          <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">ArgumentError</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">pw</span>
+            <span class="ruby-identifier">q</span>.<span class="ruby-identifier">breakable</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-node">&quot;(#{pw.name})&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+        }
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">comma_breakable</span>
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">group</span> {
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-value str">&quot;gid=&quot;</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">pp</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">gid</span>
+          <span class="ruby-keyword kw">begin</span>
+            <span class="ruby-identifier">gr</span> = <span class="ruby-constant">Etc</span>.<span class="ruby-identifier">getgrgid</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">gid</span>)
+          <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">ArgumentError</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">gr</span>
+            <span class="ruby-identifier">q</span>.<span class="ruby-identifier">breakable</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-node">&quot;(#{gr.name})&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+        }
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">comma_breakable</span>
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">group</span> {
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;rdev=0x%x&quot;</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">rdev</span>)
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">breakable</span>
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">'(%d, %d)'</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">rdev_major</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">rdev_minor</span>)
+        }
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">comma_breakable</span>
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-value str">&quot;size=&quot;</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">pp</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">size</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">comma_breakable</span>
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-value str">&quot;blksize=&quot;</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">pp</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">blksize</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">comma_breakable</span>
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-value str">&quot;blocks=&quot;</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">pp</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">blocks</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">comma_breakable</span>
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">group</span> {
+          <span class="ruby-identifier">t</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">atime</span>
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-value str">&quot;atime=&quot;</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">pp</span> <span class="ruby-identifier">t</span>
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">breakable</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-node">&quot;(#{t.tv_sec})&quot;</span>
+        }
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">comma_breakable</span>
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">group</span> {
+          <span class="ruby-identifier">t</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">mtime</span>
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-value str">&quot;mtime=&quot;</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">pp</span> <span class="ruby-identifier">t</span>
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">breakable</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-node">&quot;(#{t.tv_sec})&quot;</span>
+        }
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">comma_breakable</span>
+        <span class="ruby-identifier">q</span>.<span class="ruby-identifier">group</span> {
+          <span class="ruby-identifier">t</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ctime</span>
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-value str">&quot;ctime=&quot;</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">pp</span> <span class="ruby-identifier">t</span>
+          <span class="ruby-identifier">q</span>.<span class="ruby-identifier">breakable</span>; <span class="ruby-identifier">q</span>.<span class="ruby-identifier">text</span> <span class="ruby-node">&quot;(#{t.tv_sec})&quot;</span>
+        }
+      }
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

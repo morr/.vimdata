@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_s (NameError)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *  name_error.to_s   =&gt; string
+ *
+ * Produce a nicely-formated string representing the +NameError+.
+ */
+
+static VALUE
+name_err_to_s(exc)
+    VALUE exc;
+{
+    VALUE mesg = rb_attr_get(exc, rb_intern(&quot;mesg&quot;)), str = mesg;
+
+    if (NIL_P(mesg)) return rb_class_name(CLASS_OF(exc));
+    StringValue(str);
+    if (str != mesg) {
+        rb_iv_set(exc, &quot;mesg&quot;, mesg = str);
+    }
+    if (OBJ_TAINTED(exc)) OBJ_TAINT(mesg);
+    return mesg;
+}</pre>
+</body>
+</html>

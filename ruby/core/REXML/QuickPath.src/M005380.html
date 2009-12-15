@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>filter (REXML::QuickPath)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/quickpath.rb, line 48</span>
+                <span class="ruby-keyword kw">def</span> <span class="ruby-constant">QuickPath</span><span class="ruby-operator">::</span><span class="ruby-identifier">filter</span> <span class="ruby-identifier">elements</span>, <span class="ruby-identifier">path</span>
+                        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">elements</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">path</span> <span class="ruby-operator">==</span> <span class="ruby-value str">''</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">elements</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+                        <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">path</span>
+                        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\/\//</span><span class="ruby-identifier">u</span>                                                                                        <span class="ruby-comment cmt"># Descendant</span>
+                                <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">axe</span>( <span class="ruby-identifier">elements</span>, <span class="ruby-value str">&quot;descendant-or-self&quot;</span>, <span class="ruby-identifier">$'</span> )
+                        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\/?\b(\w[-\w]*)\b::/</span><span class="ruby-identifier">u</span>                                                 <span class="ruby-comment cmt"># Axe</span>
+                                <span class="ruby-identifier">axe_name</span> = <span class="ruby-identifier">$1</span>
+                                <span class="ruby-identifier">rest</span> = <span class="ruby-identifier">$'</span>
+                                <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">axe</span>( <span class="ruby-identifier">elements</span>, <span class="ruby-identifier">$1</span>, <span class="ruby-identifier">$'</span> )
+                        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\/(?=\b([:!\w][-\.\w]*:)?[-!\*\.\w]*\b([^:(]|$)|\*)/</span><span class="ruby-identifier">u</span> <span class="ruby-comment cmt"># Child</span>
+                                <span class="ruby-identifier">rest</span> = <span class="ruby-identifier">$'</span>
+                                <span class="ruby-identifier">results</span> = []
+                                <span class="ruby-identifier">elements</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span>
+                                        <span class="ruby-identifier">results</span> <span class="ruby-operator">|=</span> <span class="ruby-identifier">filter</span>( <span class="ruby-identifier">element</span>.<span class="ruby-identifier">to_a</span>, <span class="ruby-identifier">rest</span> )
+                                <span class="ruby-keyword kw">end</span>
+                                <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">results</span>
+                        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\/?(\w[-\w]*)\(/</span><span class="ruby-identifier">u</span>                                                     <span class="ruby-comment cmt"># / Function</span>
+                                <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">function</span>( <span class="ruby-identifier">elements</span>, <span class="ruby-identifier">$1</span>, <span class="ruby-identifier">$'</span> )
+                        <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Namespace</span><span class="ruby-operator">::</span><span class="ruby-constant">NAMESPLIT</span>            <span class="ruby-comment cmt"># Element name</span>
+                                <span class="ruby-identifier">name</span> = <span class="ruby-identifier">$2</span>
+                                <span class="ruby-identifier">ns</span> = <span class="ruby-identifier">$1</span>
+                                <span class="ruby-identifier">rest</span> = <span class="ruby-identifier">$'</span>
+                                <span class="ruby-identifier">elements</span>.<span class="ruby-identifier">delete_if</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span>
+                                        <span class="ruby-operator">!</span>(<span class="ruby-identifier">element</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Element</span> <span class="ruby-keyword kw">and</span> 
+                                                (<span class="ruby-identifier">element</span>.<span class="ruby-identifier">expanded_name</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">name</span> <span class="ruby-keyword kw">or</span>
+                                                 (<span class="ruby-identifier">element</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">name</span> <span class="ruby-keyword kw">and</span>
+                                                  <span class="ruby-identifier">element</span>.<span class="ruby-identifier">namespace</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Functions</span>.<span class="ruby-identifier">namespace_context</span>[<span class="ruby-identifier">ns</span>])))
+                                <span class="ruby-keyword kw">end</span>
+                                <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">filter</span>( <span class="ruby-identifier">elements</span>, <span class="ruby-identifier">rest</span> )
+                        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\/\[/</span><span class="ruby-identifier">u</span>
+                                <span class="ruby-identifier">matches</span> = []
+                                <span class="ruby-identifier">elements</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span>
+                                        <span class="ruby-identifier">matches</span> <span class="ruby-operator">|=</span> <span class="ruby-identifier">predicate</span>( <span class="ruby-identifier">element</span>.<span class="ruby-identifier">to_a</span>, <span class="ruby-identifier">path</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>] ) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Element</span>
+                                <span class="ruby-keyword kw">end</span>
+                                <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">matches</span>
+                        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\[/</span><span class="ruby-identifier">u</span>                                                                                          <span class="ruby-comment cmt"># Predicate</span>
+                                <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">predicate</span>( <span class="ruby-identifier">elements</span>, <span class="ruby-identifier">path</span> )
+                        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\/?\.\.\./</span><span class="ruby-identifier">u</span>                                                                           <span class="ruby-comment cmt"># Ancestor</span>
+                                <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">axe</span>( <span class="ruby-identifier">elements</span>, <span class="ruby-value str">&quot;ancestor&quot;</span>, <span class="ruby-identifier">$'</span> )
+                        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\/?\.\./</span><span class="ruby-identifier">u</span>                                                                                     <span class="ruby-comment cmt"># Parent</span>
+                                <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">filter</span>( <span class="ruby-identifier">elements</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span><span class="ruby-identifier">e</span>.<span class="ruby-identifier">parent</span>}, <span class="ruby-identifier">$'</span> )
+                        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\/?\./</span><span class="ruby-identifier">u</span>                                                                                               <span class="ruby-comment cmt"># Self</span>
+                                <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">filter</span>( <span class="ruby-identifier">elements</span>, <span class="ruby-identifier">$'</span> )
+                        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^\*/</span><span class="ruby-identifier">u</span>                                                                                                  <span class="ruby-comment cmt"># Any</span>
+                                <span class="ruby-identifier">results</span> = []
+                                <span class="ruby-identifier">elements</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span>
+                                        <span class="ruby-identifier">results</span> <span class="ruby-operator">|=</span> <span class="ruby-identifier">filter</span>( [<span class="ruby-identifier">element</span>], <span class="ruby-identifier">$'</span> ) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Element</span>
+                                        <span class="ruby-comment cmt">#if element.kind_of? Element</span>
+                                        <span class="ruby-comment cmt">#  children = element.to_a</span>
+                                        <span class="ruby-comment cmt">#  children.delete_if { |child| !child.kind_of?(Element) }</span>
+                                        <span class="ruby-comment cmt">#  results |= filter( children, $' )</span>
+                                        <span class="ruby-comment cmt">#end</span>
+                                <span class="ruby-keyword kw">end</span>
+                                <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">results</span>
+                        <span class="ruby-keyword kw">end</span>
+                        <span class="ruby-keyword kw">return</span> []
+                <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

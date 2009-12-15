@@ -1,0 +1,2268 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Net::HTTP</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Net::HTTP</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/net/http_rb.html">
+                net/http.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Protocol
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h2>What Is This Library?</h2>
+<p>
+This library provides your program functions to access WWW documents via <a
+href="HTTP.html">HTTP</a>, Hyper Text Transfer Protocol version 1.1. For
+details of <a href="HTTP.html">HTTP</a>, refer [RFC2616] (<a
+href="http://www.ietf.org/rfc/rfc2616.txt">www.ietf.org/rfc/rfc2616.txt</a>).
+</p>
+<h2>Examples</h2>
+<h3>Getting Document From WWW Server</h3>
+<p>
+Example 1: Simple GET+print
+</p>
+<pre>
+    require 'net/http'
+    Net::HTTP.get_print 'www.example.com', '/index.html'
+</pre>
+<p>
+Example 2: Simple GET+print by URL
+</p>
+<pre>
+    require 'net/http'
+    require 'uri'
+    Net::HTTP.get_print URI.parse('http://www.example.com/index.html')
+</pre>
+<p>
+Example 3: More generic GET+print
+</p>
+<pre>
+    require 'net/http'
+    require 'uri'
+
+    url = URI.parse('http://www.example.com/index.html')
+    res = Net::HTTP.start(url.host, url.port) {|http|
+      http.get('/index.html')
+    }
+    puts res.body
+</pre>
+<p>
+Example 4: More generic GET+print
+</p>
+<pre>
+    require 'net/http'
+
+    url = URI.parse('http://www.example.com/index.html')
+    req = Net::HTTP::Get.new(url.path)
+    res = Net::HTTP.start(url.host, url.port) {|http|
+      http.request(req)
+    }
+    puts res.body
+</pre>
+<h3>Posting Form Data</h3>
+<pre>
+    require 'net/http'
+    require 'uri'
+
+    #1: Simple POST
+    res = Net::HTTP.post_form(URI.parse('http://www.example.com/search.cgi'),
+                              {'q'=&gt;'ruby', 'max'=&gt;'50'})
+    puts res.body
+
+    #2: POST with basic authentication
+    res = Net::HTTP.post_form(URI.parse('http://jack:pass@www.example.com/todo.cgi'),
+                                        {'from'=&gt;'2005-01-01', 'to'=&gt;'2005-03-31'})
+    puts res.body
+
+    #3: Detailed control
+    url = URI.parse('http://www.example.com/todo.cgi')
+    req = Net::HTTP::Post.new(url.path)
+    req.basic_auth 'jack', 'pass'
+    req.set_form_data({'from'=&gt;'2005-01-01', 'to'=&gt;'2005-03-31'}, ';')
+    res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
+    case res
+    when Net::HTTPSuccess, Net::HTTPRedirection
+      # OK
+    else
+      res.error!
+    end
+</pre>
+<h3>Accessing via <a href="HTTP.html#M000672">Proxy</a></h3>
+<p>
+<a href="HTTP.html#M000672">Net::HTTP.Proxy</a> creates http proxy class.
+It has same methods of <a href="HTTP.html">Net::HTTP</a> but its instances
+always connect to proxy, instead of given host.
+</p>
+<pre>
+    require 'net/http'
+
+    proxy_addr = 'your.proxy.host'
+    proxy_port = 8080
+            :
+    Net::HTTP::Proxy(proxy_addr, proxy_port).start('www.example.com') {|http|
+      # always connect to your.proxy.addr:8080
+            :
+    }
+</pre>
+<p>
+Since <a href="HTTP.html#M000672">Net::HTTP.Proxy</a> returns <a
+href="HTTP.html">Net::HTTP</a> itself when proxy_addr is nil, there&#8216;s
+no need to change code if there&#8216;s proxy or not.
+</p>
+<p>
+There are two additional parameters in <a
+href="HTTP.html#M000672">Net::HTTP.Proxy</a> which allow to specify proxy
+user name and password:
+</p>
+<pre>
+    Net::HTTP::Proxy(proxy_addr, proxy_port, proxy_user = nil, proxy_pass = nil)
+</pre>
+<p>
+You may use them to work with authorization-enabled proxies:
+</p>
+<pre>
+    require 'net/http'
+    require 'uri'
+
+    proxy_host = 'your.proxy.host'
+    proxy_port = 8080
+    uri = URI.parse(ENV['http_proxy'])
+    proxy_user, proxy_pass = uri.userinfo.split(/:/) if uri.userinfo
+    Net::HTTP::Proxy(proxy_host, proxy_port,
+                     proxy_user, proxy_pass).start('www.example.com') {|http|
+      # always connect to your.proxy.addr:8080 using specified username and password
+            :
+    }
+</pre>
+<p>
+Note that net/http never rely on HTTP_PROXY environment variable. If you
+want to use proxy, set it explicitly.
+</p>
+<h3>Following Redirection</h3>
+<pre>
+    require 'net/http'
+    require 'uri'
+
+    def fetch(uri_str, limit = 10)
+      # You should choose better exception.
+      raise ArgumentError, 'HTTP redirect too deep' if limit == 0
+
+      response = Net::HTTP.get_response(URI.parse(uri_str))
+      case response
+      when Net::HTTPSuccess     then response
+      when Net::HTTPRedirection then fetch(response['location'], limit - 1)
+      else
+        response.error!
+      end
+    end
+
+    print fetch('http://www.ruby-lang.org')
+</pre>
+<p>
+Net::HTTPSuccess and Net::HTTPRedirection is a <a
+href="HTTPResponse.html">HTTPResponse</a> class. All <a
+href="HTTPResponse.html">HTTPResponse</a> objects belong to its own
+response class which indicate <a href="HTTP.html">HTTP</a> result status.
+For details of response classes, see section &quot;<a
+href="HTTP.html">HTTP</a> Response Classes&quot;.
+</p>
+<h3>Basic Authentication</h3>
+<pre>
+    require 'net/http'
+
+    Net::HTTP.start('www.example.com') {|http|
+      req = Net::HTTP::Get.new('/secret-page.html')
+      req.basic_auth 'account', 'password'
+      response = http.request(req)
+      print response.body
+    }
+</pre>
+<h3><a href="HTTP.html">HTTP</a> Request Classes</h3>
+<p>
+Here is <a href="HTTP.html">HTTP</a> <a
+href="HTTP.html#M000701">request</a> class hierarchy.
+</p>
+<pre>
+  Net::HTTPRequest
+      Net::HTTP::Get
+      Net::HTTP::Head
+      Net::HTTP::Post
+      Net::HTTP::Put
+      Net::HTTP::Proppatch
+      Net::HTTP::Lock
+      Net::HTTP::Unlock
+      Net::HTTP::Options
+      Net::HTTP::Propfind
+      Net::HTTP::Delete
+      Net::HTTP::Move
+      Net::HTTP::Copy
+      Net::HTTP::Mkcol
+      Net::HTTP::Trace
+</pre>
+<h3><a href="HTTP.html">HTTP</a> Response Classes</h3>
+<p>
+Here is <a href="HTTP.html">HTTP</a> response class hierarchy. All classes
+are defined in <a href="../Net.html">Net</a> module.
+</p>
+<pre>
+  HTTPResponse
+      HTTPUnknownResponse
+      HTTPInformation                    # 1xx
+          HTTPContinue                       # 100
+          HTTPSwitchProtocl                  # 101
+      HTTPSuccess                        # 2xx
+          HTTPOK                             # 200
+          HTTPCreated                        # 201
+          HTTPAccepted                       # 202
+          HTTPNonAuthoritativeInformation    # 203
+          HTTPNoContent                      # 204
+          HTTPResetContent                   # 205
+          HTTPPartialContent                 # 206
+      HTTPRedirection                    # 3xx
+          HTTPMultipleChoice                 # 300
+          HTTPMovedPermanently               # 301
+          HTTPFound                          # 302
+          HTTPSeeOther                       # 303
+          HTTPNotModified                    # 304
+          HTTPUseProxy                       # 305
+          HTTPTemporaryRedirect              # 307
+      HTTPClientError                    # 4xx
+          HTTPBadRequest                     # 400
+          HTTPUnauthorized                   # 401
+          HTTPPaymentRequired                # 402
+          HTTPForbidden                      # 403
+          HTTPNotFound                       # 404
+          HTTPMethodNotAllowed               # 405
+          HTTPNotAcceptable                  # 406
+          HTTPProxyAuthenticationRequired    # 407
+          HTTPRequestTimeOut                 # 408
+          HTTPConflict                       # 409
+          HTTPGone                           # 410
+          HTTPLengthRequired                 # 411
+          HTTPPreconditionFailed             # 412
+          HTTPRequestEntityTooLarge          # 413
+          HTTPRequestURITooLong              # 414
+          HTTPUnsupportedMediaType           # 415
+          HTTPRequestedRangeNotSatisfiable   # 416
+          HTTPExpectationFailed              # 417
+      HTTPServerError                    # 5xx
+          HTTPInternalServerError            # 500
+          HTTPNotImplemented                 # 501
+          HTTPBadGateway                     # 502
+          HTTPServiceUnavailable             # 503
+          HTTPGatewayTimeOut                 # 504
+          HTTPVersionNotSupported            # 505
+</pre>
+<h2>Switching <a href="HTTP.html">Net::HTTP</a> versions</h2>
+<p>
+You can use net/http.rb 1.1 features (bundled with Ruby 1.6) by calling <a
+href="HTTP.html#M000651">HTTP.version_1_1</a>. Calling <a
+href="HTTP.html#M000650">Net::HTTP.version_1_2</a> allows you to use 1.2
+features again.
+</p>
+<pre>
+    # example
+    Net::HTTP.start {|http1| ...(http1 has 1.2 features)... }
+
+    Net::HTTP.version_1_1
+    Net::HTTP.start {|http2| ...(http2 has 1.1 features)... }
+
+    Net::HTTP.version_1_2
+    Net::HTTP.start {|http3| ...(http3 has 1.2 features)... }
+</pre>
+<p>
+This function is NOT thread-safe.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000672">Proxy</a>&nbsp;&nbsp;
+      <a href="#M000668">active?</a>&nbsp;&nbsp;
+      <a href="#M000691">copy</a>&nbsp;&nbsp;
+      <a href="#M000658">default_port</a>&nbsp;&nbsp;
+      <a href="#M000689">delete</a>&nbsp;&nbsp;
+      <a href="#M000671">finish</a>&nbsp;&nbsp;
+      <a href="#M000655">get</a>&nbsp;&nbsp;
+      <a href="#M000681">get</a>&nbsp;&nbsp;
+      <a href="#M000697">get2</a>&nbsp;&nbsp;
+      <a href="#M000654">get_print</a>&nbsp;&nbsp;
+      <a href="#M000656">get_response</a>&nbsp;&nbsp;
+      <a href="#M000682">head</a>&nbsp;&nbsp;
+      <a href="#M000698">head2</a>&nbsp;&nbsp;
+      <a href="#M000659">http_default_port</a>&nbsp;&nbsp;
+      <a href="#M000660">https_default_port</a>&nbsp;&nbsp;
+      <a href="#M000664">inspect</a>&nbsp;&nbsp;
+      <a href="#M000685">lock</a>&nbsp;&nbsp;
+      <a href="#M000692">mkcol</a>&nbsp;&nbsp;
+      <a href="#M000690">move</a>&nbsp;&nbsp;
+      <a href="#M000662">new</a>&nbsp;&nbsp;
+      <a href="#M000663">new</a>&nbsp;&nbsp;
+      <a href="#M000687">options</a>&nbsp;&nbsp;
+      <a href="#M000683">post</a>&nbsp;&nbsp;
+      <a href="#M000699">post2</a>&nbsp;&nbsp;
+      <a href="#M000657">post_form</a>&nbsp;&nbsp;
+      <a href="#M000688">propfind</a>&nbsp;&nbsp;
+      <a href="#M000684">proppatch</a>&nbsp;&nbsp;
+      <a href="#M000674">proxy?</a>&nbsp;&nbsp;
+      <a href="#M000675">proxy_address</a>&nbsp;&nbsp;
+      <a href="#M000673">proxy_class?</a>&nbsp;&nbsp;
+      <a href="#M000678">proxy_pass</a>&nbsp;&nbsp;
+      <a href="#M000676">proxy_port</a>&nbsp;&nbsp;
+      <a href="#M000677">proxy_user</a>&nbsp;&nbsp;
+      <a href="#M000679">proxyaddr</a>&nbsp;&nbsp;
+      <a href="#M000680">proxyport</a>&nbsp;&nbsp;
+      <a href="#M000666">read_timeout=</a>&nbsp;&nbsp;
+      <a href="#M000701">request</a>&nbsp;&nbsp;
+      <a href="#M000694">request_get</a>&nbsp;&nbsp;
+      <a href="#M000695">request_head</a>&nbsp;&nbsp;
+      <a href="#M000696">request_post</a>&nbsp;&nbsp;
+      <a href="#M000700">send_request</a>&nbsp;&nbsp;
+      <a href="#M000665">set_debug_output</a>&nbsp;&nbsp;
+      <a href="#M000670">start</a>&nbsp;&nbsp;
+      <a href="#M000661">start</a>&nbsp;&nbsp;
+      <a href="#M000667">started?</a>&nbsp;&nbsp;
+      <a href="#M000693">trace</a>&nbsp;&nbsp;
+      <a href="#M000686">unlock</a>&nbsp;&nbsp;
+      <a href="#M000669">use_ssl?</a>&nbsp;&nbsp;
+      <a href="#M000651">version_1_1</a>&nbsp;&nbsp;
+      <a href="#M000653">version_1_1?</a>&nbsp;&nbsp;
+      <a href="#M000650">version_1_2</a>&nbsp;&nbsp;
+      <a href="#M000652">version_1_2?</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="HTTP/Copy.html" class="link">Net::HTTP::Copy</a><br />
+Class <a href="HTTP/Delete.html" class="link">Net::HTTP::Delete</a><br />
+Class <a href="HTTP/Get.html" class="link">Net::HTTP::Get</a><br />
+Class <a href="HTTP/Head.html" class="link">Net::HTTP::Head</a><br />
+Class <a href="HTTP/Lock.html" class="link">Net::HTTP::Lock</a><br />
+Class <a href="HTTP/Mkcol.html" class="link">Net::HTTP::Mkcol</a><br />
+Class <a href="HTTP/Move.html" class="link">Net::HTTP::Move</a><br />
+Class <a href="HTTP/Options.html" class="link">Net::HTTP::Options</a><br />
+Class <a href="HTTP/Post.html" class="link">Net::HTTP::Post</a><br />
+Class <a href="HTTP/Propfind.html" class="link">Net::HTTP::Propfind</a><br />
+Class <a href="HTTP/Proppatch.html" class="link">Net::HTTP::Proppatch</a><br />
+Class <a href="HTTP/Put.html" class="link">Net::HTTP::Put</a><br />
+Class <a href="HTTP/Trace.html" class="link">Net::HTTP::Trace</a><br />
+Class <a href="HTTP/Unlock.html" class="link">Net::HTTP::Unlock</a><br />
+
+    </div>
+
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">version_1_1?</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">is_version_1_1?</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">version_1_2?</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">is_version_1_2?</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">new</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">newobj</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">request_put</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">put2</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">address</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The host name to connect to.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">close_on_empty_response</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">open_timeout</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+Seconds to wait until connection is opened. If the <a
+href="HTTP.html">HTTP</a> object cannot open a connection in this many
+seconds, it raises a TimeoutError exception.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">port</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The port number to connect to.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">proxy_address</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">proxy_pass</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">proxy_port</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">proxy_user</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">read_timeout</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Seconds to wait until reading one block (by one read(2) call). If the <a
+href="HTTP.html">HTTP</a> object cannot open a connection in this many
+seconds, it raises a TimeoutError exception.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000672" class="method-detail">
+        <a name="M000672"></a>
+
+        <div class="method-heading">
+          <a href="#M000672" class="method-signature">
+          <span class="method-name">Proxy</span><span class="method-args">(p_addr, p_port = nil, p_user = nil, p_pass = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates an <a href="HTTP.html">HTTP</a> proxy class. Arguments are
+address/port of proxy host and username/password if authorization on proxy
+server is required. You can replace the <a href="HTTP.html">HTTP</a> class
+with created proxy class.
+</p>
+<p>
+If ADDRESS is nil, this method returns self (<a
+href="HTTP.html">Net::HTTP</a>).
+</p>
+<pre>
+    # Example
+    proxy_class = Net::HTTP::Proxy('proxy.example.com', 8080)
+                    :
+    proxy_class.start('www.ruby-lang.org') {|http|
+      # connecting proxy.foo.org:8080
+                    :
+    }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000672-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000672-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 641</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-constant">Proxy</span>(<span class="ruby-identifier">p_addr</span>, <span class="ruby-identifier">p_port</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">p_user</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">p_pass</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">self</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">p_addr</span>
+      <span class="ruby-identifier">delta</span> = <span class="ruby-constant">ProxyDelta</span>
+      <span class="ruby-identifier">proxyclass</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>)
+      <span class="ruby-identifier">proxyclass</span>.<span class="ruby-identifier">module_eval</span> {
+        <span class="ruby-identifier">include</span> <span class="ruby-identifier">delta</span>
+        <span class="ruby-comment cmt"># with proxy</span>
+        <span class="ruby-ivar">@is_proxy_class</span> = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-ivar">@proxy_address</span> = <span class="ruby-identifier">p_addr</span>
+        <span class="ruby-ivar">@proxy_port</span>    = <span class="ruby-identifier">p_port</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">default_port</span>()
+        <span class="ruby-ivar">@proxy_user</span>    = <span class="ruby-identifier">p_user</span>
+        <span class="ruby-ivar">@proxy_pass</span>    = <span class="ruby-identifier">p_pass</span>
+      }
+      <span class="ruby-identifier">proxyclass</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000658" class="method-detail">
+        <a name="M000658"></a>
+
+        <div class="method-heading">
+          <a href="#M000658" class="method-signature">
+          <span class="method-name">default_port</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The default port to use for <a href="HTTP.html">HTTP</a> requests; defaults
+to 80.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000658-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000658-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 414</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">default_port</span>
+      <span class="ruby-identifier">http_default_port</span>()
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000655" class="method-detail">
+        <a name="M000655"></a>
+
+        <div class="method-heading">
+          <a href="#M000655" class="method-signature">
+          <span class="method-name">get</span><span class="method-args">(uri_or_host, path = nil, port = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Send a GET <a href="HTTP.html#M000701">request</a> to the target and return
+the response as a string. The target can either be specified as
+(<tt>uri</tt>), or as (<tt>host</tt>, <tt>path</tt>, <tt>port</tt> = 80);
+so:
+</p>
+<pre>
+   print Net::HTTP.get(URI.parse('http://www.example.com/index.html'))
+</pre>
+<p>
+or:
+</p>
+<pre>
+   print Net::HTTP.get('www.example.com', '/index.html')
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000655-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000655-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 355</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">get</span>(<span class="ruby-identifier">uri_or_host</span>, <span class="ruby-identifier">path</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">port</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">get_response</span>(<span class="ruby-identifier">uri_or_host</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">port</span>).<span class="ruby-identifier">body</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000654" class="method-detail">
+        <a name="M000654"></a>
+
+        <div class="method-heading">
+          <a href="#M000654" class="method-signature">
+          <span class="method-name">get_print</span><span class="method-args">(uri_or_host, path = nil, port = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="HTTP/Get.html">Get</a> body from target and output it to
++$stdout+. The target can either be specified as (<tt>uri</tt>), or as
+(<tt>host</tt>, <tt>path</tt>, <tt>port</tt> = 80); so:
+</p>
+<pre>
+   Net::HTTP.get_print URI.parse('http://www.example.com/index.html')
+</pre>
+<p>
+or:
+</p>
+<pre>
+   Net::HTTP.get_print 'www.example.com', '/index.html'
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000654-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000654-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 336</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">get_print</span>(<span class="ruby-identifier">uri_or_host</span>, <span class="ruby-identifier">path</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">port</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">get_response</span>(<span class="ruby-identifier">uri_or_host</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">port</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">res</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">read_body</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">chunk</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">print</span> <span class="ruby-identifier">chunk</span>
+        <span class="ruby-keyword kw">end</span>
+      }
+      <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000656" class="method-detail">
+        <a name="M000656"></a>
+
+        <div class="method-heading">
+          <a href="#M000656" class="method-signature">
+          <span class="method-name">get_response</span><span class="method-args">(uri_or_host, path = nil, port = nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Send a GET <a href="HTTP.html#M000701">request</a> to the target and return
+the response as a <a href="HTTPResponse.html">Net::HTTPResponse</a> object.
+The target can either be specified as (<tt>uri</tt>), or as (<tt>host</tt>,
+<tt>path</tt>, <tt>port</tt> = 80); so:
+</p>
+<pre>
+   res = Net::HTTP.get_response(URI.parse('http://www.example.com/index.html'))
+   print res.body
+</pre>
+<p>
+or:
+</p>
+<pre>
+   res = Net::HTTP.get_response('www.example.com', '/index.html')
+   print res.body
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000656-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000656-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 371</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">get_response</span>(<span class="ruby-identifier">uri_or_host</span>, <span class="ruby-identifier">path</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">port</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">path</span>
+        <span class="ruby-identifier">host</span> = <span class="ruby-identifier">uri_or_host</span>
+        <span class="ruby-identifier">new</span>(<span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span> <span class="ruby-operator">||</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">default_port</span>).<span class="ruby-identifier">start</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">http</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">http</span>.<span class="ruby-identifier">request_get</span>(<span class="ruby-identifier">path</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        }
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">uri</span> = <span class="ruby-identifier">uri_or_host</span>
+        <span class="ruby-identifier">new</span>(<span class="ruby-identifier">uri</span>.<span class="ruby-identifier">host</span>, <span class="ruby-identifier">uri</span>.<span class="ruby-identifier">port</span>).<span class="ruby-identifier">start</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">http</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">http</span>.<span class="ruby-identifier">request_get</span>(<span class="ruby-identifier">uri</span>.<span class="ruby-identifier">request_uri</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        }
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000659" class="method-detail">
+        <a name="M000659"></a>
+
+        <div class="method-heading">
+          <a href="#M000659" class="method-signature">
+          <span class="method-name">http_default_port</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The default port to use for <a href="HTTP.html">HTTP</a> requests; defaults
+to 80.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000659-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000659-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 419</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">http_default_port</span>
+      <span class="ruby-value">80</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000660" class="method-detail">
+        <a name="M000660"></a>
+
+        <div class="method-heading">
+          <a href="#M000660" class="method-signature">
+          <span class="method-name">https_default_port</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The default port to use for HTTPS requests; defaults to 443.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000660-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000660-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 424</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">https_default_port</span>
+      <span class="ruby-value">443</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000662" class="method-detail">
+        <a name="M000662"></a>
+
+        <div class="method-heading">
+          <a href="#M000662" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(address, port = nil, p_addr = nil, p_port = nil, p_user = nil, p_pass = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="HTTP.html#M000662">new</a> <a
+href="HTTP.html">Net::HTTP</a> object. If <tt>proxy_addr</tt> is given,
+creates an <a href="HTTP.html">Net::HTTP</a> object with proxy support.
+This method does not open the TCP connection.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000662-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000662-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 450</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">address</span>, <span class="ruby-identifier">port</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">p_addr</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">p_port</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">p_user</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">p_pass</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">h</span> = <span class="ruby-constant">Proxy</span>(<span class="ruby-identifier">p_addr</span>, <span class="ruby-identifier">p_port</span>, <span class="ruby-identifier">p_user</span>, <span class="ruby-identifier">p_pass</span>).<span class="ruby-identifier">newobj</span>(<span class="ruby-identifier">address</span>, <span class="ruby-identifier">port</span>)
+      <span class="ruby-identifier">h</span>.<span class="ruby-identifier">instance_eval</span> {
+        <span class="ruby-ivar">@newimpl</span> = <span class="ruby-operator">::</span><span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">version_1_2?</span>
+      }
+      <span class="ruby-identifier">h</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000663" class="method-detail">
+        <a name="M000663"></a>
+
+        <div class="method-heading">
+          <a href="#M000663" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(address, port = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="HTTP.html#M000662">new</a> <a
+href="HTTP.html">Net::HTTP</a> object for the specified <tt>address</tt>.
+This method does not open the TCP connection.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000663-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000663-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 460</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">address</span>, <span class="ruby-identifier">port</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-ivar">@address</span> = <span class="ruby-identifier">address</span>
+      <span class="ruby-ivar">@port</span>    = (<span class="ruby-identifier">port</span> <span class="ruby-operator">||</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">default_port</span>)
+      <span class="ruby-ivar">@curr_http_version</span> = <span class="ruby-constant">HTTPVersion</span>
+      <span class="ruby-ivar">@seems_1_0_server</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-ivar">@close_on_empty_response</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-ivar">@socket</span>  = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@started</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-ivar">@open_timeout</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@read_timeout</span> = <span class="ruby-value">60</span>
+      <span class="ruby-ivar">@debug_output</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@use_ssl</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-ivar">@ssl_context</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000657" class="method-detail">
+        <a name="M000657"></a>
+
+        <div class="method-heading">
+          <a href="#M000657" class="method-signature">
+          <span class="method-name">post_form</span><span class="method-args">(url, params)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Posts HTML form data to the <tt>URL</tt>. Form data must be represented as
+a Hash of String to String, e.g:
+</p>
+<pre>
+  { &quot;cmd&quot; =&gt; &quot;search&quot;, &quot;q&quot; =&gt; &quot;ruby&quot;, &quot;max&quot; =&gt; &quot;50&quot; }
+</pre>
+<p>
+This method also does Basic Authentication iff <tt>URL</tt>.user exists.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  require 'net/http'
+  require 'uri'
+
+  HTTP.post_form URI.parse('http://www.example.com/search.cgi'),
+                 { &quot;q&quot; =&gt; &quot;ruby&quot;, &quot;max&quot; =&gt; &quot;50&quot; }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000657-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000657-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 400</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">post_form</span>(<span class="ruby-identifier">url</span>, <span class="ruby-identifier">params</span>)
+      <span class="ruby-identifier">req</span> = <span class="ruby-constant">Post</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">url</span>.<span class="ruby-identifier">path</span>)
+      <span class="ruby-identifier">req</span>.<span class="ruby-identifier">form_data</span> = <span class="ruby-identifier">params</span>
+      <span class="ruby-identifier">req</span>.<span class="ruby-identifier">basic_auth</span> <span class="ruby-identifier">url</span>.<span class="ruby-identifier">user</span>, <span class="ruby-identifier">url</span>.<span class="ruby-identifier">password</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">url</span>.<span class="ruby-identifier">user</span>
+      <span class="ruby-identifier">new</span>(<span class="ruby-identifier">url</span>.<span class="ruby-identifier">host</span>, <span class="ruby-identifier">url</span>.<span class="ruby-identifier">port</span>).<span class="ruby-identifier">start</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">http</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">http</span>.<span class="ruby-identifier">request</span>(<span class="ruby-identifier">req</span>)
+      }
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000673" class="method-detail">
+        <a name="M000673"></a>
+
+        <div class="method-heading">
+          <a href="#M000673" class="method-signature">
+          <span class="method-name">proxy_class?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+returns true if self is a class which was created by HTTP::Proxy.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000673-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000673-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 659</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">proxy_class?</span>
+        <span class="ruby-ivar">@is_proxy_class</span>
+      <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000661" class="method-detail">
+        <a name="M000661"></a>
+
+        <div class="method-heading">
+          <a href="#M000661" class="method-signature">
+          <span class="method-name">start</span><span class="method-args">(address, port = nil, p_addr = nil, p_port = nil, p_user = nil, p_pass = nil) {|+http+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+creates a <a href="HTTP.html#M000662">new</a> <a
+href="HTTP.html">Net::HTTP</a> object and opens its TCP connection and <a
+href="HTTP.html">HTTP</a> session. If the optional block is given, the
+newly created <a href="HTTP.html">Net::HTTP</a> object is passed to it and
+closed when the block finishes. In this case, the return value of this
+method is the return value of the block. If no block is given, the return
+value of this method is the newly created <a href="HTTP.html">Net::HTTP</a>
+object itself, and the caller is responsible for closing it upon
+completion.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000661-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000661-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 439</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">start</span>(<span class="ruby-identifier">address</span>, <span class="ruby-identifier">port</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">p_addr</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">p_port</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">p_user</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">p_pass</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-comment cmt"># :yield: +http+</span>
+      <span class="ruby-identifier">new</span>(<span class="ruby-identifier">address</span>, <span class="ruby-identifier">port</span>, <span class="ruby-identifier">p_addr</span>, <span class="ruby-identifier">p_port</span>, <span class="ruby-identifier">p_user</span>, <span class="ruby-identifier">p_pass</span>).<span class="ruby-identifier">start</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000651" class="method-detail">
+        <a name="M000651"></a>
+
+        <div class="method-heading">
+          <a href="#M000651" class="method-signature">
+          <span class="method-name">version_1_1</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Turns on net/http 1.1 (ruby 1.6) features. Defaults to OFF in ruby 1.8.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000651-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000651-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 300</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">version_1_1</span>
+      <span class="ruby-ivar">@newimpl</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000653" class="method-detail">
+        <a name="M000653"></a>
+
+        <div class="method-heading">
+          <a href="#M000653" class="method-signature">
+          <span class="method-name">version_1_1?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+true if net/http is in version 1.1 compatible mode. Defaults to true.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000653-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000653-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 312</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">version_1_1?</span>
+      <span class="ruby-keyword kw">not</span> <span class="ruby-ivar">@newimpl</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000650" class="method-detail">
+        <a name="M000650"></a>
+
+        <div class="method-heading">
+          <a href="#M000650" class="method-signature">
+          <span class="method-name">version_1_2</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Turns on net/http 1.2 (ruby 1.8) features. Defaults to ON in ruby 1.8.
+</p>
+<p>
+I strongly recommend to call this method always.
+</p>
+<pre>
+  require 'net/http'
+  Net::HTTP.version_1_2
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000650-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000650-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 294</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">version_1_2</span>
+      <span class="ruby-ivar">@newimpl</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000652" class="method-detail">
+        <a name="M000652"></a>
+
+        <div class="method-heading">
+          <a href="#M000652" class="method-signature">
+          <span class="method-name">version_1_2?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+true if net/http is in version 1.2 mode. Defaults to true.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000652-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000652-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 306</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">version_1_2?</span>
+      <span class="ruby-ivar">@newimpl</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000668" class="method-detail">
+        <a name="M000668"></a>
+
+        <div class="method-heading">
+          <span class="method-name">active?</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for started?
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000691" class="method-detail">
+        <a name="M000691"></a>
+
+        <div class="method-heading">
+          <a href="#M000691" class="method-signature">
+          <span class="method-name">copy</span><span class="method-args">(path, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a COPY <a href="HTTP.html#M000701">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000691-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000691-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 906</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">copy</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Copy</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000689" class="method-detail">
+        <a name="M000689"></a>
+
+        <div class="method-heading">
+          <a href="#M000689" class="method-signature">
+          <span class="method-name">delete</span><span class="method-args">(path, initheader = {'Depth' =&gt; 'Infinity'})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a DELETE <a href="HTTP.html#M000701">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000689-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000689-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 894</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">delete</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span> = {<span class="ruby-value str">'Depth'</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'Infinity'</span>})
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Delete</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000671" class="method-detail">
+        <a name="M000671"></a>
+
+        <div class="method-heading">
+          <a href="#M000671" class="method-signature">
+          <span class="method-name">finish</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Finishes <a href="HTTP.html">HTTP</a> session and closes TCP connection.
+Raises IOError if not started.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000671-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000671-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 601</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">finish</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">IOError</span>, <span class="ruby-value str">'HTTP session not yet started'</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">started?</span>
+      <span class="ruby-identifier">do_finish</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000681" class="method-detail">
+        <a name="M000681"></a>
+
+        <div class="method-heading">
+          <a href="#M000681" class="method-signature">
+          <span class="method-name">get</span><span class="method-args">(path, initheader = nil, dest = nil) {|+body_segment+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Gets data from <tt>path</tt> on the connected-to host. <tt>header</tt> must
+be a Hash like { &#8216;Accept&#8217; =&gt; &#8217;*/*&#8217;, &#8230; }.
+</p>
+<p>
+In version 1.1 (ruby 1.6), this method returns a pair of objects, a <a
+href="HTTPResponse.html">Net::HTTPResponse</a> object and the entity body
+string. In version 1.2 (ruby 1.8), this method returns a <a
+href="HTTPResponse.html">Net::HTTPResponse</a> object.
+</p>
+<p>
+If called with a block, yields each fragment of the entity body in turn as
+a string as it is read from the socket. Note that in this case, the
+returned response object will <b>not</b> contain a (meaningful) body.
+</p>
+<p>
+<tt>dest</tt> argument is obsolete. It still works but you must not use it.
+</p>
+<p>
+In version 1.1, this method might raise an exception for 3xx (redirect). In
+this case you can <a href="HTTP.html#M000655">get</a> a <a
+href="HTTPResponse.html">HTTPResponse</a> object by
+&quot;anException.response&quot;.
+</p>
+<p>
+In version 1.2, this method never raises exception.
+</p>
+<pre>
+    # version 1.1 (bundled with Ruby 1.6)
+    response, body = http.get('/index.html')
+
+    # version 1.2 (bundled with Ruby 1.8 or later)
+    response = http.get('/index.html')
+
+    # using block
+    File.open('result.txt', 'w') {|f|
+      http.get('/~foo/') do |str|
+        f.write str
+      end
+    }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000681-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000681-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 770</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">get</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">dest</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-comment cmt"># :yield: +body_segment+</span>
+      <span class="ruby-identifier">res</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Get</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>)) {<span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">read_body</span> <span class="ruby-identifier">dest</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
+        <span class="ruby-identifier">res</span> = <span class="ruby-identifier">r</span>
+      }
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@newimpl</span>
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">value</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">res</span>, <span class="ruby-identifier">res</span>.<span class="ruby-identifier">body</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">res</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000697" class="method-detail">
+        <a name="M000697"></a>
+
+        <div class="method-heading">
+          <span class="method-name">get2</span><span class="method-args">(path, initheader = nil)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTP.html#M000694">request_get</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000682" class="method-detail">
+        <a name="M000682"></a>
+
+        <div class="method-heading">
+          <a href="#M000682" class="method-signature">
+          <span class="method-name">head</span><span class="method-args">(path, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Gets only the header from <tt>path</tt> on the connected-to host.
+<tt>header</tt> is a Hash like { &#8216;Accept&#8217; =&gt;
+&#8217;*/*&#8217;, &#8230; }.
+</p>
+<p>
+This method returns a <a href="HTTPResponse.html">Net::HTTPResponse</a>
+object.
+</p>
+<p>
+In version 1.1, this method might raise an exception for 3xx (redirect). On
+the case you can <a href="HTTP.html#M000655">get</a> a <a
+href="HTTPResponse.html">HTTPResponse</a> object by
+&quot;anException.response&quot;. In version 1.2, this method never raises
+an exception.
+</p>
+<pre>
+    response = nil
+    Net::HTTP.start('some.www.server', 80) {|http|
+      response = http.head('/index.html')
+    }
+    p response['content-type']
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000682-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000682-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 800</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">head</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>) 
+      <span class="ruby-identifier">res</span> = <span class="ruby-identifier">request</span>(<span class="ruby-constant">Head</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>))
+      <span class="ruby-identifier">res</span>.<span class="ruby-identifier">value</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@newimpl</span>
+      <span class="ruby-identifier">res</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000698" class="method-detail">
+        <a name="M000698"></a>
+
+        <div class="method-heading">
+          <span class="method-name">head2</span><span class="method-args">(path, initheader = nil, &amp;block)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTP.html#M000695">request_head</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000664" class="method-detail">
+        <a name="M000664"></a>
+
+        <div class="method-heading">
+          <a href="#M000664" class="method-signature">
+          <span class="method-name">inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000664-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000664-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 475</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">inspect</span>
+      <span class="ruby-node">&quot;#&lt;#{self.class} #{@address}:#{@port} open=#{started?}&gt;&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000685" class="method-detail">
+        <a name="M000685"></a>
+
+        <div class="method-heading">
+          <a href="#M000685" class="method-signature">
+          <span class="method-name">lock</span><span class="method-args">(path, body, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a LOCK <a href="HTTP.html#M000701">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000685-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000685-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 870</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">lock</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">body</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Lock</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>), <span class="ruby-identifier">body</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000692" class="method-detail">
+        <a name="M000692"></a>
+
+        <div class="method-heading">
+          <a href="#M000692" class="method-signature">
+          <span class="method-name">mkcol</span><span class="method-args">(path, body = nil, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a MKCOL <a href="HTTP.html#M000701">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000692-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000692-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 912</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mkcol</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">body</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Mkcol</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>), <span class="ruby-identifier">body</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000690" class="method-detail">
+        <a name="M000690"></a>
+
+        <div class="method-heading">
+          <a href="#M000690" class="method-signature">
+          <span class="method-name">move</span><span class="method-args">(path, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a MOVE <a href="HTTP.html#M000701">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000690-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000690-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 900</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">move</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Move</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000687" class="method-detail">
+        <a name="M000687"></a>
+
+        <div class="method-heading">
+          <a href="#M000687" class="method-signature">
+          <span class="method-name">options</span><span class="method-args">(path, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a OPTIONS <a href="HTTP.html#M000701">request</a> to the
+<tt>path</tt> and gets a response, as an <a
+href="HTTPResponse.html">HTTPResponse</a> object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000687-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000687-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 882</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">options</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Options</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000683" class="method-detail">
+        <a name="M000683"></a>
+
+        <div class="method-heading">
+          <a href="#M000683" class="method-signature">
+          <span class="method-name">post</span><span class="method-args">(path, data, initheader = nil, dest = nil) {|+body_segment+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Posts <tt>data</tt> (must be a String) to <tt>path</tt>. <tt>header</tt>
+must be a Hash like { &#8216;Accept&#8217; =&gt; &#8217;*/*&#8217;, &#8230;
+}.
+</p>
+<p>
+In version 1.1 (ruby 1.6), this method returns a pair of objects, a <a
+href="HTTPResponse.html">Net::HTTPResponse</a> object and an entity body
+string. In version 1.2 (ruby 1.8), this method returns a <a
+href="HTTPResponse.html">Net::HTTPResponse</a> object.
+</p>
+<p>
+If called with a block, yields each fragment of the entity body in turn as
+a string as it are read from the socket. Note that in this case, the
+returned response object will <b>not</b> contain a (meaningful) body.
+</p>
+<p>
+<tt>dest</tt> argument is obsolete. It still works but you must not use it.
+</p>
+<p>
+In version 1.1, this method might raise an exception for 3xx (redirect). In
+this case you can <a href="HTTP.html#M000655">get</a> an <a
+href="HTTPResponse.html">HTTPResponse</a> object by
+&quot;anException.response&quot;. In version 1.2, this method never raises
+exception.
+</p>
+<pre>
+    # version 1.1
+    response, body = http.post('/cgi-bin/search.rb', 'query=foo')
+
+    # version 1.2
+    response = http.post('/cgi-bin/search.rb', 'query=foo')
+
+    # using block
+    File.open('result.txt', 'w') {|f|
+      http.post('/cgi-bin/search.rb', 'query=foo') do |str|
+        f.write str
+      end
+    }
+</pre>
+<p>
+You should set Content-Type: header field for POST. If no Content-Type:
+field given, this method uses &quot;application/x-www-form-urlencoded&quot;
+by default.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000683-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000683-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 843</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">post</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">dest</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-comment cmt"># :yield: +body_segment+</span>
+      <span class="ruby-identifier">res</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Post</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>), <span class="ruby-identifier">data</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">read_body</span> <span class="ruby-identifier">dest</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
+        <span class="ruby-identifier">res</span> = <span class="ruby-identifier">r</span>
+      }
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@newimpl</span>
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">value</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">res</span>, <span class="ruby-identifier">res</span>.<span class="ruby-identifier">body</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">res</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000699" class="method-detail">
+        <a name="M000699"></a>
+
+        <div class="method-heading">
+          <span class="method-name">post2</span><span class="method-args">(path, data, initheader = nil)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTP.html#M000696">request_post</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000688" class="method-detail">
+        <a name="M000688"></a>
+
+        <div class="method-heading">
+          <a href="#M000688" class="method-signature">
+          <span class="method-name">propfind</span><span class="method-args">(path, body = nil, initheader = {'Depth' =&gt; '0'})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a PROPFIND <a href="HTTP.html#M000701">request</a> to the
+<tt>path</tt> and gets a response, as an <a
+href="HTTPResponse.html">HTTPResponse</a> object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000688-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000688-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 888</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">propfind</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">body</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">initheader</span> = {<span class="ruby-value str">'Depth'</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'0'</span>})
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Propfind</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>), <span class="ruby-identifier">body</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000684" class="method-detail">
+        <a name="M000684"></a>
+
+        <div class="method-heading">
+          <a href="#M000684" class="method-signature">
+          <span class="method-name">proppatch</span><span class="method-args">(path, body, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a PROPPATCH <a href="HTTP.html#M000701">request</a> to the
+<tt>path</tt> and gets a response, as an <a
+href="HTTPResponse.html">HTTPResponse</a> object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000684-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000684-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 864</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">proppatch</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">body</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Proppatch</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>), <span class="ruby-identifier">body</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000674" class="method-detail">
+        <a name="M000674"></a>
+
+        <div class="method-heading">
+          <a href="#M000674" class="method-signature">
+          <span class="method-name">proxy?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+True if self is a <a href="HTTP.html">HTTP</a> proxy class.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000674-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000674-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 670</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">proxy?</span>
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">proxy_class?</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000675" class="method-detail">
+        <a name="M000675"></a>
+
+        <div class="method-heading">
+          <a href="#M000675" class="method-signature">
+          <span class="method-name">proxy_address</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Address of proxy host. If self does not use a proxy, nil.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000675-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000675-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 675</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">proxy_address</span>
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">proxy_address</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000678" class="method-detail">
+        <a name="M000678"></a>
+
+        <div class="method-heading">
+          <a href="#M000678" class="method-signature">
+          <span class="method-name">proxy_pass</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+User password for accessing proxy. If self does not use a proxy, nil.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000678-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000678-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 690</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">proxy_pass</span>
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">proxy_pass</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000676" class="method-detail">
+        <a name="M000676"></a>
+
+        <div class="method-heading">
+          <a href="#M000676" class="method-signature">
+          <span class="method-name">proxy_port</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Port number of proxy host. If self does not use a proxy, nil.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000676-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000676-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 680</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">proxy_port</span>
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">proxy_port</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000677" class="method-detail">
+        <a name="M000677"></a>
+
+        <div class="method-heading">
+          <a href="#M000677" class="method-signature">
+          <span class="method-name">proxy_user</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+User name for accessing proxy. If self does not use a proxy, nil.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000677-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000677-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 685</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">proxy_user</span>
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">proxy_user</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000679" class="method-detail">
+        <a name="M000679"></a>
+
+        <div class="method-heading">
+          <span class="method-name">proxyaddr</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTP.html#M000675">proxy_address</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000680" class="method-detail">
+        <a name="M000680"></a>
+
+        <div class="method-heading">
+          <span class="method-name">proxyport</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="HTTP.html#M000676">proxy_port</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000666" class="method-detail">
+        <a name="M000666"></a>
+
+        <div class="method-heading">
+          <a href="#M000666" class="method-signature">
+          <span class="method-name">read_timeout=</span><span class="method-args">(sec)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Setter for the read_timeout attribute.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000666-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000666-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 510</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">read_timeout=</span>(<span class="ruby-identifier">sec</span>)
+      <span class="ruby-ivar">@socket</span>.<span class="ruby-identifier">read_timeout</span> = <span class="ruby-identifier">sec</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@socket</span>
+      <span class="ruby-ivar">@read_timeout</span> = <span class="ruby-identifier">sec</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000701" class="method-detail">
+        <a name="M000701"></a>
+
+        <div class="method-heading">
+          <a href="#M000701" class="method-signature">
+          <span class="method-name">request</span><span class="method-args">(req, body = nil) {|+response+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends an <a href="HTTPRequest.html">HTTPRequest</a> object REQUEST to the
+<a href="HTTP.html">HTTP</a> server. This method also sends DATA string if
+REQUEST is a post/put <a href="HTTP.html#M000701">request</a>. Giving DATA
+for get/head <a href="HTTP.html#M000701">request</a> causes ArgumentError.
+</p>
+<p>
+When called with a block, yields an <a
+href="HTTPResponse.html">HTTPResponse</a> object. The body of this response
+will not have been read yet; the caller can process it using <a
+href="HTTPResponse.html#M000706">HTTPResponse#read_body</a>, if desired.
+</p>
+<p>
+Returns a <a href="HTTPResponse.html">HTTPResponse</a> object.
+</p>
+<p>
+This method never raises <a href="../Net.html">Net</a>::* exceptions.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000701-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000701-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1033</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">request</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">body</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)  <span class="ruby-comment cmt"># :yield: +response+</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">started?</span>
+        <span class="ruby-identifier">start</span> {
+          <span class="ruby-identifier">req</span>[<span class="ruby-value str">'connection'</span>] <span class="ruby-operator">||=</span> <span class="ruby-value str">'close'</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">request</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">body</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        }
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">proxy_user</span>()
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">use_ssl?</span>
+          <span class="ruby-identifier">req</span>.<span class="ruby-identifier">proxy_basic_auth</span> <span class="ruby-identifier">proxy_user</span>(), <span class="ruby-identifier">proxy_pass</span>()
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">req</span>.<span class="ruby-identifier">set_body_internal</span> <span class="ruby-identifier">body</span>
+      <span class="ruby-identifier">begin_transport</span> <span class="ruby-identifier">req</span>
+        <span class="ruby-identifier">req</span>.<span class="ruby-identifier">exec</span> <span class="ruby-ivar">@socket</span>, <span class="ruby-ivar">@curr_http_version</span>, <span class="ruby-identifier">edit_path</span>(<span class="ruby-identifier">req</span>.<span class="ruby-identifier">path</span>)
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">res</span> = <span class="ruby-constant">HTTPResponse</span>.<span class="ruby-identifier">read_new</span>(<span class="ruby-ivar">@socket</span>)
+        <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">res</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">HTTPContinue</span>)
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">reading_body</span>(<span class="ruby-ivar">@socket</span>, <span class="ruby-identifier">req</span>.<span class="ruby-identifier">response_body_permitted?</span>) {
+          <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">res</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+        }
+      <span class="ruby-identifier">end_transport</span> <span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>
+
+      <span class="ruby-identifier">res</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000694" class="method-detail">
+        <a name="M000694"></a>
+
+        <div class="method-heading">
+          <a href="#M000694" class="method-signature">
+          <span class="method-name">request_get</span><span class="method-args">(path, initheader = nil) {|+response+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a GET <a href="HTTP.html#M000701">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+<p>
+When called with a block, yields an <a
+href="HTTPResponse.html">HTTPResponse</a> object. The body of this response
+will not have been read yet; the caller can process it using <a
+href="HTTPResponse.html#M000706">HTTPResponse#read_body</a>, if desired.
+</p>
+<p>
+Returns the response.
+</p>
+<p>
+This method never raises <a href="../Net.html">Net</a>::* exceptions.
+</p>
+<pre>
+    response = http.request_get('/index.html')
+    # The entity body is already read here.
+    p response['content-type']
+    puts response.body
+
+    # using block
+    http.request_get('/index.html') {|response|
+      p response['content-type']
+      response.read_body do |str|   # read body now
+        print str
+      end
+    }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000694-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000694-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 947</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">request_get</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-comment cmt"># :yield: +response+</span>
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Get</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>), <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000695" class="method-detail">
+        <a name="M000695"></a>
+
+        <div class="method-heading">
+          <a href="#M000695" class="method-signature">
+          <span class="method-name">request_head</span><span class="method-args">(path, initheader = nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a HEAD <a href="HTTP.html#M000701">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+<p>
+Returns the response.
+</p>
+<p>
+This method never raises <a href="../Net.html">Net</a>::* exceptions.
+</p>
+<pre>
+    response = http.request_head('/index.html')
+    p response['content-type']
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000695-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000695-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 961</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">request_head</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Head</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>), <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000696" class="method-detail">
+        <a name="M000696"></a>
+
+        <div class="method-heading">
+          <a href="#M000696" class="method-signature">
+          <span class="method-name">request_post</span><span class="method-args">(path, data, initheader = nil) {|+response+| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a POST <a href="HTTP.html#M000701">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+<p>
+When called with a block, yields an <a
+href="HTTPResponse.html">HTTPResponse</a> object. The body of this response
+will not have been read yet; the caller can process it using <a
+href="HTTPResponse.html#M000706">HTTPResponse#read_body</a>, if desired.
+</p>
+<p>
+Returns the response.
+</p>
+<p>
+This method never raises <a href="../Net.html">Net</a>::* exceptions.
+</p>
+<pre>
+    # example
+    response = http.request_post('/cgi-bin/nice.rb', 'datadatadata...')
+    p response.status
+    puts response.body          # body is already read
+
+    # using block
+    http.request_post('/cgi-bin/nice.rb', 'datadatadata...') {|response|
+      p response.status
+      p response['content-type']
+      response.read_body do |str|   # read body now
+        print str
+      end
+    }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000696-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000696-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 991</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">request_post</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-comment cmt"># :yield: +response+</span>
+      <span class="ruby-identifier">request</span> <span class="ruby-constant">Post</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>), <span class="ruby-identifier">data</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000700" class="method-detail">
+        <a name="M000700"></a>
+
+        <div class="method-heading">
+          <a href="#M000700" class="method-signature">
+          <span class="method-name">send_request</span><span class="method-args">(name, path, data = nil, header = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends an <a href="HTTP.html">HTTP</a> <a
+href="HTTP.html#M000701">request</a> to the <a href="HTTP.html">HTTP</a>
+server. This method also sends DATA string if DATA is given.
+</p>
+<p>
+Returns a <a href="HTTPResponse.html">HTTPResponse</a> object.
+</p>
+<p>
+This method never raises <a href="../Net.html">Net</a>::* exceptions.
+</p>
+<pre>
+   response = http.send_request('GET', '/index.html')
+   puts response.body
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000700-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000700-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 1015</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">send_request</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">data</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">header</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">r</span> = <span class="ruby-constant">HTTPGenericRequest</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">name</span>,(<span class="ruby-identifier">data</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">true</span> <span class="ruby-operator">:</span> <span class="ruby-keyword kw">false</span>),<span class="ruby-keyword kw">true</span>,<span class="ruby-identifier">path</span>,<span class="ruby-identifier">header</span>)
+      <span class="ruby-identifier">request</span> <span class="ruby-identifier">r</span>, <span class="ruby-identifier">data</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000665" class="method-detail">
+        <a name="M000665"></a>
+
+        <div class="method-heading">
+          <a href="#M000665" class="method-signature">
+          <span class="method-name">set_debug_output</span><span class="method-args">(output)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<b>WARNING</b> This method causes serious security hole. Never use this
+method in production code.
+</p>
+<p>
+Set an output stream for debugging.
+</p>
+<pre>
+  http = Net::HTTP.new
+  http.set_debug_output $stderr
+  http.start { .... }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000665-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000665-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 488</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_debug_output</span>(<span class="ruby-identifier">output</span>)
+      <span class="ruby-identifier">warn</span> <span class="ruby-value str">'Net::HTTP#set_debug_output called after HTTP started'</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">started?</span>
+      <span class="ruby-ivar">@debug_output</span> = <span class="ruby-identifier">output</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000670" class="method-detail">
+        <a name="M000670"></a>
+
+        <div class="method-heading">
+          <a href="#M000670" class="method-signature">
+          <span class="method-name">start</span><span class="method-args">( {|http| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Opens TCP connection and <a href="HTTP.html">HTTP</a> session.
+</p>
+<p>
+When this method is called with block, gives a <a href="HTTP.html">HTTP</a>
+object to the block and closes the TCP connection / <a
+href="HTTP.html">HTTP</a> session after the block executed.
+</p>
+<p>
+When called with a block, returns the return value of the block; otherwise,
+returns self.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000670-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000670-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 538</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">start</span>  <span class="ruby-comment cmt"># :yield: http</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">IOError</span>, <span class="ruby-value str">'HTTP session already opened'</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@started</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">do_start</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">yield</span>(<span class="ruby-keyword kw">self</span>)
+        <span class="ruby-keyword kw">ensure</span>
+          <span class="ruby-identifier">do_finish</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">do_start</span>
+      <span class="ruby-keyword kw">self</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000667" class="method-detail">
+        <a name="M000667"></a>
+
+        <div class="method-heading">
+          <a href="#M000667" class="method-signature">
+          <span class="method-name">started?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+returns true if the <a href="HTTP.html">HTTP</a> session is started.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000667-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000667-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 516</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">started?</span>
+      <span class="ruby-ivar">@started</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000693" class="method-detail">
+        <a name="M000693"></a>
+
+        <div class="method-heading">
+          <a href="#M000693" class="method-signature">
+          <span class="method-name">trace</span><span class="method-args">(path, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a TRACE <a href="HTTP.html#M000701">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000693-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000693-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 918</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">trace</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Trace</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000686" class="method-detail">
+        <a name="M000686"></a>
+
+        <div class="method-heading">
+          <a href="#M000686" class="method-signature">
+          <span class="method-name">unlock</span><span class="method-args">(path, body, initheader = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sends a UNLOCK <a href="HTTP.html#M000701">request</a> to the <tt>path</tt>
+and gets a response, as an <a href="HTTPResponse.html">HTTPResponse</a>
+object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000686-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000686-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 876</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">unlock</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">body</span>, <span class="ruby-identifier">initheader</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">request</span>(<span class="ruby-constant">Unlock</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">initheader</span>), <span class="ruby-identifier">body</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000669" class="method-detail">
+        <a name="M000669"></a>
+
+        <div class="method-heading">
+          <a href="#M000669" class="method-signature">
+          <span class="method-name">use_ssl?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+returns true if use SSL/TLS with <a href="HTTP.html">HTTP</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000669-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000669-source">
+<pre>
+<span class="ruby-comment cmt"># File net/http.rb, line 525</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">use_ssl?</span>
+      <span class="ruby-keyword kw">false</span>   <span class="ruby-comment cmt"># redefined in net/https</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

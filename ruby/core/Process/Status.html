@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Process::Status</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Process::Status</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/process_c.html">
+                process.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<tt><a href="Status.html">Process::Status</a></tt> encapsulates the
+information on the status of a running or terminated system process. The
+built-in variable <tt>$?</tt> is either <tt>nil</tt> or a <tt><a
+href="Status.html">Process::Status</a></tt> object.
+</p>
+<pre>
+   fork { exit 99 }   #=&gt; 26557
+   Process.wait       #=&gt; 26557
+   $?.class           #=&gt; Process::Status
+   $?.to_i            #=&gt; 25344
+   $? &gt;&gt; 8            #=&gt; 99
+   $?.stopped?        #=&gt; false
+   $?.exited?         #=&gt; true
+   $?.exitstatus      #=&gt; 99
+</pre>
+<p>
+Posix systems record information on processes using a 16-bit integer. The
+lower bits record the process status (stopped, exited, signaled) and the
+upper bits possibly contain additional information (for example the
+program&#8216;s return code in the case of exited processes). Pre Ruby 1.8,
+these bits were exposed directly to the Ruby program. Ruby now encapsulates
+these in a <tt><a href="Status.html">Process::Status</a></tt> object. To
+maximize compatibility, however, these objects retain a bit-oriented
+interface. In the descriptions that follow, when we talk about the integer
+value of <em>stat</em>, we&#8216;re referring to this 16 bit value.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M003215">&amp;</a>&nbsp;&nbsp;
+      <a href="#M003214">==</a>&nbsp;&nbsp;
+      <a href="#M003216">&gt;&gt;</a>&nbsp;&nbsp;
+      <a href="#M003229">coredump?</a>&nbsp;&nbsp;
+      <a href="#M003226">exited?</a>&nbsp;&nbsp;
+      <a href="#M003227">exitstatus</a>&nbsp;&nbsp;
+      <a href="#M003220">inspect</a>&nbsp;&nbsp;
+      <a href="#M003221">pid</a>&nbsp;&nbsp;
+      <a href="#M003224">signaled?</a>&nbsp;&nbsp;
+      <a href="#M003222">stopped?</a>&nbsp;&nbsp;
+      <a href="#M003223">stopsig</a>&nbsp;&nbsp;
+      <a href="#M003228">success?</a>&nbsp;&nbsp;
+      <a href="#M003225">termsig</a>&nbsp;&nbsp;
+      <a href="#M003217">to_i</a>&nbsp;&nbsp;
+      <a href="#M003218">to_int</a>&nbsp;&nbsp;
+      <a href="#M003219">to_s</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M003215" class="method-detail">
+        <a name="M003215"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003215.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003215.html');return false;">
+          <span class="method-name">stat & num   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Logical AND of the bits in <em>stat</em> with <em>num</em>.
+</p>
+<pre>
+   fork { exit 0x37 }
+   Process.wait
+   sprintf('%04x', $?.to_i)       #=&gt; &quot;3700&quot;
+   sprintf('%04x', $? &amp; 0x1e00)   #=&gt; &quot;1600&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003214" class="method-detail">
+        <a name="M003214"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003214.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003214.html');return false;">
+          <span class="method-name">stat == other   => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if the integer value of <em>stat</em> equals
+<em>other</em>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003216" class="method-detail">
+        <a name="M003216"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003216.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003216.html');return false;">
+          <span class="method-name">stat >> num   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Shift the bits in <em>stat</em> right <em>num</em> places.
+</p>
+<pre>
+   fork { exit 99 }   #=&gt; 26563
+   Process.wait       #=&gt; 26563
+   $?.to_i            #=&gt; 25344
+   $? &gt;&gt; 8            #=&gt; 99
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003229" class="method-detail">
+        <a name="M003229"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003229.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003229.html');return false;">
+          <span class="method-name">stat.coredump?   => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if <em>stat</em> generated a coredump when it
+terminated. Not available on all platforms.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003226" class="method-detail">
+        <a name="M003226"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003226.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003226.html');return false;">
+          <span class="method-name">stat.exited?   => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if <em>stat</em> exited normally (for example using
+an <tt>exit()</tt> call or finishing the program).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003227" class="method-detail">
+        <a name="M003227"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003227.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003227.html');return false;">
+          <span class="method-name">stat.exitstatus   => fixnum or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the least significant eight bits of the return code of
+<em>stat</em>. Only available if <tt><a
+href="Status.html#M003226">exited?</a></tt> is <tt>true</tt>.
+</p>
+<pre>
+   fork { }           #=&gt; 26572
+   Process.wait       #=&gt; 26572
+   $?.exited?         #=&gt; true
+   $?.exitstatus      #=&gt; 0
+
+   fork { exit 99 }   #=&gt; 26573
+   Process.wait       #=&gt; 26573
+   $?.exited?         #=&gt; true
+   $?.exitstatus      #=&gt; 99
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003220" class="method-detail">
+        <a name="M003220"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003220.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003220.html');return false;">
+          <span class="method-name">stat.inspect   => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Override the inspection method.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003221" class="method-detail">
+        <a name="M003221"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003221.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003221.html');return false;">
+          <span class="method-name">stat.pid   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the process ID that this status object represents.
+</p>
+<pre>
+   fork { exit }   #=&gt; 26569
+   Process.wait    #=&gt; 26569
+   $?.pid          #=&gt; 26569
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003224" class="method-detail">
+        <a name="M003224"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003224.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003224.html');return false;">
+          <span class="method-name">stat.signaled?   => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if <em>stat</em> terminated because of an uncaught
+signal.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003222" class="method-detail">
+        <a name="M003222"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003222.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003222.html');return false;">
+          <span class="method-name">stat.stopped?   => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if this process is stopped. This is only returned if
+the corresponding <tt>wait</tt> call had the <tt>WUNTRACED</tt> flag set.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003223" class="method-detail">
+        <a name="M003223"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003223.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003223.html');return false;">
+          <span class="method-name">stat.stopsig   => fixnum or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the number of the signal that caused <em>stat</em> to stop (or
+<tt>nil</tt> if self is not stopped).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003228" class="method-detail">
+        <a name="M003228"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003228.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003228.html');return false;">
+          <span class="method-name">stat.success?   => true, false or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if <em>stat</em> is successful, <tt>false</tt> if
+not. Returns <tt>nil</tt> if <tt><a
+href="Status.html#M003226">exited?</a></tt> is not <tt>true</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003225" class="method-detail">
+        <a name="M003225"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003225.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003225.html');return false;">
+          <span class="method-name">stat.termsig   => fixnum or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the number of the signal that caused <em>stat</em> to terminate (or
+<tt>nil</tt> if self was not terminated by an uncaught signal).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M003217" class="method-detail">
+        <a name="M003217"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003217.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003217.html');return false;">
+          <span class="method-name">stat.to_i     => fixnum<br />
+stat.to_int   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the bits in <em>stat</em> as a <tt><a
+href="../Fixnum.html">Fixnum</a></tt>. Poking around in these bits is
+platform dependent.
+</p>
+<pre>
+   fork { exit 0xab }         #=&gt; 26566
+   Process.wait               #=&gt; 26566
+   sprintf('%04x', $?.to_i)   #=&gt; &quot;ab00&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003218" class="method-detail">
+        <a name="M003218"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003218.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003218.html');return false;">
+          <span class="method-name">stat.to_i     => fixnum<br />
+stat.to_int   => fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the bits in <em>stat</em> as a <tt><a
+href="../Fixnum.html">Fixnum</a></tt>. Poking around in these bits is
+platform dependent.
+</p>
+<pre>
+   fork { exit 0xab }         #=&gt; 26566
+   Process.wait               #=&gt; 26566
+   sprintf('%04x', $?.to_i)   #=&gt; &quot;ab00&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M003219" class="method-detail">
+        <a name="M003219"></a>
+
+        <div class="method-heading">
+          <a href="Status.src/M003219.html" target="Code" class="method-signature"
+            onclick="popupCode('Status.src/M003219.html');return false;">
+          <span class="method-name">stat.to_s   => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <em>stat</em><tt>.to_i.to_s</tt>.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>_parse (Date)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/date/format.rb, line 958</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">_parse</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">comp</span>=<span class="ruby-keyword kw">false</span>)
+    <span class="ruby-identifier">str</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">dup</span>
+
+    <span class="ruby-identifier">e</span> = <span class="ruby-constant">Format</span><span class="ruby-operator">::</span><span class="ruby-constant">Bag</span>.<span class="ruby-identifier">new</span>
+
+    <span class="ruby-identifier">e</span>.<span class="ruby-identifier">_comp</span> = <span class="ruby-identifier">comp</span>
+
+    <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/[^-+',.\/:0-9@a-z\x80-\xff]+/i</span><span class="ruby-identifier">n</span>, <span class="ruby-value str">' '</span>)
+
+    <span class="ruby-identifier">_parse_time</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>) <span class="ruby-comment cmt"># || _parse_beat(str, e)</span>
+    <span class="ruby-identifier">_parse_day</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)
+
+    <span class="ruby-identifier">_parse_eu</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)     <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_us</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)     <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_iso</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)    <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_jis</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)    <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_vms</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)    <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_sla_us</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>) <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_iso2</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)   <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_year</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)   <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_mon</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)    <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_mday</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)   <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">_parse_ddd</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">e</span>)
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/\b(bc\b|bce\b|b\.c\.|b\.c\.e\.)/i</span><span class="ruby-identifier">n</span>, <span class="ruby-value str">' '</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span>
+        <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> = <span class="ruby-operator">-</span><span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/\A\s*(\d{1,2})\s*\z/n</span>, <span class="ruby-value str">' '</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">hour</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">e</span>.<span class="ruby-identifier">mday</span>
+        <span class="ruby-identifier">v</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+        <span class="ruby-keyword kw">if</span> (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">31</span>) <span class="ruby-operator">===</span> <span class="ruby-identifier">v</span>
+          <span class="ruby-identifier">e</span>.<span class="ruby-identifier">mday</span> = <span class="ruby-identifier">v</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">mday</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">e</span>.<span class="ruby-identifier">hour</span>
+        <span class="ruby-identifier">v</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+        <span class="ruby-keyword kw">if</span> (<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">24</span>) <span class="ruby-operator">===</span> <span class="ruby-identifier">v</span>
+          <span class="ruby-identifier">e</span>.<span class="ruby-identifier">hour</span> = <span class="ruby-identifier">v</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">_comp</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">99</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">69</span>
+          <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1900</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">e</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">+=</span> <span class="ruby-value">2000</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">e</span>.<span class="ruby-identifier">offset</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">zone_to_diff</span>(<span class="ruby-identifier">e</span>.<span class="ruby-identifier">zone</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">zone</span>
+
+    <span class="ruby-identifier">e</span>.<span class="ruby-identifier">to_hash</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>binmode (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.binmode    =&gt; ios
+ *  
+ *  Puts &lt;em&gt;ios&lt;/em&gt; into binary mode. This is useful only in
+ *  MS-DOS/Windows environments. Once a stream is in binary mode, it
+ *  cannot be reset to nonbinary mode.
+ */
+
+VALUE
+rb_io_binmode(io)
+    VALUE io;
+{
+#if defined(_WIN32) || defined(DJGPP) || defined(__CYGWIN__) || defined(__human68k__) || defined(__EMX__)
+    OpenFile *fptr;
+
+    GetOpenFile(io, fptr);
+#ifdef __human68k__
+    if (fptr-&gt;f)
+        fmode(fptr-&gt;f, _IOBIN);
+    if (fptr-&gt;f2)
+        fmode(fptr-&gt;f2, _IOBIN);
+#else
+    if (fptr-&gt;f &amp;&amp; setmode(fileno(fptr-&gt;f), O_BINARY) == -1)
+        rb_sys_fail(fptr-&gt;path);
+    if (fptr-&gt;f2 &amp;&amp; setmode(fileno(fptr-&gt;f2), O_BINARY) == -1)
+        rb_sys_fail(fptr-&gt;path);
+#endif
+
+    fptr-&gt;mode |= FMODE_BINMODE;
+#endif
+    return io;
+}</pre>
+</body>
+</html>

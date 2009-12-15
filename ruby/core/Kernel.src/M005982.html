@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>chomp (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     chomp            =&gt; $_
+ *     chomp(string)    =&gt; $_
+ *  
+ *  Equivalent to &lt;code&gt;$_ = $_.chomp(&lt;em&gt;string&lt;/em&gt;)&lt;/code&gt;. See
+ *  &lt;code&gt;String#chomp&lt;/code&gt;.
+ *     
+ *     $_ = &quot;now\n&quot;
+ *     chomp         #=&gt; &quot;now&quot;
+ *     $_            #=&gt; &quot;now&quot;
+ *     chomp &quot;ow&quot;    #=&gt; &quot;n&quot;
+ *     $_            #=&gt; &quot;n&quot;
+ *     chomp &quot;xxx&quot;   #=&gt; &quot;n&quot;
+ *     $_            #=&gt; &quot;n&quot;
+ */
+
+static VALUE
+rb_f_chomp(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE str = uscore_get();
+    VALUE dup = rb_str_dup(str);
+
+    if (NIL_P(rb_str_chomp_bang(argc, argv, dup)))
+        return str;
+    rb_lastline_set(dup);
+    return dup;
+}</pre>
+</body>
+</html>

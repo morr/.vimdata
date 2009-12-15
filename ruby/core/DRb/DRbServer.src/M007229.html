@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (DRb::DRbServer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/drb/drb.rb, line 1328</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">uri</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">front</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">config_or_acl</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Hash</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">config_or_acl</span>
+        <span class="ruby-identifier">config</span> = <span class="ruby-identifier">config_or_acl</span>.<span class="ruby-identifier">dup</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">acl</span> = <span class="ruby-identifier">config_or_acl</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@@acl</span>
+        <span class="ruby-identifier">config</span> = {
+          <span class="ruby-identifier">:tcp_acl</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">acl</span>
+        }
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@config</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">make_config</span>(<span class="ruby-identifier">config</span>)
+
+      <span class="ruby-ivar">@protocol</span> = <span class="ruby-constant">DRbProtocol</span>.<span class="ruby-identifier">open_server</span>(<span class="ruby-identifier">uri</span>, <span class="ruby-ivar">@config</span>)
+      <span class="ruby-ivar">@uri</span> = <span class="ruby-ivar">@protocol</span>.<span class="ruby-identifier">uri</span>
+
+      <span class="ruby-ivar">@front</span> = <span class="ruby-identifier">front</span>
+      <span class="ruby-ivar">@idconv</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:idconv</span>]
+      <span class="ruby-ivar">@safe_level</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:safe_level</span>]
+
+      <span class="ruby-ivar">@grp</span> = <span class="ruby-constant">ThreadGroup</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-ivar">@thread</span> = <span class="ruby-identifier">run</span>
+
+      <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">regist_server</span>(<span class="ruby-keyword kw">self</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>init (XSD::Charset)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/xsd/charset.rb, line 26</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Charset</span>.<span class="ruby-identifier">init</span>
+    <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'UTF8'</span>, <span class="ruby-value str">'X_ISO8859_1'</span>]] =
+      <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">'U*'</span>).<span class="ruby-identifier">pack</span>(<span class="ruby-value str">'C*'</span>) }
+    <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'X_ISO8859_1'</span>, <span class="ruby-value str">'UTF8'</span>]] =
+      <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">'C*'</span>).<span class="ruby-identifier">pack</span>(<span class="ruby-value str">'U*'</span>) }
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">require</span> <span class="ruby-value str">'xsd/iconvcharset'</span>
+      <span class="ruby-ivar">@internal_encoding</span> = <span class="ruby-value str">'UTF8'</span>
+      <span class="ruby-identifier">sjtag</span> = (<span class="ruby-regexp re">/(mswin|bccwin|mingw|cygwin|emx)/</span> <span class="ruby-operator">=~</span> <span class="ruby-constant">RUBY_PLATFORM</span>) <span class="ruby-operator">?</span> <span class="ruby-value str">'cp932'</span> <span class="ruby-operator">:</span>
+        <span class="ruby-value str">'shift_jis'</span>
+      <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'UTF8'</span>, <span class="ruby-value str">'EUC'</span> ]] =
+        <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">IconvCharset</span>.<span class="ruby-identifier">safe_iconv</span>(<span class="ruby-value str">&quot;euc-jp&quot;</span>, <span class="ruby-value str">&quot;utf-8&quot;</span>, <span class="ruby-identifier">str</span>) }
+      <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'EUC'</span> , <span class="ruby-value str">'UTF8'</span>]] =
+        <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">IconvCharset</span>.<span class="ruby-identifier">safe_iconv</span>(<span class="ruby-value str">&quot;utf-8&quot;</span>, <span class="ruby-value str">&quot;euc-jp&quot;</span>, <span class="ruby-identifier">str</span>) }
+      <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'EUC'</span> , <span class="ruby-value str">'SJIS'</span>]] =
+        <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">IconvCharset</span>.<span class="ruby-identifier">safe_iconv</span>(<span class="ruby-identifier">sjtag</span>, <span class="ruby-value str">&quot;euc-jp&quot;</span>, <span class="ruby-identifier">str</span>) }
+      <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'UTF8'</span>, <span class="ruby-value str">'SJIS'</span>]] =
+        <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">IconvCharset</span>.<span class="ruby-identifier">safe_iconv</span>(<span class="ruby-identifier">sjtag</span>, <span class="ruby-value str">&quot;utf-8&quot;</span>, <span class="ruby-identifier">str</span>) }
+      <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'SJIS'</span>, <span class="ruby-value str">'UTF8'</span>]] =
+        <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">IconvCharset</span>.<span class="ruby-identifier">safe_iconv</span>(<span class="ruby-value str">&quot;utf-8&quot;</span>, <span class="ruby-identifier">sjtag</span>, <span class="ruby-identifier">str</span>) }
+      <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'SJIS'</span>, <span class="ruby-value str">'EUC'</span> ]] =
+        <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">IconvCharset</span>.<span class="ruby-identifier">safe_iconv</span>(<span class="ruby-value str">&quot;euc-jp&quot;</span>, <span class="ruby-identifier">sjtag</span>, <span class="ruby-identifier">str</span>) }
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LoadError</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">require</span> <span class="ruby-value str">'nkf'</span>
+        <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'EUC'</span> , <span class="ruby-value str">'SJIS'</span>]] =
+          <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">NKF</span>.<span class="ruby-identifier">nkf</span>(<span class="ruby-value str">'-sXm0'</span>, <span class="ruby-identifier">str</span>) }
+        <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'SJIS'</span>, <span class="ruby-value str">'EUC'</span> ]] =
+          <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">str</span><span class="ruby-operator">|</span> <span class="ruby-constant">NKF</span>.<span class="ruby-identifier">nkf</span>(<span class="ruby-value str">'-eXm0'</span>, <span class="ruby-identifier">str</span>) }
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LoadError</span>
+      <span class="ruby-keyword kw">end</span>
+  
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">require</span> <span class="ruby-value str">'uconv'</span>
+        <span class="ruby-ivar">@internal_encoding</span> = <span class="ruby-value str">'UTF8'</span>
+        <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'UTF8'</span>, <span class="ruby-value str">'EUC'</span> ]] = <span class="ruby-constant">Uconv</span>.<span class="ruby-identifier">method</span>(<span class="ruby-identifier">:u8toeuc</span>)
+        <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'UTF8'</span>, <span class="ruby-value str">'SJIS'</span>]] = <span class="ruby-constant">Uconv</span>.<span class="ruby-identifier">method</span>(<span class="ruby-identifier">:u8tosjis</span>)
+        <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'EUC'</span> , <span class="ruby-value str">'UTF8'</span>]] = <span class="ruby-constant">Uconv</span>.<span class="ruby-identifier">method</span>(<span class="ruby-identifier">:euctou8</span>)
+        <span class="ruby-constant">EncodingConvertMap</span>[[<span class="ruby-value str">'SJIS'</span>, <span class="ruby-value str">'UTF8'</span>]] = <span class="ruby-constant">Uconv</span>.<span class="ruby-identifier">method</span>(<span class="ruby-identifier">:sjistou8</span>)
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LoadError</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

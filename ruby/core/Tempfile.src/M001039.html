@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Tempfile)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/tempfile.rb, line 24</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">basename</span>, <span class="ruby-identifier">tmpdir</span>=<span class="ruby-constant">Dir</span><span class="ruby-operator">::</span><span class="ruby-identifier">tmpdir</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$SAFE</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">tmpdir</span>.<span class="ruby-identifier">tainted?</span>
+      <span class="ruby-identifier">tmpdir</span> = <span class="ruby-value str">'/tmp'</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">lock</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">n</span> = <span class="ruby-identifier">failure</span> = <span class="ruby-value">0</span>
+    
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">true</span>
+
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">tmpname</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">tmpdir</span>, <span class="ruby-identifier">make_tmpname</span>(<span class="ruby-identifier">basename</span>, <span class="ruby-identifier">n</span>))
+        <span class="ruby-identifier">lock</span> = <span class="ruby-identifier">tmpname</span> <span class="ruby-operator">+</span> <span class="ruby-value str">'.lock'</span>
+        <span class="ruby-identifier">n</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+      <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">while</span> <span class="ruby-ivar">@@cleanlist</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">tmpname</span>) <span class="ruby-keyword kw">or</span>
+        <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">lock</span>) <span class="ruby-keyword kw">or</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">tmpname</span>)
+
+      <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">mkdir</span>(<span class="ruby-identifier">lock</span>)
+    <span class="ruby-keyword kw">rescue</span>
+      <span class="ruby-identifier">failure</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+      <span class="ruby-keyword kw">retry</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">failure</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">MAX_TRY</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;cannot generate tempfile `%s'&quot;</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">tmpname</span>
+    <span class="ruby-keyword kw">ensure</span>
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-ivar">@data</span> = [<span class="ruby-identifier">tmpname</span>]
+    <span class="ruby-ivar">@clean_proc</span> = <span class="ruby-constant">Tempfile</span>.<span class="ruby-identifier">callback</span>(<span class="ruby-ivar">@data</span>)
+    <span class="ruby-constant">ObjectSpace</span>.<span class="ruby-identifier">define_finalizer</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-ivar">@clean_proc</span>)
+
+    <span class="ruby-ivar">@tmpfile</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">tmpname</span>, <span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-constant">RDWR</span><span class="ruby-operator">|</span><span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-constant">CREAT</span><span class="ruby-operator">|</span><span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-constant">EXCL</span>, <span class="ruby-value">0600</span>)
+    <span class="ruby-ivar">@tmpname</span> = <span class="ruby-identifier">tmpname</span>
+    <span class="ruby-ivar">@@cleanlist</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-ivar">@tmpname</span>
+    <span class="ruby-ivar">@data</span>[<span class="ruby-value">1</span>] = <span class="ruby-ivar">@tmpfile</span>
+    <span class="ruby-ivar">@data</span>[<span class="ruby-value">2</span>] = <span class="ruby-ivar">@@cleanlist</span>
+
+    <span class="ruby-keyword kw">super</span>(<span class="ruby-ivar">@tmpfile</span>)
+
+    <span class="ruby-comment cmt"># Now we have all the File/IO methods defined, you must not</span>
+    <span class="ruby-comment cmt"># carelessly put bare puts(), etc. after this.</span>
+
+    <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">rmdir</span>(<span class="ruby-identifier">lock</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

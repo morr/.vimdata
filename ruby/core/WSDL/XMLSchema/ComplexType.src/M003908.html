@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>check_type (WSDL::XMLSchema::ComplexType)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/wsdl/soap/complexType.rb, line 22</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">check_type</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">content</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-keyword kw">and</span>
+          <span class="ruby-identifier">content</span>.<span class="ruby-identifier">elements</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">content</span>.<span class="ruby-identifier">elements</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">maxoccurs</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">'1'</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-operator">::</span><span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">Mapping</span><span class="ruby-operator">::</span><span class="ruby-constant">MapQName</span>
+          <span class="ruby-identifier">:TYPE_MAP</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">:TYPE_ARRAY</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">:TYPE_STRUCT</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">complexcontent</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">complexcontent</span>.<span class="ruby-identifier">base</span> <span class="ruby-operator">==</span> <span class="ruby-operator">::</span><span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">ValueArrayName</span>
+        <span class="ruby-identifier">:TYPE_ARRAY</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">complexcontent</span>.<span class="ruby-identifier">basetype</span>.<span class="ruby-identifier">check_type</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">simplecontent</span>
+      <span class="ruby-identifier">:TYPE_SIMPLE</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-operator">!</span><span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">:TYPE_STRUCT</span>
+    <span class="ruby-keyword kw">else</span> <span class="ruby-comment cmt"># empty complexType definition (seen in partner.wsdl of salesforce)</span>
+      <span class="ruby-identifier">:TYPE_EMPTY</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

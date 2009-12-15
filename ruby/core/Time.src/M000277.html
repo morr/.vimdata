@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sec (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     time.sec =&gt; fixnum
+ *  
+ *  Returns the second of the minute (0..60)&lt;em&gt;[Yes, seconds really can
+ *  range from zero to 60. This allows the system to inject leap seconds
+ *  every now and then to correct for the fact that years are not really
+ *  a convenient number of hours long.]&lt;/em&gt; for &lt;i&gt;time&lt;/i&gt;.
+ *     
+ *     t = Time.now   #=&gt; Wed Apr 09 08:56:04 CDT 2003
+ *     t.sec          #=&gt; 4
+ */
+
+static VALUE
+time_sec(time)
+    VALUE time;
+{
+    struct time_object *tobj;
+
+    GetTimeval(time, tobj);
+    if (tobj-&gt;tm_got == 0) {
+        time_get_tm(time, tobj-&gt;gmt);
+    }
+    return INT2FIX(tobj-&gt;tm.tm_sec);
+}</pre>
+</body>
+</html>

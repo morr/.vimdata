@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (File::Stat)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *
+ *   File::Stat.new(file_name)  =&gt; stat
+ *
+ * Create a File::Stat object for the given file name (raising an
+ * exception if the file doesn't exist).
+ */
+
+static VALUE
+rb_stat_init(obj, fname)
+    VALUE obj, fname;
+{
+    struct stat st, *nst;
+
+    SafeStringValue(fname);
+
+    if (stat(StringValueCStr(fname), &amp;st) == -1) {
+        rb_sys_fail(RSTRING(fname)-&gt;ptr);
+    }
+    if (DATA_PTR(obj)) {
+        free(DATA_PTR(obj));
+        DATA_PTR(obj) = NULL;
+    }
+    nst = ALLOC(struct stat);
+    *nst = st;
+    DATA_PTR(obj) = nst;
+
+    return Qnil;
+}</pre>
+</body>
+</html>

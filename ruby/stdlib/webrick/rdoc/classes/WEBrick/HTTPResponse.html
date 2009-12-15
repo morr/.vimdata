@@ -1,0 +1,824 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: WEBrick::HTTPResponse</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">WEBrick::HTTPResponse</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/webrick/httpresponse_rb.html">
+                webrick/httpresponse.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M009691">[]</a>&nbsp;&nbsp;
+      <a href="#M009692">[]=</a>&nbsp;&nbsp;
+      <a href="#M009699">chunked=</a>&nbsp;&nbsp;
+      <a href="#M009698">chunked?</a>&nbsp;&nbsp;
+      <a href="#M009693">content_length</a>&nbsp;&nbsp;
+      <a href="#M009694">content_length=</a>&nbsp;&nbsp;
+      <a href="#M009695">content_type</a>&nbsp;&nbsp;
+      <a href="#M009696">content_type=</a>&nbsp;&nbsp;
+      <a href="#M009697">each</a>&nbsp;&nbsp;
+      <a href="#M009700">keep_alive?</a>&nbsp;&nbsp;
+      <a href="#M009688">new</a>&nbsp;&nbsp;
+      <a href="#M009704">send_body</a>&nbsp;&nbsp;
+      <a href="#M009703">send_header</a>&nbsp;&nbsp;
+      <a href="#M009701">send_response</a>&nbsp;&nbsp;
+      <a href="#M009707">set_error</a>&nbsp;&nbsp;
+      <a href="#M009706">set_redirect</a>&nbsp;&nbsp;
+      <a href="#M009702">setup_header</a>&nbsp;&nbsp;
+      <a href="#M009690">status=</a>&nbsp;&nbsp;
+      <a href="#M009689">status_line</a>&nbsp;&nbsp;
+      <a href="#M009705">to_s</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BUFSIZE</td>
+          <td>=</td>
+          <td class="context-item-value">1024*4</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">body</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">config</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">cookies</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">filename</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">header</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">http_version</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">keep_alive</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">reason_phrase</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">request_http_version</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">request_method</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">request_uri</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">sent_size</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">status</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M009688" class="m-detail">
+        <a name="M009688"></a>
+
+        <div class="method-heading">
+          <a href="#M009688" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(config)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009688-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009688-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 31</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">config</span>)
+      <span class="ruby-ivar">@config</span> = <span class="ruby-identifier">config</span>
+      <span class="ruby-ivar">@logger</span> = <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:Logger</span>]
+      <span class="ruby-ivar">@header</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-ivar">@status</span> = <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">RC_OK</span>
+      <span class="ruby-ivar">@reason_phrase</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@http_version</span> = <span class="ruby-constant">HTTPVersion</span><span class="ruby-operator">::</span><span class="ruby-identifier">convert</span>(<span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:HTTPVersion</span>])
+      <span class="ruby-ivar">@body</span> = <span class="ruby-value str">''</span>
+      <span class="ruby-ivar">@keep_alive</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-ivar">@cookies</span> = []
+      <span class="ruby-ivar">@request_method</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@request_uri</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@request_http_version</span> = <span class="ruby-ivar">@http_version</span>  <span class="ruby-comment cmt"># temporary</span>
+      <span class="ruby-ivar">@chunked</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-ivar">@filename</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@sent_size</span> = <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M009691" class="m-detail">
+        <a name="M009691"></a>
+
+        <div class="method-heading">
+          <a href="#M009691" class="method-signature">
+          <span class="method-name">[]</span><span class="method-args">(field)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009691-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009691-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 58</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]</span>(<span class="ruby-identifier">field</span>)
+      <span class="ruby-ivar">@header</span>[<span class="ruby-identifier">field</span>.<span class="ruby-identifier">downcase</span>]
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009692" class="m-detail">
+        <a name="M009692"></a>
+
+        <div class="method-heading">
+          <a href="#M009692" class="method-signature">
+          <span class="method-name">[]=</span><span class="method-args">(field, value)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009692-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009692-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 62</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]=</span>(<span class="ruby-identifier">field</span>, <span class="ruby-identifier">value</span>)
+      <span class="ruby-ivar">@header</span>[<span class="ruby-identifier">field</span>.<span class="ruby-identifier">downcase</span>] = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009699" class="m-detail">
+        <a name="M009699"></a>
+
+        <div class="method-heading">
+          <a href="#M009699" class="method-signature">
+          <span class="method-name">chunked=</span><span class="method-args">(val)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009699-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009699-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 92</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">chunked=</span>(<span class="ruby-identifier">val</span>)
+      <span class="ruby-ivar">@chunked</span> = <span class="ruby-identifier">val</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">true</span> <span class="ruby-operator">:</span> <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009698" class="m-detail">
+        <a name="M009698"></a>
+
+        <div class="method-heading">
+          <a href="#M009698" class="method-signature">
+          <span class="method-name">chunked?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009698-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009698-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 88</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">chunked?</span>
+      <span class="ruby-ivar">@chunked</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009693" class="m-detail">
+        <a name="M009693"></a>
+
+        <div class="method-heading">
+          <a href="#M009693" class="method-signature">
+          <span class="method-name">content_length</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009693-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009693-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 66</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">content_length</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">len</span> = <span class="ruby-keyword kw">self</span>[<span class="ruby-value str">'content-length'</span>]
+        <span class="ruby-keyword kw">return</span> <span class="ruby-constant">Integer</span>(<span class="ruby-identifier">len</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009694" class="m-detail">
+        <a name="M009694"></a>
+
+        <div class="method-heading">
+          <a href="#M009694" class="method-signature">
+          <span class="method-name">content_length=</span><span class="method-args">(len)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009694-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009694-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 72</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">content_length=</span>(<span class="ruby-identifier">len</span>)
+      <span class="ruby-keyword kw">self</span>[<span class="ruby-value str">'content-length'</span>] = <span class="ruby-identifier">len</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009695" class="m-detail">
+        <a name="M009695"></a>
+
+        <div class="method-heading">
+          <a href="#M009695" class="method-signature">
+          <span class="method-name">content_type</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009695-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009695-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 76</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">content_type</span>
+      <span class="ruby-keyword kw">self</span>[<span class="ruby-value str">'content-type'</span>]
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009696" class="m-detail">
+        <a name="M009696"></a>
+
+        <div class="method-heading">
+          <a href="#M009696" class="method-signature">
+          <span class="method-name">content_type=</span><span class="method-args">(type)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009696-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009696-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 80</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">content_type=</span>(<span class="ruby-identifier">type</span>)
+      <span class="ruby-keyword kw">self</span>[<span class="ruby-value str">'content-type'</span>] = <span class="ruby-identifier">type</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009697" class="m-detail">
+        <a name="M009697"></a>
+
+        <div class="method-heading">
+          <a href="#M009697" class="method-signature">
+          <span class="method-name">each</span><span class="method-args">() {|k, v| ...}</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009697-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009697-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 84</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each</span>
+      <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span><span class="ruby-operator">|</span>  <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>) }
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009700" class="m-detail">
+        <a name="M009700"></a>
+
+        <div class="method-heading">
+          <a href="#M009700" class="method-signature">
+          <span class="method-name">keep_alive?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009700-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009700-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 96</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">keep_alive?</span>
+      <span class="ruby-ivar">@keep_alive</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009704" class="m-detail">
+        <a name="M009704"></a>
+
+        <div class="method-heading">
+          <a href="#M009704" class="method-signature">
+          <span class="method-name">send_body</span><span class="method-args">(socket)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009704-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009704-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 184</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">send_body</span>(<span class="ruby-identifier">socket</span>)
+      <span class="ruby-keyword kw">case</span> <span class="ruby-ivar">@body</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">IO</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">send_body_io</span>(<span class="ruby-identifier">socket</span>)
+      <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">send_body_string</span>(<span class="ruby-identifier">socket</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009703" class="m-detail">
+        <a name="M009703"></a>
+
+        <div class="method-heading">
+          <a href="#M009703" class="method-signature">
+          <span class="method-name">send_header</span><span class="method-args">(socket)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009703-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009703-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 169</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">send_header</span>(<span class="ruby-identifier">socket</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@http_version</span>.<span class="ruby-identifier">major</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-identifier">data</span> = <span class="ruby-identifier">status_line</span>()
+        <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">tmp</span> = <span class="ruby-identifier">key</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\bwww|^te$|\b\w/</span>){<span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span> <span class="ruby-identifier">s</span>.<span class="ruby-identifier">upcase</span> }
+          <span class="ruby-identifier">data</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;#{tmp}: #{value}&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">CRLF</span>
+        }
+        <span class="ruby-ivar">@cookies</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">cookie</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">data</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;Set-Cookie: &quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">cookie</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">CRLF</span>
+        }
+        <span class="ruby-identifier">data</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">CRLF</span>
+        <span class="ruby-identifier">_write_data</span>(<span class="ruby-identifier">socket</span>, <span class="ruby-identifier">data</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009701" class="m-detail">
+        <a name="M009701"></a>
+
+        <div class="method-heading">
+          <a href="#M009701" class="method-signature">
+          <span class="method-name">send_response</span><span class="method-args">(socket)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009701-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009701-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 100</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">send_response</span>(<span class="ruby-identifier">socket</span>)
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">setup_header</span>()
+        <span class="ruby-identifier">send_header</span>(<span class="ruby-identifier">socket</span>)
+        <span class="ruby-identifier">send_body</span>(<span class="ruby-identifier">socket</span>)
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">EPIPE</span>, <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">ECONNRESET</span>, <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">ENOTCONN</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+        <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-identifier">ex</span>)
+        <span class="ruby-ivar">@keep_alive</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+        <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">error</span>(<span class="ruby-identifier">ex</span>)
+        <span class="ruby-ivar">@keep_alive</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009707" class="m-detail">
+        <a name="M009707"></a>
+
+        <div class="method-heading">
+          <a href="#M009707" class="method-signature">
+          <span class="method-name">set_error</span><span class="method-args">(ex, backtrace=false)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009707-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009707-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 203</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_error</span>(<span class="ruby-identifier">ex</span>, <span class="ruby-identifier">backtrace</span>=<span class="ruby-keyword kw">false</span>)
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">ex</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">Status</span> 
+        <span class="ruby-ivar">@keep_alive</span> = <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-identifier">error?</span>(<span class="ruby-identifier">ex</span>.<span class="ruby-identifier">code</span>)
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">status</span> = <span class="ruby-identifier">ex</span>.<span class="ruby-identifier">code</span>
+      <span class="ruby-keyword kw">else</span> 
+        <span class="ruby-ivar">@keep_alive</span> = <span class="ruby-keyword kw">false</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">status</span> = <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">RC_INTERNAL_SERVER_ERROR</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'content-type'</span>] = <span class="ruby-value str">&quot;text/html&quot;</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:create_error_page</span>)
+        <span class="ruby-identifier">create_error_page</span>()
+        <span class="ruby-keyword kw">return</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@request_uri</span>
+        <span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span> = <span class="ruby-ivar">@request_uri</span>.<span class="ruby-identifier">host</span>, <span class="ruby-ivar">@request_uri</span>.<span class="ruby-identifier">port</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:ServerName</span>], <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:Port</span>]
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@body</span> = <span class="ruby-value str">''</span>
+      <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;!DOCTYPE HTML PUBLIC \&quot;-//W3C//DTD HTML 4.0//EN\&quot;&gt;\n&lt;HTML&gt;\n&lt;HEAD&gt;&lt;TITLE&gt;\#{HTMLUtils::escape(@reason_phrase)}&lt;/TITLE&gt;&lt;/HEAD&gt;\n&lt;BODY&gt;\n&lt;H1&gt;\#{HTMLUtils::escape(@reason_phrase)}&lt;/H1&gt;\n\#{HTMLUtils::escape(ex.message)}\n&lt;HR&gt;\n&quot;</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">backtrace</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">$DEBUG</span>
+        <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;backtrace of `#{HTMLUtils::escape(ex.class.to_s)}' &quot;</span>
+        <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;#{HTMLUtils::escape(ex.message)}&quot;</span>
+        <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;PRE&gt;&quot;</span>
+        <span class="ruby-identifier">ex</span>.<span class="ruby-identifier">backtrace</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;\t#{line}\n&quot;</span>}
+        <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;/PRE&gt;&lt;HR&gt;&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;ADDRESS&gt;\n\#{HTMLUtils::escape(@config[:ServerSoftware])} at\n\#{host}:\#{port}\n&lt;/ADDRESS&gt;\n&lt;/BODY&gt;\n&lt;/HTML&gt;\n&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009706" class="m-detail">
+        <a name="M009706"></a>
+
+        <div class="method-heading">
+          <a href="#M009706" class="method-signature">
+          <span class="method-name">set_redirect</span><span class="method-args">(status, url)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009706-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009706-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 197</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_redirect</span>(<span class="ruby-identifier">status</span>, <span class="ruby-identifier">url</span>)
+      <span class="ruby-ivar">@body</span> = <span class="ruby-node">&quot;&lt;HTML&gt;&lt;A HREF=\&quot;#{url.to_s}\&quot;&gt;#{url.to_s}&lt;/A&gt;.&lt;/HTML&gt;\n&quot;</span>
+      <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'location'</span>] = <span class="ruby-identifier">url</span>.<span class="ruby-identifier">to_s</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-identifier">status</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009702" class="m-detail">
+        <a name="M009702"></a>
+
+        <div class="method-heading">
+          <a href="#M009702" class="method-signature">
+          <span class="method-name">setup_header</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009702-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009702-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 114</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">setup_header</span>()
+      <span class="ruby-ivar">@reason_phrase</span>    <span class="ruby-operator">||=</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-identifier">reason_phrase</span>(<span class="ruby-ivar">@status</span>)
+      <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'server'</span>] <span class="ruby-operator">||=</span> <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:ServerSoftware</span>]
+      <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'date'</span>]   <span class="ruby-operator">||=</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">httpdate</span>
+
+      <span class="ruby-comment cmt"># HTTP/0.9 features</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@request_http_version</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value str">&quot;1.0&quot;</span>
+        <span class="ruby-ivar">@http_version</span> = <span class="ruby-constant">HTTPVersion</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;0.9&quot;</span>)
+        <span class="ruby-ivar">@keep_alive</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-comment cmt"># HTTP/1.0 features</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@request_http_version</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value str">&quot;1.1&quot;</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">chunked?</span>
+          <span class="ruby-ivar">@chunked</span> = <span class="ruby-keyword kw">false</span>
+          <span class="ruby-identifier">ver</span> = <span class="ruby-ivar">@request_http_version</span>.<span class="ruby-identifier">to_s</span>
+          <span class="ruby-identifier">msg</span> = <span class="ruby-node">&quot;chunked is set for an HTTP/#{ver} request. (ignored)&quot;</span>
+          <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">warn</span>(<span class="ruby-identifier">msg</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-comment cmt"># Determin the message length (RFC2616 -- 4.4 Message Length)</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@status</span> <span class="ruby-operator">==</span> <span class="ruby-value">304</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@status</span> <span class="ruby-operator">==</span> <span class="ruby-value">204</span> <span class="ruby-operator">||</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-identifier">info?</span>(<span class="ruby-ivar">@status</span>)
+        <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">'content-length'</span>)
+        <span class="ruby-ivar">@body</span> = <span class="ruby-value str">&quot;&quot;</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">chunked?</span>
+        <span class="ruby-ivar">@header</span>[<span class="ruby-value str">&quot;transfer-encoding&quot;</span>] = <span class="ruby-value str">&quot;chunked&quot;</span>
+        <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">'content-length'</span>)
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-regexp re">%r{^multipart/byteranges}</span> <span class="ruby-operator">=~</span> <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'content-type'</span>]
+        <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">'content-length'</span>)
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'content-length'</span>].<span class="ruby-identifier">nil?</span>
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@body</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">IO</span>)
+          <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'content-length'</span>] = <span class="ruby-ivar">@body</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@body</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">:</span> <span class="ruby-value">0</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-comment cmt"># Keep-Alive connection.</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'connection'</span>] <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;close&quot;</span>
+         <span class="ruby-ivar">@keep_alive</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">keep_alive?</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">chunked?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'content-length'</span>]
+          <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'connection'</span>] = <span class="ruby-value str">&quot;Keep-Alive&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'connection'</span>] = <span class="ruby-value str">&quot;close&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-comment cmt"># Location is a single absoluteURI.</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">location</span> = <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'location'</span>]
+        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@request_uri</span>
+          <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'location'</span>] = <span class="ruby-ivar">@request_uri</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">location</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009690" class="m-detail">
+        <a name="M009690"></a>
+
+        <div class="method-heading">
+          <a href="#M009690" class="method-signature">
+          <span class="method-name">status=</span><span class="method-args">(status)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009690-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009690-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 53</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">status=</span>(<span class="ruby-identifier">status</span>)
+      <span class="ruby-ivar">@status</span> = <span class="ruby-identifier">status</span>
+      <span class="ruby-ivar">@reason_phrase</span> = <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-identifier">reason_phrase</span>(<span class="ruby-identifier">status</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009689" class="m-detail">
+        <a name="M009689"></a>
+
+        <div class="method-heading">
+          <a href="#M009689" class="method-signature">
+          <span class="method-name">status_line</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009689-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009689-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 49</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">status_line</span>
+      <span class="ruby-node">&quot;HTTP/#@http_version #@status #@reason_phrase #{CRLF}&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009705" class="m-detail">
+        <a name="M009705"></a>
+
+        <div class="method-heading">
+          <a href="#M009705" class="method-signature">
+          <span class="method-name">to_s</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009705-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009705-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/httpresponse.rb, line 191</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s</span>
+      <span class="ruby-identifier">ret</span> = <span class="ruby-value str">&quot;&quot;</span>
+      <span class="ruby-identifier">send_response</span>(<span class="ruby-identifier">ret</span>)
+      <span class="ruby-identifier">ret</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 4 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

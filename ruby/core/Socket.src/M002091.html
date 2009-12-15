@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>connect_nonblock (Socket)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *      socket.connect_nonblock(server_sockaddr) =&gt; 0
+ * 
+ * Requests a connection to be made on the given +server_sockaddr+ after
+ * O_NONBLOCK is set for the underlying file descriptor.
+ * Returns 0 if successful, otherwise an exception is raised.
+ *  
+ * === Parameter
+ * * +server_sockaddr+ - the +struct+ sockaddr contained in a string
+ * 
+ * === Example:
+ *      # Pull down Google's web page
+ *      require 'socket'
+ *      include Socket::Constants
+ *      socket = Socket.new(AF_INET, SOCK_STREAM, 0)
+ *      sockaddr = Socket.sockaddr_in(80, 'www.google.com')
+ *      begin
+ *        socket.connect_nonblock(sockaddr)
+ *      rescue Errno::EINPROGRESS
+ *        IO.select(nil, [socket])
+ *        begin
+ *          socket.connect_nonblock(sockaddr)
+ *        rescue Errno::EISCONN
+ *        end
+ *      end
+ *      socket.write(&quot;GET / HTTP/1.0\r\n\r\n&quot;)
+ *      results = socket.read 
+ * 
+ * Refer to Socket#connect for the exceptions that may be thrown if the call
+ * to _connect_nonblock_ fails. 
+ *
+ * Socket#connect_nonblock may raise any error corresponding to connect(2) failure,
+ * including Errno::EINPROGRESS.
+ *
+ * === See
+ * * Socket#connect
+ */
+static VALUE
+sock_connect_nonblock(sock, addr)
+    VALUE sock, addr;
+{
+    OpenFile *fptr;
+    int n;
+
+    StringValue(addr);
+    addr = rb_str_new4(addr);
+    GetOpenFile(sock, fptr);
+    rb_io_set_nonblock(fptr);
+    n = connect(fileno(fptr-&gt;f), (struct sockaddr*)RSTRING(addr)-&gt;ptr, RSTRING(addr)-&gt;len);
+    if (n &lt; 0) {
+        rb_sys_fail(&quot;connect(2)&quot;);
+    }
+
+    return INT2FIX(n);
+}</pre>
+</body>
+</html>

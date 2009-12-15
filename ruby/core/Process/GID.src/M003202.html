@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>re_exchange (Process::GID)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process::GID.re_exchange   =&gt; fixnum
+ *
+ *  Exchange real and effective group IDs and return the new effective
+ *  group ID. Not available on all platforms.
+ *
+ *     [Process.gid, Process.egid]   #=&gt; [0, 33]
+ *     Process::GID.re_exchange      #=&gt; 0
+ *     [Process.gid, Process.egid]   #=&gt; [33, 0]
+ */
+
+static VALUE
+p_gid_exchange(obj)
+    VALUE obj;
+{
+    int gid, egid;
+
+    check_gid_switch();
+
+    gid = getgid();
+    egid = getegid();
+
+#if defined(HAVE_SETRESGID) &amp;&amp;  !defined(__CHECKER__)
+    if (setresgid(egid, gid, gid) &lt; 0) rb_sys_fail(0);
+    SAVED_GROUP_ID = gid;
+#elif defined(HAVE_SETREGID) &amp;&amp; !defined(OBSOLETE_SETREGID)
+    if (setregid(egid,gid) &lt; 0) rb_sys_fail(0);
+    SAVED_GROUP_ID = gid;
+#else
+    rb_notimplement();
+#endif
+    return INT2FIX(gid);
+}</pre>
+</body>
+</html>

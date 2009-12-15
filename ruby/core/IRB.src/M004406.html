@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>irb (IRB)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb/ext/multi-irb.rb, line 148</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">irb</span>(<span class="ruby-identifier">file</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">main</span>)
+    <span class="ruby-identifier">workspace</span> = <span class="ruby-constant">WorkSpace</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">main</span>)
+    <span class="ruby-identifier">parent_thread</span> = <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>
+    <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">start</span> <span class="ruby-keyword kw">do</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">irb</span> = <span class="ruby-constant">Irb</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">workspace</span>, <span class="ruby-identifier">file</span>)
+      <span class="ruby-keyword kw">rescue</span> 
+        <span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;Subirb can't start with context(self): &quot;</span>, <span class="ruby-identifier">workspace</span>.<span class="ruby-identifier">main</span>.<span class="ruby-identifier">inspect</span>, <span class="ruby-value str">&quot;\n&quot;</span>
+        <span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;return to main irb\n&quot;</span>
+        <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">pass</span>
+        <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">main</span>.<span class="ruby-identifier">wakeup</span>
+        <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">exit</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:IRB_RC</span>].<span class="ruby-identifier">call</span>(<span class="ruby-identifier">irb</span>.<span class="ruby-identifier">context</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:IRB_RC</span>]
+      <span class="ruby-ivar">@JobManager</span>.<span class="ruby-identifier">insert</span>(<span class="ruby-identifier">irb</span>)
+      <span class="ruby-ivar">@JobManager</span>.<span class="ruby-identifier">current_job</span> = <span class="ruby-identifier">irb</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">system_exit</span> = <span class="ruby-keyword kw">false</span>
+        <span class="ruby-identifier">catch</span>(<span class="ruby-identifier">:IRB_EXIT</span>) <span class="ruby-keyword kw">do</span>
+          <span class="ruby-identifier">irb</span>.<span class="ruby-identifier">eval_input</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">SystemExit</span>
+        <span class="ruby-identifier">system_exit</span> = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-identifier">raise</span>
+        <span class="ruby-comment cmt">#fail</span>
+      <span class="ruby-keyword kw">ensure</span>
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">system_exit</span>
+          <span class="ruby-ivar">@JobManager</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">irb</span>)
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">parent_thread</span>.<span class="ruby-identifier">alive?</span>
+            <span class="ruby-ivar">@JobManager</span>.<span class="ruby-identifier">current_job</span> = <span class="ruby-ivar">@JobManager</span>.<span class="ruby-identifier">irb</span>(<span class="ruby-identifier">parent_thread</span>)
+            <span class="ruby-identifier">parent_thread</span>.<span class="ruby-identifier">run</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-ivar">@JobManager</span>.<span class="ruby-identifier">current_job</span> = <span class="ruby-ivar">@JobManager</span>.<span class="ruby-identifier">main_irb</span>
+            <span class="ruby-ivar">@JobManager</span>.<span class="ruby-identifier">main_thread</span>.<span class="ruby-identifier">run</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">stop</span>
+    <span class="ruby-ivar">@JobManager</span>.<span class="ruby-identifier">current_job</span> = <span class="ruby-ivar">@JobManager</span>.<span class="ruby-identifier">irb</span>(<span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

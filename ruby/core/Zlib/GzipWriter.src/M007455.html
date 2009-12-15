@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>comment= (Zlib::GzipWriter)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * ???
+ */
+static VALUE
+rb_gzfile_set_comment(obj, str)
+    VALUE obj, str;
+{
+    struct gzfile *gz = get_gzfile(obj);
+    VALUE s;
+    char *p;
+
+    if (gz-&gt;z.flags &amp; GZFILE_FLAG_HEADER_FINISHED) {
+        rb_raise(cGzError, &quot;header is already written&quot;);
+    }
+    s = rb_str_dup(rb_str_to_str(str));
+    p = memchr(RSTRING(s)-&gt;ptr, '\0', RSTRING(s)-&gt;len);
+    if (p) {
+        rb_str_resize(s, p - RSTRING(s)-&gt;ptr);
+    }
+    gz-&gt;comment = s;
+    return str;
+}</pre>
+</body>
+</html>

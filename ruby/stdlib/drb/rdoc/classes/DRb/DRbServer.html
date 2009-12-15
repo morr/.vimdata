@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: DRb::DRbServer</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">DRb::DRbServer</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/drb/drb_rb.html">
+                drb/drb.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Class representing a drb server instance.
+</p>
+<p>
+A <a href="DRbServer.html">DRbServer</a> must be running in the local
+process before any incoming dRuby calls can be accepted, or any local
+objects can be passed as dRuby references to remote processes, even if
+those local objects are never actually called remotely. You do not need to
+start a <a href="DRbServer.html">DRbServer</a> in the local process if you
+are only making outgoing dRuby calls passing marshalled parameters.
+</p>
+<p>
+Unless multiple servers are being used, the local <a
+href="DRbServer.html">DRbServer</a> is normally started by calling <a
+href="../DRb.html#M000230">DRb.start_service</a>.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000263">alive?</a>&nbsp;&nbsp;
+      <a href="#M000267">check_insecure_method</a>&nbsp;&nbsp;
+      <a href="#M000255">default_acl</a>&nbsp;&nbsp;
+      <a href="#M000253">default_argc_limit</a>&nbsp;&nbsp;
+      <a href="#M000256">default_id_conv</a>&nbsp;&nbsp;
+      <a href="#M000254">default_load_limit</a>&nbsp;&nbsp;
+      <a href="#M000257">default_safe_level</a>&nbsp;&nbsp;
+      <a href="#M000260">new</a>&nbsp;&nbsp;
+      <a href="#M000264">stop_service</a>&nbsp;&nbsp;
+      <a href="#M000266">to_id</a>&nbsp;&nbsp;
+      <a href="#M000265">to_obj</a>&nbsp;&nbsp;
+      <a href="#M000259">verbose</a>&nbsp;&nbsp;
+      <a href="#M000262">verbose</a>&nbsp;&nbsp;
+      <a href="#M000258">verbose=</a>&nbsp;&nbsp;
+      <a href="#M000261">verbose=</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">INSECURE_METHOD</td>
+          <td>=</td>
+          <td class="context-item-value">[       :__send__</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+List of insecure methods.
+
+<p>
+These methods are not callable via dRuby.
+</p>
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">config</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The configuration of this <a href="DRbServer.html">DRbServer</a>
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">front</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The front object of the <a href="DRbServer.html">DRbServer</a>.
+
+<p>
+This object receives remote method calls made on the server&#8216;s URI
+alone, with an object id.
+</p>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">safe_level</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">thread</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The main thread of this <a href="DRbServer.html">DRbServer</a>.
+
+<p>
+This is the thread that listens for and accepts connections from clients,
+not that handles each client&#8216;s request-response session.
+</p>
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">uri</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The URI of this <a href="DRbServer.html">DRbServer</a>.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000255" class="method-detail">
+        <a name="M000255"></a>
+
+        <div class="method-heading">
+          <a href="#M000255" class="method-signature">
+          <span class="method-name">default_acl</span><span class="method-args">(acl)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the default value for the :acl option.
+</p>
+<p>
+See <a href="DRbServer.html#M000260">new</a>(). The initial default value
+is nil.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000255-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000255-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1246</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">default_acl</span>(<span class="ruby-identifier">acl</span>)
+      <span class="ruby-ivar">@@acl</span> = <span class="ruby-identifier">acl</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000253" class="method-detail">
+        <a name="M000253"></a>
+
+        <div class="method-heading">
+          <a href="#M000253" class="method-signature">
+          <span class="method-name">default_argc_limit</span><span class="method-args">(argc)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the default value for the :argc_limit option.
+</p>
+<p>
+See <a href="DRbServer.html#M000260">new</a>(). The initial default value
+is 256.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000253-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000253-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1232</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">default_argc_limit</span>(<span class="ruby-identifier">argc</span>)
+      <span class="ruby-ivar">@@argc_limit</span> = <span class="ruby-identifier">argc</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000256" class="method-detail">
+        <a name="M000256"></a>
+
+        <div class="method-heading">
+          <a href="#M000256" class="method-signature">
+          <span class="method-name">default_id_conv</span><span class="method-args">(idconv)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the default value for the :id_conv option.
+</p>
+<p>
+See <a href="DRbServer.html#M000260">new</a>(). The initial default value
+is a <a href="DRbIdConv.html">DRbIdConv</a> instance.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000256-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000256-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1253</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">default_id_conv</span>(<span class="ruby-identifier">idconv</span>)
+      <span class="ruby-ivar">@@idconv</span> = <span class="ruby-identifier">idconv</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000254" class="method-detail">
+        <a name="M000254"></a>
+
+        <div class="method-heading">
+          <a href="#M000254" class="method-signature">
+          <span class="method-name">default_load_limit</span><span class="method-args">(sz)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the default value for the :load_limit option.
+</p>
+<p>
+See <a href="DRbServer.html#M000260">new</a>(). The initial default value
+is 25 MB.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000254-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000254-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1239</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">default_load_limit</span>(<span class="ruby-identifier">sz</span>)
+      <span class="ruby-ivar">@@load_limit</span> = <span class="ruby-identifier">sz</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000257" class="method-detail">
+        <a name="M000257"></a>
+
+        <div class="method-heading">
+          <a href="#M000257" class="method-signature">
+          <span class="method-name">default_safe_level</span><span class="method-args">(level)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000257-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000257-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1257</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">default_safe_level</span>(<span class="ruby-identifier">level</span>)
+      <span class="ruby-ivar">@@safe_level</span> = <span class="ruby-identifier">level</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000260" class="method-detail">
+        <a name="M000260"></a>
+
+        <div class="method-heading">
+          <a href="#M000260" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(uri=nil, front=nil, config_or_acl=nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="DRbServer.html#M000260">new</a> <a
+href="DRbServer.html">DRbServer</a> instance.
+</p>
+<p>
+<tt>uri</tt> is the URI to bind to. This is normally of the form
+&#8216;druby://&lt;hostname&gt;:&lt;port&gt;&#8217; where &lt;hostname&gt;
+is a hostname of the local machine. If nil, then the system&#8216;s default
+hostname will be bound to, on a port selected by the system; these value
+can be retrieved from the <tt>uri</tt> attribute. &#8216;druby:&#8217;
+specifies the default dRuby transport protocol: another protocol, such as
+&#8216;drbunix:&#8217;, can be specified instead.
+</p>
+<p>
+<tt>front</tt> is the front object for the server, that is, the object to
+which remote method calls on the server will be passed. If nil, then the
+server will not accept remote method calls.
+</p>
+<p>
+If <tt>config_or_acl</tt> is a hash, it is the configuration to use for
+this server. The following options are recognised:
+</p>
+<table>
+<tr><td valign="top">:idconv :</td><td>an id-to-object conversion object. This defaults to an instance of the
+class <a href="DRbIdConv.html">DRb::DRbIdConv</a>.
+
+</td></tr>
+<tr><td valign="top">:<a href="DRbServer.html#M000259">verbose</a> :</td><td>if true, all unsuccessful remote calls on objects in the server will be
+logged to $stdout. false by default.
+
+</td></tr>
+<tr><td valign="top">:tcp_acl :</td><td>the access control list for this server. See the ACL class from the main
+dRuby distribution.
+
+</td></tr>
+<tr><td valign="top">:load_limit :</td><td>the maximum message size in bytes accepted by the server. Defaults to 25 MB
+(26214400).
+
+</td></tr>
+<tr><td valign="top">:argc_limit :</td><td>the maximum number of arguments to a remote method accepted by the server.
+Defaults to 256.
+
+</td></tr>
+</table>
+<p>
+The default values of these options can be modified on a class-wide basis
+by the class methods <a
+href="DRbServer.html#M000253">default_argc_limit</a>, <a
+href="DRbServer.html#M000254">default_load_limit</a>, <a
+href="DRbServer.html#M000255">default_acl</a>, <a
+href="DRbServer.html#M000256">default_id_conv</a>, and <a
+href="DRbServer.html#M000259">verbose</a>=
+</p>
+<p>
+If <tt>config_or_acl</tt> is not a hash, but is not nil, it is assumed to
+be the access control list for this server. See the :tcp_acl option for
+more details.
+</p>
+<p>
+If no other server is currently set as the primary server, this will become
+the primary server.
+</p>
+<p>
+The server will immediately start running in its own thread.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000260-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000260-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1328</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">uri</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">front</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">config_or_acl</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Hash</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">config_or_acl</span>
+        <span class="ruby-identifier">config</span> = <span class="ruby-identifier">config_or_acl</span>.<span class="ruby-identifier">dup</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">acl</span> = <span class="ruby-identifier">config_or_acl</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@@acl</span>
+        <span class="ruby-identifier">config</span> = {
+          <span class="ruby-identifier">:tcp_acl</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">acl</span>
+        }
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@config</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">make_config</span>(<span class="ruby-identifier">config</span>)
+
+      <span class="ruby-ivar">@protocol</span> = <span class="ruby-constant">DRbProtocol</span>.<span class="ruby-identifier">open_server</span>(<span class="ruby-identifier">uri</span>, <span class="ruby-ivar">@config</span>)
+      <span class="ruby-ivar">@uri</span> = <span class="ruby-ivar">@protocol</span>.<span class="ruby-identifier">uri</span>
+
+      <span class="ruby-ivar">@front</span> = <span class="ruby-identifier">front</span>
+      <span class="ruby-ivar">@idconv</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:idconv</span>]
+      <span class="ruby-ivar">@safe_level</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:safe_level</span>]
+
+      <span class="ruby-ivar">@grp</span> = <span class="ruby-constant">ThreadGroup</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-ivar">@thread</span> = <span class="ruby-identifier">run</span>
+
+      <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">regist_server</span>(<span class="ruby-keyword kw">self</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000259" class="method-detail">
+        <a name="M000259"></a>
+
+        <div class="method-heading">
+          <a href="#M000259" class="method-signature">
+          <span class="method-name">verbose</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get the default value of the :<a href="DRbServer.html#M000259">verbose</a>
+option.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000259-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000259-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1269</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">verbose</span>
+      <span class="ruby-ivar">@@verbose</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000258" class="method-detail">
+        <a name="M000258"></a>
+
+        <div class="method-heading">
+          <a href="#M000258" class="method-signature">
+          <span class="method-name">verbose=</span><span class="method-args">(on)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the default value of the :<a href="DRbServer.html#M000259">verbose</a>
+option.
+</p>
+<p>
+See <a href="DRbServer.html#M000260">new</a>(). The initial default value
+is false.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000258-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000258-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1264</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">verbose=</span>(<span class="ruby-identifier">on</span>)
+      <span class="ruby-ivar">@@verbose</span> = <span class="ruby-identifier">on</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000263" class="method-detail">
+        <a name="M000263"></a>
+
+        <div class="method-heading">
+          <a href="#M000263" class="method-signature">
+          <span class="method-name">alive?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Is this server <a href="DRbServer.html#M000263">alive?</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000263-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000263-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1385</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">alive?</span>
+      <span class="ruby-ivar">@thread</span>.<span class="ruby-identifier">alive?</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000267" class="method-detail">
+        <a name="M000267"></a>
+
+        <div class="method-heading">
+          <a href="#M000267" class="method-signature">
+          <span class="method-name">check_insecure_method</span><span class="method-args">(obj, msg_id)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Check that a method is callable via dRuby.
+</p>
+<p>
+<tt>obj</tt> is the object we want to invoke the method on. <tt>msg_id</tt>
+is the method name, as a Symbol.
+</p>
+<p>
+If the method is an insecure method (see insecure_method?) a SecurityError
+is thrown. If the method is private or undefined, a NameError is thrown.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000267-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000267-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1468</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">check_insecure_method</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">msg_id</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Proc</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">obj</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">msg_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:__drb_yield</span>
+      <span class="ruby-identifier">raise</span>(<span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;#{any_to_s(msg_id)} is not a symbol&quot;</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">Symbol</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">msg_id</span>.<span class="ruby-identifier">class</span>
+      <span class="ruby-identifier">raise</span>(<span class="ruby-constant">SecurityError</span>, <span class="ruby-node">&quot;insecure method `#{msg_id}'&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">insecure_method?</span>(<span class="ruby-identifier">msg_id</span>)
+      
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">private_methods</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">msg_id</span>.<span class="ruby-identifier">to_s</span>)
+        <span class="ruby-identifier">desc</span> = <span class="ruby-identifier">any_to_s</span>(<span class="ruby-identifier">obj</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">NoMethodError</span>, <span class="ruby-node">&quot;private method `#{msg_id}' called for #{desc}&quot;</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">protected_methods</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">msg_id</span>.<span class="ruby-identifier">to_s</span>)
+        <span class="ruby-identifier">desc</span> = <span class="ruby-identifier">any_to_s</span>(<span class="ruby-identifier">obj</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">NoMethodError</span>, <span class="ruby-node">&quot;protected method `#{msg_id}' called for #{desc}&quot;</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000264" class="method-detail">
+        <a name="M000264"></a>
+
+        <div class="method-heading">
+          <a href="#M000264" class="method-signature">
+          <span class="method-name">stop_service</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Stop this server.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000264-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000264-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1390</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">stop_service</span>
+      <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">remove_server</span>(<span class="ruby-keyword kw">self</span>)
+      <span class="ruby-keyword kw">if</span>  <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>[<span class="ruby-value str">'DRb'</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>[<span class="ruby-value str">'DRb'</span>][<span class="ruby-value str">'server'</span>] <span class="ruby-operator">==</span> <span class="ruby-keyword kw">self</span>
+        <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>[<span class="ruby-value str">'DRb'</span>][<span class="ruby-value str">'stop_service'</span>] = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@thread</span>.<span class="ruby-identifier">kill</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000266" class="method-detail">
+        <a name="M000266"></a>
+
+        <div class="method-heading">
+          <a href="#M000266" class="method-signature">
+          <span class="method-name">to_id</span><span class="method-args">(obj)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a local object to a dRuby reference.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000266-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000266-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1407</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_id</span>(<span class="ruby-identifier">obj</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">__id__</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">front</span>.<span class="ruby-identifier">__id__</span>
+      <span class="ruby-ivar">@idconv</span>.<span class="ruby-identifier">to_id</span>(<span class="ruby-identifier">obj</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000265" class="method-detail">
+        <a name="M000265"></a>
+
+        <div class="method-heading">
+          <a href="#M000265" class="method-signature">
+          <span class="method-name">to_obj</span><span class="method-args">(ref)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert a dRuby reference to the local object it refers to.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000265-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000265-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1400</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_obj</span>(<span class="ruby-identifier">ref</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">front</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ref</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">front</span>[<span class="ruby-identifier">ref</span>.<span class="ruby-identifier">to_s</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-constant">DRbURIOption</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">ref</span>
+      <span class="ruby-ivar">@idconv</span>.<span class="ruby-identifier">to_obj</span>(<span class="ruby-identifier">ref</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000262" class="method-detail">
+        <a name="M000262"></a>
+
+        <div class="method-heading">
+          <a href="#M000262" class="method-signature">
+          <span class="method-name">verbose</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Get whether the server is in <a href="DRbServer.html#M000259">verbose</a>
+mode.
+</p>
+<p>
+In <a href="DRbServer.html#M000259">verbose</a> mode, failed calls are
+logged to stdout.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000262-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000262-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1382</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">verbose</span>; <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:verbose</span>]; <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000261" class="method-detail">
+        <a name="M000261"></a>
+
+        <div class="method-heading">
+          <a href="#M000261" class="method-signature">
+          <span class="method-name">verbose=</span><span class="method-args">(v)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set whether to operate in <a href="DRbServer.html#M000259">verbose</a>
+mode.
+</p>
+<p>
+In <a href="DRbServer.html#M000259">verbose</a> mode, failed calls are
+logged to stdout.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000261-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000261-source">
+<pre>
+<span class="ruby-comment cmt"># File drb/drb.rb, line 1377</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">verbose=</span>(<span class="ruby-identifier">v</span>); <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:verbose</span>]=<span class="ruby-identifier">v</span>; <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

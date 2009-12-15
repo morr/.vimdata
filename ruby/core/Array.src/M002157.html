@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>== (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* 
+ *  call-seq:
+ *     array == other_array   -&gt;   bool
+ *
+ *  Equality---Two arrays are equal if they contain the same number
+ *  of elements and if each element is equal to (according to
+ *  Object.==) the corresponding element in the other array.
+ *
+ *     [ &quot;a&quot;, &quot;c&quot; ]    == [ &quot;a&quot;, &quot;c&quot;, 7 ]     #=&gt; false
+ *     [ &quot;a&quot;, &quot;c&quot;, 7 ] == [ &quot;a&quot;, &quot;c&quot;, 7 ]     #=&gt; true
+ *     [ &quot;a&quot;, &quot;c&quot;, 7 ] == [ &quot;a&quot;, &quot;d&quot;, &quot;f&quot; ]   #=&gt; false
+ *
+ */
+
+static VALUE
+rb_ary_equal(ary1, ary2)
+    VALUE ary1, ary2;
+{
+    if (ary1 == ary2) return Qtrue;
+    if (TYPE(ary2) != T_ARRAY) {
+        if (!rb_respond_to(ary2, rb_intern(&quot;to_ary&quot;))) {
+            return Qfalse;
+        }
+        return rb_equal(ary2, ary1);
+    }
+    if (RARRAY(ary1)-&gt;len != RARRAY(ary2)-&gt;len) return Qfalse;
+    if (rb_inspecting_p(ary1)) return Qfalse;
+    return rb_protect_inspect(recursive_equal, ary1, ary2);
+}</pre>
+</body>
+</html>

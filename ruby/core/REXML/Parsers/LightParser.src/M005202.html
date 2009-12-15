@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>parse (REXML::Parsers::LightParser)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/parsers/lightparser.rb, line 22</span>
+                        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse</span>
+                                <span class="ruby-identifier">root</span> = <span class="ruby-identifier">context</span> = [ <span class="ruby-identifier">:document</span> ]
+                                <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+                                        <span class="ruby-identifier">event</span> = <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">pull</span>
+                                        <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">0</span>]
+                                        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:end_document</span>
+                                                <span class="ruby-keyword kw">break</span>
+                                        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:end_doctype</span>
+                                                <span class="ruby-identifier">context</span> = <span class="ruby-identifier">context</span>[<span class="ruby-value">1</span>]
+                                        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:start_element</span>, <span class="ruby-identifier">:start_doctype</span>
+                                                <span class="ruby-identifier">new_node</span> = <span class="ruby-identifier">event</span>
+                                                <span class="ruby-identifier">context</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">new_node</span>
+                                                <span class="ruby-identifier">new_node</span>[<span class="ruby-value">1</span>,<span class="ruby-value">0</span>] = [<span class="ruby-identifier">context</span>]
+                                                <span class="ruby-identifier">context</span> = <span class="ruby-identifier">new_node</span>
+                                        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:end_element</span>, <span class="ruby-identifier">:end_doctype</span>
+                                                <span class="ruby-identifier">context</span> = <span class="ruby-identifier">context</span>[<span class="ruby-value">1</span>]
+                                        <span class="ruby-keyword kw">else</span>
+                                                <span class="ruby-identifier">new_node</span> = <span class="ruby-identifier">event</span>
+                                                <span class="ruby-identifier">context</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">new_node</span>
+                                                <span class="ruby-identifier">new_node</span>[<span class="ruby-value">1</span>,<span class="ruby-value">0</span>] = [<span class="ruby-identifier">context</span>]
+                                        <span class="ruby-keyword kw">end</span>
+                                <span class="ruby-keyword kw">end</span>
+                                <span class="ruby-identifier">root</span>
+                        <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>&lt;&lt; (Zlib::Inflate)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: &lt;&lt; string
+ *
+ * Inputs +string+ into the inflate stream just like Zlib::Inflate#inflate, but
+ * returns the Zlib::Inflate object itself.  The output from the stream is
+ * preserved in output buffer.
+ */
+static VALUE
+rb_inflate_addstr(obj, src)
+    VALUE obj, src;
+{
+    struct zstream *z = get_zstream(obj);
+
+    OBJ_INFECT(obj, src);
+
+    if (ZSTREAM_IS_FINISHED(z)) {
+        if (!NIL_P(src)) {
+            StringValue(src);
+            zstream_append_buffer2(z, src);
+        }
+    }
+    else {
+        do_inflate(z, src);
+        if (ZSTREAM_IS_FINISHED(z)) {
+            zstream_passthrough_input(z);
+        }
+    }
+
+    return obj;
+}</pre>
+</body>
+</html>

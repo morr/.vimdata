@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>localtime (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     time.localtime =&gt; time
+ *  
+ *  Converts &lt;i&gt;time&lt;/i&gt; to local time (using the local time zone in
+ *  effect for this process) modifying the receiver.
+ *     
+ *     t = Time.gm(2000, &quot;jan&quot;, 1, 20, 15, 1)
+ *     t.gmt?        #=&gt; true
+ *     t.localtime   #=&gt; Sat Jan 01 14:15:01 CST 2000
+ *     t.gmt?        #=&gt; false
+ */
+
+static VALUE
+time_localtime(time)
+    VALUE time;
+{
+    struct time_object *tobj;
+    struct tm *tm_tmp;
+    time_t t;
+
+    GetTimeval(time, tobj);
+    if (!tobj-&gt;gmt) {
+        if (tobj-&gt;tm_got)
+            return time;
+    }
+    else {
+        time_modify(time);
+    }
+    t = tobj-&gt;tv.tv_sec;
+    tm_tmp = localtime(&amp;t);
+    if (!tm_tmp)
+        rb_raise(rb_eArgError, &quot;localtime error&quot;);
+    tobj-&gt;tm = *tm_tmp;
+    tobj-&gt;tm_got = 1;
+    tobj-&gt;gmt = 0;
+    return time;
+}</pre>
+</body>
+</html>

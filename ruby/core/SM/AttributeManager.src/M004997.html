@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>convert_attrs (SM::AttributeManager)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/markup/simple_markup/inline.rb, line 148</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">convert_attrs</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">attrs</span>)
+      <span class="ruby-comment cmt"># first do matching ones</span>
+      <span class="ruby-identifier">tags</span> = <span class="ruby-constant">MATCHING_WORD_PAIRS</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;&quot;</span>)
+      <span class="ruby-identifier">re</span> = <span class="ruby-node">&quot;(^|\\W)([#{tags}])([A-Za-z_]+?)\\2(\\W|\$)&quot;</span>
+<span class="ruby-comment cmt">#      re = &quot;(^|\\W)([#{tags}])(\\S+?)\\2(\\W|\$)&quot;</span>
+      <span class="ruby-value">1</span> <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">re</span>)) {
+        <span class="ruby-identifier">attr</span> = <span class="ruby-constant">MATCHING_WORD_PAIRS</span>[<span class="ruby-identifier">$2</span>];
+        <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">set_attrs</span>(<span class="ruby-identifier">$`</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$2</span>.<span class="ruby-identifier">length</span>, <span class="ruby-identifier">$3</span>.<span class="ruby-identifier">length</span>, <span class="ruby-identifier">attr</span>)
+        <span class="ruby-identifier">$1</span> <span class="ruby-operator">+</span> <span class="ruby-constant">NULL</span><span class="ruby-operator">*</span><span class="ruby-identifier">$2</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$3</span> <span class="ruby-operator">+</span> <span class="ruby-constant">NULL</span><span class="ruby-operator">*</span><span class="ruby-identifier">$2</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$4</span>
+      }
+
+      <span class="ruby-comment cmt"># then non-matching</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">WORD_PAIR_MAP</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-constant">WORD_PAIR_MAP</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">regexp</span>, <span class="ruby-identifier">attr</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-identifier">regexp</span>) { 
+            <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">set_attrs</span>(<span class="ruby-identifier">$`</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">length</span>, <span class="ruby-identifier">$2</span>.<span class="ruby-identifier">length</span>, <span class="ruby-identifier">attr</span>)
+            <span class="ruby-constant">NULL</span><span class="ruby-operator">*</span><span class="ruby-identifier">$1</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$2</span> <span class="ruby-operator">+</span> <span class="ruby-constant">NULL</span><span class="ruby-operator">*</span><span class="ruby-identifier">$3</span>.<span class="ruby-identifier">length</span>
+          }
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

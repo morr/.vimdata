@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>rest (StringScanner)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Returns the &quot;rest&quot; of the string (i.e. everything after the scan pointer).
+ * If there is no more data (eos? = true), it returns &lt;tt&gt;&quot;&quot;&lt;/tt&gt;.
+ */
+static VALUE
+strscan_rest(VALUE self)
+{
+    struct strscanner *p;
+
+    GET_SCANNER(self, p);
+    if (EOS_P(p)) {
+        return infect(rb_str_new(&quot;&quot;, 0), p);
+    }
+    return extract_range(p, p-&gt;curr, S_LEN(p));
+}</pre>
+</body>
+</html>

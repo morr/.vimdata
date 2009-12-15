@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (SystemCallError)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   SystemCallError.new(msg, errno)  =&gt; system_call_error_subclass
+ *
+ * If _errno_ corresponds to a known system error code, constructs
+ * the appropriate &lt;code&gt;Errno&lt;/code&gt; class for that error, otherwise
+ * constructs a generic &lt;code&gt;SystemCallError&lt;/code&gt; object. The
+ * error number is subsequently available via the &lt;code&gt;errno&lt;/code&gt;
+ * method.
+ */
+
+static VALUE
+syserr_initialize(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+#if !defined(_WIN32) &amp;&amp; !defined(__VMS)
+    char *strerror();
+#endif
+    char *err;
+    VALUE mesg, error;
+    VALUE klass = rb_obj_class(self);
+
+    if (klass == rb_eSystemCallError) {
+        rb_scan_args(argc, argv, &quot;11&quot;, &amp;mesg, &amp;error);
+        if (argc == 1 &amp;&amp; FIXNUM_P(mesg)) {
+            error = mesg; mesg = Qnil;
+        }
+        if (!NIL_P(error) &amp;&amp; st_lookup(syserr_tbl, NUM2LONG(error), &amp;klass)) {
+            /* change class */
+            if (TYPE(self) != T_OBJECT) { /* insurance to avoid type crash */
+                rb_raise(rb_eTypeError, &quot;invalid instance type&quot;);
+            }
+            RBASIC(self)-&gt;klass = klass;
+        }
+    }
+    else {
+        rb_scan_args(argc, argv, &quot;01&quot;, &amp;mesg);
+        error = rb_const_get(klass, rb_intern(&quot;Errno&quot;));
+    }
+    if (!NIL_P(error)) err = strerror(NUM2LONG(error));
+    else err = &quot;unknown error&quot;;
+    if (!NIL_P(mesg)) {
+        VALUE str = mesg;
+        size_t len;
+
+        StringValue(str);
+        len = strlen(err)+RSTRING(str)-&gt;len+3;
+        mesg = rb_str_new(0, len);
+        snprintf(RSTRING(mesg)-&gt;ptr, len+1, &quot;%s - %.*s&quot;, err,
+                (int)RSTRING(str)-&gt;len, RSTRING(str)-&gt;ptr);
+        rb_str_resize(mesg, strlen(RSTRING(mesg)-&gt;ptr));
+    }
+    else {
+        mesg = rb_str_new2(err);
+    }
+    rb_call_super(1, &amp;mesg);
+    rb_iv_set(self, &quot;errno&quot;, error);
+    return self;
+}</pre>
+</body>
+</html>

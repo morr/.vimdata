@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (SM::Line)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/markup/simple_markup/lines.rb, line 42</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">text</span>)
+      <span class="ruby-ivar">@text</span>    = <span class="ruby-identifier">text</span>.<span class="ruby-identifier">dup</span>
+      <span class="ruby-ivar">@deleted</span> = <span class="ruby-keyword kw">false</span>
+
+      <span class="ruby-comment cmt"># expand tabs</span>
+      <span class="ruby-value">1</span> <span class="ruby-keyword kw">while</span> <span class="ruby-ivar">@text</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/\t+/</span>) { <span class="ruby-value str">' '</span> <span class="ruby-operator">*</span> (<span class="ruby-value">8</span><span class="ruby-operator">*</span><span class="ruby-identifier">$&amp;</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">$`</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">%</span> <span class="ruby-value">8</span>)}  <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">$~</span> <span class="ruby-comment cmt">#`</span>
+
+      <span class="ruby-comment cmt"># Strip trailing whitespace</span>
+      <span class="ruby-ivar">@text</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/\s+$/</span>, <span class="ruby-value str">''</span>)
+
+      <span class="ruby-comment cmt"># and look for leading whitespace</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@text</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-ivar">@text</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^(\s*)/</span>
+        <span class="ruby-ivar">@leading_spaces</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">length</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@leading_spaces</span> = <span class="ruby-constant">INFINITY</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

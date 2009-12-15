@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>list (Signal)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   Signal.list =&gt; a_hash
+ *
+ * Returns a list of signal names mapped to the corresponding
+ * underlying signal numbers.
+ *
+ * Signal.list   #=&gt; {&quot;ABRT&quot;=&gt;6, &quot;ALRM&quot;=&gt;14, &quot;BUS&quot;=&gt;7, &quot;CHLD&quot;=&gt;17, &quot;CLD&quot;=&gt;17, &quot;CONT&quot;=&gt;18, &quot;FPE&quot;=&gt;8, &quot;HUP&quot;=&gt;1, &quot;ILL&quot;=&gt;4, &quot;INT&quot;=&gt;2, &quot;IO&quot;=&gt;29, &quot;IOT&quot;=&gt;6, &quot;KILL&quot;=&gt;9, &quot;PIPE&quot;=&gt;13, &quot;POLL&quot;=&gt;29, &quot;PROF&quot;=&gt;27, &quot;PWR&quot;=&gt;30, &quot;QUIT&quot;=&gt;3, &quot;SEGV&quot;=&gt;11, &quot;STOP&quot;=&gt;19, &quot;SYS&quot;=&gt;31, &quot;TERM&quot;=&gt;15, &quot;TRAP&quot;=&gt;5, &quot;TSTP&quot;=&gt;20, &quot;TTIN&quot;=&gt;21, &quot;TTOU&quot;=&gt;22, &quot;URG&quot;=&gt;23, &quot;USR1&quot;=&gt;10, &quot;USR2&quot;=&gt;12, &quot;VTALRM&quot;=&gt;26, &quot;WINCH&quot;=&gt;28, &quot;XCPU&quot;=&gt;24, &quot;XFSZ&quot;=&gt;25}
+ */
+static VALUE
+sig_list()
+{
+    VALUE h = rb_hash_new();
+    struct signals *sigs;
+
+    for (sigs = siglist; sigs-&gt;signm; sigs++) {
+        rb_hash_aset(h, rb_str_new2(sigs-&gt;signm), INT2FIX(sigs-&gt;signo));
+    }
+    return h;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_a (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     time.to_a =&gt; array
+ *  
+ *  Returns a ten-element &lt;i&gt;array&lt;/i&gt; of values for &lt;i&gt;time&lt;/i&gt;:
+ *  {&lt;code&gt;[ sec, min, hour, day, month, year, wday, yday, isdst, zone
+ *  ]&lt;/code&gt;}. See the individual methods for an explanation of the
+ *  valid ranges of each value. The ten elements can be passed directly
+ *  to &lt;code&gt;Time::utc&lt;/code&gt; or &lt;code&gt;Time::local&lt;/code&gt; to create a
+ *  new &lt;code&gt;Time&lt;/code&gt;.
+ *     
+ *     now = Time.now   #=&gt; Wed Apr 09 08:56:04 CDT 2003
+ *     t = now.to_a     #=&gt; [4, 56, 8, 9, 4, 2003, 3, 99, true, &quot;CDT&quot;]
+ */
+
+static VALUE
+time_to_a(time)
+    VALUE time;
+{
+    struct time_object *tobj;
+
+    GetTimeval(time, tobj);
+    if (tobj-&gt;tm_got == 0) {
+        time_get_tm(time, tobj-&gt;gmt);
+    }
+    return rb_ary_new3(10,
+                    INT2FIX(tobj-&gt;tm.tm_sec),
+                    INT2FIX(tobj-&gt;tm.tm_min),
+                    INT2FIX(tobj-&gt;tm.tm_hour),
+                    INT2FIX(tobj-&gt;tm.tm_mday),
+                    INT2FIX(tobj-&gt;tm.tm_mon+1),
+                    LONG2NUM((long)tobj-&gt;tm.tm_year+1900),
+                    INT2FIX(tobj-&gt;tm.tm_wday),
+                    INT2FIX(tobj-&gt;tm.tm_yday+1),
+                    tobj-&gt;tm.tm_isdst?Qtrue:Qfalse,
+                    time_zone(time));
+}</pre>
+</body>
+</html>

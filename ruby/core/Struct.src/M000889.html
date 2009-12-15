@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Struct)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ */
+
+static VALUE
+rb_struct_initialize(self, values)
+    VALUE self, values;
+{
+    VALUE klass = rb_obj_class(self);
+    VALUE size;
+    long n;
+
+    rb_struct_modify(self);
+    size = rb_struct_iv_get(klass, &quot;__size__&quot;);
+    n = FIX2LONG(size);
+    if (n &lt; RARRAY(values)-&gt;len) {
+        rb_raise(rb_eArgError, &quot;struct size differs&quot;);
+    }
+    MEMCPY(RSTRUCT(self)-&gt;ptr, RARRAY(values)-&gt;ptr, VALUE, RARRAY(values)-&gt;len);
+    if (n &gt; RARRAY(values)-&gt;len) {
+        rb_mem_clear(RSTRUCT(self)-&gt;ptr+RARRAY(values)-&gt;len,
+                     n-RARRAY(values)-&gt;len);
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

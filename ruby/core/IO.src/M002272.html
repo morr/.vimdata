@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>gets (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.gets(sep_string=$/)   =&gt; string or nil
+ *  
+ *  Reads the next ``line'' from the I/O stream; lines are separated by
+ *  &lt;i&gt;sep_string&lt;/i&gt;. A separator of &lt;code&gt;nil&lt;/code&gt; reads the entire
+ *  contents, and a zero-length separator reads the input a paragraph at
+ *  a time (two successive newlines in the input separate paragraphs).
+ *  The stream must be opened for reading or an &lt;code&gt;IOError&lt;/code&gt;
+ *  will be raised. The line read in will be returned and also assigned
+ *  to &lt;code&gt;$_&lt;/code&gt;. Returns &lt;code&gt;nil&lt;/code&gt; if called at end of
+ *  file.
+ *     
+ *     File.new(&quot;testfile&quot;).gets   #=&gt; &quot;This is line one\n&quot;
+ *     $_                          #=&gt; &quot;This is line one\n&quot;
+ */
+
+static VALUE
+rb_io_gets_m(argc, argv, io)
+    int argc;
+    VALUE *argv;
+    VALUE io;
+{
+    VALUE rs, str;
+
+    if (argc == 0) {
+        rs = rb_rs;
+    }
+    else {
+        rb_scan_args(argc, argv, &quot;1&quot;, &amp;rs);
+        if (!NIL_P(rs)) StringValue(rs);
+    }
+    str = rb_io_getline(rs, io);
+    rb_lastline_set(str);
+
+    return str;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,1188 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: CGI</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">CGI</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/lib/cgi/session_rb.html">
+                lib/cgi/session.rb
+                </a>
+        <br />
+                <a href="../files/lib/cgi_rb.html">
+                lib/cgi.rb
+                </a>
+        <br />
+                <a href="../files/lib/cgi-lib_rb.html">
+                lib/cgi-lib.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="CGI.html">CGI</a> class. See documentation for the file cgi.rb for
+an overview of the <a href="CGI.html">CGI</a> protocol.
+</p>
+<h2>Introduction</h2>
+<p>
+<a href="CGI.html">CGI</a> is a large class, providing several categories
+of methods, many of which are mixed in from other modules. Some of the
+documentation is in this class, some in the modules <a
+href="CGI/QueryExtension.html">CGI::QueryExtension</a> and <a
+href="CGI/HtmlExtension.html">CGI::HtmlExtension</a>. See <a
+href="CGI/Cookie.html">CGI::Cookie</a> for specific information on handling
+cookies, and cgi/session.rb (<a href="CGI/Session.html">CGI::Session</a>)
+for information on sessions.
+</p>
+<p>
+For queries, <a href="CGI.html">CGI</a> provides methods to get at
+environmental variables, parameters, cookies, and multipart request data.
+For responses, <a href="CGI.html">CGI</a> provides methods for writing
+output and generating HTML.
+</p>
+<p>
+Read on for more details. Examples are provided at the bottom.
+</p>
+<h2>Queries</h2>
+<p>
+The <a href="CGI.html">CGI</a> class dynamically mixes in parameter and <a
+href="CGI.html#M000552">cookie</a>-parsing functionality, environmental
+variable access, and support for parsing multipart requests (including
+uploaded files) from the <a
+href="CGI/QueryExtension.html">CGI::QueryExtension</a> module.
+</p>
+<h3>Environmental Variables</h3>
+<p>
+The standard <a href="CGI.html">CGI</a> environmental variables are
+available as read-only attributes of a <a href="CGI.html">CGI</a> object.
+The following is a list of these variables:
+</p>
+<pre>
+  AUTH_TYPE               HTTP_HOST          REMOTE_IDENT
+  CONTENT_LENGTH          HTTP_NEGOTIATE     REMOTE_USER
+  CONTENT_TYPE            HTTP_PRAGMA        REQUEST_METHOD
+  GATEWAY_INTERFACE       HTTP_REFERER       SCRIPT_NAME
+  HTTP_ACCEPT             HTTP_USER_AGENT    SERVER_NAME
+  HTTP_ACCEPT_CHARSET     PATH_INFO          SERVER_PORT
+  HTTP_ACCEPT_ENCODING    PATH_TRANSLATED    SERVER_PROTOCOL
+  HTTP_ACCEPT_LANGUAGE    QUERY_STRING       SERVER_SOFTWARE
+  HTTP_CACHE_CONTROL      REMOTE_ADDR
+  HTTP_FROM               REMOTE_HOST
+</pre>
+<p>
+For each of these variables, there is a corresponding attribute with the
+same name, except all lower case and without a preceding HTTP_.
+<tt>content_length</tt> and <tt>server_port</tt> are integers; the rest are
+strings.
+</p>
+<h3>Parameters</h3>
+<p>
+The method params() returns a hash of all parameters in the request as
+name/value-list pairs, where the value-list is an <a
+href="Array.html">Array</a> of one or more values. The <a
+href="CGI.html">CGI</a> object itself also behaves as a hash of parameter
+names to values, but only returns a single value (as a <a
+href="String.html">String</a>) for each parameter name.
+</p>
+<p>
+For instance, suppose the request contains the parameter
+&quot;favourite_colours&quot; with the multiple values &quot;blue&quot; and
+&quot;green&quot;. The following behaviour would occur:
+</p>
+<pre>
+  cgi.params[&quot;favourite_colours&quot;]  # =&gt; [&quot;blue&quot;, &quot;green&quot;]
+  cgi[&quot;favourite_colours&quot;]         # =&gt; &quot;blue&quot;
+</pre>
+<p>
+If a parameter does not exist, the former method will return an empty
+array, the latter an empty string. The simplest way to test for existence
+of a parameter is by the has_key? method.
+</p>
+<h3>Cookies</h3>
+<p>
+HTTP Cookies are automatically parsed from the request. They are available
+from the cookies() accessor, which returns a hash from <a
+href="CGI.html#M000552">cookie</a> name to <a
+href="CGI/Cookie.html">CGI::Cookie</a> object.
+</p>
+<h3>Multipart requests</h3>
+<p>
+If a request&#8216;s method is POST and its content type is
+multipart/form-data, then it may contain uploaded files. These are stored
+by the <a href="CGI/QueryExtension.html">QueryExtension</a> module in the
+parameters of the request. The parameter name is the name attribute of the
+file input field, as usual. However, the value is not a string, but an <a
+href="IO.html">IO</a> object, either an IOString for small files, or a <a
+href="Tempfile.html">Tempfile</a> for larger ones. This object also has the
+additional singleton methods:
+</p>
+<table>
+<tr><td valign="top">local_path():</td><td>the path of the uploaded file on the local filesystem
+
+</td></tr>
+<tr><td valign="top">original_filename():</td><td>the name of the file on the client computer
+
+</td></tr>
+<tr><td valign="top">content_type():</td><td>the content type of the file
+
+</td></tr>
+</table>
+<h2>Responses</h2>
+<p>
+The <a href="CGI.html">CGI</a> class provides methods for sending <a
+href="CGI.html#M000539">header</a> and content output to the HTTP client,
+and mixes in methods for programmatic HTML generation from <a
+href="CGI/HtmlExtension.html">CGI::HtmlExtension</a> and CGI::TagMaker
+modules. The precise version of HTML to use for HTML generation is
+specified at object creation time.
+</p>
+<h3>Writing output</h3>
+<p>
+The simplest way to send output to the HTTP client is using the <a
+href="CGI.html#M000540">out</a>() method. This takes the HTTP headers as a
+hash parameter, and the body content via a block. The headers can be
+generated as a string using the <a href="CGI.html#M000539">header</a>()
+method. The output stream can be written directly to using the <a
+href="CGI.html#M000541">print</a>() method.
+</p>
+<h3>Generating HTML</h3>
+<p>
+Each HTML element has a corresponding method for generating that element as
+a <a href="String.html">String</a>. The name of this method is the same as
+that of the element, all lowercase. The attributes of the element are
+passed in as a hash, and the body as a no-argument block that evaluates to
+a <a href="String.html">String</a>. The HTML generation module knows which
+elements are always empty, and silently drops any passed-in body. It also
+knows which elements require matching closing tags and which don&#8216;t.
+However, it does not know what attributes are legal for which elements.
+</p>
+<p>
+There are also some additional HTML generation methods mixed in from the <a
+href="CGI/HtmlExtension.html">CGI::HtmlExtension</a> module. These include
+individual methods for the different types of form inputs, and methods for
+elements that commonly take particular attributes where the attributes can
+be directly specified as arguments, rather than via a hash.
+</p>
+<h2>Examples of use</h2>
+<h3>Get form values</h3>
+<pre>
+  require &quot;cgi&quot;
+  cgi = CGI.new
+  value = cgi['field_name']   # &lt;== value string for 'field_name'
+    # if not 'field_name' included, then return &quot;&quot;.
+  fields = cgi.keys            # &lt;== array of field names
+
+  # returns true if form has 'field_name'
+  cgi.has_key?('field_name')
+  cgi.has_key?('field_name')
+  cgi.include?('field_name')
+</pre>
+<p>
+CAUTION! cgi[&#8216;field_name&#8217;] returned an <a
+href="Array.html">Array</a> with the old cgi.rb(included in ruby 1.6)
+</p>
+<h3>Get form values as hash</h3>
+<pre>
+  require &quot;cgi&quot;
+  cgi = CGI.new
+  params = cgi.params
+</pre>
+<p>
+cgi.params is a hash.
+</p>
+<pre>
+  cgi.params['new_field_name'] = [&quot;value&quot;]  # add new param
+  cgi.params['field_name'] = [&quot;new_value&quot;]  # change value
+  cgi.params.delete('field_name')           # delete param
+  cgi.params.clear                          # delete all params
+</pre>
+<h3>Save form values to file</h3>
+<pre>
+  require &quot;pstore&quot;
+  db = PStore.new(&quot;query.db&quot;)
+  db.transaction do
+    db[&quot;params&quot;] = cgi.params
+  end
+</pre>
+<h3>Restore form values from file</h3>
+<pre>
+  require &quot;pstore&quot;
+  db = PStore.new(&quot;query.db&quot;)
+  db.transaction do
+    cgi.params = db[&quot;params&quot;]
+  end
+</pre>
+<h3>Get multipart form values</h3>
+<pre>
+  require &quot;cgi&quot;
+  cgi = CGI.new
+  value = cgi['field_name']   # &lt;== value string for 'field_name'
+  value.read                  # &lt;== body of value
+  value.local_path            # &lt;== path to local file of value
+  value.original_filename     # &lt;== original filename of value
+  value.content_type          # &lt;== content_type of value
+</pre>
+<p>
+and value has <a href="StringIO.html">StringIO</a> or <a
+href="Tempfile.html">Tempfile</a> class methods.
+</p>
+<h3>Get <a href="CGI.html#M000552">cookie</a> values</h3>
+<pre>
+  require &quot;cgi&quot;
+  cgi = CGI.new
+  values = cgi.cookies['name']  # &lt;== array of 'name'
+    # if not 'name' included, then return [].
+  names = cgi.cookies.keys      # &lt;== array of cookie names
+</pre>
+<p>
+and cgi.cookies is a hash.
+</p>
+<h3>Get <a href="CGI.html#M000552">cookie</a> objects</h3>
+<pre>
+  require &quot;cgi&quot;
+  cgi = CGI.new
+  for name, cookie in cgi.cookies
+    cookie.expires = Time.now + 30
+  end
+  cgi.out(&quot;cookie&quot; =&gt; cgi.cookies) {&quot;string&quot;}
+
+  cgi.cookies # { &quot;name1&quot; =&gt; cookie1, &quot;name2&quot; =&gt; cookie2, ... }
+
+  require &quot;cgi&quot;
+  cgi = CGI.new
+  cgi.cookies['name'].expires = Time.now + 30
+  cgi.out(&quot;cookie&quot; =&gt; cgi.cookies['name']) {&quot;string&quot;}
+</pre>
+<h3>Print http <a href="CGI.html#M000539">header</a> and html string to $DEFAULT_OUTPUT ($&gt;)</h3>
+<pre>
+  require &quot;cgi&quot;
+  cgi = CGI.new(&quot;html3&quot;)  # add HTML generation methods
+  cgi.out() do
+    cgi.html() do
+      cgi.head{ cgi.title{&quot;TITLE&quot;} } +
+      cgi.body() do
+        cgi.form() do
+          cgi.textarea(&quot;get_text&quot;) +
+          cgi.br +
+          cgi.submit
+        end +
+        cgi.pre() do
+          CGI::escapeHTML(
+            &quot;params: &quot; + cgi.params.inspect + &quot;\n&quot; +
+            &quot;cookies: &quot; + cgi.cookies.inspect + &quot;\n&quot; +
+            ENV.collect() do |key, value|
+              key + &quot; --&gt; &quot; + value + &quot;\n&quot;
+            end.join(&quot;&quot;)
+          )
+        end
+      end
+    end
+  end
+
+  # add HTML generation methods
+  CGI.new(&quot;html3&quot;)    # html3.2
+  CGI.new(&quot;html4&quot;)    # html4.01 (Strict)
+  CGI.new(&quot;html4Tr&quot;)  # html4.01 Transitional
+  CGI.new(&quot;html4Fr&quot;)  # html4.01 Frameset
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000552">cookie</a>&nbsp;&nbsp;
+      <a href="#M000556">error</a>&nbsp;&nbsp;
+      <a href="#M000546">escape</a>&nbsp;&nbsp;
+      <a href="#M000532">escape</a>&nbsp;&nbsp;
+      <a href="#M000536">escapeElement</a>&nbsp;&nbsp;
+      <a href="#M000548">escapeHTML</a>&nbsp;&nbsp;
+      <a href="#M000534">escapeHTML</a>&nbsp;&nbsp;
+      <a href="#M000539">header</a>&nbsp;&nbsp;
+      <a href="#M000553">header</a>&nbsp;&nbsp;
+      <a href="#M000555">message</a>&nbsp;&nbsp;
+      <a href="#M000550">new</a>&nbsp;&nbsp;
+      <a href="#M000544">new</a>&nbsp;&nbsp;
+      <a href="#M000540">out</a>&nbsp;&nbsp;
+      <a href="#M000542">parse</a>&nbsp;&nbsp;
+      <a href="#M000543">pretty</a>&nbsp;&nbsp;
+      <a href="#M000541">print</a>&nbsp;&nbsp;
+      <a href="#M000554">print</a>&nbsp;&nbsp;
+      <a href="#M000549">read_from_cmdline</a>&nbsp;&nbsp;
+      <a href="#M000538">rfc1123_date</a>&nbsp;&nbsp;
+      <a href="#M000545">rfc1123_date</a>&nbsp;&nbsp;
+      <a href="#M000551">tag</a>&nbsp;&nbsp;
+      <a href="#M000533">unescape</a>&nbsp;&nbsp;
+      <a href="#M000547">unescape</a>&nbsp;&nbsp;
+      <a href="#M000537">unescapeElement</a>&nbsp;&nbsp;
+      <a href="#M000535">unescapeHTML</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="CGI/HtmlExtension.html" class="link">CGI::HtmlExtension</a><br />
+Module <a href="CGI/QueryExtension.html" class="link">CGI::QueryExtension</a><br />
+Class <a href="CGI/Cookie.html" class="link">CGI::Cookie</a><br />
+Class <a href="CGI/Session.html" class="link">CGI::Session</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CR</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\015&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">LF</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\012&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EOL</td>
+          <td>=</td>
+          <td class="context-item-value">CR + LF</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RFC822_DAYS</td>
+          <td>=</td>
+          <td class="context-item-value">%w[ Sun Mon Tue Wed Thu Fri Sat ]</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RFC822_MONTHS</td>
+          <td>=</td>
+          <td class="context-item-value">%w[ Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ]</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">cookie</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">inputs</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000552" class="method-detail">
+        <a name="M000552"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000552.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000552.html');return false;">
+          <span class="method-name">cookie</span><span class="method-args">(options)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+make raw <a href="CGI.html#M000552">cookie</a> string
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000556" class="method-detail">
+        <a name="M000556"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000556.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000556.html');return false;">
+          <span class="method-name">error</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="CGI.html#M000541">print</a> <a href="CGI.html#M000556">error</a>
+<a href="CGI.html#M000555">message</a> to $&gt; and exit
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000546" class="method-detail">
+        <a name="M000546"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000546.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000546.html');return false;">
+          <span class="method-name">escape</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="CGI.html#M000532">escape</a> url encode
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000532" class="method-detail">
+        <a name="M000532"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000532.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000532.html');return false;">
+          <span class="method-name">escape</span><span class="method-args">(string)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+URL-encode a string.
+</p>
+<pre>
+  url_encoded_string = CGI::escape(&quot;'Stop!' said Fred&quot;)
+     # =&gt; &quot;%27Stop%21%27+said+Fred&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M000536" class="method-detail">
+        <a name="M000536"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000536.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000536.html');return false;">
+          <span class="method-name">escapeElement</span><span class="method-args">(string, *elements)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Escape only the tags of certain HTML elements in <tt>string</tt>.
+</p>
+<p>
+Takes an element or elements or array of elements. Each element is
+specified by the name of the element, without angle brackets. This matches
+both the start and the end <a href="CGI.html#M000551">tag</a> of that
+element. The attribute list of the open <a href="CGI.html#M000551">tag</a>
+will also be escaped (for instance, the double-quotes surrounding attribute
+values).
+</p>
+<pre>
+  print CGI::escapeElement('&lt;BR&gt;&lt;A HREF=&quot;url&quot;&gt;&lt;/A&gt;', &quot;A&quot;, &quot;IMG&quot;)
+    # &quot;&lt;BR&gt;&amp;lt;A HREF=&amp;quot;url&amp;quot;&amp;gt;&amp;lt;/A&amp;gt&quot;
+
+  print CGI::escapeElement('&lt;BR&gt;&lt;A HREF=&quot;url&quot;&gt;&lt;/A&gt;', [&quot;A&quot;, &quot;IMG&quot;])
+    # &quot;&lt;BR&gt;&amp;lt;A HREF=&amp;quot;url&amp;quot;&amp;gt;&amp;lt;/A&amp;gt&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M000548" class="method-detail">
+        <a name="M000548"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000548.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000548.html');return false;">
+          <span class="method-name">escapeHTML</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="CGI.html#M000532">escape</a> HTML
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000534" class="method-detail">
+        <a name="M000534"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000534.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000534.html');return false;">
+          <span class="method-name">escapeHTML</span><span class="method-args">(string)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Escape special characters in HTML, namely &amp;\&quot;&lt;&gt;
+</p>
+<pre>
+  CGI::escapeHTML('Usage: foo &quot;bar&quot; &lt;baz&gt;')
+     # =&gt; &quot;Usage: foo &amp;quot;bar&amp;quot; &amp;lt;baz&amp;gt;&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M000553" class="method-detail">
+        <a name="M000553"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000553.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000553.html');return false;">
+          <span class="method-name">header</span><span class="method-args">(*options)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+make HTTP <a href="CGI.html#M000539">header</a> string
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000555" class="method-detail">
+        <a name="M000555"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000555.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000555.html');return false;">
+          <span class="method-name">message</span><span class="method-args">(message, title = &quot;&quot;, header = [&quot;Content-Type: text/html&quot;])</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="CGI.html#M000541">print</a> <a href="CGI.html#M000555">message</a>
+to $&gt;
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000550" class="method-detail">
+        <a name="M000550"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000550.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000550.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(input = $stdin)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000544" class="method-detail">
+        <a name="M000544"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000544.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000544.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(type = &quot;query&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="CGI.html#M000544">new</a> <a href="CGI.html">CGI</a>
+instance.
+</p>
+<p>
+<tt>type</tt> specifies which version of HTML to load the HTML generation
+methods for. The following versions of HTML are supported:
+</p>
+<table>
+<tr><td valign="top">html3:</td><td>HTML 3.x
+
+</td></tr>
+<tr><td valign="top">html4:</td><td>HTML 4.0
+
+</td></tr>
+<tr><td valign="top">html4Tr:</td><td>HTML 4.0 Transitional
+
+</td></tr>
+<tr><td valign="top">html4Fr:</td><td>HTML 4.0 with Framesets
+
+</td></tr>
+</table>
+<p>
+If not specified, no HTML generation methods will be loaded.
+</p>
+<p>
+If the <a href="CGI.html">CGI</a> object is not created in a standard <a
+href="CGI.html">CGI</a> call environment (that is, it can&#8216;t locate
+REQUEST_METHOD in its environment), then it will run in &quot;offline&quot;
+mode. In this mode, it reads its parameters from the command line or
+(failing that) from standard input. Otherwise, cookies and other parameters
+are parsed automatically from the standard <a href="CGI.html">CGI</a>
+locations, which varies according to the REQUEST_METHOD.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000542" class="method-detail">
+        <a name="M000542"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000542.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000542.html');return false;">
+          <span class="method-name">parse</span><span class="method-args">(query)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Parse an HTTP query string into a hash of key=&gt;value pairs.
+</p>
+<pre>
+  params = CGI::parse(&quot;query_string&quot;)
+    # {&quot;name1&quot; =&gt; [&quot;value1&quot;, &quot;value2&quot;, ...],
+    #  &quot;name2&quot; =&gt; [&quot;value1&quot;, &quot;value2&quot;, ...], ... }
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M000543" class="method-detail">
+        <a name="M000543"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000543.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000543.html');return false;">
+          <span class="method-name">pretty</span><span class="method-args">(string, shift = &quot; &quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Prettify (indent) an HTML string.
+</p>
+<p>
+<tt>string</tt> is the HTML string to indent. <tt>shift</tt> is the
+indentation unit to use; it defaults to two spaces.
+</p>
+<pre>
+  print CGI::pretty(&quot;&lt;HTML&gt;&lt;BODY&gt;&lt;/BODY&gt;&lt;/HTML&gt;&quot;)
+    # &lt;HTML&gt;
+    #   &lt;BODY&gt;
+    #   &lt;/BODY&gt;
+    # &lt;/HTML&gt;
+
+  print CGI::pretty(&quot;&lt;HTML&gt;&lt;BODY&gt;&lt;/BODY&gt;&lt;/HTML&gt;&quot;, &quot;\t&quot;)
+    # &lt;HTML&gt;
+    #         &lt;BODY&gt;
+    #         &lt;/BODY&gt;
+    # &lt;/HTML&gt;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M000554" class="method-detail">
+        <a name="M000554"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000554.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000554.html');return false;">
+          <span class="method-name">print</span><span class="method-args">(*options) {|.to_s| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="CGI.html#M000541">print</a> HTTP <a
+href="CGI.html#M000539">header</a> and string to $&gt;
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000538" class="method-detail">
+        <a name="M000538"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000538.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000538.html');return false;">
+          <span class="method-name">rfc1123_date</span><span class="method-args">(time)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Format a <tt><a href="Time.html">Time</a></tt> object as a <a
+href="String.html">String</a> using the format specified by RFC 1123.
+</p>
+<pre>
+  CGI::rfc1123_date(Time.now)
+    # Sat, 01 Jan 2000 00:00:00 GMT
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M000545" class="method-detail">
+        <a name="M000545"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000545.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000545.html');return false;">
+          <span class="method-name">rfc1123_date</span><span class="method-args">(time)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+make rfc1123 date string
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000551" class="method-detail">
+        <a name="M000551"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000551.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000551.html');return false;">
+          <span class="method-name">tag</span><span class="method-args">(element, attributes = {}) {|.to_s + &quot;&lt;/&quot; + escapeHTML(element) + &quot;&gt;&quot; : &quot;&quot;)| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+make HTML <a href="CGI.html#M000551">tag</a> string
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000533" class="method-detail">
+        <a name="M000533"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000533.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000533.html');return false;">
+          <span class="method-name">unescape</span><span class="method-args">(string)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+URL-decode a string.
+</p>
+<pre>
+  string = CGI::unescape(&quot;%27Stop%21%27+said+Fred&quot;)
+     # =&gt; &quot;'Stop!' said Fred&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M000547" class="method-detail">
+        <a name="M000547"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000547.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000547.html');return false;">
+          <span class="method-name">unescape</span><span class="method-args">(str)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="CGI.html#M000533">unescape</a> url encoded
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000537" class="method-detail">
+        <a name="M000537"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000537.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000537.html');return false;">
+          <span class="method-name">unescapeElement</span><span class="method-args">(string, *elements)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Undo escaping such as that done by CGI::escapeElement()
+</p>
+<pre>
+  print CGI::unescapeElement(
+          CGI::escapeHTML('&lt;BR&gt;&lt;A HREF=&quot;url&quot;&gt;&lt;/A&gt;'), &quot;A&quot;, &quot;IMG&quot;)
+    # &quot;&amp;lt;BR&amp;gt;&lt;A HREF=&quot;url&quot;&gt;&lt;/A&gt;&quot;
+
+  print CGI::unescapeElement(
+          CGI::escapeHTML('&lt;BR&gt;&lt;A HREF=&quot;url&quot;&gt;&lt;/A&gt;'), [&quot;A&quot;, &quot;IMG&quot;])
+    # &quot;&amp;lt;BR&amp;gt;&lt;A HREF=&quot;url&quot;&gt;&lt;/A&gt;&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M000535" class="method-detail">
+        <a name="M000535"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000535.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000535.html');return false;">
+          <span class="method-name">unescapeHTML</span><span class="method-args">(string)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Unescape a string that has been HTML-escaped
+</p>
+<pre>
+  CGI::unescapeHTML(&quot;Usage: foo &amp;quot;bar&amp;quot; &amp;lt;baz&amp;gt;&quot;)
+     # =&gt; &quot;Usage: foo \&quot;bar\&quot; &lt;baz&gt;&quot;
+</pre>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000539" class="method-detail">
+        <a name="M000539"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000539.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000539.html');return false;">
+          <span class="method-name">header</span><span class="method-args">(options = &quot;text/html&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create an HTTP <a href="CGI.html#M000539">header</a> block as a string.
+</p>
+<p>
+Includes the empty line that ends the <a href="CGI.html#M000539">header</a>
+block.
+</p>
+<p>
+<tt>options</tt> can be a string specifying the Content-Type (defaults to
+text/html), or a hash of <a href="CGI.html#M000539">header</a> key/value
+pairs. The following <a href="CGI.html#M000539">header</a> keys are
+recognized:
+</p>
+<table>
+<tr><td valign="top">type:</td><td>the Content-Type <a href="CGI.html#M000539">header</a>. Defaults to
+&quot;text/html&quot;
+
+</td></tr>
+<tr><td valign="top">charset:</td><td>the charset of the body, appended to the Content-Type <a
+href="CGI.html#M000539">header</a>.
+
+</td></tr>
+<tr><td valign="top">nph:</td><td>a boolean value. If true, prepend protocol string and status code, and
+date; and sets default values for &quot;server&quot; and
+&quot;connection&quot; if not explicitly set.
+
+</td></tr>
+<tr><td valign="top">status:</td><td>the HTTP status code, returned as the Status <a
+href="CGI.html#M000539">header</a>. See the list of available status codes
+below.
+
+</td></tr>
+<tr><td valign="top">server:</td><td>the server software, returned as the Server <a
+href="CGI.html#M000539">header</a>.
+
+</td></tr>
+<tr><td valign="top">connection:</td><td>the connection type, returned as the Connection <a
+href="CGI.html#M000539">header</a> (for instance, &quot;close&quot;.
+
+</td></tr>
+<tr><td valign="top">length:</td><td>the length of the content that will be sent, returned as the Content-Length
+<a href="CGI.html#M000539">header</a>.
+
+</td></tr>
+<tr><td valign="top">language:</td><td>the language of the content, returned as the Content-Language <a
+href="CGI.html#M000539">header</a>.
+
+</td></tr>
+<tr><td valign="top">expires:</td><td>the time on which the current content expires, as a <tt><a
+href="Time.html">Time</a></tt> object, returned as the Expires <a
+href="CGI.html#M000539">header</a>.
+
+</td></tr>
+<tr><td valign="top"><a href="CGI.html#M000552">cookie</a>:</td><td>a <a href="CGI.html#M000552">cookie</a> or cookies, returned as one or more
+<a href="Set.html">Set</a>-<a href="CGI/Cookie.html">Cookie</a> headers.
+The value can be the literal string of the <a
+href="CGI.html#M000552">cookie</a>; a <a
+href="CGI/Cookie.html">CGI::Cookie</a> object; an <a
+href="Array.html">Array</a> of literal <a
+href="CGI.html#M000552">cookie</a> strings or <a
+href="CGI/Cookie.html">Cookie</a> objects; or a hash all of whose values
+are literal <a href="CGI.html#M000552">cookie</a> strings or <a
+href="CGI/Cookie.html">Cookie</a> objects. These cookies are in addition to
+the cookies held in the @output_cookies field.
+
+</td></tr>
+</table>
+<p>
+Other <a href="CGI.html#M000539">header</a> lines can also be set; they are
+appended as key: value.
+</p>
+<pre>
+  header
+    # Content-Type: text/html
+
+  header(&quot;text/plain&quot;)
+    # Content-Type: text/plain
+
+  header(&quot;nph&quot;        =&gt; true,
+         &quot;status&quot;     =&gt; &quot;OK&quot;,  # == &quot;200 OK&quot;
+           # &quot;status&quot;     =&gt; &quot;200 GOOD&quot;,
+         &quot;server&quot;     =&gt; ENV['SERVER_SOFTWARE'],
+         &quot;connection&quot; =&gt; &quot;close&quot;,
+         &quot;type&quot;       =&gt; &quot;text/html&quot;,
+         &quot;charset&quot;    =&gt; &quot;iso-2022-jp&quot;,
+           # Content-Type: text/html; charset=iso-2022-jp
+         &quot;length&quot;     =&gt; 103,
+         &quot;language&quot;   =&gt; &quot;ja&quot;,
+         &quot;expires&quot;    =&gt; Time.now + 30,
+         &quot;cookie&quot;     =&gt; [cookie1, cookie2],
+         &quot;my_header1&quot; =&gt; &quot;my_value&quot;
+         &quot;my_header2&quot; =&gt; &quot;my_value&quot;)
+</pre>
+<p>
+The status codes are:
+</p>
+<pre>
+  &quot;OK&quot;                  --&gt; &quot;200 OK&quot;
+  &quot;PARTIAL_CONTENT&quot;     --&gt; &quot;206 Partial Content&quot;
+  &quot;MULTIPLE_CHOICES&quot;    --&gt; &quot;300 Multiple Choices&quot;
+  &quot;MOVED&quot;               --&gt; &quot;301 Moved Permanently&quot;
+  &quot;REDIRECT&quot;            --&gt; &quot;302 Found&quot;
+  &quot;NOT_MODIFIED&quot;        --&gt; &quot;304 Not Modified&quot;
+  &quot;BAD_REQUEST&quot;         --&gt; &quot;400 Bad Request&quot;
+  &quot;AUTH_REQUIRED&quot;       --&gt; &quot;401 Authorization Required&quot;
+  &quot;FORBIDDEN&quot;           --&gt; &quot;403 Forbidden&quot;
+  &quot;NOT_FOUND&quot;           --&gt; &quot;404 Not Found&quot;
+  &quot;METHOD_NOT_ALLOWED&quot;  --&gt; &quot;405 Method Not Allowed&quot;
+  &quot;NOT_ACCEPTABLE&quot;      --&gt; &quot;406 Not Acceptable&quot;
+  &quot;LENGTH_REQUIRED&quot;     --&gt; &quot;411 Length Required&quot;
+  &quot;PRECONDITION_FAILED&quot; --&gt; &quot;412 Precondition Failed&quot;
+  &quot;SERVER_ERROR&quot;        --&gt; &quot;500 Internal Server Error&quot;
+  &quot;NOT_IMPLEMENTED&quot;     --&gt; &quot;501 Method Not Implemented&quot;
+  &quot;BAD_GATEWAY&quot;         --&gt; &quot;502 Bad Gateway&quot;
+  &quot;VARIANT_ALSO_VARIES&quot; --&gt; &quot;506 Variant Also Negotiates&quot;
+</pre>
+<p>
+This method does not perform charset conversion.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000540" class="method-detail">
+        <a name="M000540"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000540.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000540.html');return false;">
+          <span class="method-name">out</span><span class="method-args">(options = &quot;text/html&quot;) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Print an HTTP <a href="CGI.html#M000539">header</a> and body to
+$DEFAULT_OUTPUT ($&gt;)
+</p>
+<p>
+The <a href="CGI.html#M000539">header</a> is provided by <tt>options</tt>,
+as for <a href="CGI.html#M000539">header</a>(). The body of the document is
+that returned by the passed- in block. This block takes no arguments. It is
+required.
+</p>
+<pre>
+  cgi = CGI.new
+  cgi.out{ &quot;string&quot; }
+    # Content-Type: text/html
+    # Content-Length: 6
+    #
+    # string
+
+  cgi.out(&quot;text/plain&quot;) { &quot;string&quot; }
+    # Content-Type: text/plain
+    # Content-Length: 6
+    #
+    # string
+
+  cgi.out(&quot;nph&quot;        =&gt; true,
+          &quot;status&quot;     =&gt; &quot;OK&quot;,  # == &quot;200 OK&quot;
+          &quot;server&quot;     =&gt; ENV['SERVER_SOFTWARE'],
+          &quot;connection&quot; =&gt; &quot;close&quot;,
+          &quot;type&quot;       =&gt; &quot;text/html&quot;,
+          &quot;charset&quot;    =&gt; &quot;iso-2022-jp&quot;,
+            # Content-Type: text/html; charset=iso-2022-jp
+          &quot;language&quot;   =&gt; &quot;ja&quot;,
+          &quot;expires&quot;    =&gt; Time.now + (3600 * 24 * 30),
+          &quot;cookie&quot;     =&gt; [cookie1, cookie2],
+          &quot;my_header1&quot; =&gt; &quot;my_value&quot;,
+          &quot;my_header2&quot; =&gt; &quot;my_value&quot;) { &quot;string&quot; }
+</pre>
+<p>
+Content-Length is automatically calculated from the size of the <a
+href="String.html">String</a> returned by the content block.
+</p>
+<p>
+If ENV[&#8216;REQUEST_METHOD&#8217;] == &quot;HEAD&quot;, then only the <a
+href="CGI.html#M000539">header</a> is outputted (the content block is still
+required, but it is ignored).
+</p>
+<p>
+If the charset is &quot;iso-2022-jp&quot; or &quot;euc-jp&quot; or
+&quot;shift_jis&quot; then the content is converted to this charset, and
+the language is set to &quot;ja&quot;.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000541" class="method-detail">
+        <a name="M000541"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000541.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000541.html');return false;">
+          <span class="method-name">print</span><span class="method-args">(*options)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Print an argument or list of arguments to the default output stream
+</p>
+<pre>
+  cgi = CGI.new
+  cgi.print    # default:  cgi.print == $DEFAULT_OUTPUT.print
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M000549" class="method-detail">
+        <a name="M000549"></a>
+
+        <div class="method-heading">
+          <a href="CGI.src/M000549.html" target="Code" class="method-signature"
+            onclick="popupCode('CGI.src/M000549.html');return false;">
+          <span class="method-name">read_from_cmdline</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+offline mode. read name=value pairs on standard input.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>append_features (RSS::SyndicationModel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rss/syndication.rb, line 16</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">append_features</span>(<span class="ruby-identifier">klass</span>)
+      <span class="ruby-keyword kw">super</span>
+
+      <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">install_must_call_validator</span>(<span class="ruby-constant">SY_PREFIX</span>, <span class="ruby-constant">SY_URI</span>)
+      <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">module_eval</span> <span class="ruby-keyword kw">do</span>
+        [
+          [<span class="ruby-value str">&quot;updatePeriod&quot;</span>],
+          [<span class="ruby-value str">&quot;updateFrequency&quot;</span>, <span class="ruby-identifier">:positive_integer</span>]
+        ].<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">install_text_element</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">SY_URI</span>, <span class="ruby-value str">&quot;?&quot;</span>,
+                               <span class="ruby-node">&quot;#{SY_PREFIX}_#{name}&quot;</span>, <span class="ruby-identifier">type</span>,
+                               <span class="ruby-node">&quot;#{SY_PREFIX}:#{name}&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-node">%w(updateBase)</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">install_date_element</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">SY_URI</span>, <span class="ruby-value str">&quot;?&quot;</span>,
+                               <span class="ruby-node">&quot;#{SY_PREFIX}_#{name}&quot;</span>, <span class="ruby-value str">'w3cdtf'</span>, <span class="ruby-identifier">name</span>)
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-identifier">alias_method</span>(<span class="ruby-identifier">:_sy_updatePeriod=</span>, <span class="ruby-identifier">:sy_updatePeriod=</span>)
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sy_updatePeriod=</span>(<span class="ruby-identifier">new_value</span>)
+          <span class="ruby-identifier">new_value</span> = <span class="ruby-identifier">new_value</span>.<span class="ruby-identifier">strip</span>
+          <span class="ruby-identifier">validate_sy_updatePeriod</span>(<span class="ruby-identifier">new_value</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@do_validate</span>
+          <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">_sy_updatePeriod</span> = <span class="ruby-identifier">new_value</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

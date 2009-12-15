@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>shift (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.shift   -&gt;   obj or nil
+ *  
+ *  Returns the first element of &lt;i&gt;self&lt;/i&gt; and removes it (shifting all
+ *  other elements down by one). Returns &lt;code&gt;nil&lt;/code&gt; if the array
+ *  is empty.
+ *     
+ *     args = [ &quot;-m&quot;, &quot;-q&quot;, &quot;filename&quot; ]
+ *     args.shift   #=&gt; &quot;-m&quot;
+ *     args         #=&gt; [&quot;-q&quot;, &quot;filename&quot;]
+ */
+
+VALUE
+rb_ary_shift(ary)
+    VALUE ary;
+{
+    VALUE top;
+
+    rb_ary_modify_check(ary);
+    if (RARRAY(ary)-&gt;len == 0) return Qnil;
+    top = RARRAY(ary)-&gt;ptr[0];
+    if (RARRAY_LEN(ary) &lt; ARY_DEFAULT_SIZE &amp;&amp; !FL_TEST(ary, ELTS_SHARED)) {
+        MEMMOVE(RARRAY_PTR(ary), RARRAY_PTR(ary)+1, VALUE, RARRAY_LEN(ary)-1);
+    }
+    else {
+        if (!FL_TEST(ary, ELTS_SHARED)) {
+            RARRAY(ary)-&gt;ptr[0] = Qnil;
+        }
+        ary_make_shared(ary);
+        RARRAY(ary)-&gt;ptr++;            /* shift ptr */
+    }
+    RARRAY(ary)-&gt;len--;
+
+    return top;
+}</pre>
+</body>
+</html>

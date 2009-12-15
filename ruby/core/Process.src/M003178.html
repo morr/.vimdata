@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>groups (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.groups   =&gt; array
+ *
+ *  Get an &lt;code&gt;Array&lt;/code&gt; of the gids of groups in the
+ *  supplemental group access list for this process.
+ *
+ *     Process.groups   #=&gt; [27, 6, 10, 11]
+ *
+ */
+
+static VALUE
+proc_getgroups(VALUE obj)
+{
+#ifdef HAVE_GETGROUPS
+    VALUE ary;
+    size_t ngroups;
+    rb_gid_t *groups;
+    int i;
+
+    groups = ALLOCA_N(rb_gid_t, maxgroups);
+
+    ngroups = getgroups(maxgroups, groups);
+    if (ngroups == -1)
+        rb_sys_fail(0);
+
+    ary = rb_ary_new();
+    for (i = 0; i &lt; ngroups; i++)
+        rb_ary_push(ary, INT2NUM(groups[i]));
+
+    return ary;
+#else
+    rb_notimplement();
+    return Qnil;
+#endif
+}</pre>
+</body>
+</html>

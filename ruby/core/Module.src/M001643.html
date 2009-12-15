@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>method_defined? (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mod.method_defined?(symbol)    =&gt; true or false
+ *  
+ *  Returns +true+ if the named method is defined by
+ *  _mod_ (or its included modules and, if _mod_ is a class,
+ *  its ancestors). Public and protected methods are matched.
+ *     
+ *     module A
+ *       def method1()  end
+ *     end
+ *     class B
+ *       def method2()  end
+ *     end
+ *     class C &lt; B
+ *       include A
+ *       def method3()  end
+ *     end
+ *     
+ *     A.method_defined? :method1    #=&gt; true
+ *     C.method_defined? &quot;method1&quot;   #=&gt; true
+ *     C.method_defined? &quot;method2&quot;   #=&gt; true
+ *     C.method_defined? &quot;method3&quot;   #=&gt; true
+ *     C.method_defined? &quot;method4&quot;   #=&gt; false
+ */
+
+static VALUE
+rb_mod_method_defined(mod, mid)
+    VALUE mod, mid;
+{
+    return rb_method_boundp(mod, rb_to_id(mid), 1);
+}</pre>
+</body>
+</html>

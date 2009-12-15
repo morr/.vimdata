@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>generate_properties_with_args (WIN32COMGen)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File ext/win32ole/sample/olegen.rb, line 164</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generate_properties_with_args</span>(<span class="ruby-identifier">klass</span>, <span class="ruby-identifier">io</span> = <span class="ruby-constant">STDOUT</span>)
+    <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">ole_methods</span>.<span class="ruby-identifier">select</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">method</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">method</span>.<span class="ruby-identifier">invoke_kind</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'PROPERTYGET'</span> <span class="ruby-operator">&amp;&amp;</span>
+      <span class="ruby-identifier">method</span>.<span class="ruby-identifier">visible?</span> <span class="ruby-operator">&amp;&amp;</span>
+      <span class="ruby-identifier">method</span>.<span class="ruby-identifier">size_params</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+    }.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">method</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">types</span> = <span class="ruby-identifier">method</span>.<span class="ruby-identifier">return_type_detail</span> 
+      <span class="ruby-identifier">io</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;\n&quot;</span>
+      <span class="ruby-identifier">io</span>.<span class="ruby-identifier">puts</span>  <span class="ruby-identifier">generate_method_help</span>(<span class="ruby-identifier">method</span>, <span class="ruby-identifier">types</span>[<span class="ruby-value">0</span>])
+      <span class="ruby-identifier">io</span>.<span class="ruby-identifier">puts</span>  <span class="ruby-node">&quot;  def #{method.name}&quot;</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">ole_type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;Class&quot;</span>
+        <span class="ruby-identifier">io</span>.<span class="ruby-identifier">print</span> <span class="ruby-node">&quot;    OLEProperty.new(@dispatch, #{method.dispid}, [&quot;</span> 
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">io</span>.<span class="ruby-identifier">print</span> <span class="ruby-node">&quot;    OLEProperty.new(self, #{method.dispid}, [&quot;</span> 
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">io</span>.<span class="ruby-identifier">print</span> <span class="ruby-identifier">generate_argtypes</span>(<span class="ruby-identifier">method</span>, <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">io</span>.<span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;], [&quot;</span>
+      <span class="ruby-identifier">io</span>.<span class="ruby-identifier">print</span> <span class="ruby-identifier">generate_argtypes</span>(<span class="ruby-identifier">method</span>, <span class="ruby-identifier">types</span>)
+      <span class="ruby-identifier">io</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;])&quot;</span>
+      <span class="ruby-identifier">io</span>.<span class="ruby-identifier">puts</span>  <span class="ruby-value str">&quot;  end&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

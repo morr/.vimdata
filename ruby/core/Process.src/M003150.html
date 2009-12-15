@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>exit (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     exit(integer=0)
+ *     Kernel::exit(integer=0)
+ *     Process::exit(integer=0)
+ *  
+ *  Initiates the termination of the Ruby script by raising the
+ *  &lt;code&gt;SystemExit&lt;/code&gt; exception. This exception may be caught. The
+ *  optional parameter is used to return a status code to the invoking
+ *  environment.
+ *     
+ *     begin
+ *       exit
+ *       puts &quot;never get here&quot;
+ *     rescue SystemExit
+ *       puts &quot;rescued a SystemExit exception&quot;
+ *     end
+ *     puts &quot;after begin block&quot;
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     rescued a SystemExit exception
+ *     after begin block
+ *     
+ *  Just prior to termination, Ruby executes any &lt;code&gt;at_exit&lt;/code&gt; functions
+ *  (see Kernel::at_exit) and runs any object finalizers (see
+ *  ObjectSpace::define_finalizer).
+ *     
+ *     at_exit { puts &quot;at_exit function&quot; }
+ *     ObjectSpace.define_finalizer(&quot;string&quot;,  proc { puts &quot;in finalizer&quot; })
+ *     exit
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     at_exit function
+ *     in finalizer
+ */
+
+VALUE
+rb_f_exit(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE status;
+    int istatus;
+
+    rb_secure(4);
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;status) == 1) {
+	switch (status) {
+	  case Qtrue:
+	    istatus = EXIT_SUCCESS;
+	    break;
+	  case Qfalse:
+	    istatus = EXIT_FAILURE;
+	    break;
+	  default:
+	    istatus = NUM2INT(status);
+#if EXIT_SUCCESS != 0
+	    if (istatus == 0) istatus = EXIT_SUCCESS;
+#endif
+	    break;
+	}
+    }
+    else {
+	istatus = EXIT_SUCCESS;
+    }
+    rb_exit(istatus);
+    return Qnil;		/* not reached */
+}</pre>
+</body>
+</html>

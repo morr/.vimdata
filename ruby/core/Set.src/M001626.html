@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>divide (Set)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/set.rb, line 369</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">divide</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">func</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">func</span>.<span class="ruby-identifier">arity</span> <span class="ruby-operator">==</span> <span class="ruby-value">2</span>
+      <span class="ruby-identifier">require</span> <span class="ruby-value str">'tsort'</span>
+
+      <span class="ruby-keyword kw">class</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dig</span> = {}         <span class="ruby-comment cmt"># :nodoc:</span>
+        <span class="ruby-identifier">include</span> <span class="ruby-constant">TSort</span>
+
+        <span class="ruby-keyword kw">alias</span> <span class="ruby-identifier">tsort_each_node</span> <span class="ruby-identifier">each_key</span>
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tsort_each_child</span>(<span class="ruby-identifier">node</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+          <span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">node</span>).<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">u</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">dig</span>[<span class="ruby-identifier">u</span>] = <span class="ruby-identifier">a</span> = []
+        <span class="ruby-identifier">each</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">func</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">u</span>, <span class="ruby-identifier">v</span>) <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">v</span> }
+      }
+
+      <span class="ruby-identifier">set</span> = <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>()
+      <span class="ruby-identifier">dig</span>.<span class="ruby-identifier">each_strongly_connected_component</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">css</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">set</span>.<span class="ruby-identifier">add</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">css</span>))
+      }
+      <span class="ruby-identifier">set</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">classify</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">func</span>).<span class="ruby-identifier">values</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>blksize (File::Stat)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     stat.blksize   =&gt; integer or nil
+ *  
+ *  Returns the native file system's block size. Will return &lt;code&gt;nil&lt;/code&gt;
+ *  on platforms that don't support this information.
+ *     
+ *     File.stat(&quot;testfile&quot;).blksize   #=&gt; 4096
+ *     
+ */
+
+static VALUE
+rb_stat_blksize(self)
+    VALUE self;
+{
+#ifdef HAVE_ST_BLKSIZE
+    return ULONG2NUM(get_stat(self)-&gt;st_blksize);
+#else
+    return Qnil;
+#endif
+}</pre>
+</body>
+</html>

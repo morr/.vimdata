@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>match_io (IRB::SLex::Node)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb/slex.rb, line 204</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">match_io</span>(<span class="ruby-identifier">io</span>, <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;&quot;</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">op</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;&quot;</span>
+          <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">io</span>.<span class="ruby-identifier">getc</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ch</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+            <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">ch</span> = <span class="ruby-identifier">io</span>.<span class="ruby-identifier">getc_of_rests</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ch</span>.<span class="ruby-identifier">nil?</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@preproc</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@preproc</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">op</span>, <span class="ruby-identifier">io</span>)
+            <span class="ruby-constant">D_DETAIL</span>.<span class="ruby-identifier">printf</span>(<span class="ruby-value str">&quot;op1: %s\n&quot;</span>, <span class="ruby-identifier">op</span>)
+            <span class="ruby-ivar">@postproc</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">op</span>, <span class="ruby-identifier">io</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-keyword kw">nil</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">node</span> = <span class="ruby-ivar">@Tree</span>[<span class="ruby-identifier">ch</span>]
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ret</span> = <span class="ruby-identifier">node</span>.<span class="ruby-identifier">match_io</span>(<span class="ruby-identifier">io</span>, <span class="ruby-identifier">op</span><span class="ruby-operator">+</span><span class="ruby-identifier">ch</span>)
+              <span class="ruby-identifier">ret</span>
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">io</span>.<span class="ruby-identifier">ungetc</span> <span class="ruby-identifier">ch</span>
+              <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@postproc</span> <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@preproc</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@preproc</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">op</span>, <span class="ruby-identifier">io</span>)
+                <span class="ruby-constant">DOUT</span>.<span class="ruby-identifier">exec_if</span>{<span class="ruby-constant">D_DETAIL</span>.<span class="ruby-identifier">printf</span> <span class="ruby-value str">&quot;op2: %s\n&quot;</span>, <span class="ruby-identifier">op</span>.<span class="ruby-identifier">inspect</span>}
+                <span class="ruby-ivar">@postproc</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">op</span>, <span class="ruby-identifier">io</span>)
+              <span class="ruby-keyword kw">else</span>
+                <span class="ruby-keyword kw">nil</span>
+              <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">io</span>.<span class="ruby-identifier">ungetc</span> <span class="ruby-identifier">ch</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@postproc</span> <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@preproc</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@preproc</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">op</span>, <span class="ruby-identifier">io</span>)
+              <span class="ruby-constant">D_DETAIL</span>.<span class="ruby-identifier">printf</span>(<span class="ruby-value str">&quot;op3: %s\n&quot;</span>, <span class="ruby-identifier">op</span>)
+              <span class="ruby-ivar">@postproc</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">op</span>, <span class="ruby-identifier">io</span>)
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-keyword kw">nil</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

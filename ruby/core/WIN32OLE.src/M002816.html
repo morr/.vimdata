@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>const_load (WIN32OLE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* 
+ *  call-seq:
+ *     WIN32OLE.const_load( ole, mod = WIN32OLE)
+ * 
+ *  Defines the constants of OLE Automation server as mod's constants.
+ *  The first argument is WIN32OLE object or type library name.
+ *  If 2nd argument is omitted, the default is WIN32OLE.
+ *  The first letter of Ruby's constant variable name is upper case,
+ *  so constant variable name of WIN32OLE object is capitalized.
+ *  For example, the 'xlTop' constant of Excel is changed to 'XlTop' 
+ *  in WIN32OLE.
+ *  If the first letter of constant variabl is not [A-Z], then
+ *  the constant is defined as CONSTANTS hash element.
+ *
+ *     module EXCEL_CONST
+ *     end
+ *     excel = WIN32OLE.new('Excel.Application')
+ *     WIN32OLE.const_load(excel, EXCEL_CONST)
+ *     puts EXCEL_CONST::XlTop # =&gt; -4160
+ *     puts EXCEL_CONST::CONSTANTS['_xlDialogChartSourceData'] # =&gt; 541
+ *     
+ *     WIN32OLE.const_load(excel)
+ *     puts WIN32OLE::XlTop # =&gt; -4160
+ *
+ *     module MSO
+ *     end
+ *     WIN32OLE.const_load('Microsoft Office 9.0 Object Library', MSO)
+ *     puts MSO::MsoLineSingle # =&gt; 1
+ */
+static VALUE
+fole_s_const_load(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE ole;
+    VALUE klass;
+    struct oledata *pole;
+    ITypeInfo *pTypeInfo;
+    ITypeLib *pTypeLib;
+    unsigned int index;
+    HRESULT hr;
+    OLECHAR *pBuf;
+    VALUE file;
+    LCID    lcid = LOCALE_SYSTEM_DEFAULT;
+    
+    rb_secure(4);
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;ole, &amp;klass);
+    if (TYPE(klass) != T_CLASS &amp;&amp;
+        TYPE(klass) != T_MODULE &amp;&amp;
+        TYPE(klass) != T_NIL) {
+        rb_raise(rb_eTypeError, &quot;2nd parameter must be Class or Module&quot;);
+    }
+    if (rb_obj_is_kind_of(ole, cWIN32OLE)) {
+        OLEData_Get_Struct(ole, pole);
+        hr = pole-&gt;pDispatch-&gt;lpVtbl-&gt;GetTypeInfo(pole-&gt;pDispatch,
+                                                  0, lcid, &amp;pTypeInfo);
+        if(FAILED(hr)) {
+            ole_raise(hr, rb_eRuntimeError, &quot;failed to GetTypeInfo&quot;);
+        }
+        hr = pTypeInfo-&gt;lpVtbl-&gt;GetContainingTypeLib(pTypeInfo, &amp;pTypeLib, &amp;index);
+        if(FAILED(hr)) {
+            OLE_RELEASE(pTypeInfo);
+            ole_raise(hr, rb_eRuntimeError, &quot;failed to GetContainingTypeLib&quot;);
+        }
+        OLE_RELEASE(pTypeInfo);
+        if(TYPE(klass) != T_NIL) {
+            ole_const_load(pTypeLib, klass, self);
+        }
+        else {
+            ole_const_load(pTypeLib, cWIN32OLE, self);
+        }
+        OLE_RELEASE(pTypeLib);
+    }
+    else if(TYPE(ole) == T_STRING) {
+        file = typelib_file(ole);
+        if (file == Qnil) {
+            file = ole;
+        }
+        pBuf = ole_mb2wc(StringValuePtr(file), -1);
+        hr = LoadTypeLibEx(pBuf, REGKIND_NONE, &amp;pTypeLib);
+        SysFreeString(pBuf);
+        if (FAILED(hr))
+            ole_raise(hr, eWIN32OLE_RUNTIME_ERROR, &quot;failed to LoadTypeLibEx&quot;);
+        if(TYPE(klass) != T_NIL) {
+            ole_const_load(pTypeLib, klass, self);
+        }
+        else {
+            ole_const_load(pTypeLib, cWIN32OLE, self);
+        }
+        OLE_RELEASE(pTypeLib);
+    }
+    else {
+        rb_raise(rb_eTypeError, &quot;1st parameter must be WIN32OLE instance&quot;);
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

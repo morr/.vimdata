@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>move (Rinda::TupleSpace)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rinda/tuplespace.rb, line 439</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">move</span>(<span class="ruby-identifier">port</span>, <span class="ruby-identifier">tuple</span>, <span class="ruby-identifier">sec</span>=<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-identifier">template</span> = <span class="ruby-constant">WaitTemplateEntry</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">tuple</span>, <span class="ruby-identifier">sec</span>)
+      <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">template</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+      <span class="ruby-identifier">synchronize</span> <span class="ruby-keyword kw">do</span>
+        <span class="ruby-identifier">entry</span> = <span class="ruby-ivar">@bag</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">template</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">entry</span>
+          <span class="ruby-identifier">port</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">entry</span>.<span class="ruby-identifier">value</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">port</span>
+          <span class="ruby-ivar">@bag</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">entry</span>)
+          <span class="ruby-identifier">notify_event</span>(<span class="ruby-value str">'take'</span>, <span class="ruby-identifier">entry</span>.<span class="ruby-identifier">value</span>)
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">entry</span>.<span class="ruby-identifier">value</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">RequestExpiredError</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">template</span>.<span class="ruby-identifier">expired?</span>
+
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-ivar">@take_waiter</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">template</span>)
+          <span class="ruby-identifier">start_keeper</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">template</span>.<span class="ruby-identifier">expires</span>
+          <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">RequestCanceledError</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">template</span>.<span class="ruby-identifier">canceled?</span>
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">RequestExpiredError</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">template</span>.<span class="ruby-identifier">expired?</span>
+            <span class="ruby-identifier">entry</span> = <span class="ruby-ivar">@bag</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">template</span>)
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">entry</span>
+              <span class="ruby-identifier">port</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">entry</span>.<span class="ruby-identifier">value</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">port</span>
+              <span class="ruby-ivar">@bag</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">entry</span>)
+              <span class="ruby-identifier">notify_event</span>(<span class="ruby-value str">'take'</span>, <span class="ruby-identifier">entry</span>.<span class="ruby-identifier">value</span>)
+              <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">entry</span>.<span class="ruby-identifier">value</span>
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-identifier">template</span>.<span class="ruby-identifier">wait</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">ensure</span>
+          <span class="ruby-ivar">@take_waiter</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">template</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

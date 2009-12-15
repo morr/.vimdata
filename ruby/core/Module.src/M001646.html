@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>protected_method_defined? (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mod.protected_method_defined?(symbol)   =&gt; true or false
+ *  
+ *  Returns +true+ if the named protected method is defined
+ *  by _mod_ (or its included modules and, if _mod_ is a
+ *  class, its ancestors).
+ *     
+ *     module A
+ *       def method1()  end
+ *     end
+ *     class B
+ *       protected
+ *       def method2()  end
+ *     end
+ *     class C &lt; B
+ *       include A
+ *       def method3()  end
+ *     end
+ *     
+ *     A.method_defined? :method1              #=&gt; true
+ *     C.protected_method_defined? &quot;method1&quot;   #=&gt; false
+ *     C.protected_method_defined? &quot;method2&quot;   #=&gt; true
+ *     C.method_defined? &quot;method2&quot;             #=&gt; true
+ */
+
+static VALUE
+rb_mod_protected_method_defined(mod, mid)
+    VALUE mod, mid;
+{
+    ID id = rb_to_id(mid);
+    int noex;
+
+    if (rb_get_method_body(&amp;mod, &amp;id, &amp;noex)) {
+        if (VISI_CHECK(noex, NOEX_PROTECTED))
+            return Qtrue;
+    }
+    return Qfalse;
+}</pre>
+</body>
+</html>

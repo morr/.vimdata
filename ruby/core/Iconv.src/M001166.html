@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>iconv (Iconv)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Document-method: iconv
+ * call-seq: iconv(str, start=0, length=-1)
+ *
+ * Converts string and returns the result.
+ * * If +str+ is a String, converts &lt;tt&gt;str[start, length]&lt;/tt&gt; and returns the converted string.
+ * * If +str+ is +nil+, places converter itself into initial shift state and
+ *   just returns a string containing the byte sequence to change the output
+ *   buffer to its initial shift state.
+ * * Otherwise, raises an exception.
+ *
+ * === Parameters
+ *
+ * str::    string to be converted, or nil
+ * start::  starting offset
+ * length:: conversion length; nil or -1 means whole the string from start
+ *
+ * === Exceptions
+ *
+ * * IconvIllegalSequence
+ * * IconvInvalidCharacter
+ * * IconvOutOfRange
+ *
+ * === Examples
+ *
+ * See the Iconv documentation.
+ */
+static VALUE
+iconv_iconv
+    (argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE str, n1, n2;
+    VALUE cd = check_iconv(self);
+    long start = 0, length = 0, slen = 0;
+
+    rb_scan_args(argc, argv, &quot;12&quot;, &amp;str, &amp;n1, &amp;n2);
+    if (!NIL_P(str)) slen = RSTRING_LEN(StringValue(str));
+    if (argc != 2 || !RTEST(rb_range_beg_len(n1, &amp;start, &amp;length, slen, 0))) {
+        if (NIL_P(n1) || ((start = NUM2LONG(n1)) &lt; 0 ? (start += slen) &gt;= 0 : start &lt; slen)) {
+            if (NIL_P(n2)) {
+                length = -1;
+            }
+            else if ((length = NUM2LONG(n2)) &gt;= slen - start) {
+                length = slen - start;
+            }
+        }
+    }
+
+    return iconv_convert(VALUE2ICONV(cd), str, start, length, NULL);
+}</pre>
+</body>
+</html>

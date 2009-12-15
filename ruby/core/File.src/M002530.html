@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>lchmod (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.lchmod(mode_int, file_name, ...)  =&gt; integer
+ *  
+ *  Equivalent to &lt;code&gt;File::chmod&lt;/code&gt;, but does not follow symbolic
+ *  links (so it will change the permissions associated with the link,
+ *  not the file referenced by the link). Often not available.
+ *     
+ */
+
+static VALUE
+rb_file_s_lchmod(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE vmode;
+    VALUE rest;
+    long mode, n;
+
+    rb_secure(2);
+    rb_scan_args(argc, argv, &quot;1*&quot;, &amp;vmode, &amp;rest);
+    mode = NUM2INT(vmode);
+
+    n = apply2files(lchmod_internal, rest, (void *)(long)mode);
+    return LONG2FIX(n);
+}</pre>
+</body>
+</html>

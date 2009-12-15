@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *    Module.new                  =&gt; mod
+ *    Module.new {|mod| block }   =&gt; mod
+ *  
+ *  Creates a new anonymous module. If a block is given, it is passed
+ *  the module object, and the block is evaluated in the context of this
+ *  module using &lt;code&gt;module_eval&lt;/code&gt;.
+ *     
+ *     Fred = Module.new do
+ *       def meth1
+ *         &quot;hello&quot;
+ *       end
+ *       def meth2
+ *         &quot;bye&quot;
+ *       end
+ *     end
+ *     a = &quot;my string&quot;
+ *     a.extend(Fred)   #=&gt; &quot;my string&quot;
+ *     a.meth1          #=&gt; &quot;hello&quot;
+ *     a.meth2          #=&gt; &quot;bye&quot;
+ */
+
+static VALUE
+rb_mod_initialize(module)
+    VALUE module;
+{
+    if (rb_block_given_p()) {
+        rb_mod_module_eval(0, 0, module);
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

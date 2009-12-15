@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>retval? (WIN32OLE_PARAM)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE_PARAM#retval?
+ *
+ *  Returns true if argument is return value.
+ *     tobj = WIN32OLE_TYPE.new('DirectX 7 for Visual Basic Type Library', 
+ *                              'DirectPlayLobbyConnection')
+ *     method = WIN32OLE_METHOD.new(tobj, 'GetPlayerShortName')
+ *     param = method.params[0]
+ *     puts &quot;#{param.name} #{param.retval?}&quot;  # =&gt; name true
+ */
+static VALUE foleparam_retval(self)
+    VALUE self;
+{
+    struct oleparamdata *pparam;
+    Data_Get_Struct(self, struct oleparamdata, pparam);
+    return ole_param_flag_mask(pparam-&gt;pTypeInfo, pparam-&gt;method_index, 
+                               pparam-&gt;index, PARAMFLAG_FRETVAL);
+}</pre>
+</body>
+</html>

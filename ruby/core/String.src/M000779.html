@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>succ (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.succ   =&gt; new_str
+ *     str.next   =&gt; new_str
+ *  
+ *  Returns the successor to &lt;i&gt;str&lt;/i&gt;. The successor is calculated by
+ *  incrementing characters starting from the rightmost alphanumeric (or
+ *  the rightmost character if there are no alphanumerics) in the
+ *  string. Incrementing a digit always results in another digit, and
+ *  incrementing a letter results in another letter of the same case.
+ *  Incrementing nonalphanumerics uses the underlying character set's
+ *  collating sequence.
+ *     
+ *  If the increment generates a ``carry,'' the character to the left of
+ *  it is incremented. This process repeats until there is no carry,
+ *  adding an additional character if necessary.
+ *     
+ *     &quot;abcd&quot;.succ        #=&gt; &quot;abce&quot;
+ *     &quot;THX1138&quot;.succ     #=&gt; &quot;THX1139&quot;
+ *     &quot;&lt;&lt;koala&gt;&gt;&quot;.succ   #=&gt; &quot;&lt;&lt;koalb&gt;&gt;&quot;
+ *     &quot;1999zzz&quot;.succ     #=&gt; &quot;2000aaa&quot;
+ *     &quot;ZZZ9999&quot;.succ     #=&gt; &quot;AAAA0000&quot;
+ *     &quot;***&quot;.succ         #=&gt; &quot;**+&quot;
+ */
+
+static VALUE
+rb_str_succ(orig)
+    VALUE orig;
+{
+    VALUE str;
+    char *sbeg, *s;
+    int c = -1;
+    long n = 0;
+
+    str = rb_str_new5(orig, RSTRING(orig)-&gt;ptr, RSTRING(orig)-&gt;len);
+    OBJ_INFECT(str, orig);
+    if (RSTRING(str)-&gt;len == 0) return str;
+
+    sbeg = RSTRING(str)-&gt;ptr; s = sbeg + RSTRING(str)-&gt;len - 1;
+
+    while (sbeg &lt;= s) {
+        if (ISALNUM(*s)) {
+            if ((c = succ_char(s)) == 0) break;
+            n = s - sbeg;
+        }
+        s--;
+    }
+    if (c == -1) {              /* str contains no alnum */
+        sbeg = RSTRING(str)-&gt;ptr; s = sbeg + RSTRING(str)-&gt;len - 1;
+        c = '\001';
+        while (sbeg &lt;= s) {
+            if ((*s += 1) != 0) break;
+            s--;
+        }
+    }
+    if (s &lt; sbeg) {
+        RESIZE_CAPA(str, RSTRING(str)-&gt;len + 1);
+        s = RSTRING(str)-&gt;ptr + n;
+        memmove(s+1, s, RSTRING(str)-&gt;len - n);
+        *s = c;
+        RSTRING(str)-&gt;len += 1;
+        RSTRING(str)-&gt;ptr[RSTRING(str)-&gt;len] = '\0';
+    }
+
+    return str;
+}</pre>
+</body>
+</html>

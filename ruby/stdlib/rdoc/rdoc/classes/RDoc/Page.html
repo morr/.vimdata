@@ -1,0 +1,936 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: RDoc::Page</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">RDoc::Page</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/rdoc/generators/template/html/html_rb.html">
+                rdoc/generators/template/html/html.rb
+                </a>
+        <br />
+                <a href="../../files/rdoc/generators/template/html/kilmer_rb.html">
+                rdoc/generators/template/html/kilmer.rb
+                </a>
+        <br />
+                <a href="../../files/rdoc/generators/template/html/old_html_rb.html">
+                rdoc/generators/template/html/old_html.rb
+                </a>
+        <br />
+                <a href="../../files/rdoc/generators/template/html/hefss_rb.html">
+                rdoc/generators/template/html/hefss.rb
+                </a>
+        <br />
+                <a href="../../files/rdoc/generators/template/html/one_page_html_rb.html">
+                rdoc/generators/template/html/one_page_html.rb
+                </a>
+        <br />
+                <a href="../../files/rdoc/generators/template/chm/chm_rb.html">
+                rdoc/generators/template/chm/chm.rb
+                </a>
+        <br />
+                <a href="../../files/rdoc/generators/template/xml/rdf_rb.html">
+                rdoc/generators/template/xml/rdf.rb
+                </a>
+        <br />
+                <a href="../../files/rdoc/generators/template/xml/xml_rb.html">
+                rdoc/generators/template/xml/xml.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+This is how you define the HTML that <a href="../RDoc.html">RDoc</a>
+generates. Simply create a file in rdoc/generators/html_templates that
+creates the module <a href="Page.html">RDoc::Page</a> and populate it as
+described below. Then invoke rdoc using the &#8212;template &lt;name of
+your file&gt; option, and your template will be used.
+</p>
+<p>
+The constants defining pages use a simple templating system:
+</p>
+<ul>
+<li>The templating system is passed a hash. Keys in the hash correspond to tags
+on this page. The tag %abc% is looked up in the hash, and is replaced by
+the corresponding hash value.
+
+</li>
+<li>Some tags are optional. You can detect this using IF/ENDIF
+
+<pre>
+   IF: title
+   The value of title is %title%
+   ENDIF: title
+</pre>
+</li>
+<li>Some entries in the hash have values that are arrays, where each entry in
+the array is itself a hash. These are used to generate lists using the
+START: construct. For example, given a hash containing
+
+<pre>
+   { 'people' =&gt; [ { 'name' =&gt; 'Fred', 'age' =&gt; '12' },
+                   { 'name' =&gt; 'Mary', 'age' =&gt; '21' } ]
+</pre>
+<p>
+You could generate a simple table using
+</p>
+<pre>
+   &lt;table&gt;
+   START:people
+     &lt;tr&gt;&lt;td&gt;%name%&lt;td&gt;%age%&lt;/tr&gt;
+   END:people
+   &lt;/table&gt;
+</pre>
+<p>
+These lists can be nested to an arbitrary depth
+</p>
+</li>
+<li>the construct HREF:url:name: generates &lt;a
+href=&quot;%url%&quot;&gt;%name%&lt;/a&gt; if <tt>url</tt> is defined in
+the hash, or %name% otherwise.
+
+</li>
+</ul>
+<p>
+Your file must contain the following constants
+</p>
+<dl>
+<dt><b>FONTS</b></dt><dd>a list of fonts to be used
+
+</dd>
+<dt><b>STYLE</b></dt><dd>a CSS section (without the &lt;style&gt; or comments). This is used to
+generate a style.css file
+
+</dd>
+<dt><b>BODY</b></dt><dd>The main body of all non-index <a href="../RDoc.html">RDoc</a> pages. BODY
+will contain two !INCLUDE!s. The first is used to include a document-type
+specific header (FILE_PAGE or CLASS_PAGE). The second include is for the
+method list (METHOD_LIST). THe body is passed:
+
+<table>
+<tr><td valign="top">%title%:</td><td>the page&#8216;s title
+
+</td></tr>
+<tr><td valign="top">%style_url%:</td><td>the url of a style sheet for this page
+
+</td></tr>
+<tr><td valign="top">%diagram%:</td><td>the optional URL of a diagram for this page
+
+</td></tr>
+<tr><td valign="top">%description%:</td><td>a (potentially multi-paragraph) string containing the description for th
+file/class/module.
+
+</td></tr>
+<tr><td valign="top">%requires%:</td><td>an optional list of %aref%/%name% pairs, one for each module required by
+this file.
+
+</td></tr>
+<tr><td valign="top">%methods%:</td><td>an optional list of %aref%/%name%, one for each method documented on this
+page. This is intended to be an index.
+
+</td></tr>
+<tr><td valign="top">%attributes%:</td><td>An optional list. For each attribute it contains:
+
+<table>
+<tr><td valign="top">%name%:</td><td>the attribute name
+
+</td></tr>
+<tr><td valign="top">%rw%:</td><td>r/o, w/o, or r/w
+
+</td></tr>
+<tr><td valign="top">%a_desc%:</td><td>description of the attribute
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top">%classlist%:</td><td>An optional string containing an already-formatted list of classes and
+modules documented in this file
+
+</td></tr>
+</table>
+<p>
+For FILE_PAGE entries, the body will be passed
+</p>
+<table>
+<tr><td valign="top">%short_name%:</td><td>The name of the file
+
+</td></tr>
+<tr><td valign="top">%full_path%:</td><td>The full path to the file
+
+</td></tr>
+<tr><td valign="top">%dtm_modified%:</td><td>The date/time the file was last changed
+
+</td></tr>
+</table>
+<p>
+For class and module pages, the body will be passed
+</p>
+<table>
+<tr><td valign="top">%classmod%:</td><td>The name of the class or module
+
+</td></tr>
+<tr><td valign="top">%files%:</td><td>A list. For each file this class is defined in, it contains:
+
+<table>
+<tr><td valign="top">%full_path_url%:</td><td>an (optional) URL of the <a href="../RDoc.html">RDoc</a> page for this file
+
+</td></tr>
+<tr><td valign="top">%full_path%:</td><td>the name of the file
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top">%par_url%:</td><td>The (optional) URL of the <a href="../RDoc.html">RDoc</a> page documenting
+this class&#8216;s parent class
+
+</td></tr>
+<tr><td valign="top">%parent%:</td><td>The name of this class&#8216;s parent.
+
+</td></tr>
+</table>
+<p>
+For both files and classes, the body is passed the following information on
+includes and methods:
+</p>
+<table>
+<tr><td valign="top">%includes%:</td><td>Optional list of included modules. For each, it receives
+
+<table>
+<tr><td valign="top">%aref%:</td><td>optional URL to <a href="../RDoc.html">RDoc</a> page for the module
+
+</td></tr>
+<tr><td valign="top">%name%:</td><td>the name of the module
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top">%method_list%:</td><td>Optional list of methods of a particular class and category.
+
+</td></tr>
+</table>
+<p>
+Each method list entry contains:
+</p>
+<table>
+<tr><td valign="top">%type%:</td><td>public/private/protected
+
+</td></tr>
+<tr><td valign="top">%category%:</td><td>instance/class
+
+</td></tr>
+<tr><td valign="top">%methods%:</td><td>a list of method descriptions
+
+</td></tr>
+</table>
+<p>
+Each method description contains:
+</p>
+<table>
+<tr><td valign="top">%aref%:</td><td>a target aref, used when referencing this method description. You should
+code this as &lt;a name=&quot;%aref%&quot;&gt;
+
+</td></tr>
+<tr><td valign="top">%codeurl%:</td><td>the optional URL to the page containing this method&#8216;s source code.
+
+</td></tr>
+<tr><td valign="top">%name%:</td><td>the method&#8216;s name
+
+</td></tr>
+<tr><td valign="top">%params%:</td><td>the method&#8216;s parameters
+
+</td></tr>
+<tr><td valign="top">%callseq%:</td><td>a full calling sequence
+
+</td></tr>
+<tr><td valign="top">%m_desc%:</td><td>the (potentially multi-paragraph) description of this method.
+
+</td></tr>
+</table>
+</dd>
+<dt><b>CLASS_PAGE</b></dt><dd>Header for pages documenting classes and modules. See BODY above for the
+available parameters.
+
+</dd>
+<dt><b>FILE_PAGE</b></dt><dd>Header for pages documenting files. See BODY above for the available
+parameters.
+
+</dd>
+<dt><b>METHOD_LIST</b></dt><dd>Controls the display of the listing of methods. See BODY for parameters.
+
+</dd>
+<dt><b>INDEX</b></dt><dd>The top-level index page. For a browser-like environment define a frame set
+that includes the file, class, and method indices. Passed
+
+<table>
+<tr><td valign="top">%title%:</td><td>title of page
+
+</td></tr>
+<tr><td valign="top">%initial_page% :</td><td>url of initial page to display
+
+</td></tr>
+</table>
+</dd>
+<dt><b>CLASS_INDEX</b></dt><dd>Individual files for the three indexes. Passed:
+
+<table>
+<tr><td valign="top">%index_url%:</td><td>URL of main index page
+
+</td></tr>
+<tr><td valign="top">%entries%:</td><td>List of
+
+<table>
+<tr><td valign="top">%name%:</td><td>name of an index entry
+
+</td></tr>
+<tr><td valign="top">%href%:</td><td>url of corresponding page
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+</dd>
+<dt><b>METHOD_INDEX</b></dt><dd>Same as CLASS_INDEX for methods
+
+</dd>
+<dt><b>FILE_INDEX</b></dt><dd>Same as CLASS_INDEX for methods
+
+</dd>
+<dt><b>FR_INDEX_BODY</b></dt><dd>A wrapper around CLASS_INDEX, METHOD_INDEX, and FILE_INDEX. If those index
+strings contain the complete HTML for the output, then FR_INDEX_BODY can
+simply be !INCLUDE!
+
+</dd>
+<dt><b>SRC_PAGE</b></dt><dd><a href="Page.html">Page</a> used to display source code. Passed %title%
+and %code%, the latter being a multi-line string of code.
+
+</dd>
+</dl>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002200">write_extra_pages</a>&nbsp;&nbsp;
+      <a href="#M002201">write_extra_pages</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FONTS</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;Verdana,Arial,Helvetica,sans-serif&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">STYLE</td>
+          <td>=</td>
+          <td class="context-item-value">%{ body {     font-family: Verdana,Arial,Helvetica,sans-serif;     font-size:   90%;     margin: 0;     margin-left: 40px;     padding: 0;     background: white; }  h1,h2,h3,h4 { margin: 0; color: #efefef; background: transparent; } h1 { font-size: 150%; } h2,h3,h4 { margin-top: 1em; }  a { background: #eef; color: #039; text-decoration: none; } a:hover { background: #039; color: #eef; }  /* Override the base stylesheet's Anchor inside a table cell */ td &gt; a {   background: transparent;   color: #039;   text-decoration: none; }  /* and inside a section title */ .section-title &gt; a {   background: transparent;   color: #eee;   text-decoration: none; }  /* === Structural elements =================================== */  div#index {     margin: 0;     margin-left: -40px;     padding: 0;     font-size: 90%; }   div#index a {     margin-left: 0.7em; }  div#index .section-bar {    margin-left: 0px;    padding-left: 0.7em;    background: #ccc;    font-size: small; }   div#classHeader, div#fileHeader {     width: auto;     color: white;     padding: 0.5em 1.5em 0.5em 1.5em;     margin: 0;     margin-left: -40px;     border-bottom: 3px solid #006; }  div#classHeader a, div#fileHeader a {     background: inherit;     color: white; }  div#classHeader td, div#fileHeader td {     background: inherit;     color: white; }   div#fileHeader {     background: #057; }  div#classHeader {     background: #048; }   .class-name-in-header {   font-size:  180%;   font-weight: bold; }   div#bodyContent {     padding: 0 1.5em 0 1.5em; }  div#description {     padding: 0.5em 1.5em;     background: #efefef;     border: 1px dotted #999; }  div#description h1,h2,h3,h4,h5,h6 {     color: #125;;     background: transparent; }  div#validator-badges {     text-align: center; } div#validator-badges img { border: 0; }  div#copyright {     color: #333;     background: #efefef;     font: 0.75em sans-serif;     margin-top: 5em;     margin-bottom: 0;     padding: 0.5em 2em; }   /* === Classes =================================== */  table.header-table {     color: white;     font-size: small; }  .type-note {     font-size: small;     color: #DEDEDE; }  .xxsection-bar {     background: #eee;     color: #333;     padding: 3px; }  .section-bar {    color: #333;    border-bottom: 1px solid #999;     margin-left: -20px; }   .section-title {     background: #79a;     color: #eee;     padding: 3px;     margin-top: 2em;     margin-left: -30px;     border: 1px solid #999; }  .top-aligned-row {  vertical-align: top } .bottom-aligned-row { vertical-align: bottom }  /* --- Context section classes ----------------------- */  .context-row { } .context-item-name { font-family: monospace; font-weight: bold; color: black; } .context-item-value { font-size: small; color: #448; } .context-item-desc { color: #333; padding-left: 2em; }  /* --- Method classes -------------------------- */ .method-detail {     background: #efefef;     padding: 0;     margin-top: 0.5em;     margin-bottom: 1em;     border: 1px dotted #ccc; } .method-heading {   color: black;   background: #ccc;   border-bottom: 1px solid #666;   padding: 0.2em 0.5em 0 0.5em; } .method-signature { color: black; background: inherit; } .method-name { font-weight: bold; } .method-args { font-style: italic; } .method-description { padding: 0 0.5em 0 0.5em; }  /* --- Source code sections -------------------- */  a.source-toggle { font-size: 90%; } div.method-source-code {     background: #262626;     color: #ffdead;     margin: 1em;     padding: 0.5em;     border: 1px dashed #999;     overflow: hidden; }  div.method-source-code pre { color: #ffdead; overflow: hidden; }  /* --- Ruby keyword styles --------------------- */  .standalone-code { background: #221111; color: #ffdead; overflow: hidden; }  .ruby-constant  { color: #7fffd4; background: transparent; } .ruby-keyword { color: #00ffff; background: transparent; } .ruby-ivar    { color: #eedd82; background: transparent; } .ruby-operator  { color: #00ffee; background: transparent; } .ruby-identifier { color: #ffdead; background: transparent; } .ruby-node    { color: #ffa07a; background: transparent; } .ruby-comment { color: #b22222; font-weight: bold; background: transparent; } .ruby-regexp  { color: #ffa07a; background: transparent; } .ruby-value   { color: #7fffd4; background: transparent; } }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">XHTML_PREAMBLE</td>
+          <td>=</td>
+          <td class="context-item-value">%{&lt;?xml version=&quot;1.0&quot; encoding=&quot;%charset%&quot;?&gt; &lt;!DOCTYPE html       PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot;      &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+H E A D E R T E M P L A T E
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">HEADER</td>
+          <td>=</td>
+          <td class="context-item-value">XHTML_PREAMBLE + %{ &lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; xml:lang=&quot;en&quot; lang=&quot;en&quot;&gt; &lt;head&gt;   &lt;title&gt;%title%&lt;/title&gt;   &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot; /&gt;   &lt;meta http-equiv=&quot;Content-Script-Type&quot; content=&quot;text/javascript&quot; /&gt;   &lt;link rel=&quot;stylesheet&quot; href=&quot;%style_url%&quot; type=&quot;text/css&quot; media=&quot;screen&quot; /&gt;   &lt;script type=&quot;text/javascript&quot;&gt;   // &lt;![CDATA[    function popupCode( url ) {     window.open(url, &quot;Code&quot;, &quot;resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400&quot;)   }    function toggleCode( id ) {     if ( document.getElementById )       elem = document.getElementById( id );     else if ( document.all )       elem = eval( &quot;document.all.&quot; + id );     else       return false;      elemStyle = elem.style;          if ( elemStyle.display != &quot;block&quot; ) {       elemStyle.display = &quot;block&quot;     } else {       elemStyle.display = &quot;none&quot;     }      return true;   }      // Make codeblocks hidden by default   document.writeln( &quot;&lt;style type=\\&quot;text/css\\&quot;&gt;div.method-source-code { display: none }&lt;/style&gt;&quot; )      // ]]&gt;   &lt;/script&gt;  &lt;/head&gt; &lt;body&gt; }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CONTEXT_CONTENT</td>
+          <td>=</td>
+          <td class="context-item-value">%{ }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+C O N T E X T C O N T E N T T E M P L A T E
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FOOTER</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;div id=&quot;validator-badges&quot;&gt;   &lt;p&gt;&lt;small&gt;&lt;a href=&quot;http://validator.w3.org/check/referer&quot;&gt;[Validate]&lt;/a&gt;&lt;/small&gt;&lt;/p&gt; &lt;/div&gt;  &lt;/body&gt; &lt;/html&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+F O O T E R T E M P L A T E
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FILE_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">%{   &lt;div id=&quot;fileHeader&quot;&gt;     &lt;h1&gt;%short_name%&lt;/h1&gt;     &lt;table class=&quot;header-table&quot;&gt;     &lt;tr class=&quot;top-aligned-row&quot;&gt;       &lt;td&gt;&lt;strong&gt;Path:&lt;/strong&gt;&lt;/td&gt;       &lt;td&gt;%full_path% IF:cvsurl         &amp;nbsp;(&lt;a href=&quot;%cvsurl%&quot;&gt;&lt;acronym title=&quot;Concurrent Versioning System&quot;&gt;CVS&lt;/acronym&gt;&lt;/a&gt;) ENDIF:cvsurl       &lt;/td&gt;     &lt;/tr&gt;     &lt;tr class=&quot;top-aligned-row&quot;&gt;       &lt;td&gt;&lt;strong&gt;Last Update:&lt;/strong&gt;&lt;/td&gt;       &lt;td&gt;%dtm_modified%&lt;/td&gt;     &lt;/tr&gt;     &lt;/table&gt;   &lt;/div&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+F I L E P A G E H E A D E R T E M P L A T E
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CLASS_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">%{     &lt;div id=&quot;classHeader&quot;&gt;         &lt;table class=&quot;header-table&quot;&gt;         &lt;tr class=&quot;top-aligned-row&quot;&gt;           &lt;td&gt;&lt;strong&gt;%classmod%&lt;/strong&gt;&lt;/td&gt;           &lt;td class=&quot;class-name-in-header&quot;&gt;%full_name%&lt;/td&gt;         &lt;/tr&gt;         &lt;tr class=&quot;top-aligned-row&quot;&gt;             &lt;td&gt;&lt;strong&gt;In:&lt;/strong&gt;&lt;/td&gt;             &lt;td&gt; START:infiles IF:full_path_url                 &lt;a href=&quot;%full_path_url%&quot;&gt; ENDIF:full_path_url                 %full_path% IF:full_path_url                 &lt;/a&gt; ENDIF:full_path_url IF:cvsurl         &amp;nbsp;(&lt;a href=&quot;%cvsurl%&quot;&gt;&lt;acronym title=&quot;Concurrent Versioning System&quot;&gt;CVS&lt;/acronym&gt;&lt;/a&gt;) ENDIF:cvsurl         &lt;br /&gt; END:infiles             &lt;/td&gt;         &lt;/tr&gt;  IF:parent         &lt;tr class=&quot;top-aligned-row&quot;&gt;             &lt;td&gt;&lt;strong&gt;Parent:&lt;/strong&gt;&lt;/td&gt;             &lt;td&gt; IF:par_url                 &lt;a href=&quot;%par_url%&quot;&gt; ENDIF:par_url                 %parent% IF:par_url                &lt;/a&gt; ENDIF:par_url             &lt;/td&gt;         &lt;/tr&gt; ENDIF:parent         &lt;/table&gt;     &lt;/div&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+C L A S S P A G E H E A D E R T E M P L A T E
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">METHOD_LIST</td>
+          <td>=</td>
+          <td class="context-item-value">%{    &lt;div id=&quot;contextContent&quot;&gt; IF:diagram     &lt;div id=&quot;diagram&quot;&gt;       %diagram%     &lt;/div&gt; ENDIF:diagram  IF:description     &lt;div id=&quot;description&quot;&gt;       %description%     &lt;/div&gt; ENDIF:description  IF:requires     &lt;div id=&quot;requires-list&quot;&gt;       &lt;h3 class=&quot;section-bar&quot;&gt;Required files&lt;/h3&gt;        &lt;div class=&quot;name-list&quot;&gt; START:requires       HREF:aref:name:&amp;nbsp;&amp;nbsp; END:requires       &lt;/div&gt;     &lt;/div&gt; ENDIF:requires  IF:toc     &lt;div id=&quot;contents-list&quot;&gt;       &lt;h3 class=&quot;section-bar&quot;&gt;Contents&lt;/h3&gt;       &lt;ul&gt; START:toc       &lt;li&gt;&lt;a href=&quot;#%href%&quot;&gt;%secname%&lt;/a&gt;&lt;/li&gt; END:toc      &lt;/ul&gt; ENDIF:toc    &lt;/div&gt;  IF:methods     &lt;div id=&quot;method-list&quot;&gt;       &lt;h3 class=&quot;section-bar&quot;&gt;Methods&lt;/h3&gt;        &lt;div class=&quot;name-list&quot;&gt; START:methods       HREF:aref:name:&amp;nbsp;&amp;nbsp; END:methods       &lt;/div&gt;     &lt;/div&gt; ENDIF:methods    &lt;/div&gt;       &lt;!-- if includes --&gt; IF:includes     &lt;div id=&quot;includes&quot;&gt;       &lt;h3 class=&quot;section-bar&quot;&gt;Included Modules&lt;/h3&gt;        &lt;div id=&quot;includes-list&quot;&gt; START:includes         &lt;span class=&quot;include-name&quot;&gt;HREF:aref:name:&lt;/span&gt; END:includes       &lt;/div&gt;     &lt;/div&gt; ENDIF:includes  START:sections     &lt;div id=&quot;section&quot;&gt; IF:sectitle       &lt;h2 class=&quot;section-title&quot;&gt;&lt;a name=&quot;%secsequence%&quot;&gt;%sectitle%&lt;/a&gt;&lt;/h2&gt; IF:seccomment       &lt;div class=&quot;section-comment&quot;&gt;         %seccomment%       &lt;/div&gt;       ENDIF:seccomment ENDIF:sectitle  IF:classlist     &lt;div id=&quot;class-list&quot;&gt;       &lt;h3 class=&quot;section-bar&quot;&gt;Classes and Modules&lt;/h3&gt;        %classlist%     &lt;/div&gt; ENDIF:classlist  IF:constants     &lt;div id=&quot;constants-list&quot;&gt;       &lt;h3 class=&quot;section-bar&quot;&gt;Constants&lt;/h3&gt;        &lt;div class=&quot;name-list&quot;&gt;         &lt;table summary=&quot;Constants&quot;&gt; START:constants         &lt;tr class=&quot;top-aligned-row context-row&quot;&gt;           &lt;td class=&quot;context-item-name&quot;&gt;%name%&lt;/td&gt;           &lt;td&gt;=&lt;/td&gt;           &lt;td class=&quot;context-item-value&quot;&gt;%value%&lt;/td&gt; IF:desc           &lt;td width=&quot;3em&quot;&gt;&amp;nbsp;&lt;/td&gt;           &lt;td class=&quot;context-item-desc&quot;&gt;%desc%&lt;/td&gt; ENDIF:desc         &lt;/tr&gt; END:constants         &lt;/table&gt;       &lt;/div&gt;     &lt;/div&gt; ENDIF:constants  IF:aliases     &lt;div id=&quot;aliases-list&quot;&gt;       &lt;h3 class=&quot;section-bar&quot;&gt;External Aliases&lt;/h3&gt;        &lt;div class=&quot;name-list&quot;&gt;                         &lt;table summary=&quot;aliases&quot;&gt; START:aliases         &lt;tr class=&quot;top-aligned-row context-row&quot;&gt;           &lt;td class=&quot;context-item-name&quot;&gt;%old_name%&lt;/td&gt;           &lt;td&gt;-&amp;gt;&lt;/td&gt;           &lt;td class=&quot;context-item-value&quot;&gt;%new_name%&lt;/td&gt;         &lt;/tr&gt; IF:desc       &lt;tr class=&quot;top-aligned-row context-row&quot;&gt;         &lt;td&gt;&amp;nbsp;&lt;/td&gt;         &lt;td colspan=&quot;2&quot; class=&quot;context-item-desc&quot;&gt;%desc%&lt;/td&gt;       &lt;/tr&gt; ENDIF:desc END:aliases                         &lt;/table&gt;       &lt;/div&gt;     &lt;/div&gt; ENDIF:aliases   IF:attributes     &lt;div id=&quot;attribute-list&quot;&gt;       &lt;h3 class=&quot;section-bar&quot;&gt;Attributes&lt;/h3&gt;        &lt;div class=&quot;name-list&quot;&gt;         &lt;table&gt; START:attributes         &lt;tr class=&quot;top-aligned-row context-row&quot;&gt;           &lt;td class=&quot;context-item-name&quot;&gt;%name%&lt;/td&gt; IF:rw           &lt;td class=&quot;context-item-value&quot;&gt;&amp;nbsp;[%rw%]&amp;nbsp;&lt;/td&gt; ENDIF:rw IFNOT:rw           &lt;td class=&quot;context-item-value&quot;&gt;&amp;nbsp;&amp;nbsp;&lt;/td&gt; ENDIF:rw           &lt;td class=&quot;context-item-desc&quot;&gt;%a_desc%&lt;/td&gt;         &lt;/tr&gt; END:attributes         &lt;/table&gt;       &lt;/div&gt;     &lt;/div&gt; ENDIF:attributes              &lt;!-- if method_list --&gt; IF:method_list     &lt;div id=&quot;methods&quot;&gt; START:method_list IF:methods       &lt;h3 class=&quot;section-bar&quot;&gt;%type% %category% methods&lt;/h3&gt;  START:methods       &lt;div id=&quot;method-%aref%&quot; class=&quot;method-detail&quot;&gt;         &lt;a name=&quot;%aref%&quot;&gt;&lt;/a&gt;          &lt;div class=&quot;method-heading&quot;&gt; IF:codeurl           &lt;a href=&quot;%codeurl%&quot; target=&quot;Code&quot; class=&quot;method-signature&quot;             onclick=&quot;popupCode('%codeurl%');return false;&quot;&gt; ENDIF:codeurl IF:sourcecode           &lt;a href=&quot;#%aref%&quot; class=&quot;method-signature&quot;&gt; ENDIF:sourcecode IF:callseq           &lt;span class=&quot;method-name&quot;&gt;%callseq%&lt;/span&gt; ENDIF:callseq IFNOT:callseq           &lt;span class=&quot;method-name&quot;&gt;%name%&lt;/span&gt;&lt;span class=&quot;method-args&quot;&gt;%params%&lt;/span&gt; ENDIF:callseq IF:codeurl           &lt;/a&gt; ENDIF:codeurl IF:sourcecode           &lt;/a&gt; ENDIF:sourcecode         &lt;/div&gt;                &lt;div class=&quot;method-description&quot;&gt; IF:m_desc           %m_desc% ENDIF:m_desc IF:sourcecode           &lt;p&gt;&lt;a class=&quot;source-toggle&quot; href=&quot;#&quot;             onclick=&quot;toggleCode('%aref%-source');return false;&quot;&gt;[Source]&lt;/a&gt;&lt;/p&gt;           &lt;div class=&quot;method-source-code&quot; id=&quot;%aref%-source&quot;&gt; &lt;pre&gt; %sourcecode% &lt;/pre&gt;           &lt;/div&gt; ENDIF:sourcecode         &lt;/div&gt;       &lt;/div&gt;  END:methods ENDIF:methods END:method_list      &lt;/div&gt; ENDIF:method_list END:sections }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+M E T H O D L I S T T E M P L A T E
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BODY</td>
+          <td>=</td>
+          <td class="context-item-value">HEADER + %{  !INCLUDE!  &lt;!-- banner header --&gt;    &lt;div id=&quot;bodyContent&quot;&gt;  } +  METHOD_LIST + %{    &lt;/div&gt;  } + FOOTER</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+B O D Y T E M P L A T E
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SRC_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">XHTML_PREAMBLE + %{ &lt;html&gt; &lt;head&gt;   &lt;title&gt;%title%&lt;/title&gt;   &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot; /&gt;   &lt;link rel=&quot;stylesheet&quot; href=&quot;%style_url%&quot; type=&quot;text/css&quot; media=&quot;screen&quot; /&gt; &lt;/head&gt; &lt;body class=&quot;standalone-code&quot;&gt;   &lt;pre&gt;%code%&lt;/pre&gt; &lt;/body&gt; &lt;/html&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+S O U R C E C O D E T E M P L A T E
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FR_INDEX_BODY</td>
+          <td>=</td>
+          <td class="context-item-value">%{ !INCLUDE! }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+I N D E X F I L E T E M P L A T E S
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FILE_INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">XHTML_PREAMBLE + %{ &lt;!--      %list_title%    --&gt; &lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; xml:lang=&quot;en&quot; lang=&quot;en&quot;&gt; &lt;head&gt;   &lt;title&gt;%list_title%&lt;/title&gt;   &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot; /&gt;   &lt;link rel=&quot;stylesheet&quot; href=&quot;%style_url%&quot; type=&quot;text/css&quot; /&gt;   &lt;base target=&quot;docwin&quot; /&gt; &lt;/head&gt; &lt;body&gt; &lt;div id=&quot;index&quot;&gt;   &lt;h1 class=&quot;section-bar&quot;&gt;%list_title%&lt;/h1&gt;   &lt;div id=&quot;index-entries&quot;&gt; START:entries     &lt;a href=&quot;%href%&quot;&gt;%name%&lt;/a&gt;&lt;br /&gt; END:entries   &lt;/div&gt; &lt;/div&gt; &lt;/body&gt; &lt;/html&gt; }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CLASS_INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">FILE_INDEX</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">METHOD_INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">FILE_INDEX</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">%{&lt;?xml version=&quot;1.0&quot; encoding=&quot;%charset%&quot;?&gt; &lt;!DOCTYPE html       PUBLIC &quot;-//W3C//DTD XHTML 1.0 Frameset//EN&quot;      &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd&quot;&gt;  &lt;!--      %title%    --&gt; &lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; xml:lang=&quot;en&quot; lang=&quot;en&quot;&gt; &lt;head&gt;   &lt;title&gt;%title%&lt;/title&gt;   &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot; /&gt; &lt;/head&gt; &lt;frameset rows=&quot;20%, 80%&quot;&gt;     &lt;frameset cols=&quot;25%,35%,45%&quot;&gt;         &lt;frame src=&quot;fr_file_index.html&quot;   title=&quot;Files&quot; name=&quot;Files&quot; /&gt;         &lt;frame src=&quot;fr_class_index.html&quot;  name=&quot;Classes&quot; /&gt;         &lt;frame src=&quot;fr_method_index.html&quot; name=&quot;Methods&quot; /&gt;     &lt;/frameset&gt;     &lt;frame src=&quot;%initial_page%&quot; name=&quot;docwin&quot; /&gt; &lt;/frameset&gt; &lt;/html&gt; }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FONTS</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;Verdana, Arial, Helvetica, sans-serif&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">STYLE</td>
+          <td>=</td>
+          <td class="context-item-value">%{ body,td,p { font-family: %fonts%;         color: #000040; }  .attr-rw { font-size: xx-small; color: #444488 }  .title-row { background-color: #CCCCFF;              color:      #000010; }  .big-title-font {    color: black;   font-weight: bold;   font-family: %fonts%;    font-size: large;    height: 60px;   padding: 10px 3px 10px 3px; }  .small-title-font { color: black;                     font-family: %fonts%;                     font-size:10; }  .aqua { color: black }  .method-name, .attr-name {       font-family: font-family: %fonts%;        font-weight: bold;       font-size: small;       margin-left: 20px;       color: #000033; }  .tablesubtitle, .tablesubsubtitle {    width: 100%;    margin-top: 1ex;    margin-bottom: .5ex;    padding: 5px 0px 5px 3px;    font-size: large;    color: black;    background-color: #CCCCFF;    border: thin; }  .name-list {   margin-left: 5px;   margin-bottom: 2ex;   line-height: 105%; }  .description {   margin-left: 5px;   margin-bottom: 2ex;   line-height: 105%;   font-size: small; }  .methodtitle {   font-size: small;   font-weight: bold;   text-decoration: none;   color: #000033;   background-color: white;  }  .srclink {   font-size: small;   font-weight: bold;   text-decoration: none;   color: #0000DD;   background-color: white; }  .paramsig {    font-size: small; }  .srcbut { float: right }  }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BODY</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;html&gt;&lt;head&gt;   &lt;title&gt;%title%&lt;/title&gt;   &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot;&gt;   &lt;link rel=&quot;stylesheet&quot; href=&quot;%style_url%&quot; type=&quot;text/css&quot; media=&quot;screen&quot; /&gt;   &lt;script type=&quot;text/javascript&quot; language=&quot;JavaScript&quot;&gt;   &lt;!--   function popCode(url) {     parent.frames.source.location = url   }   //--&gt;   &lt;/script&gt; &lt;/head&gt; &lt;body bgcolor=&quot;white&quot;&gt;  !INCLUDE!  &lt;!-- banner header --&gt;  IF:diagram &lt;table width=&quot;100%&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt; %diagram% &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; ENDIF:diagram  IF:description &lt;div class=&quot;description&quot;&gt;%description%&lt;/div&gt; ENDIF:description  IF:requires &lt;table cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Required files&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;&lt;br /&gt; &lt;div class=&quot;name-list&quot;&gt; START:requires HREF:aref:name: END:requires ENDIF:requires &lt;/div&gt;  IF:methods &lt;table cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Methods&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;&lt;br /&gt; &lt;div class=&quot;name-list&quot;&gt; START:methods HREF:aref:name:, END:methods &lt;/div&gt; ENDIF:methods   START:sections     &lt;div id=&quot;section&quot;&gt; IF:sectitle       &lt;h2 class=&quot;section-title&quot;&gt;&lt;a name=&quot;%secsequence%&quot;&gt;%sectitle%&lt;/a&gt;&lt;/h2&gt; IF:seccomment       &lt;div class=&quot;section-comment&quot;&gt;         %seccomment%       &lt;/div&gt;       ENDIF:seccomment ENDIF:sectitle  IF:attributes &lt;table cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Attributes&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;&lt;br /&gt; &lt;table cellspacing=&quot;5&quot;&gt; START:attributes      &lt;tr valign=&quot;top&quot;&gt; IF:rw        &lt;td align=&quot;center&quot; class=&quot;attr-rw&quot;&gt;&amp;nbsp;[%rw%]&amp;nbsp;&lt;/td&gt; ENDIF:rw IFNOT:rw        &lt;td&gt;&lt;/td&gt; ENDIF:rw        &lt;td class=&quot;attr-name&quot;&gt;%name%&lt;/td&gt;        &lt;td&gt;%a_desc%&lt;/td&gt;      &lt;/tr&gt; END:attributes &lt;/table&gt; ENDIF:attributes  IF:classlist &lt;table cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Classes and Modules&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;&lt;br /&gt; %classlist%&lt;br /&gt; ENDIF:classlist    !INCLUDE!  &lt;!-- method descriptions --&gt;  END:sections  &lt;/body&gt; &lt;/html&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FILE_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">&lt;&lt;_FILE_PAGE_ &lt;table width=&quot;100%&quot;&gt;  &lt;tr class=&quot;title-row&quot;&gt;  &lt;td&gt;&lt;table width=&quot;100%&quot;&gt;&lt;tr&gt;    &lt;td class=&quot;big-title-font&quot; colspan=&quot;2&quot;&gt;&lt;font size=&quot;-3&quot;&gt;&lt;b&gt;File&lt;/b&gt;&lt;br /&gt;&lt;/font&gt;%short_name%&lt;/td&gt;    &lt;td align=&quot;right&quot;&gt;&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;2&quot;&gt;          &lt;tr&gt;            &lt;td  class=&quot;small-title-font&quot;&gt;Path:&lt;/td&gt;            &lt;td class=&quot;small-title-font&quot;&gt;%full_path% IF:cvsurl                                 &amp;nbsp;(&lt;a href=&quot;%cvsurl%&quot;&gt;&lt;acronym title=&quot;Concurrent Versioning System&quot;&gt;CVS&lt;/acronym&gt;&lt;/a&gt;) ENDIF:cvsurl            &lt;/td&gt;          &lt;/tr&gt;          &lt;tr&gt;            &lt;td class=&quot;small-title-font&quot;&gt;Modified:&lt;/td&gt;            &lt;td class=&quot;small-title-font&quot;&gt;%dtm_modified%&lt;/td&gt;          &lt;/tr&gt;         &lt;/table&gt;     &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;   &lt;/tr&gt; &lt;/table&gt;&lt;br /&gt; _FILE_PAGE_</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CLASS_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;table width=&quot;100%&quot; border=&quot;0&quot; cellspacing=&quot;0&quot;&gt;  &lt;tr class=&quot;title-row&quot;&gt;  &lt;td class=&quot;big-title-font&quot;&gt;    &lt;font size=&quot;-3&quot;&gt;&lt;b&gt;%classmod%&lt;/b&gt;&lt;br /&gt;&lt;/font&gt;%full_name%  &lt;/td&gt;  &lt;td align=&quot;right&quot;&gt;    &lt;table cellspacing=&quot;0&quot; cellpadding=&quot;2&quot;&gt;      &lt;tr valign=&quot;top&quot;&gt;       &lt;td class=&quot;small-title-font&quot;&gt;In:&lt;/td&gt;       &lt;td class=&quot;small-title-font&quot;&gt; START:infiles HREF:full_path_url:full_path: IF:cvsurl &amp;nbsp;(&lt;a href=&quot;%cvsurl%&quot;&gt;&lt;acronym title=&quot;Concurrent Versioning System&quot;&gt;CVS&lt;/acronym&gt;&lt;/a&gt;) ENDIF:cvsurl END:infiles       &lt;/td&gt;      &lt;/tr&gt; IF:parent      &lt;tr&gt;       &lt;td class=&quot;small-title-font&quot;&gt;Parent:&lt;/td&gt;       &lt;td class=&quot;small-title-font&quot;&gt; IF:par_url         &lt;a href=&quot;%par_url%&quot; class=&quot;cyan&quot;&gt; ENDIF:par_url %parent% IF:par_url          &lt;/a&gt; ENDIF:par_url       &lt;/td&gt;      &lt;/tr&gt; ENDIF:parent    &lt;/table&gt;   &lt;/td&gt;   &lt;/tr&gt; &lt;/table&gt;&lt;br /&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">METHOD_LIST</td>
+          <td>=</td>
+          <td class="context-item-value">%{ IF:includes &lt;div class=&quot;tablesubsubtitle&quot;&gt;Included modules&lt;/div&gt;&lt;br /&gt; &lt;div class=&quot;name-list&quot;&gt; START:includes     &lt;span class=&quot;method-name&quot;&gt;HREF:aref:name:&lt;/span&gt; END:includes &lt;/div&gt; ENDIF:includes  IF:method_list START:method_list IF:methods &lt;table cellpadding=5 width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;%type% %category% methods&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; START:methods &lt;table width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; border=&quot;0&quot;&gt; &lt;tr&gt;&lt;td class=&quot;methodtitle&quot;&gt; &lt;a name=&quot;%aref%&quot;&gt; IF:callseq &lt;b&gt;%callseq%&lt;/b&gt; ENDIF:callseq IFNOT:callseq  &lt;b&gt;%name%&lt;/b&gt;%params% ENDIF:callseq IF:codeurl &lt;a href=&quot;%codeurl%&quot; target=&quot;source&quot; class=&quot;srclink&quot;&gt;src&lt;/a&gt; ENDIF:codeurl &lt;/a&gt;&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; IF:m_desc &lt;div class=&quot;description&quot;&gt; %m_desc% &lt;/div&gt; ENDIF:m_desc IF:aka &lt;div class=&quot;aka&quot;&gt; This method is also aliased as START:aka &lt;a href=&quot;%aref%&quot;&gt;%name%&lt;/a&gt; END:aka &lt;/div&gt; ENDIF:aka IF:sourcecode &lt;pre class=&quot;source&quot;&gt; %sourcecode% &lt;/pre&gt; ENDIF:sourcecode END:methods ENDIF:methods END:method_list ENDIF:method_list }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SRC_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;html&gt; &lt;head&gt;&lt;title&gt;%title%&lt;/title&gt; &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot;&gt; &lt;style type=&quot;text/css&quot;&gt; .ruby-comment    { color: green; font-style: italic } .ruby-constant   { color: #4433aa; font-weight: bold; } .ruby-identifier { color: #222222;  } .ruby-ivar       { color: #2233dd; } .ruby-keyword    { color: #3333FF; font-weight: bold } .ruby-node       { color: #777777; } .ruby-operator   { color: #111111;  } .ruby-regexp     { color: #662222; } .ruby-value      { color: #662222; font-style: italic }   .kw { color: #3333FF; font-weight: bold }   .cmt { color: green; font-style: italic }   .str { color: #662222; font-style: italic }   .re  { color: #662222; } &lt;/style&gt; &lt;/head&gt; &lt;body bgcolor=&quot;white&quot;&gt; &lt;pre&gt;%code%&lt;/pre&gt; &lt;/body&gt; &lt;/html&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Source code ##########################
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FR_INDEX_BODY</td>
+          <td>=</td>
+          <td class="context-item-value">%{ !INCLUDE! }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Index ################################
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FILE_INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;html&gt; &lt;head&gt; &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot;&gt; &lt;style&gt; &lt;!--   body { background-color: #ddddff;      font-family: #{FONTS};         font-size: 11px;        font-style: normal;      line-height: 14px;             color: #000040;   } div.banner {   background: #0000aa;   color:      white;   padding: 1;   margin: 0;   font-size: 90%;   font-weight: bold;   line-height: 1.1;   text-align: center;   width: 100%; }    --&gt; &lt;/style&gt; &lt;base target=&quot;docwin&quot;&gt; &lt;/head&gt; &lt;body&gt; &lt;div class=&quot;banner&quot;&gt;%list_title%&lt;/div&gt; START:entries &lt;a href=&quot;%href%&quot;&gt;%name%&lt;/a&gt;&lt;br /&gt; END:entries &lt;/body&gt;&lt;/html&gt; }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CLASS_INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">FILE_INDEX</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">METHOD_INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">FILE_INDEX</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;html&gt; &lt;head&gt;   &lt;title&gt;%title%&lt;/title&gt;   &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot;&gt; &lt;/head&gt;  &lt;frameset cols=&quot;20%,*&quot;&gt;     &lt;frameset rows=&quot;15%,35%,50%&quot;&gt;         &lt;frame src=&quot;fr_file_index.html&quot;   title=&quot;Files&quot; name=&quot;Files&quot;&gt;         &lt;frame src=&quot;fr_class_index.html&quot;  name=&quot;Classes&quot;&gt;         &lt;frame src=&quot;fr_method_index.html&quot; name=&quot;Methods&quot;&gt;     &lt;/frameset&gt; IF:inline_source       &lt;frame  src=&quot;%initial_page%&quot; name=&quot;docwin&quot;&gt; ENDIF:inline_source IFNOT:inline_source     &lt;frameset rows=&quot;80%,20%&quot;&gt;       &lt;frame  src=&quot;%initial_page%&quot; name=&quot;docwin&quot;&gt;       &lt;frame  src=&quot;blank.html&quot; name=&quot;source&quot;&gt;     &lt;/frameset&gt; ENDIF:inline_source     &lt;noframes&gt;           &lt;body bgcolor=&quot;white&quot;&gt;             Click &lt;a href=&quot;html/index.html&quot;&gt;here&lt;/a&gt; for a non-frames             version of this page.           &lt;/body&gt;     &lt;/noframes&gt; &lt;/frameset&gt;  &lt;/html&gt; }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BLANK</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;html&gt;&lt;body bgcolor=&quot;white&quot;&gt;&lt;/body&gt;&lt;/html&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+and a blank page to use as a target
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FONTS</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;Verdana, Arial, Helvetica, sans-serif&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">STYLE</td>
+          <td>=</td>
+          <td class="context-item-value">%{ body,td,p { font-family: %fonts%;         color: #000040; }  .attr-rw { font-size: x-small; color: #444488 }  .title-row { background: #0000aa;              color:      #eeeeff; }  .big-title-font { color: white;                   font-family: %fonts%;                   font-size: large;                    height: 50px}  .small-title-font { color: aqua;                     font-family: %fonts%;                     font-size: xx-small; }  .aqua { color: aqua }  .method-name, attr-name {       font-family: monospace; font-weight: bold; }  .tablesubtitle, .tablesubsubtitle {    width: 100%;    margin-top: 1ex;    margin-bottom: .5ex;    padding: 5px 0px 5px 20px;    font-size: large;    color: aqua;    background: #3333cc; }  .name-list {   font-family: monospace;   margin-left: 40px;   margin-bottom: 2ex;   line-height: 140%; }  .description {   margin-left: 40px;   margin-top: -2ex;   margin-bottom: 2ex; }  .description p {   line-height: 140%; }  .aka {   margin-left: 40px;   margin-bottom: 2ex;   line-height: 100%;   font-size:   small;   color:       #808080; }  .methodtitle {   font-size: medium;   text-decoration: none;   color: #0000AA;   background: white;  }  .paramsig {    font-size: small; }  .srcbut { float: right }  pre { font-size: 1.2em; } tt  { font-size: 1.2em; }  pre.source {   border-style: groove;   background-color: #ddddff;   margin-left:  40px;   padding: 1em 0em 1em 2em; }  .classlist {   margin-left: 40px;   margin-bottom: 2ex;   line-height: 140%; }  li {   display:    list-item;   margin-top: .6em; }  .ruby-comment    { color: green; font-style: italic } .ruby-constant   { color: #4433aa; font-weight: bold; } .ruby-identifier { color: #222222;  } .ruby-ivar       { color: #2233dd; } .ruby-keyword    { color: #3333FF; font-weight: bold } .ruby-node       { color: #777777; } .ruby-operator   { color: #111111;  } .ruby-regexp     { color: #662222; } .ruby-value      { color: #662222; font-style: italic }  }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">HEADER</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt; &lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt; &lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; xml:lang=&quot;en&quot; lang=&quot;en&quot;&gt; &lt;head&gt;   &lt;title&gt;%title%&lt;/title&gt;   &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot; /&gt;   &lt;link rel=StyleSheet href=&quot;%style_url%&quot; type=&quot;text/css&quot; media=&quot;screen&quot; /&gt;   &lt;script type=&quot;text/javascript&quot; language=&quot;JavaScript&quot;&gt;   &lt;!--   function popCode(url) {     window.open(url, &quot;Code&quot;,            &quot;resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400&quot;)   }   //--&gt;   &lt;/script&gt; &lt;/head&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">METHOD_LIST</td>
+          <td>=</td>
+          <td class="context-item-value">%{ IF:includes &lt;table summary=&quot;Included modules&quot; cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Included modules&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; &lt;div class=&quot;name-list&quot;&gt; START:includes     &lt;span class=&quot;method-name&quot;&gt;HREF:aref:name:&lt;/span&gt; END:includes &lt;/div&gt; ENDIF:includes  IF:method_list START:method_list IF:methods &lt;table summary=&quot;Method list&quot; cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;%type% %category% methods&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; START:methods &lt;table summary=&quot;method&quot;  width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; border=&quot;0&quot;&gt; &lt;tr&gt;&lt;td class=&quot;methodtitle&quot;&gt; &lt;a name=&quot;%aref%&quot;&gt;&lt;/a&gt; IF:codeurl &lt;a href=&quot;%codeurl%&quot; target=&quot;Code&quot; class=&quot;methodtitle&quot;  onClick=&quot;popCode('%codeurl%');return false;&quot;&gt; ENDIF:codeurl IF:callseq &lt;b&gt;%callseq%&lt;/b&gt; ENDIF:callseq IFNOT:callseq &lt;b&gt;%name%&lt;/b&gt;%params% ENDIF:callseq IF:codeurl &lt;/a&gt; ENDIF:codeurl &lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; IF:m_desc &lt;div class=&quot;description&quot;&gt; %m_desc% &lt;/div&gt; ENDIF:m_desc IF:aka &lt;div class=&quot;aka&quot;&gt; This method is also aliased as START:aka &lt;a href=&quot;%aref%&quot;&gt;%name%&lt;/a&gt; END:aka &lt;/div&gt; ENDIF:aka IF:sourcecode &lt;pre class=&quot;source&quot;&gt; %sourcecode% &lt;/pre&gt; ENDIF:sourcecode END:methods ENDIF:methods END:method_list ENDIF:method_list }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CONTEXT_CONTENT</td>
+          <td>=</td>
+          <td class="context-item-value">%{ IF:diagram &lt;table summary=&quot;Diagram of classes and modules&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td align=&quot;center&quot;&gt; %diagram% &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; ENDIF:diagram   IF:description &lt;div class=&quot;description&quot;&gt;%description%&lt;/div&gt; ENDIF:description  IF:requires &lt;table summary=&quot;Requires&quot; cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Required files&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; &lt;div class=&quot;name-list&quot;&gt; START:requires HREF:aref:name:&amp;nbsp; &amp;nbsp; END:requires &lt;/div&gt; ENDIF:requires  IF:methods &lt;table summary=&quot;Methods&quot; cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Methods&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; &lt;div class=&quot;name-list&quot;&gt; START:methods HREF:aref:name:&amp;nbsp; &amp;nbsp; END:methods &lt;/div&gt; ENDIF:methods  IF:constants &lt;table summary=&quot;Constants&quot; cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Constants&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; &lt;table cellpadding=&quot;5&quot;&gt; START:constants &lt;tr valign=&quot;top&quot;&gt;&lt;td&gt;%name%&lt;/td&gt;&lt;td&gt;=&lt;/td&gt;&lt;td&gt;%value%&lt;/td&gt;&lt;/tr&gt; IF:desc &lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%desc%&lt;/td&gt;&lt;/tr&gt; ENDIF:desc END:constants &lt;/table&gt; ENDIF:constants  IF:aliases &lt;table summary=&quot;Aliases&quot; cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;External Aliases&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; &lt;div class=&quot;name-list&quot;&gt; START:aliases %old_name% -&gt; %new_name%&lt;br /&gt; END:aliases &lt;/div&gt; ENDIF:aliases  IF:attributes &lt;table summary=&quot;Attributes&quot; cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Attributes&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; &lt;table summary=&quot;Attribute details&quot; cellspacing=&quot;5&quot;&gt; START:attributes      &lt;tr valign=&quot;top&quot;&gt;        &lt;td class=&quot;attr-name&quot;&gt;%name%&lt;/td&gt; IF:rw        &lt;td align=&quot;center&quot; class=&quot;attr-rw&quot;&gt;&amp;nbsp;[%rw%]&amp;nbsp;&lt;/td&gt; ENDIF:rw IFNOT:rw        &lt;td&gt;&lt;/td&gt; ENDIF:rw        &lt;td&gt;%a_desc%&lt;/td&gt;      &lt;/tr&gt; END:attributes &lt;/table&gt; ENDIF:attributes  IF:classlist &lt;table summary=&quot;List of classes&quot; cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Classes and Modules&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; &lt;div class=&quot;classlist&quot;&gt; %classlist% &lt;/div&gt; ENDIF:classlist }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BODY</td>
+          <td>=</td>
+          <td class="context-item-value">HEADER + %{ &lt;body bgcolor=&quot;white&quot;&gt; !INCLUDE!  &lt;!-- banner header --&gt; } + CONTEXT_CONTENT + METHOD_LIST + %{ &lt;/body&gt; &lt;/html&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FILE_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">&lt;&lt;_FILE_PAGE_ &lt;table summary=&quot;Information on file&quot; width=&quot;100%&quot;&gt;  &lt;tr class=&quot;title-row&quot;&gt;  &lt;td&gt;&lt;table summary=&quot;layout&quot; width=&quot;100%&quot;&gt;&lt;tr&gt;    &lt;td class=&quot;big-title-font&quot; colspan=&quot;2&quot;&gt;%short_name%&lt;/td&gt;    &lt;td align=&quot;right&quot;&gt;&lt;table summary=&quot;layout&quot; cellspacing=&quot;0&quot; cellpadding=&quot;2&quot;&gt;          &lt;tr&gt;            &lt;td  class=&quot;small-title-font&quot;&gt;Path:&lt;/td&gt;            &lt;td class=&quot;small-title-font&quot;&gt;%full_path% IF:cvsurl                                 &amp;nbsp;(&lt;a href=&quot;%cvsurl%&quot;&gt;&lt;acronym title=&quot;Concurrent Versioning System&quot;&gt;CVS&lt;/acronym&gt;&lt;/a&gt;) ENDIF:cvsurl            &lt;/td&gt;          &lt;/tr&gt;          &lt;tr&gt;            &lt;td class=&quot;small-title-font&quot;&gt;Modified:&lt;/td&gt;            &lt;td class=&quot;small-title-font&quot;&gt;%dtm_modified%&lt;/td&gt;          &lt;/tr&gt;         &lt;/table&gt;     &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;   &lt;/tr&gt; &lt;/table&gt; _FILE_PAGE_</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CLASS_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;table summary=&quot;Information on class&quot; width=&quot;100%&quot; border=&quot;0&quot; cellspacing=&quot;0&quot;&gt;  &lt;tr class=&quot;title-row&quot;&gt;  &lt;td class=&quot;big-title-font&quot;&gt;    &lt;sup&gt;&lt;font color=&quot;aqua&quot;&gt;%classmod%&lt;/font&gt;&lt;/sup&gt; %full_name%  &lt;/td&gt;  &lt;td align=&quot;right&quot;&gt;    &lt;table summary=&quot;layout&quot; cellspacing=&quot;0&quot; cellpadding=&quot;2&quot;&gt;      &lt;tr valign=&quot;top&quot;&gt;       &lt;td class=&quot;small-title-font&quot;&gt;In:&lt;/td&gt;       &lt;td class=&quot;small-title-font&quot;&gt; START:infiles IF:full_path_url         &lt;a href=&quot;%full_path_url%&quot; class=&quot;aqua&quot;&gt; ENDIF:full_path_url %full_path% IF:full_path_url          &lt;/a&gt; ENDIF:full_path_url IF:cvsurl          &amp;nbsp;(&lt;a href=&quot;%cvsurl%&quot;&gt;&lt;acronym title=&quot;Concurrent Versioning System&quot;&gt;CVS&lt;/acronym&gt;&lt;/a&gt;) ENDIF:cvsurl &lt;br /&gt; END:infiles       &lt;/td&gt;      &lt;/tr&gt; IF:parent      &lt;tr&gt;       &lt;td class=&quot;small-title-font&quot;&gt;Parent:&lt;/td&gt;       &lt;td class=&quot;small-title-font&quot;&gt; IF:par_url         &lt;a href=&quot;%par_url%&quot; class=&quot;aqua&quot;&gt; ENDIF:par_url %parent% IF:par_url          &lt;/a&gt; ENDIF:par_url       &lt;/td&gt;      &lt;/tr&gt; ENDIF:parent    &lt;/table&gt;   &lt;/td&gt;   &lt;/tr&gt; &lt;/table&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SRC_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;&gt; &lt;html&gt; &lt;head&gt; &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot;&gt; &lt;title&gt;%title%&lt;/title&gt; &lt;link rel=&quot;stylesheet&quot; href=&quot;%style_url%&quot; type=&quot;text/css&quot; media=&quot;screen&quot; /&gt; &lt;/head&gt; &lt;body bgcolor=&quot;white&quot;&gt; &lt;pre&gt;%code%&lt;/pre&gt; &lt;/body&gt; &lt;/html&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Source code ##########################
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FR_INDEX_BODY</td>
+          <td>=</td>
+          <td class="context-item-value">%{ !INCLUDE! }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Index ################################
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FILE_INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;&gt; &lt;html&gt; &lt;head&gt; &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot;&gt; &lt;title&gt;%list_title%&lt;/title&gt; &lt;style type=&quot;text/css&quot;&gt; &lt;!--   body { background-color: #ddddff;      font-family: #{FONTS};         font-size: 11px;        font-style: normal;      line-height: 14px;             color: #000040;   } div.banner {   background: #0000aa;   color:      white;   padding: 1;   margin: 0;   font-size: 90%;   font-weight: bold;   line-height: 1.1;   text-align: center;   width: 100%; }  A.xx { color: white; font-weight: bold; } --&gt; &lt;/style&gt; &lt;base target=&quot;docwin&quot;&gt; &lt;/head&gt; &lt;body&gt; &lt;div class=&quot;banner&quot;&gt;&lt;a href=&quot;%index_url%&quot; class=&quot;xx&quot;&gt;%list_title%&lt;/a&gt;&lt;/div&gt; START:entries &lt;a href=&quot;%href%&quot;&gt;%name%&lt;/a&gt;&lt;br /&gt; END:entries &lt;/body&gt;&lt;/html&gt; }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CLASS_INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">FILE_INDEX</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">METHOD_INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">FILE_INDEX</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Frameset//EN&quot;&gt; &lt;html&gt; &lt;head&gt; &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot;&gt; &lt;title&gt;%title%&lt;/title&gt;&lt;/head&gt;  &lt;frameset rows=&quot;20%, 80%&quot;&gt;     &lt;frameset cols=&quot;25%,35%,45%&quot;&gt;         &lt;frame src=&quot;fr_file_index.html&quot;   title=&quot;Files&quot; name=&quot;Files&quot;&gt;         &lt;frame src=&quot;fr_class_index.html&quot;  name=&quot;Classes&quot;&gt;         &lt;frame src=&quot;fr_method_index.html&quot; name=&quot;Methods&quot;&gt;     &lt;/frameset&gt;     &lt;frame  src=&quot;%initial_page%&quot; name=&quot;docwin&quot;&gt;     &lt;noframes&gt;           &lt;body bgcolor=&quot;white&quot;&gt;             Sorry, RDoc currently only generates HTML using frames.           &lt;/body&gt;     &lt;/noframes&gt; &lt;/frameset&gt;  &lt;/html&gt; }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CONTENTS_XML</td>
+          <td>=</td>
+          <td class="context-item-value">%{ IF:description %description% ENDIF:description  IF:requires &lt;h4&gt;Requires:&lt;/h4&gt; &lt;ul&gt; START:requires IF:aref &lt;li&gt;&lt;a href=&quot;%aref%&quot;&gt;%name%&lt;/a&gt;&lt;/li&gt; ENDIF:aref IFNOT:aref &lt;li&gt;%name%&lt;/li&gt; ENDIF:aref  END:requires &lt;/ul&gt; ENDIF:requires  IF:attributes &lt;h4&gt;Attributes&lt;/h4&gt; &lt;table&gt; START:attributes &lt;tr&gt;&lt;td&gt;%name%&lt;/td&gt;&lt;td&gt;%rw%&lt;/td&gt;&lt;td&gt;%a_desc%&lt;/td&gt;&lt;/tr&gt; END:attributes &lt;/table&gt; ENDIF:attributes  IF:includes &lt;h4&gt;Includes&lt;/h4&gt; &lt;ul&gt; START:includes IF:aref &lt;li&gt;&lt;a href=&quot;%aref%&quot;&gt;%name%&lt;/a&gt;&lt;/li&gt; ENDIF:aref IFNOT:aref &lt;li&gt;%name%&lt;/li&gt; ENDIF:aref  END:includes &lt;/ul&gt; ENDIF:includes  IF:method_list &lt;h3&gt;Methods&lt;/h3&gt; START:method_list IF:methods START:methods &lt;h4&gt;%type% %category% method: &lt;a name=&quot;%aref%&quot;&gt;%name%%params%&lt;/a&gt;&lt;/h4&gt;  IF:m_desc %m_desc% ENDIF:m_desc  IF:sourcecode &lt;blockquote&gt;&lt;pre&gt; %sourcecode% &lt;/pre&gt;&lt;/blockquote&gt; ENDIF:sourcecode END:methods ENDIF:methods END:method_list ENDIF:method_list }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+The following is used for the -1 option
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FONTS</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;Verdana, Arial, Helvetica, sans-serif&quot;</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">STYLE</td>
+          <td>=</td>
+          <td class="context-item-value">%{ body,p { font-family: Verdana, Arial, Helvetica, sans-serif;         color: #000040; background: #BBBBBB; }  td { font-family: Verdana, Arial, Helvetica, sans-serif;         color: #000040; }  .attr-rw { font-size: small; color: #444488 }  .title-row {color:      #eeeeff;             background: #BBBBDD; }  .big-title-font { color: white;                   font-family: Verdana, Arial, Helvetica, sans-serif;                   font-size: large;                    height: 50px}  .small-title-font { color: purple;                     font-family: Verdana, Arial, Helvetica, sans-serif;                     font-size: small; }  .aqua { color: purple }  .method-name, attr-name {       font-family: monospace; font-weight: bold; }  .tablesubtitle {    width: 100%;    margin-top: 1ex;    margin-bottom: .5ex;    padding: 5px 0px 5px 20px;    font-size: large;    color: purple;    background: #BBBBCC; }  .tablesubsubtitle {    width: 100%;    margin-top: 1ex;    margin-bottom: .5ex;    padding: 5px 0px 5px 20px;    font-size: medium;    color: white;    background: #BBBBCC; }  .name-list {   font-family: monospace;   margin-left: 40px;   margin-bottom: 2ex;   line-height: 140%; }  .description {   margin-left: 40px;   margin-bottom: 2ex;   line-height: 140%; }  .methodtitle {   font-size: medium;   text_decoration: none;   padding: 3px 3px 3px 20px;   color: #0000AA; }  .column-title {   font-size: medium;   font-weight: bold;   text_decoration: none;   padding: 3px 3px 3px 20px;   color: #3333CC;   }  .variable-name {   font-family: monospace;   font-size: medium;   text_decoration: none;   padding: 3px 3px 3px 20px;   color: #0000AA; }  .row-name {   font-size: medium;   font-weight: medium;   font-family: monospace;   text_decoration: none;   padding: 3px 3px 3px 20px; }  .paramsig {    font-size: small; }  .srcbut { float: right }  }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BODY</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;html&gt;&lt;head&gt;   &lt;title&gt;%title%&lt;/title&gt;   &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot;&gt;   &lt;link rel=&quot;stylesheet&quot; href=&quot;%style_url%&quot; type=&quot;text/css&quot; media=&quot;screen&quot; /&gt;   &lt;script type=&quot;text/javascript&quot; language=&quot;JavaScript&quot;&gt;   &lt;!--   function popCode(url) {     parent.frames.source.location = url   }   //--&gt;   &lt;/script&gt; &lt;/head&gt; &lt;body bgcolor=&quot;#BBBBBB&quot;&gt;  !INCLUDE!  &lt;!-- banner header --&gt;  IF:diagram &lt;table width=&quot;100%&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt; %diagram% &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; ENDIF:diagram  IF:description &lt;div class=&quot;description&quot;&gt;%description%&lt;/div&gt; ENDIF:description  IF:requires &lt;table cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Required files&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;&lt;br /&gt; &lt;div class=&quot;name-list&quot;&gt; START:requires HREF:aref:name: END:requires ENDIF:requires &lt;/div&gt;  IF:methods &lt;table cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Subroutines and Functions&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;&lt;br /&gt; &lt;div class=&quot;name-list&quot;&gt; START:methods HREF:aref:name:, END:methods &lt;/div&gt; ENDIF:methods  IF:attributes &lt;table cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Arguments&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;&lt;br /&gt; &lt;table cellspacing=&quot;5&quot;&gt; START:attributes      &lt;tr valign=&quot;top&quot;&gt; IF:rw        &lt;td align=&quot;center&quot; class=&quot;attr-rw&quot;&gt;&amp;nbsp;[%rw%]&amp;nbsp;&lt;/td&gt; ENDIF:rw IFNOT:rw        &lt;td&gt;&lt;/td&gt; ENDIF:rw        &lt;td class=&quot;attr-name&quot;&gt;%name%&lt;/td&gt;        &lt;td&gt;%a_desc%&lt;/td&gt;      &lt;/tr&gt; END:attributes &lt;/table&gt; ENDIF:attributes  IF:classlist &lt;table cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;Modules&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;&lt;br /&gt; %classlist%&lt;br /&gt; ENDIF:classlist    !INCLUDE!  &lt;!-- method descriptions --&gt;  &lt;/body&gt; &lt;/html&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FILE_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">&lt;&lt;_FILE_PAGE_ &lt;table width=&quot;100%&quot;&gt;  &lt;tr class=&quot;title-row&quot;&gt;  &lt;td&gt;&lt;table width=&quot;100%&quot;&gt;&lt;tr&gt;    &lt;td class=&quot;big-title-font&quot; colspan=&quot;2&quot;&gt;&lt;font size=&quot;-3&quot;&gt;&lt;b&gt;File&lt;/b&gt;&lt;br /&gt;&lt;/font&gt;%short_name%&lt;/td&gt;    &lt;td align=&quot;right&quot;&gt;&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;2&quot;&gt;          &lt;tr&gt;            &lt;td  class=&quot;small-title-font&quot;&gt;Path:&lt;/td&gt;            &lt;td class=&quot;small-title-font&quot;&gt;%full_path% IF:cvsurl                                 &amp;nbsp;(&lt;a href=&quot;%cvsurl%&quot;&gt;&lt;acronym title=&quot;Concurrent Versioning System&quot;&gt;CVS&lt;/acronym&gt;&lt;/a&gt;) ENDIF:cvsurl            &lt;/td&gt;          &lt;/tr&gt;          &lt;tr&gt;            &lt;td class=&quot;small-title-font&quot;&gt;Modified:&lt;/td&gt;            &lt;td class=&quot;small-title-font&quot;&gt;%dtm_modified%&lt;/td&gt;          &lt;/tr&gt;         &lt;/table&gt;     &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;   &lt;/tr&gt; &lt;/table&gt;&lt;br /&gt; _FILE_PAGE_</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CLASS_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;table width=&quot;100%&quot; border=&quot;0&quot; cellspacing=&quot;0&quot;&gt;  &lt;tr class=&quot;title-row&quot;&gt;  &lt;td class=&quot;big-title-font&quot;&gt;    &lt;font size=&quot;-3&quot;&gt;&lt;b&gt;%classmod%&lt;/b&gt;&lt;br /&gt;&lt;/font&gt;%full_name%  &lt;/td&gt;  &lt;td align=&quot;right&quot;&gt;    &lt;table cellspacing=&quot;0&quot; cellpadding=&quot;2&quot;&gt;      &lt;tr valign=&quot;top&quot;&gt;       &lt;td class=&quot;small-title-font&quot;&gt;In:&lt;/td&gt;       &lt;td class=&quot;small-title-font&quot;&gt; START:infiles HREF:full_path_url:full_path: IF:cvsurl &amp;nbsp;(&lt;a href=&quot;%cvsurl%&quot;&gt;&lt;acronym title=&quot;Concurrent Versioning System&quot;&gt;CVS&lt;/acronym&gt;&lt;/a&gt;) ENDIF:cvsurl END:infiles       &lt;/td&gt;      &lt;/tr&gt; IF:parent      &lt;tr&gt;       &lt;td class=&quot;small-title-font&quot;&gt;Parent:&lt;/td&gt;       &lt;td class=&quot;small-title-font&quot;&gt; IF:par_url         &lt;a href=&quot;%par_url%&quot; class=&quot;cyan&quot;&gt; ENDIF:par_url %parent% IF:par_url          &lt;/a&gt; ENDIF:par_url       &lt;/td&gt;      &lt;/tr&gt; ENDIF:parent    &lt;/table&gt;   &lt;/td&gt;   &lt;/tr&gt; &lt;/table&gt;&lt;br /&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">METHOD_LIST</td>
+          <td>=</td>
+          <td class="context-item-value">%{ IF:includes &lt;div class=&quot;tablesubsubtitle&quot;&gt;Uses&lt;/div&gt;&lt;br /&gt; &lt;div class=&quot;name-list&quot;&gt; START:includes     &lt;span class=&quot;method-name&quot;&gt;HREF:aref:name:&lt;/span&gt; END:includes &lt;/div&gt; ENDIF:includes  IF:method_list START:method_list IF:methods &lt;table cellpadding=&quot;5&quot; width=&quot;100%&quot;&gt; &lt;tr&gt;&lt;td class=&quot;tablesubtitle&quot;&gt;%type% %category% methods&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; START:methods &lt;table width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; border=&quot;0&quot;&gt; &lt;tr&gt;&lt;td class=&quot;methodtitle&quot;&gt; &lt;a name=&quot;%aref%&quot;&gt; &lt;b&gt;%name%&lt;/b&gt;%params%  IF:codeurl &lt;a href=&quot;%codeurl%&quot; target=&quot;source&quot; class=&quot;srclink&quot;&gt;src&lt;/a&gt; ENDIF:codeurl &lt;/a&gt;&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; IF:m_desc &lt;div class=&quot;description&quot;&gt; %m_desc% &lt;/div&gt; ENDIF:m_desc END:methods ENDIF:methods END:method_list ENDIF:method_list }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SRC_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;html&gt; &lt;head&gt;&lt;title&gt;%title%&lt;/title&gt; &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot;&gt; &lt;style type=&quot;text/css&quot;&gt;   .kw { color: #3333FF; font-weight: bold }   .cmt { color: green; font-style: italic }   .str { color: #662222; font-style: italic }   .re  { color: #662222; } .ruby-comment    { color: green; font-style: italic } .ruby-constant   { color: #4433aa; font-weight: bold; } .ruby-identifier { color: #222222;  } .ruby-ivar       { color: #2233dd; } .ruby-keyword    { color: #3333FF; font-weight: bold } .ruby-node       { color: #777777; } .ruby-operator   { color: #111111;  } .ruby-regexp     { color: #662222; } .ruby-value      { color: #662222; font-style: italic } &lt;/style&gt; &lt;/head&gt; &lt;body bgcolor=&quot;#BBBBBB&quot;&gt; &lt;pre&gt;%code%&lt;/pre&gt; &lt;/body&gt; &lt;/html&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Source code ##########################
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FR_INDEX_BODY</td>
+          <td>=</td>
+          <td class="context-item-value">%{ !INCLUDE! }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Index ################################
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FILE_INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;html&gt; &lt;head&gt; &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot;&gt; &lt;style type=&quot;text/css&quot;&gt; &lt;!--   body { background-color: #bbbbbb;      font-family: #{FONTS};         font-size: 11px;        font-style: normal;      line-height: 14px;             color: #000040;   } div.banner {   background: #bbbbcc;   color:      white;   padding: 1;   margin: 0;   font-size: 90%;   font-weight: bold;   line-height: 1.1;   text-align: center;   width: 100%; }    --&gt; &lt;/style&gt; &lt;base target=&quot;docwin&quot;&gt; &lt;/head&gt; &lt;body&gt; &lt;div class=&quot;banner&quot;&gt;%list_title%&lt;/div&gt; START:entries &lt;a href=&quot;%href%&quot;&gt;%name%&lt;/a&gt;&lt;br /&gt; END:entries &lt;/body&gt;&lt;/html&gt; }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CLASS_INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">FILE_INDEX</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">METHOD_INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">FILE_INDEX</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;html&gt; &lt;head&gt;   &lt;title&gt;%title%&lt;/title&gt;   &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot;&gt; &lt;/head&gt;  &lt;frameset cols=&quot;20%,*&quot;&gt;     &lt;frameset rows=&quot;15%,35%,50%&quot;&gt;         &lt;frame src=&quot;fr_file_index.html&quot;   title=&quot;Files&quot; name=&quot;Files&quot;&gt;         &lt;frame src=&quot;fr_class_index.html&quot;  name=&quot;Modules&quot;&gt;         &lt;frame src=&quot;fr_method_index.html&quot; name=&quot;Subroutines and Functions&quot;&gt;     &lt;/frameset&gt;     &lt;frameset rows=&quot;80%,20%&quot;&gt;       &lt;frame  src=&quot;%initial_page%&quot; name=&quot;docwin&quot;&gt;       &lt;frame  src=&quot;blank.html&quot; name=&quot;source&quot;&gt;     &lt;/frameset&gt;     &lt;noframes&gt;           &lt;body bgcolor=&quot;#BBBBBB&quot;&gt;             Click &lt;a href=&quot;html/index.html&quot;&gt;here&lt;/a&gt; for a non-frames             version of this page.           &lt;/body&gt;     &lt;/noframes&gt; &lt;/frameset&gt;  &lt;/html&gt; }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BLANK</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;html&gt;&lt;body bgcolor=&quot;#BBBBBB&quot;&gt;&lt;/body&gt;&lt;/html&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+and a blank page to use as a target
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CONTENTS_XML</td>
+          <td>=</td>
+          <td class="context-item-value">%{ IF:description %description% ENDIF:description  IF:requires &lt;h4&gt;Requires:&lt;/h4&gt; &lt;ul&gt; START:requires IF:aref &lt;li&gt;&lt;a href=&quot;%aref%&quot;&gt;%name%&lt;/a&gt;&lt;/li&gt; ENDIF:aref IFNOT:aref &lt;li&gt;%name%&lt;/li&gt; ENDIF:aref  END:requires &lt;/ul&gt; ENDIF:requires  IF:attributes &lt;h4&gt;Attributes&lt;/h4&gt; &lt;table&gt; START:attributes &lt;tr&gt;&lt;td&gt;%name%&lt;/td&gt;&lt;td&gt;%rw%&lt;/td&gt;&lt;td&gt;%a_desc%&lt;/td&gt;&lt;/tr&gt; END:attributes &lt;/table&gt; ENDIF:attributes  IF:includes &lt;h4&gt;Includes&lt;/h4&gt; &lt;ul&gt; START:includes IF:aref &lt;li&gt;&lt;a href=&quot;%aref%&quot;&gt;%name%&lt;/a&gt;&lt;/li&gt; ENDIF:aref IFNOT:aref &lt;li&gt;%name%&lt;/li&gt; ENDIF:aref  END:includes &lt;/ul&gt; ENDIF:includes  IF:method_list &lt;h3&gt;Methods&lt;/h3&gt; START:method_list IF:methods START:methods &lt;h4&gt;%type% %category% method:  IF:callseq &lt;a name=&quot;%aref%&quot;&gt;%callseq%&lt;/a&gt; ENDIF:callseq IFNOT:callseq &lt;a name=&quot;%aref%&quot;&gt;%name%%params%&lt;/a&gt;&lt;/h4&gt; ENDIF:callseq  IF:m_desc %m_desc% ENDIF:m_desc  IF:sourcecode &lt;blockquote&gt;&lt;pre&gt; %sourcecode% &lt;/pre&gt;&lt;/blockquote&gt; ENDIF:sourcecode END:methods ENDIF:methods END:method_list ENDIF:method_list }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+The following is used for the -1 option
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ONE_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;&gt; &lt;html&gt; &lt;head&gt;   &lt;title&gt;%title%&lt;/title&gt;   &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=%charset%&quot; /&gt; &lt;/head&gt; &lt;body&gt; START:files &lt;h2&gt;File: %short_name%&lt;/h2&gt; &lt;table&gt;   &lt;tr&gt;&lt;td&gt;Path:&lt;/td&gt;&lt;td&gt;%full_path%&lt;/td&gt;&lt;/tr&gt;   &lt;tr&gt;&lt;td&gt;Modified:&lt;/td&gt;&lt;td&gt;%dtm_modified%&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt; } + CONTENTS_XML + %{ END:files  IF:classes &lt;h2&gt;Classes&lt;/h2&gt; START:classes IF:parent &lt;h3&gt;%classmod% %full_name% &amp;lt; HREF:par_url:parent:&lt;/h3&gt; ENDIF:parent IFNOT:parent &lt;h3&gt;%classmod% %full_name%&lt;/h3&gt; ENDIF:parent  IF:infiles (in files START:infiles HREF:full_path_url:full_path: END:infiles ) ENDIF:infiles } + CONTENTS_XML + %{ END:classes ENDIF:classes &lt;/body&gt; &lt;/html&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">HPP_FILE</td>
+          <td>=</td>
+          <td class="context-item-value">%{ [OPTIONS] Auto Index = Yes Compatibility=1.1 or later Compiled file=%opname%.chm Contents file=contents.hhc Full-text search=Yes Index file=index.hhk Language=0x409 English(United States) Title=%title%  [FILES] START:all_html_files %html_file_name% END:all_html_files }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CONTENTS</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;!DOCTYPE HTML PUBLIC &quot;-//IETF//DTD HTML//EN&quot;&gt; &lt;HTML&gt; &lt;HEAD&gt; &lt;meta name=&quot;GENERATOR&quot; content=&quot;Microsoft&amp;reg; HTML Help Workshop 4.1&quot;&gt; &lt;!-- Sitemap 1.0 --&gt; &lt;/HEAD&gt;&lt;BODY&gt; &lt;OBJECT type=&quot;text/site properties&quot;&gt;         &lt;param name=&quot;Foreground&quot; value=&quot;0x80&quot;&gt;         &lt;param name=&quot;Window Styles&quot; value=&quot;0x800025&quot;&gt;         &lt;param name=&quot;ImageType&quot; value=&quot;Folder&quot;&gt; &lt;/OBJECT&gt; &lt;UL&gt; START:contents         &lt;LI&gt; &lt;OBJECT type=&quot;text/sitemap&quot;&gt;                 &lt;param name=&quot;Name&quot; value=&quot;%c_name%&quot;&gt;                 &lt;param name=&quot;Local&quot; value=&quot;%ref%&quot;&gt;                 &lt;/OBJECT&gt; IF:methods &lt;ul&gt; START:methods         &lt;LI&gt; &lt;OBJECT type=&quot;text/sitemap&quot;&gt;                 &lt;param name=&quot;Name&quot; value=&quot;%name%&quot;&gt;                 &lt;param name=&quot;Local&quot; value=&quot;%aref%&quot;&gt;                 &lt;/OBJECT&gt; END:methods &lt;/ul&gt; ENDIF:methods         &lt;/LI&gt; END:contents &lt;/UL&gt; &lt;/BODY&gt;&lt;/HTML&gt; }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CHM_INDEX</td>
+          <td>=</td>
+          <td class="context-item-value">%{ &lt;!DOCTYPE HTML PUBLIC &quot;-//IETF//DTD HTML//EN&quot;&gt; &lt;HTML&gt; &lt;HEAD&gt; &lt;meta name=&quot;GENERATOR&quot; content=&quot;Microsoft&amp;reg; HTML Help Workshop 4.1&quot;&gt; &lt;!-- Sitemap 1.0 --&gt; &lt;/HEAD&gt;&lt;BODY&gt; &lt;OBJECT type=&quot;text/site properties&quot;&gt;         &lt;param name=&quot;Foreground&quot; value=&quot;0x80&quot;&gt;         &lt;param name=&quot;Window Styles&quot; value=&quot;0x800025&quot;&gt;         &lt;param name=&quot;ImageType&quot; value=&quot;Folder&quot;&gt; &lt;/OBJECT&gt; &lt;UL&gt; START:index         &lt;LI&gt; &lt;OBJECT type=&quot;text/sitemap&quot;&gt;                 &lt;param name=&quot;Name&quot; value=&quot;%name%&quot;&gt;                 &lt;param name=&quot;Local&quot; value=&quot;%aref%&quot;&gt;                 &lt;/OBJECT&gt; END:index &lt;/UL&gt; &lt;/BODY&gt;&lt;/HTML&gt; }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CONTENTS_RDF</td>
+          <td>=</td>
+          <td class="context-item-value">%{ IF:description     &lt;description rd:parseType=&quot;Literal&quot;&gt; %description%     &lt;/description&gt; ENDIF:description  IF:requires START:requires          &lt;rd:required-file rd:name=&quot;%name%&quot; /&gt; END:requires ENDIF:requires  IF:attributes START:attributes         &lt;contents&gt;         &lt;Attribute rd:name=&quot;%name%&quot;&gt; IF:rw           &lt;attribute-rw&gt;%rw%&lt;/attribute-rw&gt; ENDIF:rw           &lt;description rdf:parseType=&quot;Literal&quot;&gt;%a_desc%&lt;/description&gt;         &lt;/Attribute&gt;         &lt;/contents&gt; END:attributes ENDIF:attributes  IF:includes       &lt;IncludedModuleList&gt; START:includes         &lt;included-module rd:name=&quot;%name%&quot;  /&gt; END:includes       &lt;/IncludedModuleList&gt; ENDIF:includes  IF:method_list START:method_list IF:methods START:methods         &lt;contents&gt;         &lt;Method rd:name=&quot;%name%&quot; rd:visibility=&quot;%type%&quot;                 rd:category=&quot;%category%&quot; rd:id=&quot;%aref%&quot;&gt;           &lt;parameters&gt;%params%&lt;/parameters&gt; IF:m_desc           &lt;description rdf:parseType=&quot;Literal&quot;&gt; %m_desc%           &lt;/description&gt; ENDIF:m_desc IF:sourcecode           &lt;source-code-listing rdf:parseType=&quot;Literal&quot;&gt; %sourcecode%           &lt;/source-code-listing&gt; ENDIF:sourcecode         &lt;/Method&gt;        &lt;/contents&gt; END:methods ENDIF:methods END:method_list ENDIF:method_list      &lt;!-- end method list --&gt; }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ONE_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">%{&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt; &lt;rdf:RDF xmlns:rdf=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;         xmlns=&quot;http://pragprog.com/rdoc/rdoc.rdf#&quot;         xmlns:rd=&quot;http://pragprog.com/rdoc/rdoc.rdf#&quot;&gt;  &lt;!-- RDoc --&gt; START:files   &lt;rd:File rd:name=&quot;%short_name%&quot; rd:id=&quot;%href%&quot;&gt;       &lt;path&gt;%full_path%&lt;/path&gt;       &lt;dtm-modified&gt;%dtm_modified%&lt;/dtm-modified&gt; } + CONTENTS_RDF + %{   &lt;/rd:File&gt; END:files START:classes   &lt;%classmod% rd:name=&quot;%full_name%&quot; rd:id=&quot;%full_name%&quot;&gt;     &lt;classmod-info&gt; IF:infiles       &lt;InFiles&gt; START:infiles         &lt;infile&gt;           &lt;File rd:name=&quot;%full_path%&quot; IF:full_path_url                 rdf:about=&quot;%full_path_url%&quot; ENDIF:full_path_url            /&gt;          &lt;/infile&gt; END:infiles       &lt;/InFiles&gt; ENDIF:infiles IF:parent      &lt;superclass&gt;HREF:par_url:parent:&lt;/superclass&gt; ENDIF:parent     &lt;/classmod-info&gt; } + CONTENTS_RDF + %{   &lt;/%classmod%&gt; END:classes &lt;!-- /RDoc --&gt; &lt;/rdf:RDF&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CONTENTS_XML</td>
+          <td>=</td>
+          <td class="context-item-value">%{ IF:description     &lt;description&gt; %description%     &lt;/description&gt; ENDIF:description     &lt;contents&gt; IF:requires       &lt;required-file-list&gt; START:requires          &lt;required-file name=&quot;%name%&quot; IF:aref                          href=&quot;%aref%&quot; ENDIF:aref          /&gt; END:requires       &lt;/required-file-list&gt; ENDIF:requires IF:attributes       &lt;attribute-list&gt; START:attributes         &lt;attribute name=&quot;%name%&quot;&gt; IF:rw           &lt;attribute-rw&gt;%rw%&lt;/attribute-rw&gt; ENDIF:rw           &lt;description&gt;%a_desc%&lt;/description&gt;         &lt;/attribute&gt; END:attributes       &lt;/attribute-list&gt; ENDIF:attributes IF:includes       &lt;included-module-list&gt; START:includes         &lt;included-module name=&quot;%name%&quot; IF:aref                          href=&quot;%aref%&quot; ENDIF:aref         /&gt; END:includes       &lt;/included-module-list&gt; ENDIF:includes IF:method_list       &lt;method-list&gt; START:method_list IF:methods START:methods         &lt;method name=&quot;%name%&quot; type=&quot;%type%&quot; category=&quot;%category%&quot; id=&quot;%aref%&quot;&gt;           &lt;parameters&gt;%params%&lt;/parameters&gt; IF:m_desc           &lt;description&gt; %m_desc%           &lt;/description&gt; ENDIF:m_desc IF:sourcecode           &lt;source-code-listing&gt; %sourcecode%           &lt;/source-code-listing&gt; ENDIF:sourcecode         &lt;/method&gt; END:methods ENDIF:methods END:method_list       &lt;/method-list&gt; ENDIF:method_list      &lt;/contents&gt; }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ONE_PAGE</td>
+          <td>=</td>
+          <td class="context-item-value">%{&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt; &lt;rdoc&gt; &lt;file-list&gt; START:files   &lt;file name=&quot;%short_name%&quot; id=&quot;%href%&quot;&gt;     &lt;file-info&gt;       &lt;path&gt;%full_path%&lt;/path&gt;       &lt;dtm-modified&gt;%dtm_modified%&lt;/dtm-modified&gt;     &lt;/file-info&gt; } + CONTENTS_XML + %{   &lt;/file&gt; END:files &lt;/file-list&gt; &lt;class-module-list&gt; START:classes   &lt;%classmod% name=&quot;%full_name%&quot; id=&quot;%full_name%&quot;&gt;     &lt;classmod-info&gt; IF:infiles       &lt;infiles&gt;       START:infiles         &lt;infile&gt;HREF:full_path_url:full_path:&lt;/infile&gt; END:infiles       &lt;/infiles&gt; ENDIF:infiles IF:parent      &lt;superclass&gt;HREF:par_url:parent:&lt;/superclass&gt; ENDIF:parent     &lt;/classmod-info&gt; } + CONTENTS_XML + %{   &lt;/%classmod%&gt; END:classes &lt;/class-module-list&gt; &lt;/rdoc&gt; }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002200" class="m-detail">
+        <a name="M002200"></a>
+
+        <div class="method-heading">
+          <a href="#M002200" class="method-signature">
+          <span class="method-name">write_extra_pages</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002200-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002200-source">
+<pre>
+<span class="ruby-comment cmt"># File rdoc/generators/template/html/kilmer.rb, line 430</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">write_extra_pages</span>
+  <span class="ruby-identifier">template</span> = <span class="ruby-constant">TemplatePage</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">BLANK</span>)
+  <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-value str">&quot;blank.html&quot;</span>, <span class="ruby-value str">&quot;w&quot;</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> <span class="ruby-identifier">template</span>.<span class="ruby-identifier">write_html_on</span>(<span class="ruby-identifier">f</span>, {}) }
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002201" class="m-detail">
+        <a name="M002201"></a>
+
+        <div class="method-heading">
+          <a href="#M002201" class="method-signature">
+          <span class="method-name">write_extra_pages</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002201-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002201-source">
+<pre>
+<span class="ruby-comment cmt"># File rdoc/generators/template/html/hefss.rb, line 413</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">write_extra_pages</span>
+  <span class="ruby-identifier">template</span> = <span class="ruby-constant">TemplatePage</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">BLANK</span>)
+  <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-value str">&quot;blank.html&quot;</span>, <span class="ruby-value str">&quot;w&quot;</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> <span class="ruby-identifier">template</span>.<span class="ruby-identifier">write_html_on</span>(<span class="ruby-identifier">f</span>, {}) }
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 3 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

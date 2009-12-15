@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>syswrite (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.syswrite(string)   =&gt; integer
+ *  
+ *  Writes the given string to &lt;em&gt;ios&lt;/em&gt; using a low-level write.
+ *  Returns the number of bytes written. Do not mix with other methods
+ *  that write to &lt;em&gt;ios&lt;/em&gt; or you may get unpredictable results.
+ *  Raises &lt;code&gt;SystemCallError&lt;/code&gt; on error.
+ *     
+ *     f = File.new(&quot;out&quot;, &quot;w&quot;)
+ *     f.syswrite(&quot;ABCDEF&quot;)   #=&gt; 6
+ */
+
+static VALUE
+rb_io_syswrite(io, str)
+    VALUE io, str;
+{
+    OpenFile *fptr;
+    FILE *f;
+    long n;
+
+    rb_secure(4);
+    if (TYPE(str) != T_STRING)
+        str = rb_obj_as_string(str);
+
+    GetOpenFile(io, fptr);
+    rb_io_check_writable(fptr);
+    f = GetWriteFile(fptr);
+
+    if (fptr-&gt;mode &amp; FMODE_WBUF) {
+        rb_warn(&quot;syswrite for buffered IO&quot;);
+    }
+    if (!rb_thread_fd_writable(fileno(f))) {
+        rb_io_check_closed(fptr);
+    }
+    TRAP_BEG;
+    n = write(fileno(f), RSTRING(str)-&gt;ptr, RSTRING(str)-&gt;len);
+    TRAP_END;
+
+    if (n == -1) rb_sys_fail(fptr-&gt;path);
+
+    return LONG2FIX(n);
+}</pre>
+</body>
+</html>

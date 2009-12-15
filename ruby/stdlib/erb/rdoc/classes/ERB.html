@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: ERB</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">ERB</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/erb_rb.html">
+                erb.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1><a href="ERB.html">ERB</a> &#8212; Ruby Templating</h1>
+<h2>Introduction</h2>
+<p>
+<a href="ERB.html">ERB</a> provides an easy to use but powerful templating
+system for Ruby. Using <a href="ERB.html">ERB</a>, actual Ruby code can be
+added to any plain text document for the purposes of generating document
+information details and/or flow control.
+</p>
+<p>
+A very simple example is this:
+</p>
+<pre>
+  require 'erb'
+
+  x = 42
+  template = ERB.new &lt;&lt;-EOF
+    The value of x is: &lt;%= x %&gt;
+  EOF
+  puts template.result(binding)
+</pre>
+<p>
+<em>Prints:</em> The value of x is: 42
+</p>
+<p>
+More complex examples are given below.
+</p>
+<h2>Recognized Tags</h2>
+<p>
+<a href="ERB.html">ERB</a> recognizes certain tags in the provided template
+and converts them based on the rules below:
+</p>
+<pre>
+  &lt;% Ruby code -- inline with output %&gt;
+  &lt;%= Ruby expression -- replace with result %&gt;
+  &lt;%# comment -- ignored -- useful in testing %&gt;
+  % a line of Ruby code -- treated as &lt;% line %&gt; (optional -- see ERB.new)
+  %% replaced with % if first thing on a line and % processing is used
+  &lt;%% or %%&gt; -- replace with &lt;% or %&gt; respectively
+</pre>
+<p>
+All other text is passed through <a href="ERB.html">ERB</a> filtering
+unchanged.
+</p>
+<h2>Options</h2>
+<p>
+There are several settings you can change when you use <a
+href="ERB.html">ERB</a>:
+</p>
+<ul>
+<li>the nature of the tags that are recognized;
+
+</li>
+<li>the value of <tt>$SAFE</tt> under which the template is <a
+href="ERB.html#M000303">run</a>;
+
+</li>
+<li>the binding used to resolve local variables in the template.
+
+</li>
+</ul>
+<p>
+See the <a href="ERB.html#M000301">ERB.new</a> and <a
+href="ERB.html#M000304">ERB#result</a> methods for more detail.
+</p>
+<h2>Examples</h2>
+<h3>Plain Text</h3>
+<p>
+<a href="ERB.html">ERB</a> is useful for any generic templating situation.
+Note that in this example, we use the convenient &quot;% at start of
+line&quot; tag, and we quote the template literally with
+<tt>%q{&#8230;}</tt> to avoid trouble with the backslash.
+</p>
+<pre>
+  require &quot;erb&quot;
+
+  # Create template.
+  template = %q{
+    From:  James Edward Gray II &lt;james@grayproductions.net&gt;
+    To:  &lt;%= to %&gt;
+    Subject:  Addressing Needs
+
+    &lt;%= to[/\w+/] %&gt;:
+
+    Just wanted to send a quick note assuring that your needs are being
+    addressed.
+
+    I want you to know that my team will keep working on the issues,
+    especially:
+
+    &lt;%# ignore numerous minor requests -- focus on priorities %&gt;
+    % priorities.each do |priority|
+      * &lt;%= priority %&gt;
+    % end
+
+    Thanks for your patience.
+
+    James Edward Gray II
+  }.gsub(/^  /, '')
+
+  message = ERB.new(template, 0, &quot;%&lt;&gt;&quot;)
+
+  # Set up template data.
+  to = &quot;Community Spokesman &lt;spokesman@ruby_community.org&gt;&quot;
+  priorities = [ &quot;Run Ruby Quiz&quot;,
+                 &quot;Document Modules&quot;,
+                 &quot;Answer Questions on Ruby Talk&quot; ]
+
+  # Produce result.
+  email = message.result
+  puts email
+</pre>
+<p>
+<em>Generates:</em>
+</p>
+<pre>
+  From:  James Edward Gray II &lt;james@grayproductions.net&gt;
+  To:  Community Spokesman &lt;spokesman@ruby_community.org&gt;
+  Subject:  Addressing Needs
+
+  Community:
+
+  Just wanted to send a quick note assuring that your needs are being addressed.
+
+  I want you to know that my team will keep working on the issues, especially:
+
+      * Run Ruby Quiz
+      * Document Modules
+      * Answer Questions on Ruby Talk
+
+  Thanks for your patience.
+
+  James Edward Gray II
+</pre>
+<h3>Ruby in HTML</h3>
+<p>
+<a href="ERB.html">ERB</a> is often used in <tt>.rhtml</tt> files (HTML
+with embedded Ruby). Notice the need in this example to provide a special
+binding when the template is <a href="ERB.html#M000303">run</a>, so that
+the instance variables in the Product object can be resolved.
+</p>
+<pre>
+  require &quot;erb&quot;
+
+  # Build template data class.
+  class Product
+    def initialize( code, name, desc, cost )
+      @code = code
+      @name = name
+      @desc = desc
+      @cost = cost
+
+      @features = [ ]
+    end
+
+    def add_feature( feature )
+      @features &lt;&lt; feature
+    end
+
+    # Support templating of member data.
+    def get_binding
+      binding
+    end
+
+    # ...
+  end
+
+  # Create template.
+  template = %{
+    &lt;html&gt;
+      &lt;head&gt;&lt;title&gt;Ruby Toys -- &lt;%= @name %&gt;&lt;/title&gt;&lt;/head&gt;
+      &lt;body&gt;
+
+        &lt;h1&gt;&lt;%= @name %&gt; (&lt;%= @code %&gt;)&lt;/h1&gt;
+        &lt;p&gt;&lt;%= @desc %&gt;&lt;/p&gt;
+
+        &lt;ul&gt;
+          &lt;% @features.each do |f| %&gt;
+            &lt;li&gt;&lt;b&gt;&lt;%= f %&gt;&lt;/b&gt;&lt;/li&gt;
+          &lt;% end %&gt;
+        &lt;/ul&gt;
+
+        &lt;p&gt;
+          &lt;% if @cost &lt; 10 %&gt;
+            &lt;b&gt;Only &lt;%= @cost %&gt;!!!&lt;/b&gt;
+          &lt;% else %&gt;
+             Call for a price, today!
+          &lt;% end %&gt;
+        &lt;/p&gt;
+
+      &lt;/body&gt;
+    &lt;/html&gt;
+  }.gsub(/^  /, '')
+
+  rhtml = ERB.new(template)
+
+  # Set up template data.
+  toy = Product.new( &quot;TZ-1002&quot;,
+                     &quot;Rubysapien&quot;,
+                     &quot;Geek's Best Friend!  Responds to Ruby commands...&quot;,
+                     999.95 )
+  toy.add_feature(&quot;Listens for verbal commands in the Ruby language!&quot;)
+  toy.add_feature(&quot;Ignores Perl, Java, and all C variants.&quot;)
+  toy.add_feature(&quot;Karate-Chop Action!!!&quot;)
+  toy.add_feature(&quot;Matz signature on left leg.&quot;)
+  toy.add_feature(&quot;Gem studded eyes... Rubies, of course!&quot;)
+
+  # Produce result.
+  rhtml.run(toy.get_binding)
+</pre>
+<p>
+<em>Generates (some blank lines removed):</em>
+</p>
+<pre>
+   &lt;html&gt;
+     &lt;head&gt;&lt;title&gt;Ruby Toys -- Rubysapien&lt;/title&gt;&lt;/head&gt;
+     &lt;body&gt;
+
+       &lt;h1&gt;Rubysapien (TZ-1002)&lt;/h1&gt;
+       &lt;p&gt;Geek's Best Friend!  Responds to Ruby commands...&lt;/p&gt;
+
+       &lt;ul&gt;
+           &lt;li&gt;&lt;b&gt;Listens for verbal commands in the Ruby language!&lt;/b&gt;&lt;/li&gt;
+           &lt;li&gt;&lt;b&gt;Ignores Perl, Java, and all C variants.&lt;/b&gt;&lt;/li&gt;
+           &lt;li&gt;&lt;b&gt;Karate-Chop Action!!!&lt;/b&gt;&lt;/li&gt;
+           &lt;li&gt;&lt;b&gt;Matz signature on left leg.&lt;/b&gt;&lt;/li&gt;
+           &lt;li&gt;&lt;b&gt;Gem studded eyes... Rubies, of course!&lt;/b&gt;&lt;/li&gt;
+       &lt;/ul&gt;
+
+       &lt;p&gt;
+            Call for a price, today!
+       &lt;/p&gt;
+
+     &lt;/body&gt;
+   &lt;/html&gt;
+</pre>
+<h2>Notes</h2>
+<p>
+There are a variety of templating solutions available in various Ruby
+projects:
+</p>
+<ul>
+<li><a href="ERB.html">ERB</a>&#8216;s big brother, eRuby, works the same but
+is written in C for speed;
+
+</li>
+<li>Amrita (smart at producing HTML/XML);
+
+</li>
+<li>cs/Template (written in C for speed);
+
+</li>
+<li>RDoc, distributed with Ruby, uses its own template engine, which can be
+reused elsewhere;
+
+</li>
+<li>and others; search the RAA.
+
+</li>
+</ul>
+<p>
+Rails, the web application framework, uses <a href="ERB.html">ERB</a> to
+create views.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000301">new</a>&nbsp;&nbsp;
+      <a href="#M000304">result</a>&nbsp;&nbsp;
+      <a href="#M000303">run</a>&nbsp;&nbsp;
+      <a href="#M000302">set_eoutvar</a>&nbsp;&nbsp;
+      <a href="#M000300">version</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="ERB/Util.html" class="link">ERB::Util</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Revision</td>
+          <td>=</td>
+          <td class="context-item-value">'$Date: 2009-02-23 11:43:45 -0600 (Mon, 23 Feb 2009) $'</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">filename</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+The optional <em>filename</em> argument passed to Kernel#eval when the <a
+href="ERB.html">ERB</a> code is <a href="ERB.html#M000303">run</a>
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">src</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The Ruby code generated by <a href="ERB.html">ERB</a>
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000301" class="method-detail">
+        <a name="M000301"></a>
+
+        <div class="method-heading">
+          <a href="#M000301" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(str, safe_level=nil, trim_mode=nil, eoutvar='_erbout')</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Constructs a <a href="ERB.html#M000301">new</a> <a href="ERB.html">ERB</a>
+object with the template specified in <em>str</em>.
+</p>
+<p>
+An <a href="ERB.html">ERB</a> object works by building a chunk of Ruby code
+that will output the completed template when <a
+href="ERB.html#M000303">run</a>. If <em>safe_level</em> is set to a non-nil
+value, <a href="ERB.html">ERB</a> code will be <a
+href="ERB.html#M000303">run</a> in a separate thread with <b>$SAFE</b> set
+to the provided level.
+</p>
+<p>
+If <em>trim_mode</em> is passed a String containing one or more of the
+following modifiers, <a href="ERB.html">ERB</a> will adjust its code
+generation as listed:
+</p>
+<pre>
+    %  enables Ruby code processing for lines beginning with %
+    &lt;&gt; omit newline for lines starting with &lt;% and ending in %&gt;
+    &gt;  omit newline for lines ending in %&gt;
+</pre>
+<p>
+<em>eoutvar</em> can be used to set the name of the variable <a
+href="ERB.html">ERB</a> will build up its output in. This is useful when
+you need to <a href="ERB.html#M000303">run</a> multiple <a
+href="ERB.html">ERB</a> templates through the same binding and/or when you
+want to control where output ends up. Pass the name of the variable to be
+used inside a String.
+</p>
+<h3>Example</h3>
+<pre>
+ require &quot;erb&quot;
+
+ # build data class
+ class Listings
+   PRODUCT = { :name =&gt; &quot;Chicken Fried Steak&quot;,
+               :desc =&gt; &quot;A well messages pattie, breaded and fried.&quot;,
+               :cost =&gt; 9.95 }
+
+   attr_reader :product, :price
+
+   def initialize( product = &quot;&quot;, price = &quot;&quot; )
+     @product = product
+     @price = price
+   end
+
+   def build
+     b = binding
+     # create and run templates, filling member data variebles
+     ERB.new(&lt;&lt;-'END_PRODUCT'.gsub(/^\s+/, &quot;&quot;), 0, &quot;&quot;, &quot;@product&quot;).result b
+       &lt;%= PRODUCT[:name] %&gt;
+       &lt;%= PRODUCT[:desc] %&gt;
+     END_PRODUCT
+     ERB.new(&lt;&lt;-'END_PRICE'.gsub(/^\s+/, &quot;&quot;), 0, &quot;&quot;, &quot;@price&quot;).result b
+       &lt;%= PRODUCT[:name] %&gt; -- &lt;%= PRODUCT[:cost] %&gt;
+       &lt;%= PRODUCT[:desc] %&gt;
+     END_PRICE
+   end
+ end
+
+ # setup template data
+ listings = Listings.new
+ listings.build
+
+ puts listings.product + &quot;\n&quot; + listings.price
+</pre>
+<p>
+<em>Generates</em>
+</p>
+<pre>
+ Chicken Fried Steak
+ A well messages pattie, breaded and fried.
+
+ Chicken Fried Steak -- 9.95
+ A well messages pattie, breaded and fried.
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000301-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000301-source">
+<pre>
+<span class="ruby-comment cmt"># File erb.rb, line 660</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">safe_level</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">trim_mode</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">eoutvar</span>=<span class="ruby-value str">'_erbout'</span>)
+    <span class="ruby-ivar">@safe_level</span> = <span class="ruby-identifier">safe_level</span>
+    <span class="ruby-identifier">compiler</span> = <span class="ruby-constant">ERB</span><span class="ruby-operator">::</span><span class="ruby-constant">Compiler</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">trim_mode</span>)
+    <span class="ruby-identifier">set_eoutvar</span>(<span class="ruby-identifier">compiler</span>, <span class="ruby-identifier">eoutvar</span>)
+    <span class="ruby-ivar">@src</span> = <span class="ruby-identifier">compiler</span>.<span class="ruby-identifier">compile</span>(<span class="ruby-identifier">str</span>)
+    <span class="ruby-ivar">@filename</span> = <span class="ruby-keyword kw">nil</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000300" class="method-detail">
+        <a name="M000300"></a>
+
+        <div class="method-heading">
+          <a href="#M000300" class="method-signature">
+          <span class="method-name">version</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns revision information for the erb.rb module.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000300-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000300-source">
+<pre>
+<span class="ruby-comment cmt"># File erb.rb, line 242</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">version</span>
+    <span class="ruby-node">&quot;erb.rb [2.0.4 #{ERB::Revision.split[1]}]&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000304" class="method-detail">
+        <a name="M000304"></a>
+
+        <div class="method-heading">
+          <a href="#M000304" class="method-signature">
+          <span class="method-name">result</span><span class="method-args">(b=TOPLEVEL_BINDING)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Executes the generated <a href="ERB.html">ERB</a> code to produce a
+completed template, returning the results of that code. (See <a
+href="ERB.html#M000301">ERB#new</a> for details on how this process can be
+affected by <em>safe_level</em>.)
+</p>
+<p>
+<em>b</em> accepts a Binding or Proc object which is used to set the
+context of code evaluation.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000304-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000304-source">
+<pre>
+<span class="ruby-comment cmt"># File erb.rb, line 708</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">result</span>(<span class="ruby-identifier">b</span>=<span class="ruby-constant">TOPLEVEL_BINDING</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@safe_level</span>
+      <span class="ruby-identifier">th</span> = <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">start</span> { 
+        <span class="ruby-identifier">$SAFE</span> = <span class="ruby-ivar">@safe_level</span>
+        <span class="ruby-identifier">eval</span>(<span class="ruby-ivar">@src</span>, <span class="ruby-identifier">b</span>, (<span class="ruby-ivar">@filename</span> <span class="ruby-operator">||</span> <span class="ruby-value str">'(erb)'</span>), <span class="ruby-value">1</span>)
+      }
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">th</span>.<span class="ruby-identifier">value</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">eval</span>(<span class="ruby-ivar">@src</span>, <span class="ruby-identifier">b</span>, (<span class="ruby-ivar">@filename</span> <span class="ruby-operator">||</span> <span class="ruby-value str">'(erb)'</span>), <span class="ruby-value">1</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000303" class="method-detail">
+        <a name="M000303"></a>
+
+        <div class="method-heading">
+          <a href="#M000303" class="method-signature">
+          <span class="method-name">run</span><span class="method-args">(b=TOPLEVEL_BINDING)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Generate results and print them. (see <a
+href="ERB.html#M000304">ERB#result</a>)
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000303-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000303-source">
+<pre>
+<span class="ruby-comment cmt"># File erb.rb, line 696</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run</span>(<span class="ruby-identifier">b</span>=<span class="ruby-constant">TOPLEVEL_BINDING</span>)
+    <span class="ruby-identifier">print</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">result</span>(<span class="ruby-identifier">b</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000302" class="method-detail">
+        <a name="M000302"></a>
+
+        <div class="method-heading">
+          <a href="#M000302" class="method-signature">
+          <span class="method-name">set_eoutvar</span><span class="method-args">(compiler, eoutvar = '_erbout')</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Can be used to set <em>eoutvar</em> as described in <a
+href="ERB.html#M000301">ERB#new</a>. It&#8216;s probably easier to just use
+the constructor though, since calling this method requires the setup of an
+<a href="ERB.html">ERB</a> <em>compiler</em> object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000302-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000302-source">
+<pre>
+<span class="ruby-comment cmt"># File erb.rb, line 680</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_eoutvar</span>(<span class="ruby-identifier">compiler</span>, <span class="ruby-identifier">eoutvar</span> = <span class="ruby-value str">'_erbout'</span>)
+    <span class="ruby-identifier">compiler</span>.<span class="ruby-identifier">put_cmd</span> = <span class="ruby-node">&quot;#{eoutvar}.concat&quot;</span>
+    <span class="ruby-identifier">compiler</span>.<span class="ruby-identifier">insert_cmd</span> = <span class="ruby-node">&quot;#{eoutvar}.concat&quot;</span>
+
+    <span class="ruby-identifier">cmd</span> = []
+    <span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">push</span> <span class="ruby-node">&quot;#{eoutvar} = ''&quot;</span>
+    
+    <span class="ruby-identifier">compiler</span>.<span class="ruby-identifier">pre_cmd</span> = <span class="ruby-identifier">cmd</span>
+
+    <span class="ruby-identifier">cmd</span> = []
+    <span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">eoutvar</span>)
+
+    <span class="ruby-identifier">compiler</span>.<span class="ruby-identifier">post_cmd</span> = <span class="ruby-identifier">cmd</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

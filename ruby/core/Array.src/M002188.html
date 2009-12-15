@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>collect! (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* 
+ *  call-seq:
+ *     array.collect! {|item| block }   -&gt;   array
+ *     array.map!     {|item| block }   -&gt;   array
+ *
+ *  Invokes the block once for each element of _self_, replacing the
+ *  element with the value returned by _block_.
+ *  See also &lt;code&gt;Enumerable#collect&lt;/code&gt;.
+ *   
+ *     a = [ &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot; ]
+ *     a.collect! {|x| x + &quot;!&quot; }
+ *     a             #=&gt;  [ &quot;a!&quot;, &quot;b!&quot;, &quot;c!&quot;, &quot;d!&quot; ]
+ */
+
+static VALUE
+rb_ary_collect_bang(ary)
+    VALUE ary;
+{
+    long i;
+
+    rb_ary_modify(ary);
+    for (i = 0; i &lt; RARRAY(ary)-&gt;len; i++) {
+        rb_ary_store(ary, i, rb_yield(RARRAY(ary)-&gt;ptr[i]));
+    }
+    return ary;
+}</pre>
+</body>
+</html>

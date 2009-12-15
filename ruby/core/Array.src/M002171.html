@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>unshift (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.unshift(obj, ...)  -&gt; array
+ *  
+ *  Prepends objects to the front of &lt;i&gt;array&lt;/i&gt;.
+ *  other elements up one.
+ *     
+ *     a = [ &quot;b&quot;, &quot;c&quot;, &quot;d&quot; ]
+ *     a.unshift(&quot;a&quot;)   #=&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;]
+ *     a.unshift(1, 2)  #=&gt; [ 1, 2, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;]
+ */
+
+static VALUE
+rb_ary_unshift_m(argc, argv, ary)
+    int argc;
+    VALUE *argv;
+    VALUE ary;
+{
+    long len = RARRAY(ary)-&gt;len;
+
+    if (argc == 0) return ary;
+
+    /* make rooms by setting the last item */
+    rb_ary_store(ary, len + argc - 1, Qnil);
+
+    /* sliding items */
+    MEMMOVE(RARRAY(ary)-&gt;ptr + argc, RARRAY(ary)-&gt;ptr, VALUE, len);
+    MEMCPY(RARRAY(ary)-&gt;ptr, argv, VALUE, argc);
+    
+    return ary;
+}</pre>
+</body>
+</html>

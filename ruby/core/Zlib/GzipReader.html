@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Zlib::GzipReader</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Zlib::GzipReader</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/ext/zlib/zlib_c.html">
+                ext/zlib/zlib.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="GzipFile.html">
+                Zlib::GzipFile
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="GzipReader.html">Zlib::GzipReader</a> is the class for reading a
+gzipped file. <a href="GzipReader.html">GzipReader</a> should be used an <a
+href="../IO.html">IO</a>, or -<a href="../IO.html">IO</a>-lie, object.
+</p>
+<pre>
+  Zlib::GzipReader.open('hoge.gz') {|gz|
+    print gz.read
+  }
+
+  File.open('hoge.gz') do |f|
+    gz = Zlib::GzipReader.new(f)
+    print gz.read
+    gz.close
+  end
+
+  # TODO: test these.  Are they equivalent?  Can GzipReader.new take a
+  # block?
+</pre>
+<h2><a href="../Method.html">Method</a> Catalogue</h2>
+<p>
+The following methods in <a href="GzipReader.html">Zlib::GzipReader</a> are
+just like their counterparts in <a href="../IO.html">IO</a>, but they raise
+<a href="Error.html">Zlib::Error</a> or <a
+href="GzipFile/Error.html">Zlib::GzipFile::Error</a> exception if an error
+was found in the gzip file.
+</p>
+<ul>
+<li><a href="GzipReader.html#M007509">each</a>
+
+</li>
+<li><a href="GzipReader.html#M007510">each_line</a>
+
+</li>
+<li><a href="GzipReader.html#M007505">each_byte</a>
+
+</li>
+<li><a href="GzipReader.html#M007507">gets</a>
+
+</li>
+<li><a href="GzipReader.html#M007503">getc</a>
+
+</li>
+<li><a href="GzipReader.html#M007492">lineno</a>
+
+</li>
+<li><a href="GzipReader.html#M007492">lineno</a>=
+
+</li>
+<li><a href="GzipReader.html#M007502">read</a>
+
+</li>
+<li><a href="GzipReader.html#M007504">readchar</a>
+
+</li>
+<li><a href="GzipReader.html#M007508">readline</a>
+
+</li>
+<li><a href="GzipReader.html#M007511">readlines</a>
+
+</li>
+<li><a href="GzipReader.html#M007506">ungetc</a>
+
+</li>
+</ul>
+<p>
+Be careful of the footer of the gzip file. A gzip file has the checksum of
+pre-compressed data in its footer. <a href="GzipReader.html">GzipReader</a>
+checks all uncompressed data against that checksum at the following cases,
+and if it fails, raises <tt><a
+href="GzipFile/NoFooter.html">Zlib::GzipFile::NoFooter</a></tt>, <tt><a
+href="GzipFile/CRCError.html">Zlib::GzipFile::CRCError</a></tt>, or <tt><a
+href="GzipFile/LengthError.html">Zlib::GzipFile::LengthError</a></tt>
+exception.
+</p>
+<ul>
+<li>When an reading request is received beyond the end of file (the end of
+compressed data). That is, when <a
+href="GzipReader.html#M007502">Zlib::GzipReader#read</a>, <a
+href="GzipReader.html#M007507">Zlib::GzipReader#gets</a>, or some other
+methods for reading returns nil.
+
+</li>
+<li>When <a href="GzipFile.html#M007448">Zlib::GzipFile#close</a> method is
+called after the object reaches the end of file.
+
+</li>
+<li>When <a href="GzipReader.html#M007501">Zlib::GzipReader#unused</a> method
+is called after the object reaches the end of file.
+
+</li>
+</ul>
+<p>
+The rest of the methods are adequately described in their own
+documentation.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M007509">each</a>&nbsp;&nbsp;
+      <a href="#M007505">each_byte</a>&nbsp;&nbsp;
+      <a href="#M007510">each_line</a>&nbsp;&nbsp;
+      <a href="#M007494">eof</a>&nbsp;&nbsp;
+      <a href="#M007495">eof?</a>&nbsp;&nbsp;
+      <a href="#M007503">getc</a>&nbsp;&nbsp;
+      <a href="#M007507">gets</a>&nbsp;&nbsp;
+      <a href="#M007492">lineno</a>&nbsp;&nbsp;
+      <a href="#M007493">lineno=</a>&nbsp;&nbsp;
+      <a href="#M007499">new</a>&nbsp;&nbsp;
+      <a href="#M007498">open</a>&nbsp;&nbsp;
+      <a href="#M007496">pos</a>&nbsp;&nbsp;
+      <a href="#M007502">read</a>&nbsp;&nbsp;
+      <a href="#M007504">readchar</a>&nbsp;&nbsp;
+      <a href="#M007508">readline</a>&nbsp;&nbsp;
+      <a href="#M007511">readlines</a>&nbsp;&nbsp;
+      <a href="#M007500">rewind</a>&nbsp;&nbsp;
+      <a href="#M007497">tell</a>&nbsp;&nbsp;
+      <a href="#M007506">ungetc</a>&nbsp;&nbsp;
+      <a href="#M007501">unused</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="../Enumerable.html">Enumerable</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M007499" class="method-detail">
+        <a name="M007499"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007499.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007499.html');return false;">
+          <span class="method-name"> Zlib::GzipReader.new(io)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="GzipReader.html">GzipReader</a> object associated with
+<tt>io</tt>. The <a href="GzipReader.html">GzipReader</a> object reads
+gzipped data from <tt>io</tt>, and parses/decompresses them. At least,
+<tt>io</tt> must have a <tt><a href="GzipReader.html#M007502">read</a></tt>
+method that behaves same as the <tt><a
+href="GzipReader.html#M007502">read</a></tt> method in <a
+href="../IO.html">IO</a> class.
+</p>
+<p>
+If the gzip file header is incorrect, raises an <a
+href="GzipFile/Error.html">Zlib::GzipFile::Error</a> exception.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007498" class="method-detail">
+        <a name="M007498"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007498.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007498.html');return false;">
+          <span class="method-name"> Zlib::GzipReader.open(filename) {|gz| ... }<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Opens a file specified by <tt>filename</tt> as a gzipped file, and returns
+a <a href="GzipReader.html">GzipReader</a> object associated with that
+file. Further details of this method are in <a
+href="GzipReader.html#M007499">Zlib::GzipReader.new</a> and
+ZLib::GzipReader.wrap.
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M007509" class="method-detail">
+        <a name="M007509"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007509.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007509.html');return false;">
+          <span class="method-name">each</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <a href="GzipReader.html">Zlib::GzipReader</a> documentation for a
+description.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007505" class="method-detail">
+        <a name="M007505"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007505.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007505.html');return false;">
+          <span class="method-name">each_byte</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <a href="GzipReader.html">Zlib::GzipReader</a> documentation for a
+description.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007510" class="method-detail">
+        <a name="M007510"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007510.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007510.html');return false;">
+          <span class="method-name">each_line</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <a href="GzipReader.html">Zlib::GzipReader</a> documentation for a
+description.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007494" class="method-detail">
+        <a name="M007494"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007494.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007494.html');return false;">
+          <span class="method-name">eof</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+???
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007495" class="method-detail">
+        <a name="M007495"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007495.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007495.html');return false;">
+          <span class="method-name">eof?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+???
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007503" class="method-detail">
+        <a name="M007503"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007503.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007503.html');return false;">
+          <span class="method-name">getc</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <a href="GzipReader.html">Zlib::GzipReader</a> documentation for a
+description.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007507" class="method-detail">
+        <a name="M007507"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007507.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007507.html');return false;">
+          <span class="method-name">gets</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <a href="GzipReader.html">Zlib::GzipReader</a> documentation for a
+description.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007492" class="method-detail">
+        <a name="M007492"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007492.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007492.html');return false;">
+          <span class="method-name">lineno</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+???
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007493" class="method-detail">
+        <a name="M007493"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007493.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007493.html');return false;">
+          <span class="method-name">lineno=</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+???
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007496" class="method-detail">
+        <a name="M007496"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007496.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007496.html');return false;">
+          <span class="method-name">pos</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+???
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007502" class="method-detail">
+        <a name="M007502"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007502.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007502.html');return false;">
+          <span class="method-name">read</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <a href="GzipReader.html">Zlib::GzipReader</a> documentation for a
+description.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007504" class="method-detail">
+        <a name="M007504"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007504.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007504.html');return false;">
+          <span class="method-name">readchar</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <a href="GzipReader.html">Zlib::GzipReader</a> documentation for a
+description.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007508" class="method-detail">
+        <a name="M007508"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007508.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007508.html');return false;">
+          <span class="method-name">readline</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <a href="GzipReader.html">Zlib::GzipReader</a> documentation for a
+description.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007511" class="method-detail">
+        <a name="M007511"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007511.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007511.html');return false;">
+          <span class="method-name">readlines</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <a href="GzipReader.html">Zlib::GzipReader</a> documentation for a
+description.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007500" class="method-detail">
+        <a name="M007500"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007500.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007500.html');return false;">
+          <span class="method-name">rewind</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Resets the position of the file pointer to the point created the <a
+href="GzipReader.html">GzipReader</a> object. The associated <a
+href="../IO.html">IO</a> object needs to respond to the <tt>seek</tt>
+method.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007497" class="method-detail">
+        <a name="M007497"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007497.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007497.html');return false;">
+          <span class="method-name">tell</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+???
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007506" class="method-detail">
+        <a name="M007506"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007506.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007506.html');return false;">
+          <span class="method-name">ungetc</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <a href="GzipReader.html">Zlib::GzipReader</a> documentation for a
+description.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M007501" class="method-detail">
+        <a name="M007501"></a>
+
+        <div class="method-heading">
+          <a href="GzipReader.src/M007501.html" target="Code" class="method-signature"
+            onclick="popupCode('GzipReader.src/M007501.html');return false;">
+          <span class="method-name">unused</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the rest of the data which had <a
+href="GzipReader.html#M007502">read</a> for parsing gzip format, or
+<tt>nil</tt> if the whole gzip file is not parsed yet.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

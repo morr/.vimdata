@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>marshal_load (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * undocumented
+ */
+
+static VALUE
+time_mload(time, str)
+    VALUE time, str;
+{
+    struct time_object *tobj;
+    unsigned long p, s;
+    time_t sec, usec;
+    unsigned char *buf;
+    struct tm tm;
+    int i, gmt;
+
+    time_modify(time);
+    StringValue(str);
+    buf = (unsigned char *)RSTRING(str)-&gt;ptr;
+    if (RSTRING(str)-&gt;len != 8) {
+        rb_raise(rb_eTypeError, &quot;marshaled time format differ&quot;);
+    }
+
+    p = s = 0;
+    for (i=0; i&lt;4; i++) {
+        p |= buf[i]&lt;&lt;(8*i);
+    }
+    for (i=4; i&lt;8; i++) {
+        s |= buf[i]&lt;&lt;(8*(i-4));
+    }
+
+    if ((p &amp; (1UL&lt;&lt;31)) == 0) {
+        sec = p;
+        usec = s;
+    }
+    else {
+        p &amp;= ~(1UL&lt;&lt;31);
+        gmt        = (p &gt;&gt; 30) &amp; 0x1;
+        tm.tm_year = (p &gt;&gt; 14) &amp; 0xffff;
+        tm.tm_mon  = (p &gt;&gt; 10) &amp; 0xf;
+        tm.tm_mday = (p &gt;&gt;  5) &amp; 0x1f;
+        tm.tm_hour =  p        &amp; 0x1f;
+        tm.tm_min  = (s &gt;&gt; 26) &amp; 0x3f;
+        tm.tm_sec  = (s &gt;&gt; 20) &amp; 0x3f;
+        tm.tm_isdst = 0;
+
+        sec = make_time_t(&amp;tm, Qtrue);
+        usec = (time_t)(s &amp; 0xfffff);
+    }
+    time_overflow_p(&amp;sec, &amp;usec);
+
+    GetTimeval(time, tobj);
+    tobj-&gt;tm_got = 0;
+    tobj-&gt;gmt = gmt;
+    tobj-&gt;tv.tv_sec = sec;
+    tobj-&gt;tv.tv_usec = usec;
+    return time;
+}</pre>
+</body>
+</html>

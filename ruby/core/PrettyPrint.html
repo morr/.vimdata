@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: PrettyPrint</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">PrettyPrint</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/lib/prettyprint_rb.html">
+                lib/prettyprint.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+This class implements a pretty printing algorithm. It finds line breaks and
+nice indentations for grouped structure.
+</p>
+<p>
+By default, the class assumes that primitive elements are strings and each
+byte in the strings have single column in width. But it can be used for
+other situations by giving suitable arguments for some methods:
+</p>
+<ul>
+<li>newline object and space generation block for <a
+href="PrettyPrint.html#M001346">PrettyPrint.new</a>
+
+</li>
+<li>optional width argument for <a
+href="PrettyPrint.html#M001350">PrettyPrint#text</a>
+
+</li>
+<li><a href="PrettyPrint.html#M001352">PrettyPrint#breakable</a>
+
+</li>
+</ul>
+<p>
+There are several candidate uses:
+</p>
+<ul>
+<li><a href="PrettyPrint.html#M001350">text</a> formatting using proportional
+fonts
+
+</li>
+<li>multibyte characters which has columns different to number of bytes
+
+</li>
+<li>non-string formatting
+
+</li>
+</ul>
+<h2>Bugs</h2>
+<ul>
+<li>Box based formatting?
+
+</li>
+<li>Other (better) model/algorithm?
+
+</li>
+</ul>
+<h2>References</h2>
+<p>
+Christian Lindig, Strictly Pretty, March 2000, <a
+href="http://www.st.cs.uni-sb.de/~lindig/papers/#pretty">www.st.cs.uni-sb.de/~lindig/papers/#pretty</a>
+</p>
+<p>
+Philip Wadler, A prettier printer, March 1998, <a
+href="http://homepages.inf.ed.ac.uk/wadler/topics/language-design.html#prettier">homepages.inf.ed.ac.uk/wadler/topics/language-design.html#prettier</a>
+</p>
+<h2>Author</h2>
+<p>
+Tanaka Akira &lt;akr@m17n.org&gt;
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001349">break_outmost_groups</a>&nbsp;&nbsp;
+      <a href="#M001352">breakable</a>&nbsp;&nbsp;
+      <a href="#M001347">current_group</a>&nbsp;&nbsp;
+      <a href="#M001351">fill_breakable</a>&nbsp;&nbsp;
+      <a href="#M001348">first?</a>&nbsp;&nbsp;
+      <a href="#M001356">flush</a>&nbsp;&nbsp;
+      <a href="#M001344">format</a>&nbsp;&nbsp;
+      <a href="#M001353">group</a>&nbsp;&nbsp;
+      <a href="#M001354">group_sub</a>&nbsp;&nbsp;
+      <a href="#M001355">nest</a>&nbsp;&nbsp;
+      <a href="#M001346">new</a>&nbsp;&nbsp;
+      <a href="#M001345">singleline_format</a>&nbsp;&nbsp;
+      <a href="#M001350">text</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="PrettyPrint/Breakable.html" class="link">PrettyPrint::Breakable</a><br />
+Class <a href="PrettyPrint/Group.html" class="link">PrettyPrint::Group</a><br />
+Class <a href="PrettyPrint/GroupQueue.html" class="link">PrettyPrint::GroupQueue</a><br />
+Class <a href="PrettyPrint/SingleLine.html" class="link">PrettyPrint::SingleLine</a><br />
+Class <a href="PrettyPrint/Text.html" class="link">PrettyPrint::Text</a><br />
+
+    </div>
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">genspace</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">group_queue</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">indent</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">maxwidth</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">newline</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">output</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001344" class="method-detail">
+        <a name="M001344"></a>
+
+        <div class="method-heading">
+          <a href="PrettyPrint.src/M001344.html" target="Code" class="method-signature"
+            onclick="popupCode('PrettyPrint.src/M001344.html');return false;">
+          <span class="method-name">format</span><span class="method-args">(output='', maxwidth=79, newline=&quot;\n&quot;, genspace=lambda {|n| ' ' * n} {|q| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This is a convenience method which is same as follows:
+</p>
+<pre>
+  begin
+    q = PrettyPrint.new(output, maxwidth, newline, &amp;genspace)
+    ...
+    q.flush
+    output
+  end
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M001346" class="method-detail">
+        <a name="M001346"></a>
+
+        <div class="method-heading">
+          <a href="PrettyPrint.src/M001346.html" target="Code" class="method-signature"
+            onclick="popupCode('PrettyPrint.src/M001346.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(output='', maxwidth=79, newline=&quot;\n&quot;, &amp;genspace)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a buffer for pretty printing.
+</p>
+<p>
+<tt>output</tt> is an output target. If it is not specified, &#8217;&#8217;
+is assumed. It should have a &lt;&lt; method which accepts the first
+argument <tt>obj</tt> of <a
+href="PrettyPrint.html#M001350">PrettyPrint#text</a>, the first argument
+<tt>sep</tt> of <a
+href="PrettyPrint.html#M001352">PrettyPrint#breakable</a>, the first
+argument <tt>newline</tt> of <a
+href="PrettyPrint.html#M001346">PrettyPrint.new</a>, and the result of a
+given block for <a href="PrettyPrint.html#M001346">PrettyPrint.new</a>.
+</p>
+<p>
+<tt>maxwidth</tt> specifies maximum line length. If it is not specified, 79
+is assumed. However actual outputs may overflow <tt>maxwidth</tt> if long
+non-<a href="PrettyPrint.html#M001352">breakable</a> texts are provided.
+</p>
+<p>
+<tt>newline</tt> is used for line breaks. &quot;\n&quot; is used if it is
+not specified.
+</p>
+<p>
+The block is used to generate spaces. {|width| &#8217; &#8217; * width} is
+used if it is not given.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001345" class="method-detail">
+        <a name="M001345"></a>
+
+        <div class="method-heading">
+          <a href="PrettyPrint.src/M001345.html" target="Code" class="method-signature"
+            onclick="popupCode('PrettyPrint.src/M001345.html');return false;">
+          <span class="method-name">singleline_format</span><span class="method-args">(output='', maxwidth=nil, newline=nil, genspace=nil) {|q| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This is similar to PrettyPrint::format but the result has no breaks.
+</p>
+<p>
+<tt>maxwidth</tt>, <tt>newline</tt> and <tt>genspace</tt> are ignored.
+</p>
+<p>
+The invocation of <tt><a href="PrettyPrint.html#M001352">breakable</a></tt>
+in the block doesn&#8216;t break a line and is treated as just an
+invocation of <tt><a href="PrettyPrint.html#M001350">text</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001349" class="method-detail">
+        <a name="M001349"></a>
+
+        <div class="method-heading">
+          <a href="PrettyPrint.src/M001349.html" target="Code" class="method-signature"
+            onclick="popupCode('PrettyPrint.src/M001349.html');return false;">
+          <span class="method-name">break_outmost_groups</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M001352" class="method-detail">
+        <a name="M001352"></a>
+
+        <div class="method-heading">
+          <a href="PrettyPrint.src/M001352.html" target="Code" class="method-signature"
+            onclick="popupCode('PrettyPrint.src/M001352.html');return false;">
+          <span class="method-name">breakable</span><span class="method-args">(sep=' ', width=sep.length)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This tells &quot;you can break a line here if necessary&quot;, and a
+<tt>width</tt>\-column <a href="PrettyPrint.html#M001350">text</a>
+<tt>sep</tt> is inserted if a line is not broken at the point.
+</p>
+<p>
+If <tt>sep</tt> is not specified, &quot; &quot; is used.
+</p>
+<p>
+If <tt>width</tt> is not specified, +sep.length+ is used. You will have to
+specify this when <tt>sep</tt> is a multibyte character, for example.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001347" class="method-detail">
+        <a name="M001347"></a>
+
+        <div class="method-heading">
+          <a href="PrettyPrint.src/M001347.html" target="Code" class="method-signature"
+            onclick="popupCode('PrettyPrint.src/M001347.html');return false;">
+          <span class="method-name">current_group</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M001351" class="method-detail">
+        <a name="M001351"></a>
+
+        <div class="method-heading">
+          <a href="PrettyPrint.src/M001351.html" target="Code" class="method-signature"
+            onclick="popupCode('PrettyPrint.src/M001351.html');return false;">
+          <span class="method-name">fill_breakable</span><span class="method-args">(sep=' ', width=sep.length)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M001348" class="method-detail">
+        <a name="M001348"></a>
+
+        <div class="method-heading">
+          <a href="PrettyPrint.src/M001348.html" target="Code" class="method-signature"
+            onclick="popupCode('PrettyPrint.src/M001348.html');return false;">
+          <span class="method-name">first?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="PrettyPrint.html#M001348">first?</a> is a predicate to test the
+call is a first call to <a href="PrettyPrint.html#M001348">first?</a> with
+current <a href="PrettyPrint.html#M001353">group</a>.
+</p>
+<p>
+It is useful to <a href="PrettyPrint.html#M001344">format</a> comma
+separated values as:
+</p>
+<pre>
+  q.group(1, '[', ']') {
+    xxx.each {|yyy|
+      unless q.first?
+        q.text ','
+        q.breakable
+      end
+      ... pretty printing yyy ...
+    }
+  }
+</pre>
+<p>
+<a href="PrettyPrint.html#M001348">first?</a> is obsoleted in 1.8.2.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001356" class="method-detail">
+        <a name="M001356"></a>
+
+        <div class="method-heading">
+          <a href="PrettyPrint.src/M001356.html" target="Code" class="method-signature"
+            onclick="popupCode('PrettyPrint.src/M001356.html');return false;">
+          <span class="method-name">flush</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+outputs buffered data.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001353" class="method-detail">
+        <a name="M001353"></a>
+
+        <div class="method-heading">
+          <a href="PrettyPrint.src/M001353.html" target="Code" class="method-signature"
+            onclick="popupCode('PrettyPrint.src/M001353.html');return false;">
+          <span class="method-name">group</span><span class="method-args">(indent=0, open_obj='', close_obj='', open_width=open_obj.length, close_width=close_obj.length) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Groups line break hints added in the block. The line break hints are all to
+be used or not.
+</p>
+<p>
+If <tt>indent</tt> is specified, the method call is regarded as nested by
+<a href="PrettyPrint.html#M001355">nest</a>(indent) { &#8230; }.
+</p>
+<p>
+If <tt>open_obj</tt> is specified, <tt><a
+href="PrettyPrint.html#M001350">text</a> open_obj, open_width</tt> is
+called before grouping. If <tt>close_obj</tt> is specified, <tt><a
+href="PrettyPrint.html#M001350">text</a> close_obj, close_width</tt> is
+called after grouping.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001354" class="method-detail">
+        <a name="M001354"></a>
+
+        <div class="method-heading">
+          <a href="PrettyPrint.src/M001354.html" target="Code" class="method-signature"
+            onclick="popupCode('PrettyPrint.src/M001354.html');return false;">
+          <span class="method-name">group_sub</span><span class="method-args">() {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M001355" class="method-detail">
+        <a name="M001355"></a>
+
+        <div class="method-heading">
+          <a href="PrettyPrint.src/M001355.html" target="Code" class="method-signature"
+            onclick="popupCode('PrettyPrint.src/M001355.html');return false;">
+          <span class="method-name">nest</span><span class="method-args">(indent) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Increases left margin after newline with <tt>indent</tt> for line breaks
+added in the block.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001350" class="method-detail">
+        <a name="M001350"></a>
+
+        <div class="method-heading">
+          <a href="PrettyPrint.src/M001350.html" target="Code" class="method-signature"
+            onclick="popupCode('PrettyPrint.src/M001350.html');return false;">
+          <span class="method-name">text</span><span class="method-args">(obj, width=obj.length)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This adds <tt>obj</tt> as a <a href="PrettyPrint.html#M001350">text</a> of
+<tt>width</tt> columns in width.
+</p>
+<p>
+If <tt>width</tt> is not specified, obj.length is used.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

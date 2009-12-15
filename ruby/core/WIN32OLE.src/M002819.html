@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>ole_show_help (WIN32OLE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE.ole_show_help(obj [,helpcontext])
+ * 
+ *  Displays helpfile. The 1st argument specifies WIN32OLE_TYPE
+ *  object or WIN32OLE_METHOD object or helpfile.
+ *
+ *     excel = WIN32OLE.new('Excel.Application')
+ *     typeobj = excel.ole_type
+ *     WIN32OLE.ole_show_help(typeobj)
+ */
+static VALUE
+fole_s_show_help(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE target;
+    VALUE helpcontext;
+    VALUE helpfile;
+    VALUE name;
+    HWND  hwnd;
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;target, &amp;helpcontext);
+    if (rb_obj_is_kind_of(target, cWIN32OLE_TYPE) ||
+        rb_obj_is_kind_of(target, cWIN32OLE_METHOD)) {
+        helpfile = rb_funcall(target, rb_intern(&quot;helpfile&quot;), 0);
+        if(strlen(StringValuePtr(helpfile)) == 0) {
+            name = rb_ivar_get(target, rb_intern(&quot;name&quot;));
+            rb_raise(rb_eRuntimeError, &quot;no helpfile of `%s'&quot;,
+                     StringValuePtr(name));
+        }
+        helpcontext = rb_funcall(target, rb_intern(&quot;helpcontext&quot;), 0);
+    } else {
+        helpfile = target;
+    }
+    if (TYPE(helpfile) != T_STRING) {
+        rb_raise(rb_eTypeError, &quot;1st parameter must be (String|WIN32OLE_TYPE|WIN32OLE_METHOD)&quot;);
+    }
+    hwnd = ole_show_help(helpfile, helpcontext);
+    if(hwnd == 0) {
+        rb_raise(rb_eRuntimeError, &quot;failed to open help file `%s'&quot;,
+                 StringValuePtr(helpfile));
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

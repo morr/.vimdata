@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>set_dictionary (Zlib::Inflate)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Sets the preset dictionary and returns +string+.  This method is available just
+ * only after a Zlib::NeedDict exception was raised.  See zlib.h for details.
+ *
+ * TODO: document better!
+ */
+static VALUE
+rb_inflate_set_dictionary(obj, dic)
+    VALUE obj, dic;
+{
+    struct zstream *z = get_zstream(obj);
+    VALUE src = dic;
+    int err;
+
+    OBJ_INFECT(obj, dic);
+    StringValue(src);
+    err = inflateSetDictionary(&amp;z-&gt;stream,
+                               RSTRING(src)-&gt;ptr, RSTRING(src)-&gt;len);
+    if (err != Z_OK) {
+        raise_zlib_error(err, z-&gt;stream.msg);
+    }
+
+    return dic;
+}</pre>
+</body>
+</html>

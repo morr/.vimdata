@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>set_error (WEBrick::HTTPResponse)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/httpresponse.rb, line 203</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_error</span>(<span class="ruby-identifier">ex</span>, <span class="ruby-identifier">backtrace</span>=<span class="ruby-keyword kw">false</span>)
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">ex</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">Status</span> 
+        <span class="ruby-ivar">@keep_alive</span> = <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-identifier">error?</span>(<span class="ruby-identifier">ex</span>.<span class="ruby-identifier">code</span>)
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">status</span> = <span class="ruby-identifier">ex</span>.<span class="ruby-identifier">code</span>
+      <span class="ruby-keyword kw">else</span> 
+        <span class="ruby-ivar">@keep_alive</span> = <span class="ruby-keyword kw">false</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">status</span> = <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">RC_INTERNAL_SERVER_ERROR</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'content-type'</span>] = <span class="ruby-value str">&quot;text/html&quot;</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:create_error_page</span>)
+        <span class="ruby-identifier">create_error_page</span>()
+        <span class="ruby-keyword kw">return</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@request_uri</span>
+        <span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span> = <span class="ruby-ivar">@request_uri</span>.<span class="ruby-identifier">host</span>, <span class="ruby-ivar">@request_uri</span>.<span class="ruby-identifier">port</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:ServerName</span>], <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:Port</span>]
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@body</span> = <span class="ruby-value str">''</span>
+      <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;!DOCTYPE HTML PUBLIC \&quot;-//W3C//DTD HTML 4.0//EN\&quot;&gt;\n&lt;HTML&gt;\n&lt;HEAD&gt;&lt;TITLE&gt;\#{HTMLUtils::escape(@reason_phrase)}&lt;/TITLE&gt;&lt;/HEAD&gt;\n&lt;BODY&gt;\n&lt;H1&gt;\#{HTMLUtils::escape(@reason_phrase)}&lt;/H1&gt;\n\#{HTMLUtils::escape(ex.message)}\n&lt;HR&gt;\n&quot;</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">backtrace</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">$DEBUG</span>
+        <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;backtrace of `#{HTMLUtils::escape(ex.class.to_s)}' &quot;</span>
+        <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;#{HTMLUtils::escape(ex.message)}&quot;</span>
+        <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;PRE&gt;&quot;</span>
+        <span class="ruby-identifier">ex</span>.<span class="ruby-identifier">backtrace</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;\t#{line}\n&quot;</span>}
+        <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;/PRE&gt;&lt;HR&gt;&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@body</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;ADDRESS&gt;\n\#{HTMLUtils::escape(@config[:ServerSoftware])} at\n\#{host}:\#{port}\n&lt;/ADDRESS&gt;\n&lt;/BODY&gt;\n&lt;/HTML&gt;\n&quot;</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

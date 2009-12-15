@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>mtime (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     file.mtime -&gt; time
+ *  
+ *  Returns the modification time for &lt;i&gt;file&lt;/i&gt;.
+ *     
+ *     File.new(&quot;testfile&quot;).mtime   #=&gt; Wed Apr 09 08:53:14 CDT 2003
+ *     
+ */
+
+static VALUE
+rb_file_mtime(obj)
+    VALUE obj;
+{
+    OpenFile *fptr;
+    struct stat st;
+
+    GetOpenFile(obj, fptr);
+    if (fstat(fileno(fptr-&gt;f), &amp;st) == -1) {
+        rb_sys_fail(fptr-&gt;path);
+    }
+    return rb_time_new(st.st_mtime, 0);
+}</pre>
+</body>
+</html>

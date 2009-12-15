@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Thread.new([arg]*) {|args| block }   =&gt; thread
+ *  
+ *  Creates and runs a new thread to execute the instructions given in
+ *  &lt;i&gt;block&lt;/i&gt;. Any arguments passed to &lt;code&gt;Thread::new&lt;/code&gt; are passed
+ *  into the block.
+ *     
+ *     x = Thread.new { sleep 0.1; print &quot;x&quot;; print &quot;y&quot;; print &quot;z&quot; }
+ *     a = Thread.new { print &quot;a&quot;; print &quot;b&quot;; sleep 0.2; print &quot;c&quot; }
+ *     x.join # Let the threads finish before
+ *     a.join # main thread exits...
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     abxyzc
+ */
+
+static VALUE
+rb_thread_s_new(argc, argv, klass)
+    int argc;
+    VALUE *argv;
+    VALUE klass;
+{
+    rb_thread_t th = rb_thread_alloc(klass);
+    volatile VALUE *pos;
+
+    pos = th-&gt;stk_pos;
+    rb_obj_call_init(th-&gt;thread, argc, argv);
+    if (th-&gt;stk_pos == 0) {
+        rb_raise(rb_eThreadError, &quot;uninitialized thread - check `%s#initialize'&quot;,
+                 rb_class2name(klass));
+    }
+
+    return th-&gt;thread;
+}</pre>
+</body>
+</html>

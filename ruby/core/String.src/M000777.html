@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>=~ (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str =~ obj   =&gt; fixnum or nil
+ *  
+ *  Match---If &lt;i&gt;obj&lt;/i&gt; is a &lt;code&gt;Regexp&lt;/code&gt;, use it as a pattern to match
+ *  against &lt;i&gt;str&lt;/i&gt;,and returns the position the match starts, or 
+ *  &lt;code&gt;nil&lt;/code&gt; if there is no match. Otherwise, invokes
+ *  &lt;i&gt;obj.=~&lt;/i&gt;, passing &lt;i&gt;str&lt;/i&gt; as an argument. The default
+ *  &lt;code&gt;=~&lt;/code&gt; in &lt;code&gt;Object&lt;/code&gt; returns &lt;code&gt;false&lt;/code&gt;.
+ *     
+ *     &quot;cat o' 9 tails&quot; =~ /\d/   #=&gt; 7
+ *     &quot;cat o' 9 tails&quot; =~ 9      #=&gt; false
+ */
+
+static VALUE
+rb_str_match(x, y)
+    VALUE x, y;
+{
+    switch (TYPE(y)) {
+      case T_STRING:
+        rb_raise(rb_eTypeError, &quot;type mismatch: String given&quot;);
+
+      case T_REGEXP:
+        return rb_reg_match(y, x);
+
+      default:
+        return rb_funcall(y, rb_intern(&quot;=~&quot;), 1, x);
+    }
+}</pre>
+</body>
+</html>

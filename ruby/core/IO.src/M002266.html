@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>readlines (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.readlines(sep_string=$/)  =&gt;   array
+ *  
+ *  Reads all of the lines in &lt;em&gt;ios&lt;/em&gt;, and returns them in
+ *  &lt;i&gt;anArray&lt;/i&gt;. Lines are separated by the optional
+ *  &lt;i&gt;sep_string&lt;/i&gt;. If &lt;i&gt;sep_string&lt;/i&gt; is &lt;code&gt;nil&lt;/code&gt;, the
+ *  rest of the stream is returned as a single record.
+ *  The stream must be opened for reading or an
+ *  &lt;code&gt;IOError&lt;/code&gt; will be raised.
+ *     
+ *     f = File.new(&quot;testfile&quot;)
+ *     f.readlines[0]   #=&gt; &quot;This is line one\n&quot;
+ */
+
+static VALUE
+rb_io_readlines(argc, argv, io)
+    int argc;
+    VALUE *argv;
+    VALUE io;
+{
+    VALUE line, ary;
+    VALUE rs;
+
+    if (argc == 0) {
+        rs = rb_rs;
+    }
+    else {
+        rb_scan_args(argc, argv, &quot;1&quot;, &amp;rs);
+        if (!NIL_P(rs)) StringValue(rs);
+    }
+    ary = rb_ary_new();
+    while (!NIL_P(line = rb_io_getline(rs, io))) {
+        rb_ary_push(ary, line);
+    }
+    return ary;
+}</pre>
+</body>
+</html>

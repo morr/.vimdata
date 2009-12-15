@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>dev_minor (File::Stat)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     stat.dev_minor   =&gt; fixnum
+ *  
+ *  Returns the minor part of &lt;code&gt;File_Stat#dev&lt;/code&gt; or
+ *  &lt;code&gt;nil&lt;/code&gt;.
+ *     
+ *     File.stat(&quot;/dev/fd1&quot;).dev_minor   #=&gt; 1
+ *     File.stat(&quot;/dev/tty&quot;).dev_minor   #=&gt; 0
+ */
+
+static VALUE
+rb_stat_dev_minor(self)
+    VALUE self;
+{
+#if defined(minor)
+    long dev = get_stat(self)-&gt;st_dev;
+    return ULONG2NUM(minor(dev));
+#else
+    return Qnil;
+#endif
+}</pre>
+</body>
+</html>

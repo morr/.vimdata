@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>__send__ (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.send(symbol [, args...])        =&gt; obj
+ *     obj.__send__(symbol [, args...])    =&gt; obj
+ *  
+ *  Invokes the method identified by _symbol_, passing it any
+ *  arguments specified. You can use &lt;code&gt;\_\_send__&lt;/code&gt; if the name
+ *  +send+ clashes with an existing method in _obj_.
+ *     
+ *     class Klass
+ *       def hello(*args)
+ *         &quot;Hello &quot; + args.join(' ')
+ *       end
+ *     end
+ *     k = Klass.new
+ *     k.send :hello, &quot;gentle&quot;, &quot;readers&quot;   #=&gt; &quot;Hello gentle readers&quot;
+ */
+
+static VALUE
+rb_f_send(argc, argv, recv)
+    int argc;
+    VALUE *argv;
+    VALUE recv;
+{
+    VALUE vid;
+
+    if (argc == 0) rb_raise(rb_eArgError, &quot;no method name given&quot;);
+
+    vid = *argv++; argc--;
+    PUSH_ITER(rb_block_given_p()?ITER_PRE:ITER_NOT);
+    vid = rb_call(CLASS_OF(recv), recv, rb_to_id(vid), argc, argv, 1, Qundef);
+    POP_ITER();
+
+    return vid;
+}</pre>
+</body>
+</html>

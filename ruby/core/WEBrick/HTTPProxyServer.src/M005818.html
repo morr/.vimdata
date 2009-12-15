@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>choose_header (WEBrick::HTTPProxyServer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/httpproxy.rb, line 56</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">choose_header</span>(<span class="ruby-identifier">src</span>, <span class="ruby-identifier">dst</span>)
+      <span class="ruby-identifier">connections</span> = <span class="ruby-identifier">split_field</span>(<span class="ruby-identifier">src</span>[<span class="ruby-value str">'connection'</span>])
+      <span class="ruby-identifier">src</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">key</span> = <span class="ruby-identifier">key</span>.<span class="ruby-identifier">downcase</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-constant">HopByHop</span>.<span class="ruby-identifier">member?</span>(<span class="ruby-identifier">key</span>)          <span class="ruby-operator">||</span> <span class="ruby-comment cmt"># RFC2616: 13.5.1</span>
+           <span class="ruby-identifier">connections</span>.<span class="ruby-identifier">member?</span>(<span class="ruby-identifier">key</span>)       <span class="ruby-operator">||</span> <span class="ruby-comment cmt"># RFC2616: 14.10</span>
+           <span class="ruby-constant">ShouldNotTransfer</span>.<span class="ruby-identifier">member?</span>(<span class="ruby-identifier">key</span>)    <span class="ruby-comment cmt"># pragmatics</span>
+          <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-node">&quot;choose_header: `#{key}: #{value}'&quot;</span>)
+          <span class="ruby-keyword kw">next</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">dst</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">value</span>
+      }
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

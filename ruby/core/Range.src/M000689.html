@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Range)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Range.new(start, end, exclusive=false)    =&gt; range
+ *  
+ *  Constructs a range using the given &lt;i&gt;start&lt;/i&gt; and &lt;i&gt;end&lt;/i&gt;. If the third
+ *  parameter is omitted or is &lt;code&gt;false&lt;/code&gt;, the &lt;i&gt;range&lt;/i&gt; will include
+ *  the end object; otherwise, it will be excluded.
+ */
+
+static VALUE
+range_initialize(argc, argv, range)
+    int argc;
+    VALUE *argv;
+    VALUE range;
+{
+    VALUE beg, end, flags;
+    
+    rb_scan_args(argc, argv, &quot;21&quot;, &amp;beg, &amp;end, &amp;flags);
+    /* Ranges are immutable, so that they should be initialized only once. */
+    if (rb_ivar_defined(range, id_beg)) {
+        rb_name_error(rb_intern(&quot;initialize&quot;), &quot;`initialize' called twice&quot;);
+    }
+    range_init(range, beg, end, RTEST(flags));
+    return Qnil;
+}</pre>
+</body>
+</html>

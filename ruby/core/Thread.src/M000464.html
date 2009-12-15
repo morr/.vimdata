@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>stop? (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     thr.stop?   =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; if &lt;i&gt;thr&lt;/i&gt; is dead or sleeping.
+ *     
+ *     a = Thread.new { Thread.stop }
+ *     b = Thread.current
+ *     a.stop?   #=&gt; true
+ *     b.stop?   #=&gt; false
+ */
+
+static VALUE
+rb_thread_stop_p(thread)
+    VALUE thread;
+{
+    rb_thread_t th = rb_thread_check(thread);
+
+    if (rb_thread_dead(th)) return Qtrue;
+    if (th-&gt;status == THREAD_STOPPED) return Qtrue;
+    return Qfalse;
+}</pre>
+</body>
+</html>

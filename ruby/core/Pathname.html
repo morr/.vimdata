@@ -1,0 +1,2417 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Pathname</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Pathname</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/lib/pathname_rb.html">
+                lib/pathname.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h2><a href="Pathname.html">Pathname</a></h2>
+<p>
+<a href="Pathname.html">Pathname</a> represents a pathname which locates a
+file in a filesystem. The pathname depends on OS: Unix, Windows, etc. <a
+href="Pathname.html">Pathname</a> library works with pathnames of local OS.
+However non-Unix pathnames are supported experimentally.
+</p>
+<p>
+It does not represent the file itself. A <a
+href="Pathname.html">Pathname</a> can be relative or absolute. It&#8216;s
+not until you try to reference the file that it even matters whether the
+file exists or not.
+</p>
+<p>
+<a href="Pathname.html">Pathname</a> is immutable. It has no method for
+destructive update.
+</p>
+<p>
+The value of this class is to manipulate file path information in a neater
+way than standard Ruby provides. The examples below demonstrate the
+difference. <b>All</b> functionality from <a href="File.html">File</a>, <a
+href="FileTest.html">FileTest</a>, and some from <a href="Dir.html">Dir</a>
+and <a href="FileUtils.html">FileUtils</a> is included, in an unsurprising
+way. It is essentially a facade for all of these, and more.
+</p>
+<h2>Examples</h2>
+<h3>Example 1: Using <a href="Pathname.html">Pathname</a></h3>
+<pre>
+  require 'pathname'
+  p = Pathname.new(&quot;/usr/bin/ruby&quot;)
+  size = p.size              # 27662
+  isdir = p.directory?       # false
+  dir  = p.dirname           # Pathname:/usr/bin
+  base = p.basename          # Pathname:ruby
+  dir, base = p.split        # [Pathname:/usr/bin, Pathname:ruby]
+  data = p.read
+  p.open { |f| _ }
+  p.each_line { |line| _ }
+</pre>
+<h3>Example 2: Using standard Ruby</h3>
+<pre>
+  p = &quot;/usr/bin/ruby&quot;
+  size = File.size(p)        # 27662
+  isdir = File.directory?(p) # false
+  dir  = File.dirname(p)     # &quot;/usr/bin&quot;
+  base = File.basename(p)    # &quot;ruby&quot;
+  dir, base = File.split(p)  # [&quot;/usr/bin&quot;, &quot;ruby&quot;]
+  data = File.read(p)
+  File.open(p) { |f| _ }
+  File.foreach(p) { |line| _ }
+</pre>
+<h3>Example 3: Special features</h3>
+<pre>
+  p1 = Pathname.new(&quot;/usr/lib&quot;)   # Pathname:/usr/lib
+  p2 = p1 + &quot;ruby/1.8&quot;            # Pathname:/usr/lib/ruby/1.8
+  p3 = p1.parent                  # Pathname:/usr
+  p4 = p2.relative_path_from(p3)  # Pathname:lib/ruby/1.8
+  pwd = Pathname.pwd              # Pathname:/home/gavin
+  pwd.absolute?                   # true
+  p5 = Pathname.new &quot;.&quot;           # Pathname:.
+  p5 = p5 + &quot;music/../articles&quot;   # Pathname:music/../articles
+  p5.cleanpath                    # Pathname:articles
+  p5.realpath                     # Pathname:/home/gavin/articles
+  p5.children                     # [Pathname:/home/gavin/articles/linux, ...]
+</pre>
+<h2>Breakdown of functionality</h2>
+<h3>Core methods</h3>
+<p>
+These methods are effectively manipulating a <a
+href="String.html">String</a>, because that&#8216;s all a path is. Except
+for mountpoint?, <a href="Pathname.html#M001721">children</a>, and <a
+href="Pathname.html#M001710">realpath</a>, they don&#8216;t access the
+filesystem.
+</p>
+<ul>
+<li>+
+
+</li>
+<li><a href="Pathname.html#M001720">join</a>
+
+</li>
+<li><a href="Pathname.html#M001711">parent</a>
+
+</li>
+<li>root?
+
+</li>
+<li>absolute?
+
+</li>
+<li>relative?
+
+</li>
+<li><a href="Pathname.html#M001722">relative_path_from</a>
+
+</li>
+<li><a href="Pathname.html#M001716">each_filename</a>
+
+</li>
+<li><a href="Pathname.html#M001709">cleanpath</a>
+
+</li>
+<li><a href="Pathname.html#M001710">realpath</a>
+
+</li>
+<li><a href="Pathname.html#M001721">children</a>
+
+</li>
+<li>mountpoint?
+
+</li>
+</ul>
+<h3><a href="File.html">File</a> status predicate methods</h3>
+<p>
+These methods are a facade for <a href="FileTest.html">FileTest</a>:
+</p>
+<ul>
+<li>blockdev?
+
+</li>
+<li>chardev?
+
+</li>
+<li>directory?
+
+</li>
+<li>executable?
+
+</li>
+<li>executable_real?
+
+</li>
+<li>exist?
+
+</li>
+<li>file?
+
+</li>
+<li>grpowned?
+
+</li>
+<li>owned?
+
+</li>
+<li>pipe?
+
+</li>
+<li>readable?
+
+</li>
+<li>world_readable?
+
+</li>
+<li>readable_real?
+
+</li>
+<li>setgid?
+
+</li>
+<li>setuid?
+
+</li>
+<li><a href="Pathname.html#M001770">size</a>
+
+</li>
+<li><a href="Pathname.html#M001770">size</a>?
+
+</li>
+<li>socket?
+
+</li>
+<li>sticky?
+
+</li>
+<li><a href="Pathname.html#M001753">symlink</a>?
+
+</li>
+<li>writable?
+
+</li>
+<li>world_writable?
+
+</li>
+<li>writable_real?
+
+</li>
+<li>zero?
+
+</li>
+</ul>
+<h3><a href="File.html">File</a> property and manipulation methods</h3>
+<p>
+These methods are a facade for <a href="File.html">File</a>:
+</p>
+<ul>
+<li><a href="Pathname.html#M001728">atime</a>
+
+</li>
+<li><a href="Pathname.html#M001729">ctime</a>
+
+</li>
+<li><a href="Pathname.html#M001730">mtime</a>
+
+</li>
+<li>chmod(mode)
+
+</li>
+<li>lchmod(mode)
+
+</li>
+<li><a href="Pathname.html#M001733">chown</a>(owner, group)
+
+</li>
+<li><a href="Pathname.html#M001734">lchown</a>(owner, group)
+
+</li>
+<li><a href="Pathname.html#M001735">fnmatch</a>(pattern, *args)
+
+</li>
+<li><a href="Pathname.html#M001735">fnmatch</a>?(pattern, *args)
+
+</li>
+<li><a href="Pathname.html#M001737">ftype</a>
+
+</li>
+<li>make_link(old)
+
+</li>
+<li><a href="Pathname.html#M001739">open</a>(*args, &amp;block)
+
+</li>
+<li><a href="Pathname.html#M001740">readlink</a>
+
+</li>
+<li>rename(to)
+
+</li>
+<li><a href="Pathname.html#M001742">stat</a>
+
+</li>
+<li><a href="Pathname.html#M001743">lstat</a>
+
+</li>
+<li>make_symlink(old)
+
+</li>
+<li>truncate(length)
+
+</li>
+<li><a href="Pathname.html#M001746">utime</a>(<a
+href="Pathname.html#M001728">atime</a>, <a
+href="Pathname.html#M001730">mtime</a>)
+
+</li>
+<li>basename(*args)
+
+</li>
+<li><a href="Pathname.html#M001748">dirname</a>
+
+</li>
+<li><a href="Pathname.html#M001749">extname</a>
+
+</li>
+<li>expand_path(*args)
+
+</li>
+<li><a href="Pathname.html#M001751">split</a>
+
+</li>
+</ul>
+<h3>Directory methods</h3>
+<p>
+These methods are a facade for <a href="Dir.html">Dir</a>:
+</p>
+<ul>
+<li><a href="Pathname.html#M001778">Pathname.glob(*args)</a>
+
+</li>
+<li><a href="Pathname.html#M001779">Pathname.getwd</a> / Pathname.pwd
+
+</li>
+<li><a href="Pathname.html#M001786">rmdir</a>
+
+</li>
+<li><a href="Pathname.html#M001782">entries</a>
+
+</li>
+<li><a href="Pathname.html#M001783">each_entry</a>(&amp;block)
+
+</li>
+<li>mkdir(*args)
+
+</li>
+<li>opendir(*args)
+
+</li>
+</ul>
+<h3><a href="IO.html">IO</a></h3>
+<p>
+These methods are a facade for <a href="IO.html">IO</a>:
+</p>
+<ul>
+<li><a href="Pathname.html#M001723">each_line</a>(*args, &amp;block)
+
+</li>
+<li>read(*args)
+
+</li>
+<li>readlines(*args)
+
+</li>
+<li>sysopen(*args)
+
+</li>
+</ul>
+<h3>Utilities</h3>
+<p>
+These methods are a mixture of <a href="Find.html">Find</a>, <a
+href="FileUtils.html">FileUtils</a>, and others:
+</p>
+<ul>
+<li><a href="Pathname.html#M001788">find</a>(&amp;block)
+
+</li>
+<li><a href="Pathname.html#M001789">mkpath</a>
+
+</li>
+<li><a href="Pathname.html#M001790">rmtree</a>
+
+</li>
+<li><a href="Pathname.html#M001791">unlink</a> / <a
+href="Pathname.html#M001792">delete</a>
+
+</li>
+</ul>
+<h2><a href="Method.html">Method</a> documentation</h2>
+<p>
+As the above section shows, most of the methods in <a
+href="Pathname.html">Pathname</a> are facades. The documentation for these
+methods generally just says, for instance, &quot;See
+FileTest.writable?&quot;, as you should be familiar with the original
+method anyway, and its documentation (e.g. through <tt>ri</tt>) will
+contain more information. In some cases, a brief description will follow.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001719">+</a>&nbsp;&nbsp;
+      <a href="#M001705">&lt;=&gt;</a>&nbsp;&nbsp;
+      <a href="#M001702">==</a>&nbsp;&nbsp;
+      <a href="#M001703">===</a>&nbsp;&nbsp;
+      <a href="#M001707">TO_PATH</a>&nbsp;&nbsp;
+      <a href="#M001714">absolute?</a>&nbsp;&nbsp;
+      <a href="#M001718">ascend</a>&nbsp;&nbsp;
+      <a href="#M001728">atime</a>&nbsp;&nbsp;
+      <a href="#M001747">basename</a>&nbsp;&nbsp;
+      <a href="#M001754">blockdev?</a>&nbsp;&nbsp;
+      <a href="#M001755">chardev?</a>&nbsp;&nbsp;
+      <a href="#M001780">chdir</a>&nbsp;&nbsp;
+      <a href="#M001721">children</a>&nbsp;&nbsp;
+      <a href="#M001731">chmod</a>&nbsp;&nbsp;
+      <a href="#M001733">chown</a>&nbsp;&nbsp;
+      <a href="#M001781">chroot</a>&nbsp;&nbsp;
+      <a href="#M001709">cleanpath</a>&nbsp;&nbsp;
+      <a href="#M001729">ctime</a>&nbsp;&nbsp;
+      <a href="#M001792">delete</a>&nbsp;&nbsp;
+      <a href="#M001717">descend</a>&nbsp;&nbsp;
+      <a href="#M001784">dir_foreach</a>&nbsp;&nbsp;
+      <a href="#M001760">directory?</a>&nbsp;&nbsp;
+      <a href="#M001748">dirname</a>&nbsp;&nbsp;
+      <a href="#M001783">each_entry</a>&nbsp;&nbsp;
+      <a href="#M001716">each_filename</a>&nbsp;&nbsp;
+      <a href="#M001723">each_line</a>&nbsp;&nbsp;
+      <a href="#M001782">entries</a>&nbsp;&nbsp;
+      <a href="#M001704">eql?</a>&nbsp;&nbsp;
+      <a href="#M001756">executable?</a>&nbsp;&nbsp;
+      <a href="#M001757">executable_real?</a>&nbsp;&nbsp;
+      <a href="#M001758">exist?</a>&nbsp;&nbsp;
+      <a href="#M001750">expand_path</a>&nbsp;&nbsp;
+      <a href="#M001749">extname</a>&nbsp;&nbsp;
+      <a href="#M001761">file?</a>&nbsp;&nbsp;
+      <a href="#M001788">find</a>&nbsp;&nbsp;
+      <a href="#M001735">fnmatch</a>&nbsp;&nbsp;
+      <a href="#M001736">fnmatch?</a>&nbsp;&nbsp;
+      <a href="#M001793">foreach</a>&nbsp;&nbsp;
+      <a href="#M001724">foreachline</a>&nbsp;&nbsp;
+      <a href="#M001699">freeze</a>&nbsp;&nbsp;
+      <a href="#M001737">ftype</a>&nbsp;&nbsp;
+      <a href="#M001779">getwd</a>&nbsp;&nbsp;
+      <a href="#M001778">glob</a>&nbsp;&nbsp;
+      <a href="#M001759">grpowned?</a>&nbsp;&nbsp;
+      <a href="#M001720">join</a>&nbsp;&nbsp;
+      <a href="#M001732">lchmod</a>&nbsp;&nbsp;
+      <a href="#M001734">lchown</a>&nbsp;&nbsp;
+      <a href="#M001752">link</a>&nbsp;&nbsp;
+      <a href="#M001743">lstat</a>&nbsp;&nbsp;
+      <a href="#M001738">make_link</a>&nbsp;&nbsp;
+      <a href="#M001744">make_symlink</a>&nbsp;&nbsp;
+      <a href="#M001785">mkdir</a>&nbsp;&nbsp;
+      <a href="#M001789">mkpath</a>&nbsp;&nbsp;
+      <a href="#M001712">mountpoint?</a>&nbsp;&nbsp;
+      <a href="#M001730">mtime</a>&nbsp;&nbsp;
+      <a href="#M001698">new</a>&nbsp;&nbsp;
+      <a href="#M001739">open</a>&nbsp;&nbsp;
+      <a href="#M001787">opendir</a>&nbsp;&nbsp;
+      <a href="#M001764">owned?</a>&nbsp;&nbsp;
+      <a href="#M001711">parent</a>&nbsp;&nbsp;
+      <a href="#M001762">pipe?</a>&nbsp;&nbsp;
+      <a href="#M001725">read</a>&nbsp;&nbsp;
+      <a href="#M001765">readable?</a>&nbsp;&nbsp;
+      <a href="#M001767">readable_real?</a>&nbsp;&nbsp;
+      <a href="#M001726">readlines</a>&nbsp;&nbsp;
+      <a href="#M001740">readlink</a>&nbsp;&nbsp;
+      <a href="#M001710">realpath</a>&nbsp;&nbsp;
+      <a href="#M001715">relative?</a>&nbsp;&nbsp;
+      <a href="#M001722">relative_path_from</a>&nbsp;&nbsp;
+      <a href="#M001741">rename</a>&nbsp;&nbsp;
+      <a href="#M001786">rmdir</a>&nbsp;&nbsp;
+      <a href="#M001790">rmtree</a>&nbsp;&nbsp;
+      <a href="#M001713">root?</a>&nbsp;&nbsp;
+      <a href="#M001769">setgid?</a>&nbsp;&nbsp;
+      <a href="#M001768">setuid?</a>&nbsp;&nbsp;
+      <a href="#M001770">size</a>&nbsp;&nbsp;
+      <a href="#M001771">size?</a>&nbsp;&nbsp;
+      <a href="#M001763">socket?</a>&nbsp;&nbsp;
+      <a href="#M001751">split</a>&nbsp;&nbsp;
+      <a href="#M001742">stat</a>&nbsp;&nbsp;
+      <a href="#M001772">sticky?</a>&nbsp;&nbsp;
+      <a href="#M001708">sub</a>&nbsp;&nbsp;
+      <a href="#M001753">symlink</a>&nbsp;&nbsp;
+      <a href="#M001773">symlink?</a>&nbsp;&nbsp;
+      <a href="#M001727">sysopen</a>&nbsp;&nbsp;
+      <a href="#M001700">taint</a>&nbsp;&nbsp;
+      <a href="#M001706">to_s</a>&nbsp;&nbsp;
+      <a href="#M001745">truncate</a>&nbsp;&nbsp;
+      <a href="#M001791">unlink</a>&nbsp;&nbsp;
+      <a href="#M001701">untaint</a>&nbsp;&nbsp;
+      <a href="#M001746">utime</a>&nbsp;&nbsp;
+      <a href="#M001766">world_readable?</a>&nbsp;&nbsp;
+      <a href="#M001775">world_writable?</a>&nbsp;&nbsp;
+      <a href="#M001774">writable?</a>&nbsp;&nbsp;
+      <a href="#M001776">writable_real?</a>&nbsp;&nbsp;
+      <a href="#M001777">zero?</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SEPARATOR_PAT</td>
+          <td>=</td>
+          <td class="context-item-value">/[#{Regexp.quote File::ALT_SEPARATOR}#{Regexp.quote File::SEPARATOR}]/</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SEPARATOR_PAT</td>
+          <td>=</td>
+          <td class="context-item-value">/#{Regexp.quote File::SEPARATOR}/</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">getwd</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">pwd</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001779" class="method-detail">
+        <a name="M001779"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001779.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001779.html');return false;">
+          <span class="method-name">getwd</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="Dir.html#M002315">Dir.getwd</a></tt>. Returns the current
+working directory as a <a href="Pathname.html">Pathname</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001778" class="method-detail">
+        <a name="M001778"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001778.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001778.html');return false;">
+          <span class="method-name">glob</span><span class="method-args">(*args) {|p| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="Dir.html#M002322">Dir.glob</a></tt>. Returns or yields <a
+href="Pathname.html">Pathname</a> objects.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001698" class="method-detail">
+        <a name="M001698"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001698.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001698.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="Pathname.html">Pathname</a> object from the given <a
+href="String.html">String</a> (or <a href="String.html">String</a>-like
+object). If <tt>path</tt> contains a NUL character (<tt>\0</tt>), an <a
+href="ArgumentError.html">ArgumentError</a> is raised.
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001719" class="method-detail">
+        <a name="M001719"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001719.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001719.html');return false;">
+          <span class="method-name">+</span><span class="method-args">(other)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Pathname.html">Pathname</a>#+ appends a pathname fragment to this
+one to produce a <a href="Pathname.html#M001698">new</a> <a
+href="Pathname.html">Pathname</a> object.
+</p>
+<pre>
+  p1 = Pathname.new(&quot;/usr&quot;)      # Pathname:/usr
+  p2 = p1 + &quot;bin/ruby&quot;           # Pathname:/usr/bin/ruby
+  p3 = p1 + &quot;/etc/passwd&quot;        # Pathname:/etc/passwd
+</pre>
+<p>
+This method doesn&#8216;t access the file system; it is pure string
+manipulation.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001705" class="method-detail">
+        <a name="M001705"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001705.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001705.html');return false;">
+          <span class="method-name">&lt;=&gt;</span><span class="method-args">(other)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Provides for comparing pathnames, case-sensitively.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001702" class="method-detail">
+        <a name="M001702"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001702.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001702.html');return false;">
+          <span class="method-name">==</span><span class="method-args">(other)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Compare this pathname with <tt>other</tt>. The comparison is string-based.
+Be aware that two different paths (<tt>foo.txt</tt> and <tt>./foo.txt</tt>)
+can refer to the same file.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001703" class="method-detail">
+        <a name="M001703"></a>
+
+        <div class="method-heading">
+          <span class="method-name">===</span><span class="method-args">(other)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for #==
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001707" class="method-detail">
+        <a name="M001707"></a>
+
+        <div class="method-heading">
+          <span class="method-name">TO_PATH</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Pathname.html#M001706">to_s</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001714" class="method-detail">
+        <a name="M001714"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001714.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001714.html');return false;">
+          <span class="method-name">absolute?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Predicate method for testing whether a path is absolute. It returns
+<tt>true</tt> if the pathname begins with a slash.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001718" class="method-detail">
+        <a name="M001718"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001718.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001718.html');return false;">
+          <span class="method-name">ascend</span><span class="method-args">() {|self| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Iterates over and yields a <a href="Pathname.html#M001698">new</a> <a
+href="Pathname.html">Pathname</a> object for each element in the given path
+in ascending order.
+</p>
+<pre>
+ Pathname.new('/path/to/some/file.rb').ascend {|v| p v}
+    #&lt;Pathname:/path/to/some/file.rb&gt;
+    #&lt;Pathname:/path/to/some&gt;
+    #&lt;Pathname:/path/to&gt;
+    #&lt;Pathname:/path&gt;
+    #&lt;Pathname:/&gt;
+
+ Pathname.new('path/to/some/file.rb').ascend {|v| p v}
+    #&lt;Pathname:path/to/some/file.rb&gt;
+    #&lt;Pathname:path/to/some&gt;
+    #&lt;Pathname:path/to&gt;
+    #&lt;Pathname:path&gt;
+</pre>
+<p>
+It doesn&#8216;t access actual filesystem.
+</p>
+<p>
+This method is available since 1.8.5.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001728" class="method-detail">
+        <a name="M001728"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001728.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001728.html');return false;">
+          <span class="method-name">atime</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002524">File.atime</a></tt>. Returns last
+access time.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001747" class="method-detail">
+        <a name="M001747"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001747.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001747.html');return false;">
+          <span class="method-name">basename</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002541">File.basename</a></tt>. Returns the
+last component of the path.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001754" class="method-detail">
+        <a name="M001754"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001754.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001754.html');return false;">
+          <span class="method-name">blockdev?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.blockdev?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001755" class="method-detail">
+        <a name="M001755"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001755.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001755.html');return false;">
+          <span class="method-name">chardev?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.chardev?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001780" class="method-detail">
+        <a name="M001780"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001780.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001780.html');return false;">
+          <span class="method-name">chdir</span><span class="method-args">(&amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Pathname.html#M001780">Pathname#chdir</a> is <b>obsoleted</b> at
+1.8.1.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001721" class="method-detail">
+        <a name="M001721"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001721.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001721.html');return false;">
+          <span class="method-name">children</span><span class="method-args">(with_directory=true)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="Pathname.html#M001721">children</a> of the directory
+(files and subdirectories, not recursive) as an array of <a
+href="Pathname.html">Pathname</a> objects. By default, the returned
+pathnames will have enough information to access the files. If you set
+<tt>with_directory</tt> to <tt>false</tt>, then the returned pathnames will
+contain the filename only.
+</p>
+<p>
+For example:
+</p>
+<pre>
+  p = Pathname(&quot;/usr/lib/ruby/1.8&quot;)
+  p.children
+      # -&gt; [ Pathname:/usr/lib/ruby/1.8/English.rb,
+             Pathname:/usr/lib/ruby/1.8/Env.rb,
+             Pathname:/usr/lib/ruby/1.8/abbrev.rb, ... ]
+  p.children(false)
+      # -&gt; [ Pathname:English.rb, Pathname:Env.rb, Pathname:abbrev.rb, ... ]
+</pre>
+<p>
+Note that the result never contain the <a
+href="Pathname.html#M001782">entries</a> <tt>.</tt> and <tt>..</tt> in the
+directory because they are not <a
+href="Pathname.html#M001721">children</a>.
+</p>
+<p>
+This method has existed since 1.8.1.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001731" class="method-detail">
+        <a name="M001731"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001731.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001731.html');return false;">
+          <span class="method-name">chmod</span><span class="method-args">(mode)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002528">File.chmod</a></tt>. Changes
+permissions.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001733" class="method-detail">
+        <a name="M001733"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001733.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001733.html');return false;">
+          <span class="method-name">chown</span><span class="method-args">(owner, group)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002529">File.chown</a></tt>. Change owner and
+group of file.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001781" class="method-detail">
+        <a name="M001781"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001781.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001781.html');return false;">
+          <span class="method-name">chroot</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Pathname.html#M001781">Pathname#chroot</a> is <b>obsoleted</b> at
+1.8.1.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001709" class="method-detail">
+        <a name="M001709"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001709.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001709.html');return false;">
+          <span class="method-name">cleanpath</span><span class="method-args">(consider_symlink=false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns clean pathname of <tt>self</tt> with consecutive slashes and
+useless dots removed. The filesystem is not accessed.
+</p>
+<p>
+If <tt>consider_symlink</tt> is <tt>true</tt>, then a more conservative
+algorithm is used to avoid breaking symbolic linkages. This may retain more
+<tt>..</tt> <a href="Pathname.html#M001782">entries</a> than absolutely
+necessary, but without accessing the filesystem, this can&#8216;t be
+avoided. See <a href="Pathname.html#M001710">realpath</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001729" class="method-detail">
+        <a name="M001729"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001729.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001729.html');return false;">
+          <span class="method-name">ctime</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002526">File.ctime</a></tt>. Returns last
+(directory entry, not file) change time.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001792" class="method-detail">
+        <a name="M001792"></a>
+
+        <div class="method-heading">
+          <span class="method-name">delete</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Pathname.html#M001791">unlink</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001717" class="method-detail">
+        <a name="M001717"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001717.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001717.html');return false;">
+          <span class="method-name">descend</span><span class="method-args">() {|v| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Iterates over and yields a <a href="Pathname.html#M001698">new</a> <a
+href="Pathname.html">Pathname</a> object for each element in the given path
+in descending order.
+</p>
+<pre>
+ Pathname.new('/path/to/some/file.rb').descend {|v| p v}
+    #&lt;Pathname:/&gt;
+    #&lt;Pathname:/path&gt;
+    #&lt;Pathname:/path/to&gt;
+    #&lt;Pathname:/path/to/some&gt;
+    #&lt;Pathname:/path/to/some/file.rb&gt;
+
+ Pathname.new('path/to/some/file.rb').descend {|v| p v}
+    #&lt;Pathname:path&gt;
+    #&lt;Pathname:path/to&gt;
+    #&lt;Pathname:path/to/some&gt;
+    #&lt;Pathname:path/to/some/file.rb&gt;
+</pre>
+<p>
+It doesn&#8216;t access actual filesystem.
+</p>
+<p>
+This method is available since 1.8.5.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001784" class="method-detail">
+        <a name="M001784"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001784.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001784.html');return false;">
+          <span class="method-name">dir_foreach</span><span class="method-args">(*args, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Pathname.html#M001784">Pathname#dir_foreach</a> is
+<b>obsoleted</b> at 1.8.1.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001760" class="method-detail">
+        <a name="M001760"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001760.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001760.html');return false;">
+          <span class="method-name">directory?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.directory?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001748" class="method-detail">
+        <a name="M001748"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001748.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001748.html');return false;">
+          <span class="method-name">dirname</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002542">File.dirname</a></tt>. Returns all but
+the last component of the path.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001783" class="method-detail">
+        <a name="M001783"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001783.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001783.html');return false;">
+          <span class="method-name">each_entry</span><span class="method-args">() {|p| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Iterates over the <a href="Pathname.html#M001782">entries</a> (files and
+subdirectories) in the directory. It yields a <a
+href="Pathname.html">Pathname</a> object for each entry.
+</p>
+<p>
+This method has existed since 1.8.1.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001716" class="method-detail">
+        <a name="M001716"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001716.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001716.html');return false;">
+          <span class="method-name">each_filename</span><span class="method-args">( {|filename| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Iterates over each component of the path.
+</p>
+<pre>
+  Pathname.new(&quot;/usr/bin/ruby&quot;).each_filename {|filename| ... }
+    # yields &quot;usr&quot;, &quot;bin&quot;, and &quot;ruby&quot;.
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M001723" class="method-detail">
+        <a name="M001723"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001723.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001723.html');return false;">
+          <span class="method-name">each_line</span><span class="method-args">(*args) {|line| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Pathname.html#M001723">each_line</a> iterates over the line in the
+file. It yields a <a href="String.html">String</a> object for each line.
+</p>
+<p>
+This method has existed since 1.8.1.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001782" class="method-detail">
+        <a name="M001782"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001782.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001782.html');return false;">
+          <span class="method-name">entries</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the <a href="Pathname.html#M001782">entries</a> (files and
+subdirectories) in the directory, each as a <a
+href="Pathname.html">Pathname</a> object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001704" class="method-detail">
+        <a name="M001704"></a>
+
+        <div class="method-heading">
+          <span class="method-name">eql?</span><span class="method-args">(other)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for #==
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001756" class="method-detail">
+        <a name="M001756"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001756.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001756.html');return false;">
+          <span class="method-name">executable?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.executable?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001757" class="method-detail">
+        <a name="M001757"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001757.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001757.html');return false;">
+          <span class="method-name">executable_real?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.executable_real?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001758" class="method-detail">
+        <a name="M001758"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001758.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001758.html');return false;">
+          <span class="method-name">exist?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.exist?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001750" class="method-detail">
+        <a name="M001750"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001750.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001750.html');return false;">
+          <span class="method-name">expand_path</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002540">File.expand_path</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001749" class="method-detail">
+        <a name="M001749"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001749.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001749.html');return false;">
+          <span class="method-name">extname</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002543">File.extname</a></tt>. Returns the
+file&#8216;s extension.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001761" class="method-detail">
+        <a name="M001761"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001761.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001761.html');return false;">
+          <span class="method-name">file?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.file?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001788" class="method-detail">
+        <a name="M001788"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001788.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001788.html');return false;">
+          <span class="method-name">find</span><span class="method-args">() {|p| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Pathname.html#M001788">Pathname#find</a> is an iterator to
+traverse a directory tree in a depth first manner. It yields a <a
+href="Pathname.html">Pathname</a> for each file under &quot;this&quot;
+directory.
+</p>
+<p>
+Since it is implemented by <tt>find.rb</tt>, <tt><a
+href="Find.html#M007613">Find.prune</a></tt> can be used to control the
+traverse.
+</p>
+<p>
+If <tt>self</tt> is <tt>.</tt>, yielded pathnames begin with a filename in
+the current directory, not <tt>./</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001735" class="method-detail">
+        <a name="M001735"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001735.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001735.html');return false;">
+          <span class="method-name">fnmatch</span><span class="method-args">(pattern, *args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002519">File.fnmatch</a></tt>. Return
+<tt>true</tt> if the receiver matches the given pattern.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001736" class="method-detail">
+        <a name="M001736"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001736.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001736.html');return false;">
+          <span class="method-name">fnmatch?</span><span class="method-args">(pattern, *args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002519">File.fnmatch</a>?</tt> (same as <a
+href="Pathname.html#M001735">fnmatch</a>).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001793" class="method-detail">
+        <a name="M001793"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001793.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001793.html');return false;">
+          <span class="method-name">foreach</span><span class="method-args">(*args, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This method is <b>obsoleted</b> at 1.8.1. Use <a
+href="Pathname.html#M001723">each_line</a> or <a
+href="Pathname.html#M001783">each_entry</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001724" class="method-detail">
+        <a name="M001724"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001724.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001724.html');return false;">
+          <span class="method-name">foreachline</span><span class="method-args">(*args, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Pathname.html#M001724">Pathname#foreachline</a> is
+<b>obsoleted</b> at 1.8.1. Use <a
+href="Pathname.html#M001723">each_line</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001699" class="method-detail">
+        <a name="M001699"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001699.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001699.html');return false;">
+          <span class="method-name">freeze</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M001737" class="method-detail">
+        <a name="M001737"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001737.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001737.html');return false;">
+          <span class="method-name">ftype</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002523">File.ftype</a></tt>. Returns
+&quot;type&quot; of file (&quot;file&quot;, &quot;directory&quot;, etc).
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001759" class="method-detail">
+        <a name="M001759"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001759.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001759.html');return false;">
+          <span class="method-name">grpowned?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.grpowned?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001720" class="method-detail">
+        <a name="M001720"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001720.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001720.html');return false;">
+          <span class="method-name">join</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Pathname.html#M001720">Pathname#join</a> joins pathnames.
+</p>
+<p>
+<tt>path0.join(path1, &#8230;, pathN)</tt> is the same as <tt>path0 + path1
++ &#8230; + pathN</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001732" class="method-detail">
+        <a name="M001732"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001732.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001732.html');return false;">
+          <span class="method-name">lchmod</span><span class="method-args">(mode)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002530">File.lchmod</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001734" class="method-detail">
+        <a name="M001734"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001734.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001734.html');return false;">
+          <span class="method-name">lchown</span><span class="method-args">(owner, group)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002531">File.lchown</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001752" class="method-detail">
+        <a name="M001752"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001752.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001752.html');return false;">
+          <span class="method-name">link</span><span class="method-args">(old)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Pathname.html#M001752">Pathname#link</a> is confusing and
+<b>obsoleted</b> because the receiver/argument order is inverted to
+corresponding system call.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001743" class="method-detail">
+        <a name="M001743"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001743.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001743.html');return false;">
+          <span class="method-name">lstat</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002522">File.lstat</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001738" class="method-detail">
+        <a name="M001738"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001738.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001738.html');return false;">
+          <span class="method-name">make_link</span><span class="method-args">(old)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002532">File.link</a></tt>. Creates a hard <a
+href="Pathname.html#M001752">link</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001744" class="method-detail">
+        <a name="M001744"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001744.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001744.html');return false;">
+          <span class="method-name">make_symlink</span><span class="method-args">(old)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002533">File.symlink</a></tt>. Creates a
+symbolic <a href="Pathname.html#M001752">link</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001785" class="method-detail">
+        <a name="M001785"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001785.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001785.html');return false;">
+          <span class="method-name">mkdir</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="Dir.html#M002318">Dir.mkdir</a></tt>. Create the
+referenced directory.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001789" class="method-detail">
+        <a name="M001789"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001789.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001789.html');return false;">
+          <span class="method-name">mkpath</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="FileUtils.html#M004316">FileUtils.mkpath</a></tt>. Creates
+a full path, including any intermediate directories that don&#8216;t yet
+exist.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001712" class="method-detail">
+        <a name="M001712"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001712.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001712.html');return false;">
+          <span class="method-name">mountpoint?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+mountpoint? returns <tt>true</tt> if <tt>self</tt> points to a mountpoint.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001730" class="method-detail">
+        <a name="M001730"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001730.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001730.html');return false;">
+          <span class="method-name">mtime</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002525">File.mtime</a></tt>. Returns last
+modification time.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001739" class="method-detail">
+        <a name="M001739"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001739.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001739.html');return false;">
+          <span class="method-name">open</span><span class="method-args">(*args) {|file| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>File.open</tt>. Opens the file for reading or writing.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001787" class="method-detail">
+        <a name="M001787"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001787.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001787.html');return false;">
+          <span class="method-name">opendir</span><span class="method-args">() {|dir| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="Dir.html#M002301">Dir.open</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001764" class="method-detail">
+        <a name="M001764"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001764.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001764.html');return false;">
+          <span class="method-name">owned?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.owned?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001711" class="method-detail">
+        <a name="M001711"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001711.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001711.html');return false;">
+          <span class="method-name">parent</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Pathname.html#M001711">parent</a> returns the <a
+href="Pathname.html#M001711">parent</a> directory.
+</p>
+<p>
+This is same as <tt>self + &#8217;..&#8217;</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001762" class="method-detail">
+        <a name="M001762"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001762.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001762.html');return false;">
+          <span class="method-name">pipe?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.pipe?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001725" class="method-detail">
+        <a name="M001725"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001725.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001725.html');return false;">
+          <span class="method-name">read</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="IO.html#M002245">IO.read</a></tt>. Returns all the bytes
+from the file, or the first <tt>N</tt> if specified.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001765" class="method-detail">
+        <a name="M001765"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001765.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001765.html');return false;">
+          <span class="method-name">readable?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.readable?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001767" class="method-detail">
+        <a name="M001767"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001767.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001767.html');return false;">
+          <span class="method-name">readable_real?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.readable_real?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001726" class="method-detail">
+        <a name="M001726"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001726.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001726.html');return false;">
+          <span class="method-name">readlines</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="IO.html#M002244">IO.readlines</a></tt>. Returns all the
+lines from the file.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001740" class="method-detail">
+        <a name="M001740"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001740.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001740.html');return false;">
+          <span class="method-name">readlink</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002534">File.readlink</a></tt>. Read symbolic
+<a href="Pathname.html#M001752">link</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001710" class="method-detail">
+        <a name="M001710"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001710.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001710.html');return false;">
+          <span class="method-name">realpath</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a real (absolute) pathname of <tt>self</tt> in the actual
+filesystem. The real pathname doesn&#8216;t contain symlinks or useless
+dots.
+</p>
+<p>
+No arguments should be given; the old behaviour is <b>obsoleted</b>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001715" class="method-detail">
+        <a name="M001715"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001715.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001715.html');return false;">
+          <span class="method-name">relative?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The opposite of absolute?
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001722" class="method-detail">
+        <a name="M001722"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001722.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001722.html');return false;">
+          <span class="method-name">relative_path_from</span><span class="method-args">(base_directory)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Pathname.html#M001722">relative_path_from</a> returns a relative
+path from the argument to the receiver. If <tt>self</tt> is absolute, the
+argument must be absolute too. If <tt>self</tt> is relative, the argument
+must be relative too.
+</p>
+<p>
+<a href="Pathname.html#M001722">relative_path_from</a> doesn&#8216;t access
+the filesystem. It assumes no symlinks.
+</p>
+<p>
+<a href="ArgumentError.html">ArgumentError</a> is raised when it cannot <a
+href="Pathname.html#M001788">find</a> a relative path.
+</p>
+<p>
+This method has existed since 1.8.1.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001741" class="method-detail">
+        <a name="M001741"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001741.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001741.html');return false;">
+          <span class="method-name">rename</span><span class="method-args">(to)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002537">File.rename</a></tt>. Rename the file.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001786" class="method-detail">
+        <a name="M001786"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001786.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001786.html');return false;">
+          <span class="method-name">rmdir</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="Dir.html#M002319">Dir.rmdir</a></tt>. Remove the
+referenced directory.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001790" class="method-detail">
+        <a name="M001790"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001790.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001790.html');return false;">
+          <span class="method-name">rmtree</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="FileUtils.html#M004336">FileUtils.rm_r</a></tt>. Deletes a
+directory and all beneath it.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001713" class="method-detail">
+        <a name="M001713"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001713.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001713.html');return false;">
+          <span class="method-name">root?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+root? is a predicate for root directories. I.e. it returns <tt>true</tt> if
+the pathname consists of consecutive slashes.
+</p>
+<p>
+It doesn&#8216;t access actual filesystem. So it may return <tt>false</tt>
+for some pathnames which points to roots such as <tt>/usr/..</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001769" class="method-detail">
+        <a name="M001769"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001769.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001769.html');return false;">
+          <span class="method-name">setgid?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.setgid?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001768" class="method-detail">
+        <a name="M001768"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001768.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001768.html');return false;">
+          <span class="method-name">setuid?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.setuid?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001770" class="method-detail">
+        <a name="M001770"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001770.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001770.html');return false;">
+          <span class="method-name">size</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="FileTest.html#M007577">FileTest.size</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001771" class="method-detail">
+        <a name="M001771"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001771.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001771.html');return false;">
+          <span class="method-name">size?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="FileTest.html#M007577">FileTest.size</a>?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001763" class="method-detail">
+        <a name="M001763"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001763.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001763.html');return false;">
+          <span class="method-name">socket?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.socket?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001751" class="method-detail">
+        <a name="M001751"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001751.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001751.html');return false;">
+          <span class="method-name">split</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002544">File.split</a></tt>. Returns the <a
+href="Pathname.html#M001748">dirname</a> and the <a
+href="Pathname.html#M001747">basename</a> in an <a
+href="Array.html">Array</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001742" class="method-detail">
+        <a name="M001742"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001742.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001742.html');return false;">
+          <span class="method-name">stat</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002521">File.stat</a></tt>. Returns a <tt><a
+href="File/Stat.html">File::Stat</a></tt> object.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001772" class="method-detail">
+        <a name="M001772"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001772.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001772.html');return false;">
+          <span class="method-name">sticky?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.sticky?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001708" class="method-detail">
+        <a name="M001708"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001708.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001708.html');return false;">
+          <span class="method-name">sub</span><span class="method-args">(pattern, *rest, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a pathname which is substituted by <a
+href="String.html#M000816">String#sub</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001753" class="method-detail">
+        <a name="M001753"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001753.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001753.html');return false;">
+          <span class="method-name">symlink</span><span class="method-args">(old)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Pathname.html#M001753">Pathname#symlink</a> is confusing and
+<b>obsoleted</b> because the receiver/argument order is inverted to
+corresponding system call.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001773" class="method-detail">
+        <a name="M001773"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001773.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001773.html');return false;">
+          <span class="method-name">symlink?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.symlink?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001727" class="method-detail">
+        <a name="M001727"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001727.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001727.html');return false;">
+          <span class="method-name">sysopen</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="IO.html#M002240">IO.sysopen</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001700" class="method-detail">
+        <a name="M001700"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001700.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001700.html');return false;">
+          <span class="method-name">taint</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M001706" class="method-detail">
+        <a name="M001706"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001706.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001706.html');return false;">
+          <span class="method-name">to_s</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the path as a <a href="String.html">String</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001745" class="method-detail">
+        <a name="M001745"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001745.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001745.html');return false;">
+          <span class="method-name">truncate</span><span class="method-args">(length)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002539">File.truncate</a></tt>. Truncate the
+file to <tt>length</tt> bytes.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001791" class="method-detail">
+        <a name="M001791"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001791.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001791.html');return false;">
+          <span class="method-name">unlink</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Removes a file or directory, using <tt><a
+href="File.html#M002535">File.unlink</a></tt> or <tt><a
+href="Dir.html#M002321">Dir.unlink</a></tt> as necessary.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001701" class="method-detail">
+        <a name="M001701"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001701.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001701.html');return false;">
+          <span class="method-name">untaint</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M001746" class="method-detail">
+        <a name="M001746"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001746.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001746.html');return false;">
+          <span class="method-name">utime</span><span class="method-args">(atime, mtime)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt><a href="File.html#M002527">File.utime</a></tt>. Update the access
+and modification times.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001766" class="method-detail">
+        <a name="M001766"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001766.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001766.html');return false;">
+          <span class="method-name">world_readable?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.world_readable?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001775" class="method-detail">
+        <a name="M001775"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001775.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001775.html');return false;">
+          <span class="method-name">world_writable?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.world_writable?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001774" class="method-detail">
+        <a name="M001774"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001774.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001774.html');return false;">
+          <span class="method-name">writable?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.writable?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001776" class="method-detail">
+        <a name="M001776"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001776.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001776.html');return false;">
+          <span class="method-name">writable_real?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.writable_real?</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001777" class="method-detail">
+        <a name="M001777"></a>
+
+        <div class="method-heading">
+          <a href="Pathname.src/M001777.html" target="Code" class="method-signature"
+            onclick="popupCode('Pathname.src/M001777.html');return false;">
+          <span class="method-name">zero?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+See <tt>FileTest.zero?</tt>.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>deflate (Zlib::Deflate)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: Zlib::Deflate.deflate(string[, level])
+ *
+ * Compresses the given +string+. Valid values of level are
+ * &lt;tt&gt;Zlib::NO_COMPRESSION&lt;/tt&gt;, &lt;tt&gt;Zlib::BEST_SPEED&lt;/tt&gt;,
+ * &lt;tt&gt;Zlib::BEST_COMPRESSION&lt;/tt&gt;, &lt;tt&gt;Zlib::DEFAULT_COMPRESSION&lt;/tt&gt;, and an
+ * integer from 0 to 9.
+ *
+ * This method is almost equivalent to the following code:
+ *
+ *   def deflate(string, level)
+ *     z = Zlib::Deflate.new(level)
+ *     dst = z.deflate(string, Zlib::FINISH)
+ *     z.close
+ *     dst
+ *   end
+ *
+ * TODO: what's default value of +level+?
+ *
+ */
+static VALUE
+rb_deflate_s_deflate(argc, argv, klass)
+    int argc;
+    VALUE *argv;
+    VALUE klass;
+{
+    struct zstream z;
+    VALUE src, level, dst, args[2];
+    int err, lev;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;src, &amp;level);
+
+    lev = ARG_LEVEL(level);
+    StringValue(src);
+    zstream_init_deflate(&amp;z);
+    err = deflateInit(&amp;z.stream, lev);
+    if (err != Z_OK) {
+        raise_zlib_error(err, z.stream.msg);
+    }
+    ZSTREAM_READY(&amp;z);
+
+    args[0] = (VALUE)&amp;z;
+    args[1] = src;
+    dst = rb_ensure(deflate_run, (VALUE)args, zstream_end, (VALUE)&amp;z);
+
+    OBJ_INFECT(dst, src);
+    return dst;
+}</pre>
+</body>
+</html>

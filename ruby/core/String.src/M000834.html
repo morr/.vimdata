@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>count (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.count([other_str]+)   =&gt; fixnum
+ *  
+ *  Each &lt;i&gt;other_str&lt;/i&gt; parameter defines a set of characters to count.  The
+ *  intersection of these sets defines the characters to count in
+ *  &lt;i&gt;str&lt;/i&gt;. Any &lt;i&gt;other_str&lt;/i&gt; that starts with a caret (^) is
+ *  negated. The sequence c1--c2 means all characters between c1 and c2.
+ *     
+ *     a = &quot;hello world&quot;
+ *     a.count &quot;lo&quot;            #=&gt; 5
+ *     a.count &quot;lo&quot;, &quot;o&quot;       #=&gt; 2
+ *     a.count &quot;hello&quot;, &quot;^l&quot;   #=&gt; 4
+ *     a.count &quot;ej-m&quot;          #=&gt; 4
+ */
+
+static VALUE
+rb_str_count(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    char table[256];
+    char *s, *send;
+    int init = 1;
+    int i;
+
+    if (argc &lt; 1) {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments&quot;);
+    }
+    for (i=0; i&lt;argc; i++) {
+        VALUE s = argv[i];
+
+        StringValue(s);
+        tr_setup_table(s, table, init);
+        init = 0;
+    }
+
+    s = RSTRING(str)-&gt;ptr;
+    if (!s || RSTRING(str)-&gt;len == 0) return INT2FIX(0);
+    send = s + RSTRING(str)-&gt;len;
+    i = 0;
+    while (s &lt; send) {
+        if (table[*s++ &amp; 0xff]) {
+            i++;
+        }
+    }
+    return INT2NUM(i);
+}</pre>
+</body>
+</html>

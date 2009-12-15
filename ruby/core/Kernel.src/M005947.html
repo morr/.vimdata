@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>callcc (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     callcc {|cont| block }   =&gt;  obj
+ *  
+ *  Generates a &lt;code&gt;Continuation&lt;/code&gt; object, which it passes to the
+ *  associated block. Performing a &lt;em&gt;cont&lt;/em&gt;&lt;code&gt;.call&lt;/code&gt; will
+ *  cause the &lt;code&gt;callcc&lt;/code&gt; to return (as will falling through the
+ *  end of the block). The value returned by the &lt;code&gt;callcc&lt;/code&gt; is
+ *  the value of the block, or the value passed to
+ *  &lt;em&gt;cont&lt;/em&gt;&lt;code&gt;.call&lt;/code&gt;. See class &lt;code&gt;Continuation&lt;/code&gt; 
+ *  for more details. Also see &lt;code&gt;Kernel::throw&lt;/code&gt; for
+ *  an alternative mechanism for unwinding a call stack.
+ */
+
+static VALUE
+rb_callcc(self)
+    VALUE self;
+{
+    volatile VALUE cont;
+    rb_thread_t th;
+    volatile rb_thread_t th_save;
+    struct tag *tag;
+    struct RVarmap *vars;
+
+    THREAD_ALLOC(th);
+    /* must finish th initialization before any possible gc.
+     * brent@mbari.org */
+    th-&gt;thread = curr_thread-&gt;thread;
+    th-&gt;thgroup = cont_protect;
+    cont = Data_Wrap_Struct(rb_cCont, cc_mark, thread_free, th);
+
+    scope_dup(ruby_scope);
+    for (tag=prot_tag; tag; tag=tag-&gt;prev) {
+        scope_dup(tag-&gt;scope);
+    }
+
+    for (vars = ruby_dyna_vars; vars; vars = vars-&gt;next) {
+        if (FL_TEST(vars, DVAR_DONT_RECYCLE)) break;
+        FL_SET(vars, DVAR_DONT_RECYCLE);
+    }
+    th_save = th;
+    if (THREAD_SAVE_CONTEXT(th)) {
+        return th_save-&gt;result;
+    }
+    else {
+        return rb_yield(cont);
+    }
+}</pre>
+</body>
+</html>

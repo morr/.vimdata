@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>abort_on_exception= (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Thread.abort_on_exception= boolean   =&gt; true or false
+ *  
+ *  When set to &lt;code&gt;true&lt;/code&gt;, all threads will abort if an exception is
+ *  raised. Returns the new state.
+ *     
+ *     Thread.abort_on_exception = true
+ *     t1 = Thread.new do
+ *       puts  &quot;In new thread&quot;
+ *       raise &quot;Exception from thread&quot;
+ *     end
+ *     sleep(1)
+ *     puts &quot;not reached&quot;
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     In new thread
+ *     prog.rb:4: Exception from thread (RuntimeError)
+ *      from prog.rb:2:in `initialize'
+ *      from prog.rb:2:in `new'
+ *      from prog.rb:2
+ */
+
+static VALUE
+rb_thread_s_abort_exc_set(self, val)
+    VALUE self, val;
+{
+    rb_secure(4);
+    ruby_thread_abort = RTEST(val);
+    return val;
+}</pre>
+</body>
+</html>

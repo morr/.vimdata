@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>merge! (Hash)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     hsh.merge!(other_hash)                                 =&gt; hsh
+ *     hsh.update(other_hash)                                 =&gt; hsh
+ *     hsh.merge!(other_hash){|key, oldval, newval| block}    =&gt; hsh
+ *     hsh.update(other_hash){|key, oldval, newval| block}    =&gt; hsh
+ *  
+ *  Adds the contents of &lt;i&gt;other_hash&lt;/i&gt; to &lt;i&gt;hsh&lt;/i&gt;, overwriting
+ *  entries with duplicate keys with those from &lt;i&gt;other_hash&lt;/i&gt;.
+ *     
+ *     h1 = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+ *     h2 = { &quot;b&quot; =&gt; 254, &quot;c&quot; =&gt; 300 }
+ *     h1.merge!(h2)   #=&gt; {&quot;a&quot;=&gt;100, &quot;b&quot;=&gt;254, &quot;c&quot;=&gt;300}
+ */
+
+static VALUE
+rb_hash_update(hash1, hash2)
+    VALUE hash1, hash2;
+{
+    hash2 = to_hash(hash2);
+    if (rb_block_given_p()) {
+        rb_hash_foreach(hash2, rb_hash_update_block_i, hash1);
+    }
+    else {
+        rb_hash_foreach(hash2, rb_hash_update_i, hash1);
+    }
+    return hash1;
+}</pre>
+</body>
+</html>

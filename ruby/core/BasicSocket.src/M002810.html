@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>setsockopt (BasicSocket)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Document-method: setsockopt
+ * call-seq: setsockopt(level, optname, optval)
+ *
+ * Sets a socket option. These are protocol and system specific, see your
+ * local sytem documentation for details.
+ *
+ * === Parameters
+ * * +level+ is an integer, usually one of the SOL_ constants such as
+ *   Socket::SOL_SOCKET, or a protocol level.
+ * * +optname+ is an integer, usually one of the SO_ constants, such
+ *   as Socket::SO_REUSEADDR.
+ * * +optval+ is the value of the option, it is passed to the underlying
+ *   setsockopt() as a pointer to a certain number of bytes. How this is
+ *   done depends on the type:
+ *   - Fixnum: value is assigned to an int, and a pointer to the int is
+ *     passed, with length of sizeof(int).
+ *   - true or false: 1 or 0 (respectively) is assigned to an int, and the
+ *     int is passed as for a Fixnum. Note that +false+ must be passed,
+ *     not +nil+.
+ *   - String: the string's data and length is passed to the socket.
+ *
+ * === Examples
+ *
+ * Some socket options are integers with boolean values, in this case
+ * #setsockopt could be called like this:
+ *   sock.setsockopt(Socket::SOL_SOCKET,Socket::SO_REUSEADDR, true)
+ *
+ * Some socket options are integers with numeric values, in this case
+ * #setsockopt could be called like this:
+ *   sock.setsockopt(Socket::IPPROTO_IP, Socket::IP_TTL, 255)
+ *
+ * Option values may be structs. Passing them can be complex as it involves
+ * examining your system headers to determine the correct definition. An
+ * example is an +ip_mreq+, which may be defined in your system headers as:
+ *   struct ip_mreq {
+ *     struct  in_addr imr_multiaddr;
+ *     struct  in_addr imr_interface;
+ *   };
+ * 
+ * In this case #setsockopt could be called like this:
+ *   optval =  IPAddr.new(&quot;224.0.0.251&quot;) + Socket::INADDR_ANY
+ *   sock.setsockopt(Socket::IPPROTO_IP, Socket::IP_ADD_MEMBERSHIP, optval)
+ *
+*/
+static VALUE
+bsock_setsockopt(sock, lev, optname, val)
+    VALUE sock, lev, optname, val;
+{
+    int level, option;
+    OpenFile *fptr;
+    int i;
+    char *v;
+    int vlen;
+
+    rb_secure(2);
+    level = NUM2INT(lev);
+    option = NUM2INT(optname);
+
+    switch (TYPE(val)) {
+      case T_FIXNUM:
+        i = FIX2INT(val);
+        goto numval;
+      case T_FALSE:
+        i = 0;
+        goto numval;
+      case T_TRUE:
+        i = 1;
+      numval:
+        v = (char*)&amp;i; vlen = sizeof(i);
+        break;
+      default:
+        StringValue(val);
+        v = RSTRING(val)-&gt;ptr;
+        vlen = RSTRING(val)-&gt;len;
+        break;
+    }
+
+    GetOpenFile(sock, fptr);
+    if (setsockopt(fileno(fptr-&gt;f), level, option, v, vlen) &lt; 0)
+        rb_sys_fail(fptr-&gt;path);
+
+    return INT2FIX(0);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: WEBrick::CGI</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">WEBrick::CGI</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/webrick/cgi_rb.html">
+                webrick/cgi.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M009638">[]</a>&nbsp;&nbsp;
+      <a href="#M009637">new</a>&nbsp;&nbsp;
+      <a href="#M009640">service</a>&nbsp;&nbsp;
+      <a href="#M009639">start</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="CGI/Socket.html" class="link">WEBrick::CGI::Socket</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CGIError</td>
+          <td>=</td>
+          <td class="context-item-value">Class.new(StandardError)</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">config</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">logger</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M009637" class="m-detail">
+        <a name="M009637"></a>
+
+        <div class="method-heading">
+          <a href="#M009637" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009637-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009637-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/cgi.rb, line 21</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span>(<span class="ruby-constant">MOD_RUBY</span>)
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">ENV</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;GATEWAY_INTERFACE&quot;</span>)
+          <span class="ruby-constant">Apache</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">setup_cgi_env</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-regexp re">%r{HTTP/(\d+\.\d+)}</span> <span class="ruby-operator">=~</span> <span class="ruby-constant">ENV</span>[<span class="ruby-value str">&quot;SERVER_PROTOCOL&quot;</span>]
+        <span class="ruby-identifier">httpv</span> = <span class="ruby-identifier">$1</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@config</span> = <span class="ruby-constant">WEBrick</span><span class="ruby-operator">::</span><span class="ruby-constant">Config</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">dup</span>.<span class="ruby-identifier">update</span>(
+        <span class="ruby-identifier">:ServerSoftware</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">ENV</span>[<span class="ruby-value str">&quot;SERVER_SOFTWARE&quot;</span>] <span class="ruby-operator">||</span> <span class="ruby-value str">&quot;null&quot;</span>,
+        <span class="ruby-identifier">:HTTPVersion</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">HTTPVersion</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">httpv</span> <span class="ruby-operator">||</span> <span class="ruby-value str">&quot;1.0&quot;</span>),
+        <span class="ruby-identifier">:RunOnCGI</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>,   <span class="ruby-comment cmt"># to detect if it runs on CGI.</span>
+        <span class="ruby-identifier">:NPH</span>            =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">false</span>   <span class="ruby-comment cmt"># set true to run as NPH script.</span>
+      )
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">config</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span>
+        <span class="ruby-ivar">@config</span>.<span class="ruby-identifier">update</span>(<span class="ruby-identifier">config</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:Logger</span>] <span class="ruby-operator">||=</span> <span class="ruby-constant">WEBrick</span><span class="ruby-operator">::</span><span class="ruby-constant">BasicLog</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">$stderr</span>)
+      <span class="ruby-ivar">@logger</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:Logger</span>]
+      <span class="ruby-ivar">@options</span> = <span class="ruby-identifier">args</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M009638" class="m-detail">
+        <a name="M009638"></a>
+
+        <div class="method-heading">
+          <a href="#M009638" class="method-signature">
+          <span class="method-name">[]</span><span class="method-args">(key)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009638-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009638-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/cgi.rb, line 44</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]</span>(<span class="ruby-identifier">key</span>)
+      <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">key</span>]
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009640" class="m-detail">
+        <a name="M009640"></a>
+
+        <div class="method-heading">
+          <a href="#M009640" class="method-signature">
+          <span class="method-name">service</span><span class="method-args">(req, res)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009640-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009640-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/cgi.rb, line 111</span>
+    <span class="ruby-keyword kw">def</span>   <span class="ruby-identifier">service</span><span class="ruby-identifier">service</span><span class="ruby-identifier">service</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+      <span class="ruby-identifier">method_name</span> = <span class="ruby-value str">&quot;do_&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">request_method</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/-/</span>, <span class="ruby-value str">&quot;_&quot;</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">method_name</span>)
+        <span class="ruby-identifier">__send__</span>(<span class="ruby-identifier">method_name</span>, <span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">MethodNotAllowed</span>,
+              <span class="ruby-node">&quot;unsupported method `#{req.request_method}'.&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009639" class="m-detail">
+        <a name="M009639"></a>
+
+        <div class="method-heading">
+          <a href="#M009639" class="method-signature">
+          <span class="method-name">start</span><span class="method-args">(env=ENV, stdin=$stdin, stdout=$stdout)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009639-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009639-source">
+<pre>
+<span class="ruby-comment cmt"># File webrick/cgi.rb, line 48</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">start</span>(<span class="ruby-identifier">env</span>=<span class="ruby-constant">ENV</span>, <span class="ruby-identifier">stdin</span>=<span class="ruby-identifier">$stdin</span>, <span class="ruby-identifier">stdout</span>=<span class="ruby-identifier">$stdout</span>)
+      <span class="ruby-identifier">sock</span> = <span class="ruby-constant">WEBrick</span><span class="ruby-operator">::</span><span class="ruby-constant">CGI</span><span class="ruby-operator">::</span><span class="ruby-constant">Socket</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@config</span>, <span class="ruby-identifier">env</span>, <span class="ruby-identifier">stdin</span>, <span class="ruby-identifier">stdout</span>)
+      <span class="ruby-identifier">req</span> = <span class="ruby-constant">HTTPRequest</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@config</span>)
+      <span class="ruby-identifier">res</span> = <span class="ruby-constant">HTTPResponse</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@config</span>)
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:NPH</span>] <span class="ruby-keyword kw">or</span> <span class="ruby-keyword kw">defined?</span>(<span class="ruby-constant">MOD_RUBY</span>)
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">res</span>.<span class="ruby-identifier">setup_header</span>
+          <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@header</span>[<span class="ruby-value str">&quot;status&quot;</span>]
+            <span class="ruby-identifier">phrase</span> = <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-identifier">reason_phrase</span>(<span class="ruby-ivar">@status</span>)
+            <span class="ruby-ivar">@header</span>[<span class="ruby-value str">&quot;status&quot;</span>] = <span class="ruby-node">&quot;#{@status} #{phrase}&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">super</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">res</span>.<span class="ruby-identifier">status_line</span>
+          <span class="ruby-value str">&quot;&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">req</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">sock</span>)
+        <span class="ruby-identifier">req</span>.<span class="ruby-identifier">script_name</span> = (<span class="ruby-identifier">env</span>[<span class="ruby-value str">&quot;SCRIPT_NAME&quot;</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">$0</span>)).<span class="ruby-identifier">dup</span>
+        <span class="ruby-identifier">req</span>.<span class="ruby-identifier">path_info</span> = (<span class="ruby-identifier">env</span>[<span class="ruby-value str">&quot;PATH_INFO&quot;</span>] <span class="ruby-operator">||</span> <span class="ruby-value str">&quot;&quot;</span>).<span class="ruby-identifier">dup</span>
+        <span class="ruby-identifier">req</span>.<span class="ruby-identifier">query_string</span> = <span class="ruby-identifier">env</span>[<span class="ruby-value str">&quot;QUERY_STRING&quot;</span>]
+        <span class="ruby-identifier">req</span>.<span class="ruby-identifier">user</span> = <span class="ruby-identifier">env</span>[<span class="ruby-value str">&quot;REMOTE_USER&quot;</span>]
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">request_method</span> = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">request_method</span>
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">request_uri</span> = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">request_uri</span>
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">request_http_version</span> = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">http_version</span>
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">keep_alive</span> = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">keep_alive?</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">service</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">set_error</span>(<span class="ruby-identifier">ex</span>)
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">Status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">status</span> = <span class="ruby-identifier">ex</span>.<span class="ruby-identifier">code</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span> 
+        <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">error</span>(<span class="ruby-identifier">ex</span>)
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">set_error</span>(<span class="ruby-identifier">ex</span>, <span class="ruby-keyword kw">true</span>)
+      <span class="ruby-keyword kw">ensure</span>
+        <span class="ruby-identifier">req</span>.<span class="ruby-identifier">fixup</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span>(<span class="ruby-constant">MOD_RUBY</span>)
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">setup_header</span>
+          <span class="ruby-constant">Apache</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">status_line</span> = <span class="ruby-node">&quot;#{res.status} #{res.reason_phrase}&quot;</span>
+          <span class="ruby-constant">Apache</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">status</span> = <span class="ruby-identifier">res</span>.<span class="ruby-identifier">status</span>
+          <span class="ruby-identifier">table</span> = <span class="ruby-constant">Apache</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">headers_out</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">header</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">val</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">key</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^content-encoding$/i</span>
+              <span class="ruby-constant">Apache</span><span class="ruby-operator">::</span><span class="ruby-identifier">request</span>.<span class="ruby-identifier">content_encoding</span> = <span class="ruby-identifier">val</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^content-type$/i</span>
+              <span class="ruby-constant">Apache</span><span class="ruby-operator">::</span><span class="ruby-identifier">request</span>.<span class="ruby-identifier">content_type</span> = <span class="ruby-identifier">val</span>
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">table</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">val</span>.<span class="ruby-identifier">to_s</span>
+            <span class="ruby-keyword kw">end</span>
+          }
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">cookies</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">cookie</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">table</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">&quot;Set-Cookie&quot;</span>, <span class="ruby-identifier">cookie</span>.<span class="ruby-identifier">to_s</span>)
+          }
+          <span class="ruby-constant">Apache</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">send_http_header</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">send_body</span>(<span class="ruby-identifier">sock</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">send_response</span>(<span class="ruby-identifier">sock</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 0 --> <p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and run  by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. Ruby-doc.org was created in 2002 to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>&lt;=&gt; (Bignum)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     big &lt;=&gt; numeric   =&gt; -1, 0, +1
+ *  
+ *  Comparison---Returns -1, 0, or +1 depending on whether &lt;i&gt;big&lt;/i&gt; is
+ *  less than, equal to, or greater than &lt;i&gt;numeric&lt;/i&gt;. This is the
+ *  basis for the tests in &lt;code&gt;Comparable&lt;/code&gt;.
+ *     
+ */
+
+static VALUE
+rb_big_cmp(x, y)
+    VALUE x, y;
+{
+    long xlen = RBIGNUM(x)-&gt;len;
+
+    switch (TYPE(y)) {
+      case T_FIXNUM:
+        y = rb_int2big(FIX2LONG(y));
+        break;
+
+      case T_BIGNUM:
+        break;
+
+      case T_FLOAT:
+        return rb_dbl_cmp(rb_big2dbl(x), RFLOAT(y)-&gt;value);
+
+      default:
+        return rb_num_coerce_cmp(x, y);
+    }
+
+    if (RBIGNUM(x)-&gt;sign &gt; RBIGNUM(y)-&gt;sign) return INT2FIX(1);
+    if (RBIGNUM(x)-&gt;sign &lt; RBIGNUM(y)-&gt;sign) return INT2FIX(-1);
+    if (xlen &lt; RBIGNUM(y)-&gt;len)
+        return (RBIGNUM(x)-&gt;sign) ? INT2FIX(-1) : INT2FIX(1);
+    if (xlen &gt; RBIGNUM(y)-&gt;len)
+        return (RBIGNUM(x)-&gt;sign) ? INT2FIX(1) : INT2FIX(-1);
+
+    while(xlen-- &amp;&amp; (BDIGITS(x)[xlen]==BDIGITS(y)[xlen]));
+    if (-1 == xlen) return INT2FIX(0);
+    return (BDIGITS(x)[xlen] &gt; BDIGITS(y)[xlen]) ?
+        (RBIGNUM(x)-&gt;sign ? INT2FIX(1) : INT2FIX(-1)) :
+            (RBIGNUM(x)-&gt;sign ? INT2FIX(-1) : INT2FIX(1));
+}</pre>
+</body>
+</html>

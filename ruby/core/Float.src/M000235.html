@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>eql? (Float)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     flt.eql?(obj)   =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; only if &lt;i&gt;obj&lt;/i&gt; is a
+ *  &lt;code&gt;Float&lt;/code&gt; with the same value as &lt;i&gt;flt&lt;/i&gt;. Contrast this
+ *  with &lt;code&gt;Float#==&lt;/code&gt;, which performs type conversions.
+ *     
+ *     1.0.eql?(1)   #=&gt; false
+ */
+
+static VALUE
+flo_eql(x, y)
+    VALUE x, y;
+{
+    if (TYPE(y) == T_FLOAT) {
+        double a = RFLOAT(x)-&gt;value;
+        double b = RFLOAT(y)-&gt;value;
+
+        if (isnan(a) || isnan(b)) return Qfalse;
+        if (a == b) return Qtrue;
+    }
+    return Qfalse;
+}</pre>
+</body>
+</html>

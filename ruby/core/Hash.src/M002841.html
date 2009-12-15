@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>initialize_copy (Hash)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     hsh.replace(other_hash) -&gt; hsh
+ *  
+ *  Replaces the contents of &lt;i&gt;hsh&lt;/i&gt; with the contents of
+ *  &lt;i&gt;other_hash&lt;/i&gt;.
+ *     
+ *     h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+ *     h.replace({ &quot;c&quot; =&gt; 300, &quot;d&quot; =&gt; 400 })   #=&gt; {&quot;c&quot;=&gt;300, &quot;d&quot;=&gt;400}
+ *     
+ */
+
+static VALUE
+rb_hash_replace(hash, hash2)
+    VALUE hash, hash2;
+{
+    hash2 = to_hash(hash2);
+    if (hash == hash2) return hash;
+    rb_hash_clear(hash);
+    rb_hash_foreach(hash2, replace_i, hash);
+    RHASH(hash)-&gt;ifnone = RHASH(hash2)-&gt;ifnone;
+    if (FL_TEST(hash2, HASH_PROC_DEFAULT)) {
+        FL_SET(hash, HASH_PROC_DEFAULT);
+    }
+    else {
+        FL_UNSET(hash, HASH_PROC_DEFAULT);
+    }
+
+    return hash;
+}</pre>
+</body>
+</html>

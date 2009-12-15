@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>pos (Dir)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     dir.pos =&gt; integer
+ *     dir.tell =&gt; integer
+ *
+ *  Returns the current position in &lt;em&gt;dir&lt;/em&gt;. See also
+ *  &lt;code&gt;Dir#seek&lt;/code&gt;.
+ *
+ *     d = Dir.new(&quot;testdir&quot;)
+ *     d.tell   #=&gt; 0
+ *     d.read   #=&gt; &quot;.&quot;
+ *     d.tell   #=&gt; 12
+ */
+static VALUE
+dir_tell(dir)
+    VALUE dir;
+{
+#ifdef HAVE_TELLDIR
+    struct dir_data *dirp;
+    long pos;
+
+    GetDIR(dir, dirp);
+    pos = telldir(dirp-&gt;dir);
+    return rb_int2inum(pos);
+#else
+    rb_notimplement();
+#endif
+}</pre>
+</body>
+</html>

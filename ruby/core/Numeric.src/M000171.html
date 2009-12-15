@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>singleton_method_added (Numeric)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Trap attempts to add methods to &lt;code&gt;Numeric&lt;/code&gt; objects. Always
+ * raises a &lt;code&gt;TypeError&lt;/code&gt;
+ */
+
+static VALUE
+num_sadded(x, name)
+    VALUE x, name;
+{
+    ruby_frame = ruby_frame-&gt;prev; /* pop frame for &quot;singleton_method_added&quot; */
+    /* Numerics should be values; singleton_methods should not be added to them */
+    rb_raise(rb_eTypeError,
+             &quot;can't define singleton method \&quot;%s\&quot; for %s&quot;,
+             rb_id2name(rb_to_id(name)),
+             rb_obj_classname(x)); 
+    return Qnil;                /* not reached */
+}</pre>
+</body>
+</html>

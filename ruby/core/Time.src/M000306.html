@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>rfc2822 (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/time.rb, line 261</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">rfc2822</span>(<span class="ruby-identifier">date</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-regexp re">/\A\s*
+          (?:(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s*,\s*)?
+          (\d{1,2})\s+
+          (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+
+          (\d{2,})\s+
+          (\d{2})\s*
+          :\s*(\d{2})\s*
+          (?::\s*(\d{2}))?\s+
+          ([+-]\d{4}|
+           UT|GMT|EST|EDT|CST|CDT|MST|MDT|PST|PDT|[A-IK-Z])/i</span><span class="ruby-identifier">x</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">date</span>
+        <span class="ruby-comment cmt"># Since RFC 2822 permit comments, the regexp has no right anchor.</span>
+        <span class="ruby-identifier">day</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+        <span class="ruby-identifier">mon</span> = <span class="ruby-constant">MonthValue</span>[<span class="ruby-identifier">$2</span>.<span class="ruby-identifier">upcase</span>]
+        <span class="ruby-identifier">year</span> = <span class="ruby-identifier">$3</span>.<span class="ruby-identifier">to_i</span>
+        <span class="ruby-identifier">hour</span> = <span class="ruby-identifier">$4</span>.<span class="ruby-identifier">to_i</span>
+        <span class="ruby-identifier">min</span> = <span class="ruby-identifier">$5</span>.<span class="ruby-identifier">to_i</span>
+        <span class="ruby-identifier">sec</span> = <span class="ruby-identifier">$6</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">$6</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">:</span> <span class="ruby-value">0</span>
+        <span class="ruby-identifier">zone</span> = <span class="ruby-identifier">$7</span>
+
+        <span class="ruby-comment cmt"># following year completion is compliant with RFC 2822.</span>
+        <span class="ruby-identifier">year</span> = <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">year</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">50</span>
+                 <span class="ruby-value">2000</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">year</span>
+               <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">year</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">1000</span>
+                 <span class="ruby-value">1900</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">year</span>
+               <span class="ruby-keyword kw">else</span>
+                 <span class="ruby-identifier">year</span>
+               <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-identifier">year</span>, <span class="ruby-identifier">mon</span>, <span class="ruby-identifier">day</span>, <span class="ruby-identifier">hour</span>, <span class="ruby-identifier">min</span>, <span class="ruby-identifier">sec</span> =
+          <span class="ruby-identifier">apply_offset</span>(<span class="ruby-identifier">year</span>, <span class="ruby-identifier">mon</span>, <span class="ruby-identifier">day</span>, <span class="ruby-identifier">hour</span>, <span class="ruby-identifier">min</span>, <span class="ruby-identifier">sec</span>, <span class="ruby-identifier">zone_offset</span>(<span class="ruby-identifier">zone</span>))
+        <span class="ruby-identifier">t</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">utc</span>(<span class="ruby-identifier">year</span>, <span class="ruby-identifier">mon</span>, <span class="ruby-identifier">day</span>, <span class="ruby-identifier">hour</span>, <span class="ruby-identifier">min</span>, <span class="ruby-identifier">sec</span>)
+        <span class="ruby-identifier">t</span>.<span class="ruby-identifier">localtime</span> <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">zone_utc?</span>(<span class="ruby-identifier">zone</span>)
+        <span class="ruby-identifier">t</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;not RFC 2822 compliant date: #{date.inspect}&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

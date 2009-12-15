@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>variable_kind (WIN32OLE_VARIABLE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   WIN32OLE_VARIABLE#variable_kind
+ * 
+ * Returns variable kind string.
+ *
+ *    tobj = WIN32OLE_TYPE.new('Microsoft Excel 9.0 Object Library', 'XlSheetType')
+ *    variables = tobj.variables
+ *    variables.each do |variable|
+ *      puts &quot;#{variable.name} #{variable.variable_kind}&quot;
+ *    end
+ *
+ *    The result of above script is following:
+ *      xlChart CONSTANT
+ *      xlDialogSheet CONSTANT
+ *      xlExcel4IntlMacroSheet CONSTANT
+ *      xlExcel4MacroSheet CONSTANT
+ *      xlWorksheet CONSTANT
+ */
+static VALUE
+folevariable_variable_kind(self)
+    VALUE self;
+{
+    struct olevariabledata *pvar;
+    Data_Get_Struct(self, struct olevariabledata, pvar);
+    return ole_variable_kind(pvar-&gt;pTypeInfo, pvar-&gt;index);
+}</pre>
+</body>
+</html>

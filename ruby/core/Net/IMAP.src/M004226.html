@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>encode_utf7 (Net::IMAP)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/net/imap.rb, line 843</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">encode_utf7</span>(<span class="ruby-identifier">s</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">s</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/(&amp;)|([^\x20-\x25\x27-\x7e]+)/n</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$1</span>
+          <span class="ruby-value str">&quot;&amp;-&quot;</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">base64</span> = [<span class="ruby-identifier">u8tou16</span>(<span class="ruby-identifier">x</span>)].<span class="ruby-identifier">pack</span>(<span class="ruby-value str">&quot;m&quot;</span>)
+          <span class="ruby-value str">&quot;&amp;&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">base64</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;=\n&quot;</span>).<span class="ruby-identifier">tr</span>(<span class="ruby-value str">&quot;/&quot;</span>, <span class="ruby-value str">&quot;,&quot;</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;-&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      }
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

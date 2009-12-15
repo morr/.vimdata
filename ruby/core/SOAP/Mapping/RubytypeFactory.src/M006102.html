@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>obj2soap (SOAP::Mapping::RubytypeFactory)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/mapping/rubytypeFactory.rb, line 38</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">obj2soap</span>(<span class="ruby-identifier">soap_class</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">info</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-identifier">param</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">obj</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">String</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-ivar">@string_factory</span>.<span class="ruby-identifier">obj2soap</span>(<span class="ruby-constant">SOAPString</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">info</span>, <span class="ruby-identifier">map</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">!=</span> <span class="ruby-constant">String</span>
+        <span class="ruby-identifier">param</span>.<span class="ruby-identifier">extraattr</span>[<span class="ruby-constant">RubyTypeName</span>] = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">Time</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-ivar">@datetime_factory</span>.<span class="ruby-identifier">obj2soap</span>(<span class="ruby-constant">SOAPDateTime</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">info</span>, <span class="ruby-identifier">map</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">!=</span> <span class="ruby-constant">Time</span>
+        <span class="ruby-identifier">param</span>.<span class="ruby-identifier">extraattr</span>[<span class="ruby-constant">RubyTypeName</span>] = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">Array</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-ivar">@array_factory</span>.<span class="ruby-identifier">obj2soap</span>(<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">info</span>, <span class="ruby-identifier">map</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">!=</span> <span class="ruby-constant">Array</span>
+        <span class="ruby-identifier">param</span>.<span class="ruby-identifier">extraattr</span>[<span class="ruby-constant">RubyTypeName</span>] = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">NilClass</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-ivar">@basetype_factory</span>.<span class="ruby-identifier">obj2soap</span>(<span class="ruby-constant">SOAPNil</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">info</span>, <span class="ruby-identifier">map</span>)
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">FalseClass</span>, <span class="ruby-operator">::</span><span class="ruby-constant">TrueClass</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-ivar">@basetype_factory</span>.<span class="ruby-identifier">obj2soap</span>(<span class="ruby-constant">SOAPBoolean</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">info</span>, <span class="ruby-identifier">map</span>)
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">Integer</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-ivar">@basetype_factory</span>.<span class="ruby-identifier">obj2soap</span>(<span class="ruby-constant">SOAPInt</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">info</span>, <span class="ruby-identifier">map</span>)
+      <span class="ruby-identifier">param</span> <span class="ruby-operator">||=</span> <span class="ruby-ivar">@basetype_factory</span>.<span class="ruby-identifier">obj2soap</span>(<span class="ruby-constant">SOAPInteger</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">info</span>, <span class="ruby-identifier">map</span>)
+      <span class="ruby-identifier">param</span> <span class="ruby-operator">||=</span> <span class="ruby-ivar">@basetype_factory</span>.<span class="ruby-identifier">obj2soap</span>(<span class="ruby-constant">SOAPDecimal</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">info</span>, <span class="ruby-identifier">map</span>)
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">Float</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-ivar">@basetype_factory</span>.<span class="ruby-identifier">obj2soap</span>(<span class="ruby-constant">SOAPDouble</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">info</span>, <span class="ruby-identifier">map</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">!=</span> <span class="ruby-constant">Float</span>
+        <span class="ruby-identifier">param</span>.<span class="ruby-identifier">extraattr</span>[<span class="ruby-constant">RubyTypeName</span>] = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:default_proc</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">default_proc</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;cannot dump hash with default proc&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-constant">SOAPStruct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">TYPE_HASH</span>)
+      <span class="ruby-identifier">mark_marshalled_obj</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">param</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">!=</span> <span class="ruby-constant">Hash</span>
+        <span class="ruby-identifier">param</span>.<span class="ruby-identifier">extraattr</span>[<span class="ruby-constant">RubyTypeName</span>] = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">elem</span> = <span class="ruby-constant">SOAPStruct</span>.<span class="ruby-identifier">new</span> <span class="ruby-comment cmt"># Undefined type.</span>
+        <span class="ruby-identifier">elem</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">&quot;key&quot;</span>, <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">_obj2soap</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">map</span>))
+        <span class="ruby-identifier">elem</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">&quot;value&quot;</span>, <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">_obj2soap</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">map</span>))
+        <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">&quot;item&quot;</span>, <span class="ruby-identifier">elem</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">'default'</span>, <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">_obj2soap</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">default</span>, <span class="ruby-identifier">map</span>))
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">Regexp</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-constant">SOAPStruct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">TYPE_REGEXP</span>)
+      <span class="ruby-identifier">mark_marshalled_obj</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">param</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">!=</span> <span class="ruby-constant">Regexp</span>
+        <span class="ruby-identifier">param</span>.<span class="ruby-identifier">extraattr</span>[<span class="ruby-constant">RubyTypeName</span>] = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">'source'</span>, <span class="ruby-constant">SOAPBase64</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">source</span>))
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value str">'options'</span>)
+        <span class="ruby-comment cmt"># Regexp#options is from Ruby/1.7</span>
+        <span class="ruby-identifier">options</span> = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">options</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">options</span> = <span class="ruby-value">0</span>
+        <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inspect</span>.<span class="ruby-identifier">sub</span>(<span class="ruby-regexp re">/^.*\//</span>, <span class="ruby-value str">''</span>).<span class="ruby-identifier">each_byte</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">options</span> <span class="ruby-operator">+=</span> <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">c</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value">?i</span>
+              <span class="ruby-value">1</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value">?x</span>
+              <span class="ruby-value">2</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value">?m</span>
+              <span class="ruby-value">4</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value">?n</span>
+              <span class="ruby-value">16</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value">?e</span>
+              <span class="ruby-value">32</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value">?s</span>
+              <span class="ruby-value">48</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value">?u</span>
+              <span class="ruby-value">64</span>
+            <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">'options'</span>, <span class="ruby-constant">SOAPInt</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">options</span>))
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">Range</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-constant">SOAPStruct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">TYPE_RANGE</span>)
+      <span class="ruby-identifier">mark_marshalled_obj</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">param</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">!=</span> <span class="ruby-constant">Range</span>
+        <span class="ruby-identifier">param</span>.<span class="ruby-identifier">extraattr</span>[<span class="ruby-constant">RubyTypeName</span>] = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">'begin'</span>, <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">_obj2soap</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">begin</span>, <span class="ruby-identifier">map</span>))
+      <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">'end'</span>, <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">_obj2soap</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">end</span>, <span class="ruby-identifier">map</span>))
+      <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">'exclude_end'</span>, <span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">SOAPBoolean</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">exclude_end?</span>))
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">Class</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">to_s</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?#</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;can't dump anonymous class #{obj}&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-constant">SOAPStruct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">TYPE_CLASS</span>)
+      <span class="ruby-identifier">mark_marshalled_obj</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">param</span>)
+      <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">'name'</span>, <span class="ruby-constant">SOAPString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">name</span>))
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">Module</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">to_s</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?#</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;can't dump anonymous module #{obj}&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-constant">SOAPStruct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">TYPE_MODULE</span>)
+      <span class="ruby-identifier">mark_marshalled_obj</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">param</span>)
+      <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">'name'</span>, <span class="ruby-constant">SOAPString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">name</span>))
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">Symbol</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-constant">SOAPStruct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">TYPE_SYMBOL</span>)
+      <span class="ruby-identifier">mark_marshalled_obj</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">param</span>)
+      <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">'id'</span>, <span class="ruby-constant">SOAPString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">id2name</span>))
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">Struct</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@allow_original_mapping</span>
+        <span class="ruby-comment cmt"># treat it as an user defined class. [ruby-talk:104980]</span>
+        <span class="ruby-comment cmt">#param = unknownobj2soap(soap_class, obj, info, map)</span>
+        <span class="ruby-identifier">param</span> = <span class="ruby-constant">SOAPStruct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">AnyTypeName</span>)
+        <span class="ruby-identifier">mark_marshalled_obj</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">param</span>)
+        <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">members</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">member</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">name2elename</span>(<span class="ruby-identifier">member</span>),
+            <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">_obj2soap</span>(<span class="ruby-identifier">obj</span>[<span class="ruby-identifier">member</span>], <span class="ruby-identifier">map</span>))
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">param</span> = <span class="ruby-constant">SOAPStruct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">TYPE_STRUCT</span>)
+        <span class="ruby-identifier">mark_marshalled_obj</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">param</span>)
+        <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">'type'</span>, <span class="ruby-identifier">ele_type</span> = <span class="ruby-constant">SOAPString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">to_s</span>))
+        <span class="ruby-identifier">ele_member</span> = <span class="ruby-constant">SOAPStruct</span>.<span class="ruby-identifier">new</span>
+        <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">members</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">member</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">ele_member</span>.<span class="ruby-identifier">add</span>(<span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">name2elename</span>(<span class="ruby-identifier">member</span>),
+            <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">_obj2soap</span>(<span class="ruby-identifier">obj</span>[<span class="ruby-identifier">member</span>], <span class="ruby-identifier">map</span>))
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">'member'</span>, <span class="ruby-identifier">ele_member</span>)
+        <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">IO</span>, <span class="ruby-operator">::</span><span class="ruby-constant">Binding</span>, <span class="ruby-operator">::</span><span class="ruby-constant">Continuation</span>, <span class="ruby-operator">::</span><span class="ruby-constant">Data</span>, <span class="ruby-operator">::</span><span class="ruby-constant">Dir</span>, <span class="ruby-operator">::</span><span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-constant">Stat</span>,
+        <span class="ruby-operator">::</span><span class="ruby-constant">MatchData</span>, <span class="ruby-constant">Method</span>, <span class="ruby-operator">::</span><span class="ruby-constant">Proc</span>, <span class="ruby-operator">::</span><span class="ruby-constant">Thread</span>, <span class="ruby-operator">::</span><span class="ruby-constant">ThreadGroup</span>
+        <span class="ruby-comment cmt"># from 1.8: Process::Status, UnboundMethod</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">Mapping</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-constant">SOAPStruct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">AnyTypeName</span>)
+      <span class="ruby-identifier">mark_marshalled_obj</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">param</span>)
+      <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">__xmlele</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">key</span>.<span class="ruby-identifier">name</span>, <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">_obj2soap</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">map</span>))
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">__xmlattr</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">param</span>.<span class="ruby-identifier">extraattr</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">value</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-operator">::</span><span class="ruby-constant">Exception</span>
+      <span class="ruby-identifier">typestr</span> = <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">name2elename</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">to_s</span>)
+      <span class="ruby-identifier">param</span> = <span class="ruby-constant">SOAPStruct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">QName</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">RubyTypeNamespace</span>, <span class="ruby-identifier">typestr</span>))
+      <span class="ruby-identifier">mark_marshalled_obj</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">param</span>)
+      <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">'message'</span>, <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">_obj2soap</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">message</span>, <span class="ruby-identifier">map</span>))
+      <span class="ruby-identifier">param</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value str">'backtrace'</span>, <span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">_obj2soap</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">backtrace</span>, <span class="ruby-identifier">map</span>))
+      <span class="ruby-identifier">addiv2soapattr</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">param</span> = <span class="ruby-identifier">unknownobj2soap</span>(<span class="ruby-identifier">soap_class</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">info</span>, <span class="ruby-identifier">map</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">param</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

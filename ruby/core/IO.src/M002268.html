@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>write_nonblock (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.write_nonblock(string)   =&gt; integer
+ *
+ *  Writes the given string to &lt;em&gt;ios&lt;/em&gt; using
+ *  write(2) system call after O_NONBLOCK is set for
+ *  the underlying file descriptor.
+ *
+ *  write_nonblock just calls write(2).
+ *  It causes all errors write(2) causes: EAGAIN, EINTR, etc.
+ *  The result may also be smaller than string.length (partial write).
+ *  The caller should care such errors and partial write.
+ *
+ */
+
+static VALUE
+rb_io_write_nonblock(VALUE io, VALUE str)
+{
+    OpenFile *fptr;
+    FILE *f;
+    long n;
+
+    rb_secure(4);
+    if (TYPE(str) != T_STRING)
+        str = rb_obj_as_string(str);
+
+    GetOpenFile(io, fptr);
+    rb_io_check_writable(fptr);
+
+    f = GetWriteFile(fptr);
+
+    rb_io_set_nonblock(fptr);
+    n = write(fileno(f), RSTRING(str)-&gt;ptr, RSTRING(str)-&gt;len);
+
+    if (n == -1) rb_sys_fail(fptr-&gt;path);
+
+    return LONG2FIX(n);
+}</pre>
+</body>
+</html>

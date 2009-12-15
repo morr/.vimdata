@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>header (CGI)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/cgi.rb, line 539</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">header</span>(<span class="ruby-identifier">options</span> = <span class="ruby-value str">&quot;text/html&quot;</span>)
+
+    <span class="ruby-identifier">buf</span> = <span class="ruby-value str">&quot;&quot;</span>
+
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">options</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>
+      <span class="ruby-identifier">options</span> = { <span class="ruby-value str">&quot;type&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">options</span> }
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Hash</span>
+      <span class="ruby-identifier">options</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">dup</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;type&quot;</span>)
+      <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;type&quot;</span>] = <span class="ruby-value str">&quot;text/html&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;charset&quot;</span>)
+      <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;type&quot;</span>] <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;; charset=&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;charset&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;nph&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span>(<span class="ruby-constant">MOD_RUBY</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;nph&quot;</span>) <span class="ruby-keyword kw">or</span>
+        (<span class="ruby-regexp re">/IIS\/(\d+)/n</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">env_table</span>[<span class="ruby-value str">'SERVER_SOFTWARE'</span>]) <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">5</span>)
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">+=</span> (<span class="ruby-identifier">env_table</span>[<span class="ruby-value str">&quot;SERVER_PROTOCOL&quot;</span>] <span class="ruby-keyword kw">or</span> <span class="ruby-value str">&quot;HTTP/1.0&quot;</span>)  <span class="ruby-operator">+</span> <span class="ruby-value str">&quot; &quot;</span> <span class="ruby-operator">+</span>
+             (<span class="ruby-constant">HTTP_STATUS</span>[<span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;status&quot;</span>]] <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;status&quot;</span>] <span class="ruby-keyword kw">or</span> <span class="ruby-value str">&quot;200 OK&quot;</span>) <span class="ruby-operator">+</span>
+             <span class="ruby-constant">EOL</span> <span class="ruby-operator">+</span>
+             <span class="ruby-value str">&quot;Date: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-constant">CGI</span><span class="ruby-operator">::</span><span class="ruby-identifier">rfc1123_date</span>(<span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>) <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;server&quot;</span>)
+        <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;server&quot;</span>] = (<span class="ruby-identifier">env_table</span>[<span class="ruby-value str">'SERVER_SOFTWARE'</span>] <span class="ruby-keyword kw">or</span> <span class="ruby-value str">&quot;&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;connection&quot;</span>)
+        <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;connection&quot;</span>] = <span class="ruby-value str">&quot;close&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;status&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;status&quot;</span>)
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;Status: &quot;</span> <span class="ruby-operator">+</span>
+             (<span class="ruby-constant">HTTP_STATUS</span>[<span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;status&quot;</span>]] <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;status&quot;</span>]) <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+      <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;status&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;server&quot;</span>)
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;Server: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;server&quot;</span>) <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;connection&quot;</span>)
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;Connection: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;connection&quot;</span>) <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">buf</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;Content-Type: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;type&quot;</span>) <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;length&quot;</span>)
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;Content-Length: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;length&quot;</span>).<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;language&quot;</span>)
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;Content-Language: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;language&quot;</span>) <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;expires&quot;</span>)
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;Expires: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-constant">CGI</span><span class="ruby-operator">::</span><span class="ruby-identifier">rfc1123_date</span>( <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;expires&quot;</span>) ) <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;cookie&quot;</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;cookie&quot;</span>].<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">String</span>) <span class="ruby-keyword kw">or</span>
+           <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;cookie&quot;</span>].<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Cookie</span>)
+        <span class="ruby-identifier">buf</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;Set-Cookie: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;cookie&quot;</span>).<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;cookie&quot;</span>].<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Array</span>)
+        <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;cookie&quot;</span>).<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">cookie</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">buf</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;Set-Cookie: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">cookie</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+        }
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;cookie&quot;</span>].<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Hash</span>)
+        <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;cookie&quot;</span>).<span class="ruby-identifier">each_value</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">cookie</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">buf</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;Set-Cookie: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">cookie</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+        }
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@output_cookies</span>
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">cookie</span> <span class="ruby-keyword kw">in</span> <span class="ruby-ivar">@output_cookies</span>
+        <span class="ruby-identifier">buf</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;Set-Cookie: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">cookie</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">options</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">key</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+    }
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span>(<span class="ruby-constant">MOD_RUBY</span>)
+      <span class="ruby-identifier">table</span> = <span class="ruby-constant">Apache</span><span class="ruby-operator">::</span><span class="ruby-identifier">request</span>.<span class="ruby-identifier">headers_out</span>
+      <span class="ruby-identifier">buf</span>.<span class="ruby-identifier">scan</span>(<span class="ruby-node">/([^:]+): (.+)#{EOL}/n</span>){ <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">warn</span> <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;name:%s value:%s\n&quot;</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$DEBUG</span>
+        <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">name</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'Set-Cookie'</span>
+          <span class="ruby-identifier">table</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span>)
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^status$/n</span><span class="ruby-identifier">i</span>
+          <span class="ruby-constant">Apache</span><span class="ruby-operator">::</span><span class="ruby-identifier">request</span>.<span class="ruby-identifier">status_line</span> = <span class="ruby-identifier">value</span>
+          <span class="ruby-constant">Apache</span><span class="ruby-operator">::</span><span class="ruby-identifier">request</span>.<span class="ruby-identifier">status</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_i</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^content-type$/n</span><span class="ruby-identifier">i</span>
+          <span class="ruby-constant">Apache</span><span class="ruby-operator">::</span><span class="ruby-identifier">request</span>.<span class="ruby-identifier">content_type</span> = <span class="ruby-identifier">value</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^content-encoding$/n</span><span class="ruby-identifier">i</span>
+          <span class="ruby-constant">Apache</span><span class="ruby-operator">::</span><span class="ruby-identifier">request</span>.<span class="ruby-identifier">content_encoding</span> = <span class="ruby-identifier">value</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^location$/n</span><span class="ruby-identifier">i</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Apache</span><span class="ruby-operator">::</span><span class="ruby-identifier">request</span>.<span class="ruby-identifier">status</span> <span class="ruby-operator">==</span> <span class="ruby-value">200</span>
+            <span class="ruby-constant">Apache</span><span class="ruby-operator">::</span><span class="ruby-identifier">request</span>.<span class="ruby-identifier">status</span> = <span class="ruby-value">302</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-constant">Apache</span><span class="ruby-operator">::</span><span class="ruby-identifier">request</span>.<span class="ruby-identifier">headers_out</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">value</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-constant">Apache</span><span class="ruby-operator">::</span><span class="ruby-identifier">request</span>.<span class="ruby-identifier">headers_out</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">value</span>
+        <span class="ruby-keyword kw">end</span>
+      }
+      <span class="ruby-constant">Apache</span><span class="ruby-operator">::</span><span class="ruby-identifier">request</span>.<span class="ruby-identifier">send_http_header</span>
+      <span class="ruby-value str">''</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">buf</span> <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>
+    <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

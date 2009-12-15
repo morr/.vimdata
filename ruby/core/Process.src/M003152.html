@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>kill (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.kill(signal, pid, ...)    =&gt; fixnum
+ *  
+ *  Sends the given signal to the specified process id(s), or to the
+ *  current process if _pid_ is zero. _signal_ may be an
+ *  integer signal number or a POSIX signal name (either with or without
+ *  a +SIG+ prefix). If _signal_ is negative (or starts
+ *  with a minus sign), kills process groups instead of
+ *  processes. Not all signals are available on all platforms.
+ *     
+ *     pid = fork do
+ *        Signal.trap(&quot;HUP&quot;) { puts &quot;Ouch!&quot;; exit }
+ *        # ... do some work ...
+ *     end
+ *     # ...
+ *     Process.kill(&quot;HUP&quot;, pid)
+ *     Process.wait
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     Ouch!
+ */
+
+VALUE
+rb_f_kill(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    int negative = 0;
+    int sig;
+    int i;
+    char *s;
+
+    rb_secure(2);
+    if (argc &lt; 2)
+	rb_raise(rb_eArgError, &quot;wrong number of arguments -- kill(sig, pid...)&quot;);
+    switch (TYPE(argv[0])) {
+      case T_FIXNUM:
+	sig = FIX2INT(argv[0]);
+	break;
+
+      case T_SYMBOL:
+	s = rb_id2name(SYM2ID(argv[0]));
+	if (!s) rb_raise(rb_eArgError, &quot;bad signal&quot;);
+	goto str_signal;
+
+      case T_STRING:
+	s = RSTRING(argv[0])-&gt;ptr;
+	if (s[0] == '-') {
+	    negative++;
+	    s++;
+	}
+      str_signal:
+	if (strncmp(&quot;SIG&quot;, s, 3) == 0)
+	    s += 3;
+	if((sig = signm2signo(s)) == 0)
+	    rb_raise(rb_eArgError, &quot;unsupported name `SIG%s'&quot;, s);
+
+	if (negative)
+	    sig = -sig;
+	break;
+
+      default:
+        {
+	    VALUE str;
+
+	    str = rb_check_string_type(argv[0]);
+	    if (!NIL_P(str)) {
+		s = RSTRING(str)-&gt;ptr;
+		goto str_signal;
+	    }
+	    rb_raise(rb_eArgError, &quot;bad signal type %s&quot;,
+		     rb_obj_classname(argv[0]));
+	}
+	break;
+    }
+
+    if (sig &lt; 0) {
+	sig = -sig;
+	for (i=1; i&lt;argc; i++) {
+	    int pid = NUM2INT(argv[i]);
+#ifdef HAS_KILLPG
+	    if (killpg(pid, sig) &lt; 0)
+#else
+	    if (kill(-pid, sig) &lt; 0)
+#endif
+		rb_sys_fail(0);
+	}
+    }
+    else {
+	for (i=1; i&lt;argc; i++) {
+	    Check_Type(argv[i], T_FIXNUM);
+	    if (kill(FIX2INT(argv[i]), sig) &lt; 0)
+		rb_sys_fail(0);
+	}
+    }
+    return INT2FIX(i-1);
+}</pre>
+</body>
+</html>

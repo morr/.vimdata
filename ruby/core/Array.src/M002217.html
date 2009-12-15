@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>compact! (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* 
+ *  call-seq:
+ *     array.compact!    -&gt;   array  or  nil
+ *
+ *  Removes +nil+ elements from array.
+ *  Returns +nil+ if no changes were made.
+ *
+ *     [ &quot;a&quot;, nil, &quot;b&quot;, nil, &quot;c&quot; ].compact! #=&gt; [ &quot;a&quot;, &quot;b&quot;, &quot;c&quot; ]
+ *     [ &quot;a&quot;, &quot;b&quot;, &quot;c&quot; ].compact!           #=&gt; nil
+ */
+
+static VALUE
+rb_ary_compact_bang(ary)
+    VALUE ary;
+{
+    VALUE *p, *t, *end;
+
+    rb_ary_modify(ary);
+    p = t = RARRAY(ary)-&gt;ptr;
+    end = p + RARRAY(ary)-&gt;len;
+    
+    while (t &lt; end) {
+        if (NIL_P(*t)) t++;
+        else *p++ = *t++;
+    }
+    if (RARRAY(ary)-&gt;len == (p - RARRAY(ary)-&gt;ptr)) {
+        return Qnil;
+    }
+    RARRAY(ary)-&gt;len = RARRAY(ary)-&gt;aux.capa = (p - RARRAY(ary)-&gt;ptr);
+    REALLOC_N(RARRAY(ary)-&gt;ptr, VALUE, RARRAY(ary)-&gt;len);
+
+    return ary;
+}</pre>
+</body>
+</html>

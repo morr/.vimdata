@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>encode_data (SOAP::SOAPGenerator)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/generator.rb, line 68</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">encode_data</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">parent</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SOAPEnvelopeElement</span>)
+      <span class="ruby-identifier">encode_element</span>(<span class="ruby-identifier">ns</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">parent</span>)
+      <span class="ruby-keyword kw">return</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@reftarget</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">obj</span>.<span class="ruby-identifier">precedents</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">add_reftarget</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">obj</span>)
+      <span class="ruby-identifier">ref</span> = <span class="ruby-constant">SOAPReference</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">obj</span>)
+      <span class="ruby-identifier">ref</span>.<span class="ruby-identifier">elename</span> = <span class="ruby-identifier">ref</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">dup_name</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">name</span>)
+      <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">precedents</span>.<span class="ruby-identifier">clear</span>      <span class="ruby-comment cmt"># Avoid cyclic delay.</span>
+      <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">encodingstyle</span> = <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">encodingstyle</span>
+      <span class="ruby-comment cmt"># SOAPReference is encoded here.</span>
+      <span class="ruby-identifier">obj</span> = <span class="ruby-identifier">ref</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">encodingstyle</span> = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">encodingstyle</span>
+    <span class="ruby-comment cmt"># Children's encodingstyle is derived from its parent.</span>
+    <span class="ruby-identifier">encodingstyle</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">encodingstyle</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">parent</span>
+    <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">encodingstyle</span> = <span class="ruby-identifier">encodingstyle</span>
+    <span class="ruby-identifier">handler</span> = <span class="ruby-identifier">find_handler</span>(<span class="ruby-identifier">encodingstyle</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@default_encodingstyle</span>)
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">handler</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">FormatEncodeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;Unknown encodingStyle: #{ encodingstyle }.&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">obj</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">FormatEncodeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;Element name not defined: #{ obj }.&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">handler</span>.<span class="ruby-identifier">encode_data</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">ns</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">parent</span>)
+    <span class="ruby-identifier">handler</span>.<span class="ruby-identifier">encode_data_end</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">ns</span>, <span class="ruby-identifier">obj</span>, <span class="ruby-identifier">parent</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

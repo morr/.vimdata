@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>succ (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   time.succ   =&gt; new_time
+ *
+ * Return a new time object, one second later than &lt;code&gt;time&lt;/code&gt;.
+ */
+
+static VALUE
+time_succ(time)
+    VALUE time;
+{
+    struct time_object *tobj;
+    int gmt;
+
+    GetTimeval(time, tobj);
+    gmt = tobj-&gt;gmt;
+    time = rb_time_new(tobj-&gt;tv.tv_sec + 1, tobj-&gt;tv.tv_usec);
+    GetTimeval(time, tobj);
+    tobj-&gt;gmt = gmt;
+    return time;
+}</pre>
+</body>
+</html>

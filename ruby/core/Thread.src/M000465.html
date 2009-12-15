@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>raise (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     thr.raise(exception)
+ *  
+ *  Raises an exception (see &lt;code&gt;Kernel::raise&lt;/code&gt;) from &lt;i&gt;thr&lt;/i&gt;. The
+ *  caller does not have to be &lt;i&gt;thr&lt;/i&gt;.
+ *     
+ *     Thread.abort_on_exception = true
+ *     a = Thread.new { sleep(200) }
+ *     a.raise(&quot;Gotcha&quot;)
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     prog.rb:3: Gotcha (RuntimeError)
+ *      from prog.rb:2:in `initialize'
+ *      from prog.rb:2:in `new'
+ *      from prog.rb:2
+ */
+
+static VALUE
+rb_thread_raise_m(argc, argv, thread)
+    int argc;
+    VALUE *argv;
+    VALUE thread;
+{
+    rb_thread_t th = rb_thread_check(thread);
+
+    if (ruby_safe_level &gt; th-&gt;safe) {
+        rb_secure(4);
+    }
+    rb_thread_raise(argc, argv, th);
+    return Qnil;                /* not reached */
+}</pre>
+</body>
+</html>

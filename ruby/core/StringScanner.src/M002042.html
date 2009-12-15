@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>[] (StringScanner)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: [](n)
+ *
+ * Return the n-th subgroup in the most recent match.
+ *
+ *   s = StringScanner.new(&quot;Fri Dec 12 1975 14:39&quot;)
+ *   s.scan(/(\w+) (\w+) (\d+) /)       # -&gt; &quot;Fri Dec 12 &quot;
+ *   s[0]                               # -&gt; &quot;Fri Dec 12 &quot;
+ *   s[1]                               # -&gt; &quot;Fri&quot;
+ *   s[2]                               # -&gt; &quot;Dec&quot;
+ *   s[3]                               # -&gt; &quot;12&quot;
+ *   s.post_match                       # -&gt; &quot;1975 14:39&quot;
+ *   s.pre_match                        # -&gt; &quot;&quot;
+ */
+static VALUE
+strscan_aref(VALUE self, VALUE idx)
+{
+    struct strscanner *p;
+    long i;
+
+    GET_SCANNER(self, p);
+    if (! MATCHED_P(p))        return Qnil;
+    
+    i = NUM2LONG(idx);
+    if (i &lt; 0)
+        i += p-&gt;regs.num_regs;
+    if (i &lt; 0)                 return Qnil;
+    if (i &gt;= p-&gt;regs.num_regs) return Qnil;
+    if (p-&gt;regs.beg[i] == -1)  return Qnil;
+
+    return extract_range(p, p-&gt;prev + p-&gt;regs.beg[i],
+                            p-&gt;prev + p-&gt;regs.end[i]);
+}</pre>
+</body>
+</html>

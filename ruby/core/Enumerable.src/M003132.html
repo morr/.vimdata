@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>any? (Enumerable)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     enum.any? [{|obj| block } ]   =&gt; true or false
+ *  
+ *  Passes each element of the collection to the given block. The method
+ *  returns &lt;code&gt;true&lt;/code&gt; if the block ever returns a value other
+ *  than &lt;code&gt;false&lt;/code&gt; or &lt;code&gt;nil&lt;/code&gt;. If the block is not
+ *  given, Ruby adds an implicit block of &lt;code&gt;{|obj| obj}&lt;/code&gt; (that
+ *  is &lt;code&gt;any?&lt;/code&gt; will return &lt;code&gt;true&lt;/code&gt; if at least one
+ *  of the collection members is not &lt;code&gt;false&lt;/code&gt; or
+ *  &lt;code&gt;nil&lt;/code&gt;.
+ *     
+ *     %w{ ant bear cat}.any? {|word| word.length &gt;= 3}   #=&gt; true
+ *     %w{ ant bear cat}.any? {|word| word.length &gt;= 4}   #=&gt; true
+ *     [ nil, true, 99 ].any?                             #=&gt; true
+ *     
+ */
+
+static VALUE
+enum_any(obj)
+    VALUE obj;
+{
+    VALUE result = Qfalse;
+
+    rb_iterate(rb_each, obj, rb_block_given_p() ? any_iter_i : any_i, (VALUE)&amp;result);
+    return result;
+}</pre>
+</body>
+</html>

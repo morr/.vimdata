@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>re_exchange (Process::UID)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process::UID.re_exchange   =&gt; fixnum
+ *
+ *  Exchange real and effective user IDs and return the new effective
+ *  user ID. Not available on all platforms.
+ *
+ *     [Process.uid, Process.euid]   #=&gt; [0, 31]
+ *     Process::UID.re_exchange      #=&gt; 0
+ *     [Process.uid, Process.euid]   #=&gt; [31, 0]
+ */
+
+static VALUE
+p_uid_exchange(obj)
+    VALUE obj;
+{
+    int uid, euid;
+
+    check_uid_switch();
+
+    uid = getuid();
+    euid = geteuid();
+
+#if defined(HAVE_SETRESUID) &amp;&amp;  !defined(__CHECKER__)
+    if (setresuid(euid, uid, uid) &lt; 0) rb_sys_fail(0);
+    SAVED_USER_ID = uid;
+#elif defined(HAVE_SETREUID) &amp;&amp; !defined(OBSOLETE_SETREUID)
+    if (setreuid(euid,uid) &lt; 0) rb_sys_fail(0);
+    SAVED_USER_ID = uid;
+#else
+    rb_notimplement();
+#endif
+    return INT2FIX(uid);
+}</pre>
+</body>
+</html>

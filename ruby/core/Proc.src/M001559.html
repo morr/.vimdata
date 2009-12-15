@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>binding (Proc)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     prc.binding    =&gt; binding
+ *  
+ *  Returns the binding associated with &lt;i&gt;prc&lt;/i&gt;. Note that
+ *  &lt;code&gt;Kernel#eval&lt;/code&gt; accepts either a &lt;code&gt;Proc&lt;/code&gt; or a
+ *  &lt;code&gt;Binding&lt;/code&gt; object as its second parameter.
+ *     
+ *     def fred(param)
+ *       proc {}
+ *     end
+ *     
+ *     b = fred(99)
+ *     eval(&quot;param&quot;, b.binding)   #=&gt; 99
+ *     eval(&quot;param&quot;, b)           #=&gt; 99
+ */
+
+static VALUE
+proc_binding(proc)
+    VALUE proc;
+{
+    struct BLOCK *orig, *data;
+    VALUE bind;
+
+    Data_Get_Struct(proc, struct BLOCK, orig);
+    bind = Data_Make_Struct(rb_cBinding,struct BLOCK,blk_mark,blk_free,data);
+    MEMCPY(data, orig, struct BLOCK, 1);
+    frame_dup(&amp;data-&gt;frame);
+
+    if (data-&gt;iter) {
+        blk_copy_prev(data);
+    }
+    else {
+        data-&gt;prev = 0;
+    }
+
+    return bind;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,985 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: TkcTagAccess</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">TkcTagAccess</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/tk/lib/tk/canvastag_rb.html">
+                tk/lib/tk/canvastag.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M009241">&amp;</a>&nbsp;&nbsp;
+      <a href="#M009244">-@</a>&nbsp;&nbsp;
+      <a href="#M009243">^</a>&nbsp;&nbsp;
+      <a href="#M009212">addtag</a>&nbsp;&nbsp;
+      <a href="#M009213">bbox</a>&nbsp;&nbsp;
+      <a href="#M009214">bind</a>&nbsp;&nbsp;
+      <a href="#M009215">bind_append</a>&nbsp;&nbsp;
+      <a href="#M009216">bind_remove</a>&nbsp;&nbsp;
+      <a href="#M009217">bindinfo</a>&nbsp;&nbsp;
+      <a href="#M009218">cget</a>&nbsp;&nbsp;
+      <a href="#M009220">configinfo</a>&nbsp;&nbsp;
+      <a href="#M009219">configure</a>&nbsp;&nbsp;
+      <a href="#M009222">coords</a>&nbsp;&nbsp;
+      <a href="#M009221">current_configinfo</a>&nbsp;&nbsp;
+      <a href="#M009223">dchars</a>&nbsp;&nbsp;
+      <a href="#M009225">deltag</a>&nbsp;&nbsp;
+      <a href="#M009224">dtag</a>&nbsp;&nbsp;
+      <a href="#M009226">find</a>&nbsp;&nbsp;
+      <a href="#M009228">focus</a>&nbsp;&nbsp;
+      <a href="#M009229">gettags</a>&nbsp;&nbsp;
+      <a href="#M009230">icursor</a>&nbsp;&nbsp;
+      <a href="#M009231">index</a>&nbsp;&nbsp;
+      <a href="#M009232">insert</a>&nbsp;&nbsp;
+      <a href="#M009240">itemtype</a>&nbsp;&nbsp;
+      <a href="#M009227">list</a>&nbsp;&nbsp;
+      <a href="#M009233">lower</a>&nbsp;&nbsp;
+      <a href="#M009234">move</a>&nbsp;&nbsp;
+      <a href="#M009235">raise</a>&nbsp;&nbsp;
+      <a href="#M009236">scale</a>&nbsp;&nbsp;
+      <a href="#M009237">select_adjust</a>&nbsp;&nbsp;
+      <a href="#M009238">select_from</a>&nbsp;&nbsp;
+      <a href="#M009239">select_to</a>&nbsp;&nbsp;
+      <a href="#M009242">|</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="TkComm.html">TkComm</a></span>
+        <span class="include-name"><a href="TkTreatTagFont.html">TkTreatTagFont</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M009241" class="m-detail">
+        <a name="M009241"></a>
+
+        <div class="method-heading">
+          <a href="#M009241" class="method-signature">
+          <span class="method-name">&amp;</span><span class="method-args">(tag)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Following operators support logical expressions of canvas tags (for
+Tk8.3+). If tag1.path is &#8216;t1&#8217; and tag2.path is
+&#8216;t2&#8217;, then
+</p>
+<pre>
+     ltag = tag1 &amp; tag2; ltag.path =&gt; &quot;(t1)&amp;&amp;(t2)&quot;
+     ltag = tag1 | tag2; ltag.path =&gt; &quot;(t1)||(t2)&quot;
+     ltag = tag1 ^ tag2; ltag.path =&gt; &quot;(t1)^(t2)&quot;
+     ltag = - tag1;      ltag.path =&gt; &quot;!(t1)&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009241-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009241-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 169</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">&amp;</span> (<span class="ruby-identifier">tag</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">TkObject</span>
+      <span class="ruby-constant">TkcTagString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@c</span>, <span class="ruby-value str">'('</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@id</span> <span class="ruby-operator">+</span> <span class="ruby-value str">')&amp;&amp;('</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">path</span> <span class="ruby-operator">+</span> <span class="ruby-value str">')'</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-constant">TkcTagString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@c</span>, <span class="ruby-value str">'('</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@id</span> <span class="ruby-operator">+</span> <span class="ruby-value str">')&amp;&amp;('</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">')'</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009244" class="m-detail">
+        <a name="M009244"></a>
+
+        <div class="method-heading">
+          <a href="#M009244" class="method-signature">
+          <span class="method-name">-@</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009244-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009244-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 193</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">-@</span>
+    <span class="ruby-constant">TkcTagString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@c</span>, <span class="ruby-value str">'!('</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@id</span> <span class="ruby-operator">+</span> <span class="ruby-value str">')'</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009243" class="m-detail">
+        <a name="M009243"></a>
+
+        <div class="method-heading">
+          <a href="#M009243" class="method-signature">
+          <span class="method-name">^</span><span class="method-args">(tag)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009243-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009243-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 185</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">^</span> (<span class="ruby-identifier">tag</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">TkObject</span>
+      <span class="ruby-constant">TkcTagString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@c</span>, <span class="ruby-value str">'('</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@id</span> <span class="ruby-operator">+</span> <span class="ruby-value str">')^('</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">path</span> <span class="ruby-operator">+</span> <span class="ruby-value str">')'</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-constant">TkcTagString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@c</span>, <span class="ruby-value str">'('</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@id</span> <span class="ruby-operator">+</span> <span class="ruby-value str">')^('</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">')'</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009212" class="m-detail">
+        <a name="M009212"></a>
+
+        <div class="method-heading">
+          <a href="#M009212" class="method-signature">
+          <span class="method-name">addtag</span><span class="method-args">(tag)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009212-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009212-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 15</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">addtag</span>(<span class="ruby-identifier">tag</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">addtag</span>(<span class="ruby-identifier">tag</span>, <span class="ruby-value str">'withtag'</span>, <span class="ruby-ivar">@id</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009213" class="m-detail">
+        <a name="M009213"></a>
+
+        <div class="method-heading">
+          <a href="#M009213" class="method-signature">
+          <span class="method-name">bbox</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009213-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009213-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 20</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bbox</span>
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">bbox</span>(<span class="ruby-ivar">@id</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009214" class="m-detail">
+        <a name="M009214"></a>
+
+        <div class="method-heading">
+          <a href="#M009214" class="method-signature">
+          <span class="method-name">bind</span><span class="method-args">(seq, *args)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+def <a href="TkcTagAccess.html#M009214">bind</a>(seq, cmd=Proc.new, *args)
+</p>
+<pre>
+  @c.itembind(@id, seq, cmd, *args)
+  self
+</pre>
+<p>
+end
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009214-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009214-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 28</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bind</span>(<span class="ruby-identifier">seq</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-comment cmt"># if args[0].kind_of?(Proc) || args[0].kind_of?(Method)</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-constant">TkComm</span>.<span class="ruby-identifier">_callback_entry?</span>(<span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>]) <span class="ruby-operator">||</span> <span class="ruby-operator">!</span><span class="ruby-identifier">block_given?</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">itembind</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">seq</span>, <span class="ruby-identifier">cmd</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009215" class="m-detail">
+        <a name="M009215"></a>
+
+        <div class="method-heading">
+          <a href="#M009215" class="method-signature">
+          <span class="method-name">bind_append</span><span class="method-args">(seq, *args)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+def <a href="TkcTagAccess.html#M009215">bind_append</a>(seq, cmd=Proc.new,
+*args)
+</p>
+<pre>
+  @c.itembind_append(@id, seq, cmd, *args)
+  self
+</pre>
+<p>
+end
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009215-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009215-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 43</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bind_append</span>(<span class="ruby-identifier">seq</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-comment cmt"># if args[0].kind_of?(Proc) || args[0].kind_of?(Method)</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-constant">TkComm</span>.<span class="ruby-identifier">_callback_entry?</span>(<span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>]) <span class="ruby-operator">||</span> <span class="ruby-operator">!</span><span class="ruby-identifier">block_given?</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">itembind_append</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">seq</span>, <span class="ruby-identifier">cmd</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009216" class="m-detail">
+        <a name="M009216"></a>
+
+        <div class="method-heading">
+          <a href="#M009216" class="method-signature">
+          <span class="method-name">bind_remove</span><span class="method-args">(seq)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009216-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009216-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 54</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bind_remove</span>(<span class="ruby-identifier">seq</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">itembind_remove</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">seq</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009217" class="m-detail">
+        <a name="M009217"></a>
+
+        <div class="method-heading">
+          <a href="#M009217" class="method-signature">
+          <span class="method-name">bindinfo</span><span class="method-args">(seq=nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009217-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009217-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 59</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">bindinfo</span>(<span class="ruby-identifier">seq</span>=<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">itembindinfo</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">seq</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009218" class="m-detail">
+        <a name="M009218"></a>
+
+        <div class="method-heading">
+          <a href="#M009218" class="method-signature">
+          <span class="method-name">cget</span><span class="method-args">(option)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009218-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009218-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 63</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">cget</span>(<span class="ruby-identifier">option</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">itemcget</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">option</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009220" class="m-detail">
+        <a name="M009220"></a>
+
+        <div class="method-heading">
+          <a href="#M009220" class="method-signature">
+          <span class="method-name">configinfo</span><span class="method-args">(key=nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+def <a href="TkcTagAccess.html#M009219">configure</a>(keys)
+</p>
+<pre>
+  @c.itemconfigure @id, keys
+</pre>
+<p>
+end
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009220-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009220-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 75</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">configinfo</span>(<span class="ruby-identifier">key</span>=<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">itemconfiginfo</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">key</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009219" class="m-detail">
+        <a name="M009219"></a>
+
+        <div class="method-heading">
+          <a href="#M009219" class="method-signature">
+          <span class="method-name">configure</span><span class="method-args">(key, value=None)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009219-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009219-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 67</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">configure</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>=<span class="ruby-constant">None</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">itemconfigure</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009222" class="m-detail">
+        <a name="M009222"></a>
+
+        <div class="method-heading">
+          <a href="#M009222" class="method-signature">
+          <span class="method-name">coords</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009222-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009222-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 83</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">coords</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">coords</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009221" class="m-detail">
+        <a name="M009221"></a>
+
+        <div class="method-heading">
+          <a href="#M009221" class="method-signature">
+          <span class="method-name">current_configinfo</span><span class="method-args">(key=nil)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009221-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009221-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 79</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">current_configinfo</span>(<span class="ruby-identifier">key</span>=<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">current_itemconfiginfo</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">key</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009223" class="m-detail">
+        <a name="M009223"></a>
+
+        <div class="method-heading">
+          <a href="#M009223" class="method-signature">
+          <span class="method-name">dchars</span><span class="method-args">(first, last=None)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009223-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009223-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 87</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">dchars</span>(<span class="ruby-identifier">first</span>, <span class="ruby-identifier">last</span>=<span class="ruby-constant">None</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">dchars</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">first</span>, <span class="ruby-identifier">last</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009225" class="m-detail">
+        <a name="M009225"></a>
+
+        <div class="method-heading">
+          <span class="method-name">deltag</span><span class="method-args">(tag_to_del=None)</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="TkcTagAccess.html#M009224">dtag</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M009224" class="m-detail">
+        <a name="M009224"></a>
+
+        <div class="method-heading">
+          <a href="#M009224" class="method-signature">
+          <span class="method-name">dtag</span><span class="method-args">(tag_to_del=None)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009224-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009224-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 92</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">dtag</span>(<span class="ruby-identifier">tag_to_del</span>=<span class="ruby-constant">None</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">dtag</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">tag_to_del</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009226" class="m-detail">
+        <a name="M009226"></a>
+
+        <div class="method-heading">
+          <a href="#M009226" class="method-signature">
+          <span class="method-name">find</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009226-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009226-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 98</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">find</span>
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">find</span>(<span class="ruby-value str">'withtag'</span>, <span class="ruby-ivar">@id</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009228" class="m-detail">
+        <a name="M009228"></a>
+
+        <div class="method-heading">
+          <a href="#M009228" class="method-signature">
+          <span class="method-name">focus</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009228-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009228-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 103</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">focus</span>
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">itemfocus</span>(<span class="ruby-ivar">@id</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009229" class="m-detail">
+        <a name="M009229"></a>
+
+        <div class="method-heading">
+          <a href="#M009229" class="method-signature">
+          <span class="method-name">gettags</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009229-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009229-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 107</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">gettags</span>
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">gettags</span>(<span class="ruby-ivar">@id</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009230" class="m-detail">
+        <a name="M009230"></a>
+
+        <div class="method-heading">
+          <a href="#M009230" class="method-signature">
+          <span class="method-name">icursor</span><span class="method-args">(index)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009230-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009230-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 111</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">icursor</span>(<span class="ruby-identifier">index</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">icursor</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">index</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009231" class="m-detail">
+        <a name="M009231"></a>
+
+        <div class="method-heading">
+          <a href="#M009231" class="method-signature">
+          <span class="method-name">index</span><span class="method-args">(idx)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009231-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009231-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 116</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">index</span>(<span class="ruby-identifier">idx</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">index</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">idx</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009232" class="m-detail">
+        <a name="M009232"></a>
+
+        <div class="method-heading">
+          <a href="#M009232" class="method-signature">
+          <span class="method-name">insert</span><span class="method-args">(beforethis, string)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009232-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009232-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 120</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">insert</span>(<span class="ruby-identifier">beforethis</span>, <span class="ruby-identifier">string</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">insert</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">beforethis</span>, <span class="ruby-identifier">string</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009240" class="m-detail">
+        <a name="M009240"></a>
+
+        <div class="method-heading">
+          <a href="#M009240" class="method-signature">
+          <span class="method-name">itemtype</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009240-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009240-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 158</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">itemtype</span>
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">itemtype</span>(<span class="ruby-ivar">@id</span>)
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009227" class="m-detail">
+        <a name="M009227"></a>
+
+        <div class="method-heading">
+          <span class="method-name">list</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Alias for <a href="TkcTagAccess.html#M009226">find</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M009233" class="m-detail">
+        <a name="M009233"></a>
+
+        <div class="method-heading">
+          <a href="#M009233" class="method-signature">
+          <span class="method-name">lower</span><span class="method-args">(belowthis=None)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009233-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009233-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 125</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">lower</span>(<span class="ruby-identifier">belowthis</span>=<span class="ruby-constant">None</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">lower</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">belowthis</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009234" class="m-detail">
+        <a name="M009234"></a>
+
+        <div class="method-heading">
+          <a href="#M009234" class="method-signature">
+          <span class="method-name">move</span><span class="method-args">(xamount, yamount)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009234-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009234-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 130</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">move</span>(<span class="ruby-identifier">xamount</span>, <span class="ruby-identifier">yamount</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">move</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">xamount</span>, <span class="ruby-identifier">yamount</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009235" class="m-detail">
+        <a name="M009235"></a>
+
+        <div class="method-heading">
+          <a href="#M009235" class="method-signature">
+          <span class="method-name">raise</span><span class="method-args">(abovethis=None)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009235-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009235-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 135</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">raise</span>(<span class="ruby-identifier">abovethis</span>=<span class="ruby-constant">None</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">raise</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">abovethis</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009236" class="m-detail">
+        <a name="M009236"></a>
+
+        <div class="method-heading">
+          <a href="#M009236" class="method-signature">
+          <span class="method-name">scale</span><span class="method-args">(xorigin, yorigin, xscale, yscale)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009236-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009236-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 140</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">scale</span>(<span class="ruby-identifier">xorigin</span>, <span class="ruby-identifier">yorigin</span>, <span class="ruby-identifier">xscale</span>, <span class="ruby-identifier">yscale</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">scale</span>(<span class="ruby-ivar">@id</span>, <span class="ruby-identifier">xorigin</span>, <span class="ruby-identifier">yorigin</span>, <span class="ruby-identifier">xscale</span>, <span class="ruby-identifier">yscale</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009237" class="m-detail">
+        <a name="M009237"></a>
+
+        <div class="method-heading">
+          <a href="#M009237" class="method-signature">
+          <span class="method-name">select_adjust</span><span class="method-args">(index)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009237-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009237-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 145</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_adjust</span>(<span class="ruby-identifier">index</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">select</span>(<span class="ruby-value str">'adjust'</span>, <span class="ruby-ivar">@id</span>, <span class="ruby-identifier">index</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009238" class="m-detail">
+        <a name="M009238"></a>
+
+        <div class="method-heading">
+          <a href="#M009238" class="method-signature">
+          <span class="method-name">select_from</span><span class="method-args">(index)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009238-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009238-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 149</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_from</span>(<span class="ruby-identifier">index</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">select</span>(<span class="ruby-value str">'from'</span>, <span class="ruby-ivar">@id</span>, <span class="ruby-identifier">index</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009239" class="m-detail">
+        <a name="M009239"></a>
+
+        <div class="method-heading">
+          <a href="#M009239" class="method-signature">
+          <span class="method-name">select_to</span><span class="method-args">(index)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009239-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009239-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 153</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_to</span>(<span class="ruby-identifier">index</span>)
+    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">select</span>(<span class="ruby-value str">'to'</span>, <span class="ruby-ivar">@id</span>, <span class="ruby-identifier">index</span>)
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009242" class="m-detail">
+        <a name="M009242"></a>
+
+        <div class="method-heading">
+          <a href="#M009242" class="method-signature">
+          <span class="method-name">|</span><span class="method-args">(tag)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009242-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009242-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tk/canvastag.rb, line 177</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">|</span> (<span class="ruby-identifier">tag</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">TkObject</span>
+      <span class="ruby-constant">TkcTagString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@c</span>, <span class="ruby-value str">'('</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@id</span> <span class="ruby-operator">+</span> <span class="ruby-value str">')||('</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">path</span> <span class="ruby-operator">+</span> <span class="ruby-value str">')'</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-constant">TkcTagString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@c</span>, <span class="ruby-value str">'('</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@id</span> <span class="ruby-operator">+</span> <span class="ruby-value str">')||('</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">')'</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 4 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a community service provided by <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'>Phoenix, Arizona,  Ruby application development company</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

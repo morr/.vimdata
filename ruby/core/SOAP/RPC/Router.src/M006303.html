@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>add_document_request_operation (SOAP::RPC::Router)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/rpc/router.rb, line 137</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_document_request_operation</span>(<span class="ruby-identifier">factory</span>, <span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">param_def</span>, <span class="ruby-identifier">opt</span> = {})
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-comment cmt"># adopt workaround for doc/lit wrapper method</span>
+    <span class="ruby-comment cmt"># (you should consider to simply use rpc/lit service)</span>
+    <span class="ruby-comment cmt">#</span>
+    <span class="ruby-comment cmt">#unless soapaction</span>
+    <span class="ruby-comment cmt">#  raise RPCRoutingError.new(&quot;soapaction is a must for document method&quot;)</span>
+    <span class="ruby-comment cmt">#end</span>
+    <span class="ruby-identifier">ensure_styleuse_option</span>(<span class="ruby-identifier">opt</span>, <span class="ruby-identifier">:document</span>, <span class="ruby-identifier">:literal</span>)
+    <span class="ruby-identifier">op</span> = <span class="ruby-constant">RequestScopeOperation</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">receiver</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">param_def</span>, <span class="ruby-identifier">opt</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:request_style</span>] <span class="ruby-operator">!=</span> <span class="ruby-identifier">:document</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">RPCRoutingError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;illegal request_style given&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">assign_operation</span>(<span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">first_input_part_qname</span>(<span class="ruby-identifier">param_def</span>), <span class="ruby-identifier">op</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

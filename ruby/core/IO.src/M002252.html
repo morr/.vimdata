@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>puts (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.puts(obj, ...)    =&gt; nil
+ *  
+ *  Writes the given objects to &lt;em&gt;ios&lt;/em&gt; as with
+ *  &lt;code&gt;IO#print&lt;/code&gt;. Writes a record separator (typically a
+ *  newline) after any that do not already end with a newline sequence.
+ *  If called with an array argument, writes each element on a new line.
+ *  If called without arguments, outputs a single record separator.
+ *     
+ *     $stdout.puts(&quot;this&quot;, &quot;is&quot;, &quot;a&quot;, &quot;test&quot;)
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     this
+ *     is
+ *     a
+ *     test
+ */
+
+VALUE
+rb_io_puts(argc, argv, out)
+    int argc;
+    VALUE *argv;
+    VALUE out;
+{
+    int i;
+    VALUE line;
+
+    /* if no argument given, print newline. */
+    if (argc == 0) {
+        rb_io_write(out, rb_default_rs);
+        return Qnil;
+    }
+    for (i=0; i&lt;argc; i++) {
+        if (NIL_P(argv[i])) {
+            line = rb_str_new2(&quot;nil&quot;);
+        }
+        else {
+            line = rb_check_array_type(argv[i]);
+            if (!NIL_P(line)) {
+                rb_protect_inspect(io_puts_ary, line, out);
+                continue;
+            }
+            line = rb_obj_as_string(argv[i]);
+        }
+        rb_io_write(out, line);
+        if (RSTRING(line)-&gt;len == 0 ||
+            RSTRING(line)-&gt;ptr[RSTRING(line)-&gt;len-1] != '\n') {
+            rb_io_write(out, rb_default_rs);
+        }
+    }
+
+    return Qnil;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>pos= (StringIO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   strio.pos = integer    -&gt; integer
+ *
+ * Seeks to the given position (in bytes) in *strio*.
+ */
+static VALUE
+strio_set_pos(self, pos)
+    VALUE self;
+    VALUE pos;
+{
+    struct StringIO *ptr = StringIO(self);
+    long p = NUM2LONG(pos);
+    if (p &lt; 0) {
+        error_inval(0);
+    }
+    ptr-&gt;pos = p;
+    ptr-&gt;flags &amp;= ~STRIO_EOF;
+    return pos;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>proxy_connect (WEBrick::HTTPProxyServer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/httpproxy.rb, line 169</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">proxy_connect</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+      <span class="ruby-comment cmt"># Proxy Authentication</span>
+      <span class="ruby-identifier">proxy_auth</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+
+      <span class="ruby-identifier">ua</span> = <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>[<span class="ruby-identifier">:WEBrickSocket</span>]  <span class="ruby-comment cmt"># User-Agent</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">InternalServerError</span>,
+        <span class="ruby-value str">&quot;[BUG] cannot get socket&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">ua</span>
+
+      <span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span> = <span class="ruby-identifier">req</span>.<span class="ruby-identifier">unparsed_uri</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">&quot;:&quot;</span>, <span class="ruby-value">2</span>)
+      <span class="ruby-comment cmt"># Proxy authentication for upstream proxy server</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">proxy</span> = <span class="ruby-identifier">proxy_uri</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+        <span class="ruby-identifier">proxy_request_line</span> = <span class="ruby-node">&quot;CONNECT #{host}:#{port} HTTP/1.0&quot;</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">proxy</span>.<span class="ruby-identifier">userinfo</span>
+          <span class="ruby-identifier">credentials</span> = <span class="ruby-value str">&quot;Basic &quot;</span> <span class="ruby-operator">+</span> [<span class="ruby-identifier">proxy</span>.<span class="ruby-identifier">userinfo</span>].<span class="ruby-identifier">pack</span>(<span class="ruby-value str">&quot;m*&quot;</span>)
+          <span class="ruby-identifier">credentials</span>.<span class="ruby-identifier">chomp!</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span> = <span class="ruby-identifier">proxy</span>.<span class="ruby-identifier">host</span>, <span class="ruby-identifier">proxy</span>.<span class="ruby-identifier">port</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-node">&quot;CONNECT: upstream proxy is `#{host}:#{port}'.&quot;</span>)
+        <span class="ruby-identifier">os</span> = <span class="ruby-constant">TCPSocket</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span>)     <span class="ruby-comment cmt"># origin server</span>
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">proxy</span>
+          <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-value str">&quot;CONNECT: sending a Request-Line&quot;</span>)
+          <span class="ruby-identifier">os</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">proxy_request_line</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">CRLF</span>
+          <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-node">&quot;CONNECT: &gt; #{proxy_request_line}&quot;</span>)
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">credentials</span>
+            <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-value str">&quot;CONNECT: sending a credentials&quot;</span>)
+            <span class="ruby-identifier">os</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;Proxy-Authorization: &quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">credentials</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">CRLF</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">os</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">CRLF</span>
+          <span class="ruby-identifier">proxy_status_line</span> = <span class="ruby-identifier">os</span>.<span class="ruby-identifier">gets</span>(<span class="ruby-constant">LF</span>)
+          <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-value str">&quot;CONNECT: read a Status-Line form the upstream server&quot;</span>)
+          <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-node">&quot;CONNECT: &lt; #{proxy_status_line}&quot;</span>)
+          <span class="ruby-keyword kw">if</span> <span class="ruby-regexp re">%r{^HTTP/\d+\.\d+\s+200\s*}</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">proxy_status_line</span>
+            <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">os</span>.<span class="ruby-identifier">gets</span>(<span class="ruby-constant">LF</span>)
+              <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-node">/\A(#{CRLF}|#{LF})\z/o</span><span class="ruby-identifier">m</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">line</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">BadGateway</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-node">&quot;CONNECT #{host}:#{port}: succeeded&quot;</span>)
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">status</span> = <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">RC_OK</span>
+      <span class="ruby-keyword kw">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+        <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-node">&quot;CONNECT #{host}:#{port}: failed `#{ex.message}'&quot;</span>)
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">set_error</span>(<span class="ruby-identifier">ex</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">EOFError</span>
+      <span class="ruby-keyword kw">ensure</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">handler</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:ProxyContentHandler</span>]
+          <span class="ruby-identifier">handler</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">res</span>.<span class="ruby-identifier">send_response</span>(<span class="ruby-identifier">ua</span>)
+        <span class="ruby-identifier">access_log</span>(<span class="ruby-ivar">@config</span>, <span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+
+        <span class="ruby-comment cmt"># Should clear request-line not to send the sesponse twice.</span>
+        <span class="ruby-comment cmt"># see: HTTPServer#run</span>
+        <span class="ruby-identifier">req</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-constant">NullReader</span>) <span class="ruby-keyword kw">rescue</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">fds</span> = <span class="ruby-constant">IO</span><span class="ruby-operator">::</span><span class="ruby-identifier">select</span>([<span class="ruby-identifier">ua</span>, <span class="ruby-identifier">os</span>])
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">fds</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">member?</span>(<span class="ruby-identifier">ua</span>)
+            <span class="ruby-identifier">buf</span> = <span class="ruby-identifier">ua</span>.<span class="ruby-identifier">sysread</span>(<span class="ruby-value">1024</span>);
+            <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-node">&quot;CONNECT: #{buf.size} byte from User-Agent&quot;</span>)
+            <span class="ruby-identifier">os</span>.<span class="ruby-identifier">syswrite</span>(<span class="ruby-identifier">buf</span>)
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">fds</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">member?</span>(<span class="ruby-identifier">os</span>)
+            <span class="ruby-identifier">buf</span> = <span class="ruby-identifier">os</span>.<span class="ruby-identifier">sysread</span>(<span class="ruby-value">1024</span>);
+            <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-node">&quot;CONNECT: #{buf.size} byte from #{host}:#{port}&quot;</span>)
+            <span class="ruby-identifier">ua</span>.<span class="ruby-identifier">syswrite</span>(<span class="ruby-identifier">buf</span>)
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>
+        <span class="ruby-identifier">os</span>.<span class="ruby-identifier">close</span>
+        <span class="ruby-ivar">@logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-node">&quot;CONNECT #{host}:#{port}: closed&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">EOFError</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

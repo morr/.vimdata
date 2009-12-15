@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>kcode (Regexp)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     rxp.kcode   =&gt; str
+ *  
+ *  Returns the character set code for the regexp.
+ */
+
+static VALUE
+rb_reg_kcode_m(re)
+    VALUE re;
+{
+    char *kcode;
+
+    if (FL_TEST(re, KCODE_FIXED)) {
+        switch (RBASIC(re)-&gt;flags &amp; KCODE_MASK) {
+          case KCODE_NONE:
+            kcode = &quot;none&quot;; break;
+          case KCODE_EUC:
+            kcode = &quot;euc&quot;; break;
+          case KCODE_SJIS:
+            kcode = &quot;sjis&quot;; break;
+          case KCODE_UTF8:
+            kcode = &quot;utf8&quot;; break;
+          default:
+            rb_bug(&quot;unknown kcode - should not happen&quot;);
+            break;
+        }
+        return rb_str_new2(kcode);
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

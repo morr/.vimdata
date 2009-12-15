@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>lstat (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     file.lstat   =&gt;  stat
+ *  
+ *  Same as &lt;code&gt;IO#stat&lt;/code&gt;, but does not follow the last symbolic
+ *  link. Instead, reports on the link itself.
+ *     
+ *     File.symlink(&quot;testfile&quot;, &quot;link2test&quot;)   #=&gt; 0
+ *     File.stat(&quot;testfile&quot;).size              #=&gt; 66
+ *     f = File.new(&quot;link2test&quot;)
+ *     f.lstat.size                            #=&gt; 8
+ *     f.stat.size                             #=&gt; 66
+ */
+
+static VALUE
+rb_file_lstat(obj)
+    VALUE obj;
+{
+#ifdef HAVE_LSTAT
+    OpenFile *fptr;
+    struct stat st;
+
+    rb_secure(2);
+    GetOpenFile(obj, fptr);
+    if (!fptr-&gt;path) return Qnil;
+    if (lstat(fptr-&gt;path, &amp;st) == -1) {
+        rb_sys_fail(fptr-&gt;path);
+    }
+    return stat_new(&amp;st);
+#else
+    return rb_io_stat(obj);
+#endif
+}</pre>
+</body>
+</html>

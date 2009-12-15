@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>start (Thread)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Thread.start([args]*) {|args| block }   =&gt; thread
+ *     Thread.fork([args]*) {|args| block }    =&gt; thread
+ *  
+ *  Basically the same as &lt;code&gt;Thread::new&lt;/code&gt;. However, if class
+ *  &lt;code&gt;Thread&lt;/code&gt; is subclassed, then calling &lt;code&gt;start&lt;/code&gt; in that
+ *  subclass will not invoke the subclass's &lt;code&gt;initialize&lt;/code&gt; method.
+ */
+
+static VALUE
+rb_thread_start(klass, args)
+    VALUE klass, args;
+{
+    if (!rb_block_given_p()) {
+        rb_raise(rb_eThreadError, &quot;must be called with a block&quot;);
+    }
+    return rb_thread_start_0(rb_thread_yield, args, rb_thread_alloc(klass));
+}</pre>
+</body>
+</html>

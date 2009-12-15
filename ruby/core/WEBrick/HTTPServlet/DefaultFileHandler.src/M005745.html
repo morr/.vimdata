@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>do_GET (WEBrick::HTTPServlet::DefaultFileHandler)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/webrick/httpservlet/filehandler.rb, line 27</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">do_GET</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>)
+        <span class="ruby-identifier">st</span> = <span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-identifier">stat</span>(<span class="ruby-ivar">@local_path</span>)
+        <span class="ruby-identifier">mtime</span> = <span class="ruby-identifier">st</span>.<span class="ruby-identifier">mtime</span>
+        <span class="ruby-identifier">res</span>[<span class="ruby-value str">'etag'</span>] = <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;%x-%x-%x&quot;</span>, <span class="ruby-identifier">st</span>.<span class="ruby-identifier">ino</span>, <span class="ruby-identifier">st</span>.<span class="ruby-identifier">size</span>, <span class="ruby-identifier">st</span>.<span class="ruby-identifier">mtime</span>.<span class="ruby-identifier">to_i</span>)
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">not_modified?</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>, <span class="ruby-identifier">mtime</span>, <span class="ruby-identifier">res</span>[<span class="ruby-value str">'etag'</span>])
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">body</span> = <span class="ruby-value str">''</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">NotModified</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">req</span>[<span class="ruby-value str">'range'</span>] 
+          <span class="ruby-identifier">make_partial_content</span>(<span class="ruby-identifier">req</span>, <span class="ruby-identifier">res</span>, <span class="ruby-ivar">@local_path</span>, <span class="ruby-identifier">st</span>.<span class="ruby-identifier">size</span>)
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPStatus</span><span class="ruby-operator">::</span><span class="ruby-constant">PartialContent</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">mtype</span> = <span class="ruby-constant">HTTPUtils</span><span class="ruby-operator">::</span><span class="ruby-identifier">mime_type</span>(<span class="ruby-ivar">@local_path</span>, <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:MimeTypes</span>])
+          <span class="ruby-identifier">res</span>[<span class="ruby-value str">'content-type'</span>] = <span class="ruby-identifier">mtype</span>
+          <span class="ruby-identifier">res</span>[<span class="ruby-value str">'content-length'</span>] = <span class="ruby-identifier">st</span>.<span class="ruby-identifier">size</span>
+          <span class="ruby-identifier">res</span>[<span class="ruby-value str">'last-modified'</span>] = <span class="ruby-identifier">mtime</span>.<span class="ruby-identifier">httpdate</span>
+          <span class="ruby-identifier">res</span>.<span class="ruby-identifier">body</span> = <span class="ruby-identifier">open</span>(<span class="ruby-ivar">@local_path</span>, <span class="ruby-value str">&quot;rb&quot;</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

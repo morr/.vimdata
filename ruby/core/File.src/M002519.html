@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>fnmatch (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.fnmatch( pattern, path, [flags] ) =&gt; (true or false)
+ *     File.fnmatch?( pattern, path, [flags] ) =&gt; (true or false)
+ *
+ *  Returns true if &lt;i&gt;path&lt;/i&gt; matches against &lt;i&gt;pattern&lt;/i&gt; The
+ *  pattern is not a regular expression; instead it follows rules
+ *  similar to shell filename globbing. It may contain the following
+ *  metacharacters:
+ *
+ *  &lt;code&gt;*&lt;/code&gt;::        Matches any file. Can be restricted by
+ *                          other values in the glob. &lt;code&gt;*&lt;/code&gt;
+ *                          will match all files; &lt;code&gt;c*&lt;/code&gt; will
+ *                          match all files beginning with
+ *                          &lt;code&gt;c&lt;/code&gt;; &lt;code&gt;*c&lt;/code&gt; will match
+ *                          all files ending with &lt;code&gt;c&lt;/code&gt;; and
+ *                          &lt;code&gt;*c*&lt;/code&gt; will match all files that
+ *                          have &lt;code&gt;c&lt;/code&gt; in them (including at
+ *                          the beginning or end). Equivalent to
+ *                          &lt;code&gt;/ .* /x&lt;/code&gt; in regexp.
+ *  &lt;code&gt;**&lt;/code&gt;::       Matches directories recursively or files
+ *                          expansively.
+ *  &lt;code&gt;?&lt;/code&gt;::        Matches any one character. Equivalent to
+ *                          &lt;code&gt;/.{1}/&lt;/code&gt; in regexp.
+ *  &lt;code&gt;[set]&lt;/code&gt;::    Matches any one character in +set+.
+ *                          Behaves exactly like character sets in
+ *                          Regexp, including set negation
+ *                          (&lt;code&gt;[^a-z]&lt;/code&gt;).
+ *  &lt;code&gt;\&lt;/code&gt;::        Escapes the next metacharacter.
+ *
+ *  &lt;i&gt;flags&lt;/i&gt; is a bitwise OR of the &lt;code&gt;FNM_xxx&lt;/code&gt;
+ *  parameters. The same glob pattern and flags are used by
+ *  &lt;code&gt;Dir::glob&lt;/code&gt;.
+ *
+ *     File.fnmatch('cat',       'cat')        #=&gt; true  : match entire string
+ *     File.fnmatch('cat',       'category')   #=&gt; false : only match partial string
+ *     File.fnmatch('c{at,ub}s', 'cats')       #=&gt; false : { } isn't supported
+ *
+ *     File.fnmatch('c?t',     'cat')          #=&gt; true  : '?' match only 1 character
+ *     File.fnmatch('c??t',    'cat')          #=&gt; false : ditto
+ *     File.fnmatch('c*',      'cats')         #=&gt; true  : '*' match 0 or more characters
+ *     File.fnmatch('c*t',     'c/a/b/t')      #=&gt; true  : ditto
+ *     File.fnmatch('ca[a-z]', 'cat')          #=&gt; true  : inclusive bracket expression
+ *     File.fnmatch('ca[^t]',  'cat')          #=&gt; false : exclusive bracket expression ('^' or '!')
+ *
+ *     File.fnmatch('cat', 'CAT')                     #=&gt; false : case sensitive
+ *     File.fnmatch('cat', 'CAT', File::FNM_CASEFOLD) #=&gt; true  : case insensitive
+ *
+ *     File.fnmatch('?',   '/', File::FNM_PATHNAME)  #=&gt; false : wildcard doesn't match '/' on FNM_PATHNAME
+ *     File.fnmatch('*',   '/', File::FNM_PATHNAME)  #=&gt; false : ditto
+ *     File.fnmatch('[/]', '/', File::FNM_PATHNAME)  #=&gt; false : ditto
+ *
+ *     File.fnmatch('\?',   '?')                       #=&gt; true  : escaped wildcard becomes ordinary
+ *     File.fnmatch('\a',   'a')                       #=&gt; true  : escaped ordinary remains ordinary
+ *     File.fnmatch('\a',   '\a', File::FNM_NOESCAPE)  #=&gt; true  : FNM_NOESACPE makes '\' ordinary
+ *     File.fnmatch('[\?]', '?')                       #=&gt; true  : can escape inside bracket expression
+ *
+ *     File.fnmatch('*',   '.profile')                      #=&gt; false : wildcard doesn't match leading
+ *     File.fnmatch('*',   '.profile', File::FNM_DOTMATCH)  #=&gt; true    period by default.
+ *     File.fnmatch('.*',  '.profile')                      #=&gt; true
+ *
+ *     rbfiles = '**' '/' '*.rb' # you don't have to do like this. just write in single string.
+ *     File.fnmatch(rbfiles, 'main.rb')                    #=&gt; false
+ *     File.fnmatch(rbfiles, './main.rb')                  #=&gt; false
+ *     File.fnmatch(rbfiles, 'lib/song.rb')                #=&gt; true
+ *     File.fnmatch('**.rb', 'main.rb')                    #=&gt; true
+ *     File.fnmatch('**.rb', './main.rb')                  #=&gt; false
+ *     File.fnmatch('**.rb', 'lib/song.rb')                #=&gt; true
+ *     File.fnmatch('*',           'dave/.profile')                      #=&gt; true
+ *
+ *     pattern = '*' '/' '*'
+ *     File.fnmatch(pattern, 'dave/.profile', File::FNM_PATHNAME)  #=&gt; false
+ *     File.fnmatch(pattern, 'dave/.profile', File::FNM_PATHNAME | File::FNM_DOTMATCH) #=&gt; true
+ *
+ *     pattern = '**' '/' 'foo'
+ *     File.fnmatch(pattern, 'a/b/c/foo', File::FNM_PATHNAME)     #=&gt; true
+ *     File.fnmatch(pattern, '/a/b/c/foo', File::FNM_PATHNAME)    #=&gt; true
+ *     File.fnmatch(pattern, 'c:/a/b/c/foo', File::FNM_PATHNAME)  #=&gt; true
+ *     File.fnmatch(pattern, 'a/.b/c/foo', File::FNM_PATHNAME)    #=&gt; false
+ *     File.fnmatch(pattern, 'a/.b/c/foo', File::FNM_PATHNAME | File::FNM_DOTMATCH) #=&gt; true
+ */
+static VALUE
+file_s_fnmatch(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    VALUE pattern, path;
+    VALUE rflags;
+    int flags;
+
+    if (rb_scan_args(argc, argv, &quot;21&quot;, &amp;pattern, &amp;path, &amp;rflags) == 3)
+        flags = NUM2INT(rflags);
+    else
+        flags = 0;
+
+    StringValue(pattern);
+    StringValue(path);
+
+    if (fnmatch(RSTRING(pattern)-&gt;ptr, RSTRING(path)-&gt;ptr, flags) == 0)
+        return Qtrue;
+
+    return Qfalse;
+}</pre>
+</body>
+</html>

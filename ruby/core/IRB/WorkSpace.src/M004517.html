@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>filter_backtrace (IRB::WorkSpace)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb/workspace.rb, line 86</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">filter_backtrace</span>(<span class="ruby-identifier">bt</span>)
+      <span class="ruby-keyword kw">case</span> <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">conf</span>[<span class="ruby-identifier">:CONTEXT_MODE</span>]
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">bt</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/\(irb_local_binding\)/</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span>
+        <span class="ruby-keyword kw">if</span>(<span class="ruby-identifier">bt</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">%r!/tmp/irb-binding!</span> <span class="ruby-keyword kw">or</span>
+           <span class="ruby-identifier">bt</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">%r!irb/.*\.rb!</span> <span class="ruby-keyword kw">or</span>
+           <span class="ruby-identifier">bt</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/irb\.rb/</span>)
+          <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value">2</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">bt</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/irb\/.*\.rb/</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value">3</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">bt</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/irb\/.*\.rb/</span>
+        <span class="ruby-identifier">bt</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/:\s*in `irb_binding'/</span>){<span class="ruby-value str">&quot;&quot;</span>} 
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">bt</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

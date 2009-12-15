@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Net::IMAP)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/net/imap.rb, line 881</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span> = <span class="ruby-constant">PORT</span>, <span class="ruby-identifier">usessl</span> = <span class="ruby-keyword kw">false</span>, <span class="ruby-identifier">certs</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">verify</span> = <span class="ruby-keyword kw">false</span>)
+      <span class="ruby-keyword kw">super</span>()
+      <span class="ruby-ivar">@host</span> = <span class="ruby-identifier">host</span>
+      <span class="ruby-ivar">@port</span> = <span class="ruby-identifier">port</span>
+      <span class="ruby-ivar">@tag_prefix</span> = <span class="ruby-value str">&quot;RUBY&quot;</span>
+      <span class="ruby-ivar">@tagno</span> = <span class="ruby-value">0</span>
+      <span class="ruby-ivar">@parser</span> = <span class="ruby-constant">ResponseParser</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-ivar">@sock</span> = <span class="ruby-constant">TCPSocket</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">usessl</span>
+        <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">defined?</span>(<span class="ruby-constant">OpenSSL</span>)
+          <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;SSL extension not installed&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-ivar">@usessl</span> = <span class="ruby-keyword kw">true</span>
+
+        <span class="ruby-comment cmt"># verify the server.</span>
+        <span class="ruby-identifier">context</span> = <span class="ruby-constant">SSLContext</span><span class="ruby-operator">::</span><span class="ruby-identifier">new</span>()
+        <span class="ruby-identifier">context</span>.<span class="ruby-identifier">ca_file</span> = <span class="ruby-identifier">certs</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">certs</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">FileTest</span><span class="ruby-operator">::</span><span class="ruby-identifier">file?</span>(<span class="ruby-identifier">certs</span>)
+        <span class="ruby-identifier">context</span>.<span class="ruby-identifier">ca_path</span> = <span class="ruby-identifier">certs</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">certs</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">FileTest</span><span class="ruby-operator">::</span><span class="ruby-identifier">directory?</span>(<span class="ruby-identifier">certs</span>)
+        <span class="ruby-identifier">context</span>.<span class="ruby-identifier">verify_mode</span> = <span class="ruby-constant">VERIFY_PEER</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verify</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span>(<span class="ruby-constant">VerifyCallbackProc</span>)
+          <span class="ruby-identifier">context</span>.<span class="ruby-identifier">verify_callback</span> = <span class="ruby-constant">VerifyCallbackProc</span> 
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-ivar">@sock</span> = <span class="ruby-constant">SSLSocket</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@sock</span>, <span class="ruby-identifier">context</span>)
+        <span class="ruby-ivar">@sock</span>.<span class="ruby-identifier">connect</span>   <span class="ruby-comment cmt"># start ssl session.</span>
+        <span class="ruby-ivar">@sock</span>.<span class="ruby-identifier">post_connection_check</span>(<span class="ruby-ivar">@host</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verify</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@usessl</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@responses</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>([].<span class="ruby-identifier">freeze</span>)
+      <span class="ruby-ivar">@tagged_responses</span> = {}
+      <span class="ruby-ivar">@response_handlers</span> = []
+      <span class="ruby-ivar">@response_arrival</span> = <span class="ruby-identifier">new_cond</span>
+      <span class="ruby-ivar">@continuation_request</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@logout_command_tag</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@debug_output_bol</span> = <span class="ruby-keyword kw">true</span>
+
+      <span class="ruby-ivar">@greeting</span> = <span class="ruby-identifier">get_response</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@greeting</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;BYE&quot;</span>
+        <span class="ruby-ivar">@sock</span>.<span class="ruby-identifier">close</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ByeResponseError</span>, <span class="ruby-ivar">@greeting</span>.<span class="ruby-identifier">raw_data</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@client_thread</span> = <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>
+      <span class="ruby-ivar">@receiver_thread</span> = <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">start</span> {
+        <span class="ruby-identifier">receive_responses</span>
+      }
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

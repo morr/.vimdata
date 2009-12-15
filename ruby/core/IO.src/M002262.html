@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sync (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.sync    =&gt; true or false
+ *  
+ *  Returns the current ``sync mode'' of &lt;em&gt;ios&lt;/em&gt;. When sync mode is
+ *  true, all output is immediately flushed to the underlying operating
+ *  system and is not buffered by Ruby internally. See also
+ *  &lt;code&gt;IO#fsync&lt;/code&gt;.
+ *     
+ *     f = File.new(&quot;testfile&quot;)
+ *     f.sync   #=&gt; false
+ */
+
+static VALUE
+rb_io_sync(io)
+    VALUE io;
+{
+    OpenFile *fptr;
+
+    GetOpenFile(io, fptr);
+    return (fptr-&gt;mode &amp; FMODE_SYNC) ? Qtrue : Qfalse;
+}</pre>
+</body>
+</html>

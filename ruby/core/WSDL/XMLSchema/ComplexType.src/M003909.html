@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>child_type (WSDL::XMLSchema::ComplexType)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/wsdl/soap/complexType.rb, line 49</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">child_type</span>(<span class="ruby-identifier">name</span> = <span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">compoundtype</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:TYPE_STRUCT</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ele</span> = <span class="ruby-identifier">find_element</span>(<span class="ruby-identifier">name</span>)
+        <span class="ruby-identifier">ele</span>.<span class="ruby-identifier">type</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">ele</span> = <span class="ruby-identifier">find_element_by_name</span>(<span class="ruby-identifier">name</span>.<span class="ruby-identifier">name</span>)
+        <span class="ruby-identifier">ele</span>.<span class="ruby-identifier">type</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:TYPE_ARRAY</span>
+      <span class="ruby-ivar">@contenttype</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">content_arytype</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:TYPE_MAP</span>
+      <span class="ruby-identifier">item_ele</span> = <span class="ruby-identifier">find_element_by_name</span>(<span class="ruby-value str">&quot;item&quot;</span>) <span class="ruby-keyword kw">or</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;'item' element not found in Map definition.&quot;</span>)
+      <span class="ruby-identifier">content</span> = <span class="ruby-identifier">item_ele</span>.<span class="ruby-identifier">local_complextype</span> <span class="ruby-keyword kw">or</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;No complexType definition for 'item'.&quot;</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ele</span> = <span class="ruby-identifier">content</span>.<span class="ruby-identifier">find_element</span>(<span class="ruby-identifier">name</span>)
+        <span class="ruby-identifier">ele</span>.<span class="ruby-identifier">type</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">ele</span> = <span class="ruby-identifier">content</span>.<span class="ruby-identifier">find_element_by_name</span>(<span class="ruby-identifier">name</span>.<span class="ruby-identifier">name</span>)
+        <span class="ruby-identifier">ele</span>.<span class="ruby-identifier">type</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;Unknown kind of complexType.&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

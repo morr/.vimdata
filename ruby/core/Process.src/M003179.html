@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>groups= (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.groups= array   =&gt; array
+ *
+ *  Set the supplemental group access list to the given
+ *  &lt;code&gt;Array&lt;/code&gt; of group IDs.
+ *
+ *     Process.groups   #=&gt; [0, 1, 2, 3, 4, 6, 10, 11, 20, 26, 27]
+ *     Process.groups = [27, 6, 10, 11]   #=&gt; [27, 6, 10, 11]
+ *     Process.groups   #=&gt; [27, 6, 10, 11]
+ *
+ */
+
+static VALUE
+proc_setgroups(VALUE obj, VALUE ary)
+{
+#ifdef HAVE_SETGROUPS
+    size_t ngroups;
+    rb_gid_t *groups;
+    int i;
+    struct group *gr;
+
+    Check_Type(ary, T_ARRAY);
+
+    ngroups = RARRAY(ary)-&gt;len;
+    if (ngroups &gt; maxgroups)
+        rb_raise(rb_eArgError, &quot;too many groups, %d max&quot;, maxgroups);
+
+    groups = ALLOCA_N(rb_gid_t, ngroups);
+
+    for (i = 0; i &lt; ngroups &amp;&amp; i &lt; RARRAY(ary)-&gt;len; i++) {
+        VALUE g = RARRAY(ary)-&gt;ptr[i];
+
+        if (FIXNUM_P(g)) {
+            groups[i] = FIX2INT(g);
+        }
+        else {
+            VALUE tmp = rb_check_string_type(g);
+
+            if (NIL_P(tmp)) {
+                groups[i] = NUM2INT(g);
+            }
+            else {
+                gr = getgrnam(RSTRING(tmp)-&gt;ptr);
+                if (gr == NULL)
+                    rb_raise(rb_eArgError,
+                             &quot;can't find group for %s&quot;, RSTRING(tmp)-&gt;ptr);
+                groups[i] = gr-&gt;gr_gid;
+            }
+        }
+    }
+
+    i = setgroups(ngroups, groups);
+    if (i == -1)
+        rb_sys_fail(0);
+
+    return proc_getgroups(obj);
+#else
+    rb_notimplement();
+    return Qnil;
+#endif
+}</pre>
+</body>
+</html>

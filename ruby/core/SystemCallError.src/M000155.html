@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>=== (SystemCallError)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   system_call_error === other  =&gt; true or false
+ *
+ * Return +true+ if the receiver is a generic +SystemCallError+, or
+ * if the error numbers _self_ and _other_ are the same.
+ */
+
+
+static VALUE
+syserr_eqq(self, exc)
+    VALUE self, exc;
+{
+    VALUE num, e;
+
+    if (!rb_obj_is_kind_of(exc, rb_eSystemCallError)) return Qfalse;
+    if (self == rb_eSystemCallError) return Qtrue;
+
+    num = rb_attr_get(exc, rb_intern(&quot;errno&quot;));
+    if (NIL_P(num)) {
+        VALUE klass = CLASS_OF(exc);
+
+        while (TYPE(klass) == T_ICLASS || FL_TEST(klass, FL_SINGLETON)) {
+            klass = (VALUE)RCLASS(klass)-&gt;super;
+        }
+        num = rb_const_get(klass, rb_intern(&quot;Errno&quot;));
+    }
+    e = rb_const_get(self, rb_intern(&quot;Errno&quot;));
+    if (FIXNUM_P(num) ? num == e : rb_equal(num, e))
+        return Qtrue;
+    return Qfalse;
+}</pre>
+</body>
+</html>

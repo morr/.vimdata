@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>foreach (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     IO.foreach(name, sep_string=$/) {|line| block }   =&gt; nil
+ *  
+ *  Executes the block for every line in the named I/O port, where lines
+ *  are separated by &lt;em&gt;sep_string&lt;/em&gt;.
+ *     
+ *     IO.foreach(&quot;testfile&quot;) {|x| print &quot;GOT &quot;, x }
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     GOT This is line one
+ *     GOT This is line two
+ *     GOT This is line three
+ *     GOT And so on...
+ */     
+
+static VALUE
+rb_io_s_foreach(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE fname;
+    struct foreach_arg arg;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;fname, &amp;arg.sep);
+    SafeStringValue(fname);
+
+    if (argc == 1) {
+        arg.sep = rb_default_rs;
+    }
+    else if (!NIL_P(arg.sep)) {
+        StringValue(arg.sep);
+    }
+    arg.io = rb_io_open(StringValueCStr(fname), &quot;r&quot;);
+    if (NIL_P(arg.io)) return Qnil;
+
+    return rb_ensure(io_s_foreach, (VALUE)&amp;arg, rb_io_close, arg.io);
+}</pre>
+</body>
+</html>

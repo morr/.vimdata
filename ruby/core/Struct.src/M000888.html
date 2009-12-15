@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Struct)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Struct.new( [aString] [, aSym]+&gt; )    =&gt; StructClass
+ *     StructClass.new(arg, ...)             =&gt; obj
+ *     StructClass[arg, ...]                 =&gt; obj
+ *
+ *  Creates a new class, named by &lt;i&gt;aString&lt;/i&gt;, containing accessor
+ *  methods for the given symbols. If the name &lt;i&gt;aString&lt;/i&gt; is
+ *  omitted, an anonymous structure class will be created. Otherwise,
+ *  the name of this struct will appear as a constant in class
+ *  &lt;code&gt;Struct&lt;/code&gt;, so it must be unique for all
+ *  &lt;code&gt;Struct&lt;/code&gt;s in the system and should start with a capital
+ *  letter. Assigning a structure class to a constant effectively gives
+ *  the class the name of the constant.
+ *     
+ *  &lt;code&gt;Struct::new&lt;/code&gt; returns a new &lt;code&gt;Class&lt;/code&gt; object,
+ *  which can then be used to create specific instances of the new
+ *  structure. The number of actual parameters must be
+ *  less than or equal to the number of attributes defined for this
+ *  class; unset parameters default to \nil{}.  Passing too many
+ *  parameters will raise an \E{ArgumentError}.
+ *
+ *  The remaining methods listed in this section (class and instance)
+ *  are defined for this generated class. 
+ *     
+ *     # Create a structure with a name in Struct
+ *     Struct.new(&quot;Customer&quot;, :name, :address)    #=&gt; Struct::Customer
+ *     Struct::Customer.new(&quot;Dave&quot;, &quot;123 Main&quot;)   #=&gt; #&lt;Struct::Customer name=&quot;Dave&quot;, address=&quot;123 Main&quot;&gt;
+ *     
+ *     # Create a structure named by its constant
+ *     Customer = Struct.new(:name, :address)     #=&gt; Customer
+ *     Customer.new(&quot;Dave&quot;, &quot;123 Main&quot;)           #=&gt; #&lt;Customer name=&quot;Dave&quot;, address=&quot;123 Main&quot;&gt;
+ */
+
+static VALUE
+rb_struct_s_def(argc, argv, klass)
+    int argc;
+    VALUE *argv;
+    VALUE klass;
+{
+    VALUE name, rest;
+    long i;
+    VALUE st;
+    ID id;
+
+    rb_scan_args(argc, argv, &quot;1*&quot;, &amp;name, &amp;rest);
+    if (!NIL_P(name) &amp;&amp; SYMBOL_P(name)) {
+        rb_ary_unshift(rest, name);
+        name = Qnil;
+    }
+    for (i=0; i&lt;RARRAY(rest)-&gt;len; i++) {
+        id = rb_to_id(RARRAY(rest)-&gt;ptr[i]);
+        RARRAY(rest)-&gt;ptr[i] = ID2SYM(id);
+    }
+    st = make_struct(name, rest, klass);
+    if (rb_block_given_p()) {
+        rb_mod_module_eval(0, 0, st);
+    }
+
+    return st;
+}</pre>
+</body>
+</html>

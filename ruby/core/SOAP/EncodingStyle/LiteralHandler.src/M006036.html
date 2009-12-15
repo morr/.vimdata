@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>decode_parent (SOAP::EncodingStyle::LiteralHandler)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/encodingstyle/literalHandler.rb, line 180</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">decode_parent</span>(<span class="ruby-identifier">parent</span>, <span class="ruby-identifier">node</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">node</span>
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">node</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">SOAPUnknown</span>
+      <span class="ruby-identifier">newparent</span> = <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">node</span>.<span class="ruby-identifier">as_element</span>
+      <span class="ruby-identifier">node</span>.<span class="ruby-identifier">parent</span> = <span class="ruby-identifier">newparent</span>
+      <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">replace_node</span>(<span class="ruby-identifier">newparent</span>)
+      <span class="ruby-identifier">decode_parent</span>(<span class="ruby-identifier">parent</span>, <span class="ruby-identifier">node</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">SOAPElement</span>
+      <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">node</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">node</span>)
+      <span class="ruby-identifier">node</span>.<span class="ruby-identifier">parent</span> = <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">node</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">SOAPStruct</span>
+      <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">node</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">node</span>.<span class="ruby-identifier">elename</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">node</span>)
+      <span class="ruby-identifier">node</span>.<span class="ruby-identifier">parent</span> = <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">node</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">SOAPArray</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">position</span>
+        <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">node</span>[<span class="ruby-operator">*</span>(<span class="ruby-identifier">decode_arypos</span>(<span class="ruby-identifier">node</span>.<span class="ruby-identifier">position</span>))] = <span class="ruby-identifier">node</span>
+        <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">node</span>.<span class="ruby-identifier">sparse</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">node</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">node</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">node</span>.<span class="ruby-identifier">parent</span> = <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">node</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">EncodingStyleError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;illegal parent: #{parent.node}&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

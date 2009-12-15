@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>mkdir (Dir)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Dir.mkdir( string [, integer] ) =&gt; 0
+ *
+ *  Makes a new directory named by &lt;i&gt;string&lt;/i&gt;, with permissions
+ *  specified by the optional parameter &lt;i&gt;anInteger&lt;/i&gt;. The
+ *  permissions may be modified by the value of
+ *  &lt;code&gt;File::umask&lt;/code&gt;, and are ignored on NT. Raises a
+ *  &lt;code&gt;SystemCallError&lt;/code&gt; if the directory cannot be created. See
+ *  also the discussion of permissions in the class documentation for
+ *  &lt;code&gt;File&lt;/code&gt;.
+ *
+ */
+static VALUE
+dir_s_mkdir(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    VALUE path, vmode;
+    int mode;
+
+    if (rb_scan_args(argc, argv, &quot;11&quot;, &amp;path, &amp;vmode) == 2) {
+        mode = NUM2INT(vmode);
+    }
+    else {
+        mode = 0777;
+    }
+
+    check_dirname(&amp;path);
+    if (mkdir(RSTRING(path)-&gt;ptr, mode) == -1)
+        rb_sys_fail(RSTRING(path)-&gt;ptr);
+
+    return INT2FIX(0);
+}</pre>
+</body>
+</html>

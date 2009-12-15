@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>flock (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     file.flock (locking_constant ) =&gt;  0 or false
+ *  
+ *  Locks or unlocks a file according to &lt;i&gt;locking_constant&lt;/i&gt; (a
+ *  logical &lt;em&gt;or&lt;/em&gt; of the values in the table below).
+ *  Returns &lt;code&gt;false&lt;/code&gt; if &lt;code&gt;File::LOCK_NB&lt;/code&gt; is
+ *  specified and the operation would otherwise have blocked. Not
+ *  available on all platforms.
+ *     
+ *  Locking constants (in class File):
+ *
+ *     LOCK_EX   | Exclusive lock. Only one process may hold an
+ *               | exclusive lock for a given file at a time.
+ *     ----------+------------------------------------------------
+ *     LOCK_NB   | Don't block when locking. May be combined
+ *               | with other lock options using logical or.
+ *     ----------+------------------------------------------------
+ *     LOCK_SH   | Shared lock. Multiple processes may each hold a
+ *               | shared lock for a given file at the same time.
+ *     ----------+------------------------------------------------
+ *     LOCK_UN   | Unlock.
+ *
+ *  Example:
+ *
+ *     File.new(&quot;testfile&quot;).flock(File::LOCK_UN)   #=&gt; 0
+ *     
+ */
+
+static VALUE
+rb_file_flock(obj, operation)
+    VALUE obj;
+    VALUE operation;
+{
+#ifndef __CHECKER__
+    OpenFile *fptr;
+    int op;
+
+    rb_secure(2);
+    op = NUM2INT(operation);
+    GetOpenFile(obj, fptr);
+
+    if (fptr-&gt;mode &amp; FMODE_WRITABLE) {
+        fflush(GetWriteFile(fptr));
+    }
+  retry:
+    if (flock(fileno(fptr-&gt;f), op) &lt; 0) {
+        switch (errno) {
+          case EAGAIN:
+          case EACCES:
+#if defined(EWOULDBLOCK) &amp;&amp; EWOULDBLOCK != EAGAIN
+          case EWOULDBLOCK:
+#endif
+              return Qfalse;
+          case EINTR:
+#if defined(ERESTART)
+          case ERESTART:
+#endif
+            goto retry;
+        }
+        rb_sys_fail(fptr-&gt;path);
+    }
+#endif
+    return INT2FIX(0);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>lazy_initialize (Resolv::DNS::Config)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/resolv.rb, line 817</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">lazy_initialize</span>
+        <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">synchronize</span> {
+          <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@initialized</span>
+            <span class="ruby-ivar">@nameserver</span> = []
+            <span class="ruby-ivar">@search</span> = <span class="ruby-keyword kw">nil</span>
+            <span class="ruby-ivar">@ndots</span> = <span class="ruby-value">1</span>
+            <span class="ruby-keyword kw">case</span> <span class="ruby-ivar">@config_info</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-keyword kw">nil</span>
+              <span class="ruby-identifier">config_hash</span> = <span class="ruby-constant">Config</span>.<span class="ruby-identifier">default_config_hash</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>
+              <span class="ruby-identifier">config_hash</span> = <span class="ruby-constant">Config</span>.<span class="ruby-identifier">parse_resolv_conf</span>(<span class="ruby-ivar">@config_info</span>)
+            <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Hash</span>
+              <span class="ruby-identifier">config_hash</span> = <span class="ruby-ivar">@config_info</span>.<span class="ruby-identifier">dup</span>
+              <span class="ruby-keyword kw">if</span> <span class="ruby-constant">String</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">:nameserver</span>]
+                <span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">:nameserver</span>] = [<span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">:nameserver</span>]]
+              <span class="ruby-keyword kw">end</span>
+              <span class="ruby-keyword kw">if</span> <span class="ruby-constant">String</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">:search</span>]
+                <span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">:search</span>] = [<span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">:search</span>]]
+              <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;invalid resolv configuration: #{@config_info.inspect}&quot;</span>)
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-ivar">@nameserver</span> = <span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">:nameserver</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">config_hash</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:nameserver</span>
+            <span class="ruby-ivar">@search</span> = <span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">:search</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">config_hash</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:search</span>
+            <span class="ruby-ivar">@ndots</span> = <span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">:ndots</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">config_hash</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:ndots</span>
+
+            <span class="ruby-ivar">@nameserver</span> = [<span class="ruby-value str">'0.0.0.0'</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@nameserver</span>.<span class="ruby-identifier">empty?</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@search</span>
+              <span class="ruby-ivar">@search</span> = <span class="ruby-ivar">@search</span>.<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span> <span class="ruby-constant">Label</span>.<span class="ruby-identifier">split</span>(<span class="ruby-identifier">arg</span>) }
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">hostname</span> = <span class="ruby-constant">Socket</span>.<span class="ruby-identifier">gethostname</span>
+              <span class="ruby-keyword kw">if</span> <span class="ruby-regexp re">/\./</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">hostname</span>
+                <span class="ruby-ivar">@search</span> = [<span class="ruby-constant">Label</span>.<span class="ruby-identifier">split</span>(<span class="ruby-identifier">$'</span>)]
+              <span class="ruby-keyword kw">else</span>
+                <span class="ruby-ivar">@search</span> = [[]]
+              <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">end</span>
+
+            <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@nameserver</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Array</span>) <span class="ruby-operator">||</span>
+               <span class="ruby-operator">!</span><span class="ruby-ivar">@nameserver</span>.<span class="ruby-identifier">all?</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">ns</span><span class="ruby-operator">|</span> <span class="ruby-constant">String</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">ns</span> }
+              <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;invalid nameserver config: #{@nameserver.inspect}&quot;</span>)
+            <span class="ruby-keyword kw">end</span>
+
+            <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@search</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Array</span>) <span class="ruby-operator">||</span>
+               <span class="ruby-operator">!</span><span class="ruby-ivar">@search</span>.<span class="ruby-identifier">all?</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">ls</span><span class="ruby-operator">|</span> <span class="ruby-identifier">ls</span>.<span class="ruby-identifier">all?</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">l</span><span class="ruby-operator">|</span> <span class="ruby-constant">Label</span><span class="ruby-operator">::</span><span class="ruby-constant">Str</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">l</span> } }
+              <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;invalid search config: #{@search.inspect}&quot;</span>)
+            <span class="ruby-keyword kw">end</span>
+
+            <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@ndots</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>)
+              <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;invalid ndots config: #{@ndots.inspect}&quot;</span>)
+            <span class="ruby-keyword kw">end</span>
+
+            <span class="ruby-ivar">@initialized</span> = <span class="ruby-keyword kw">true</span>
+          <span class="ruby-keyword kw">end</span>
+        }
+        <span class="ruby-keyword kw">self</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

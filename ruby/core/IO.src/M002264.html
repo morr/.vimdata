@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>lineno (IO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     ios.lineno    =&gt; integer
+ *  
+ *  Returns the current line number in &lt;em&gt;ios&lt;/em&gt;. The stream must be
+ *  opened for reading. &lt;code&gt;lineno&lt;/code&gt; counts the number of times
+ *  &lt;code&gt;gets&lt;/code&gt; is called, rather than the number of newlines
+ *  encountered. The two values will differ if &lt;code&gt;gets&lt;/code&gt; is
+ *  called with a separator other than newline. See also the
+ *  &lt;code&gt;$.&lt;/code&gt; variable.
+ *     
+ *     f = File.new(&quot;testfile&quot;)
+ *     f.lineno   #=&gt; 0
+ *     f.gets     #=&gt; &quot;This is line one\n&quot;
+ *     f.lineno   #=&gt; 1
+ *     f.gets     #=&gt; &quot;This is line two\n&quot;
+ *     f.lineno   #=&gt; 2
+ */
+
+static VALUE
+rb_io_lineno(io)
+    VALUE io;
+{
+    OpenFile *fptr;
+
+    GetOpenFile(io, fptr);
+    rb_io_check_readable(fptr);
+    return INT2NUM(fptr-&gt;lineno);
+}</pre>
+</body>
+</html>

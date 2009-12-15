@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>set_range (Net::HTTPHeader)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/net/http.rb, line 1298</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_range</span>(<span class="ruby-identifier">r</span>, <span class="ruby-identifier">e</span> = <span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">r</span>
+        <span class="ruby-ivar">@header</span>.<span class="ruby-identifier">delete</span> <span class="ruby-value str">'range'</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">r</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">r</span> = (<span class="ruby-identifier">r</span><span class="ruby-operator">...</span><span class="ruby-identifier">r</span><span class="ruby-operator">+</span><span class="ruby-identifier">e</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">r</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Numeric</span>
+        <span class="ruby-identifier">n</span> = <span class="ruby-identifier">r</span>.<span class="ruby-identifier">to_i</span>
+        <span class="ruby-identifier">rangestr</span> = (<span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-node">&quot;0-#{n-1}&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;-#{-n}&quot;</span>)
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Range</span>
+        <span class="ruby-identifier">first</span> = <span class="ruby-identifier">r</span>.<span class="ruby-identifier">first</span>
+        <span class="ruby-identifier">last</span> = <span class="ruby-identifier">r</span>.<span class="ruby-identifier">last</span>
+        <span class="ruby-identifier">last</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">exclude_end?</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">last</span> <span class="ruby-operator">==</span> <span class="ruby-value">-1</span>
+          <span class="ruby-identifier">rangestr</span> = (<span class="ruby-identifier">first</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-node">&quot;#{first}-&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;-#{-first}&quot;</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPHeaderSyntaxError</span>, <span class="ruby-value str">'range.first is negative'</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">first</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPHeaderSyntaxError</span>, <span class="ruby-value str">'range.last is negative'</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">last</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">HTTPHeaderSyntaxError</span>, <span class="ruby-value str">'must be .first &lt; .last'</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">first</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">last</span>
+          <span class="ruby-identifier">rangestr</span> = <span class="ruby-node">&quot;#{first}-#{last}&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-value str">'Range/Integer is required'</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@header</span>[<span class="ruby-value str">'range'</span>] = [<span class="ruby-node">&quot;bytes=#{rangestr}&quot;</span>]
+      <span class="ruby-identifier">r</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

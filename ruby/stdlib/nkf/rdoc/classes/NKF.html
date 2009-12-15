@@ -1,0 +1,944 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: NKF</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">NKF</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/nkf/nkf_c.html">
+                nkf/nkf.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="NKF.html">NKF</a> - Ruby extension for Network Kanji Filter
+</p>
+<h2>Description</h2>
+<p>
+This is a Ruby Extension version of <a href="NKF.html#M001384">nkf</a>
+(Netowrk Kanji Filter). It converts the first argument and return converted
+result. Conversion details are specified by flags as the first argument.
+</p>
+<p>
+<b>Nkf</b> is a yet another kanji code converter among networks, hosts and
+terminals. It converts input kanji code to designated kanji code such as
+ISO-2022-JP, Shift_JIS, EUC-JP, UTF-8 or UTF-16.
+</p>
+<p>
+One of the most unique faculty of <b><a href="NKF.html#M001384">nkf</a></b>
+is the guess of the input kanji encodings. It currently recognizes
+ISO-2022-JP, Shift_JIS, EUC-JP, UTF-8 and UTF-16. So users needn&#8216;t
+set the input kanji code explicitly.
+</p>
+<p>
+By default, X0201 kana is converted into X0208 kana. For X0201 kana, SO/SI,
+SSO and ESC-(-I methods are supported. For automatic code detection, <a
+href="NKF.html#M001384">nkf</a> assumes no X0201 kana in Shift_JIS. To
+accept X0201 in Shift_JIS, use <b>-X</b>, <b>-x</b> or <b>-S</b>.
+</p>
+<h2>Flags</h2>
+<h3>-b -u</h3>
+<p>
+Output is buffered (DEFAULT), Output is unbuffered.
+</p>
+<h3>-j -s -e -w -w16</h3>
+<p>
+Output code is ISO-2022-JP (7bit JIS), Shift_JIS, EUC-JP, UTF-8N, UTF-16BE.
+Without this option and compile option, ISO-2022-JP is assumed.
+</p>
+<h3>-J -S -E -W -W16</h3>
+<p>
+Input assumption is JIS 7 bit, Shift_JIS, EUC-JP, UTF-8, UTF-16LE.
+</p>
+<h4>-J</h4>
+<p>
+Assume JIS input. It also accepts EUC-JP. This is the default. This flag
+does not exclude Shift_JIS.
+</p>
+<h4>-S</h4>
+<p>
+Assume Shift_JIS and X0201 kana input. It also accepts JIS. EUC-JP is
+recognized as X0201 kana. Without <b>-x</b> flag, X0201 kana (halfwidth
+kana) is converted into X0208.
+</p>
+<h4>-E</h4>
+<p>
+Assume EUC-JP input. It also accepts JIS. Same as -J.
+</p>
+<h3>-t</h3>
+<p>
+No conversion.
+</p>
+<h3>-i_</h3>
+<p>
+Output sequence to designate JIS-kanji. (DEFAULT B)
+</p>
+<h3>-o_</h3>
+<p>
+Output sequence to designate ASCII. (DEFAULT B)
+</p>
+<h3>-r</h3>
+<p>
+{de/en}crypt ROT13/47
+</p>
+<h3>-h[123] &#8212;hiragana &#8212;katakana &#8212;katakana-hiragana</h3>
+<dl>
+<dt>-h1 &#8212;hiragana</dt><dd>Katakana to Hiragana conversion.
+
+</dd>
+<dt>-h2 &#8212;katakana</dt><dd>Hiragana to Katakana conversion.
+
+</dd>
+<dt>-h3 &#8212;katakana-hiragana</dt><dd>Katakana to Hiragana and Hiragana to Katakana conversion.
+
+</dd>
+</dl>
+<h3>-T</h3>
+<p>
+Text mode output (MS-DOS)
+</p>
+<h3>-l</h3>
+<p>
+ISO8859-1 (Latin-1) support
+</p>
+<h3>-f[<tt>m</tt> [- <tt>n</tt>]]</h3>
+<p>
+Folding on <tt>m</tt> length with <tt>n</tt> margin in a line. Without this
+option, fold length is 60 and fold margin is 10.
+</p>
+<h3>-F</h3>
+<p>
+New line preserving line folding.
+</p>
+<h3>-Z[0-3]</h3>
+<p>
+Convert X0208 alphabet (Fullwidth Alphabets) to ASCII.
+</p>
+<dl>
+<dt>-Z -Z0</dt><dd>Convert X0208 alphabet to ASCII.
+
+</dd>
+<dt>-Z1</dt><dd>Converts X0208 kankaku to single ASCII space.
+
+</dd>
+<dt>-Z2</dt><dd>Converts X0208 kankaku to double ASCII spaces.
+
+</dd>
+<dt>-Z3</dt><dd>Replacing Fullwidth &gt;, &lt;, &quot;, &amp; into &#8217;&amp;gt;&#8217;,
+&#8217;&amp;lt;&#8217;, &#8217;&amp;quot;&#8217;, &#8217;&amp;amp;&#8217;
+as in HTML.
+
+</dd>
+</dl>
+<h3>-X -x</h3>
+<p>
+Assume X0201 kana in MS-Kanji. With <b>-X</b> or without this option, X0201
+is converted into X0208 Kana. With <b>-x</b>, try to preserve X0208 kana
+and do not convert X0201 kana to X0208. In JIS output, ESC-(-I is used. In
+EUC output, SSO is used.
+</p>
+<h3>-B[0-2]</h3>
+<p>
+Assume broken JIS-Kanji input, which lost ESC. Useful when your site is
+using old B-News Nihongo patch.
+</p>
+<dl>
+<dt>-B1</dt><dd>allows any char after ESC-( or ESC-$.
+
+</dd>
+<dt>-B2</dt><dd>forces ASCII after NL.
+
+</dd>
+</dl>
+<h3>-I</h3>
+<p>
+Replacing non iso-2022-jp char into a geta character (substitute character
+in Japanese).
+</p>
+<h3>-d -c</h3>
+<p>
+Delete \r in line feed, Add \r in line feed.
+</p>
+<h3>-m[BQN0]</h3>
+<p>
+MIME ISO-2022-JP/ISO8859-1 decode. (DEFAULT) To see ISO8859-1 (Latin-1) -l
+is necessary.
+</p>
+<dl>
+<dt>-mB</dt><dd>Decode MIME base64 encoded stream. Remove header or other part before
+
+</dd>
+</dl>
+<p>
+conversion.
+</p>
+<dl>
+<dt>-mQ</dt><dd>Decode MIME quoted stream. &#8216;_&#8217; in quoted stream is converted to
+space.
+
+</dd>
+<dt>-mN</dt><dd>Non-strict decoding.
+
+</dd>
+</dl>
+<p>
+It allows line break in the middle of the base64 encoding.
+</p>
+<dl>
+<dt>-m0</dt><dd>No MIME decode.
+
+</dd>
+</dl>
+<h3>-M</h3>
+<p>
+MIME encode. Header style. All ASCII code and control characters are
+intact. Kanji conversion is performed before encoding, so this cannot be
+used as a picture encoder.
+</p>
+<dl>
+<dt>-MB</dt><dd>MIME encode Base64 stream.
+
+</dd>
+<dt>-MQ</dt><dd>Perfome quoted encoding.
+
+</dd>
+</dl>
+<h3>-l</h3>
+<p>
+Input and output code is ISO8859-1 (Latin-1) and ISO-2022-JP. <b>-s</b>,
+<b>-e</b> and <b>-x</b> are not compatible with this option.
+</p>
+<h3>-L[uwm]</h3>
+<p>
+new line mode Without this option, <a href="NKF.html#M001384">nkf</a>
+doesn&#8216;t convert line breaks.
+</p>
+<dl>
+<dt>-Lu</dt><dd>unix (LF)
+
+</dd>
+<dt>-Lw</dt><dd>windows (CRLF)
+
+</dd>
+<dt>-Lm</dt><dd>mac (CR)
+
+</dd>
+</dl>
+<h3>&#8212;fj &#8212;unix &#8212;mac &#8212;msdos &#8212;windows</h3>
+<p>
+convert for these system
+</p>
+<h3>&#8212;jis &#8212;euc &#8212;sjis &#8212;mime &#8212;base64</h3>
+<p>
+convert for named code
+</p>
+<h3>&#8212;jis-input &#8212;euc-input &#8212;sjis-input &#8212;mime-input &#8212;base64-input</h3>
+<p>
+assume input system
+</p>
+<h3>&#8212;ic=<tt>input codeset</tt> &#8212;oc=<tt>output codeset</tt></h3>
+<p>
+Set the input or output codeset. <a href="NKF.html">NKF</a> supports
+following codesets and those codeset name are case insensitive.
+</p>
+<dl>
+<dt>ISO-2022-JP</dt><dd>a.k.a. RFC1468, 7bit JIS, JUNET
+
+</dd>
+<dt>EUC-JP (eucJP-<a href="NKF.html#M001384">nkf</a>)</dt><dd>a.k.a. AT&amp;T JIS, Japanese EUC, UJIS
+
+</dd>
+<dt>eucJP-ascii</dt><dd>a.k.a. x-eucjp-open-19970715-ascii
+
+</dd>
+<dt>eucJP-ms</dt><dd>a.k.a. x-eucjp-open-19970715-ms
+
+</dd>
+<dt>CP51932</dt><dd>Microsoft Version of EUC-JP.
+
+</dd>
+<dt>Shift_JIS</dt><dd>SJIS, MS-Kanji
+
+</dd>
+<dt>CP932</dt><dd>a.k.a. Windows-31J
+
+</dd>
+<dt>UTF-8</dt><dd>same as UTF-8N
+
+</dd>
+<dt>UTF-8N</dt><dd>UTF-8 without BOM
+
+</dd>
+<dt>UTF-8-BOM</dt><dd>UTF-8 with BOM
+
+</dd>
+<dt>UTF-16</dt><dd>same as UTF-16BE
+
+</dd>
+<dt>UTF-16BE</dt><dd>UTF-16 Big Endian without BOM
+
+</dd>
+<dt>UTF-16BE-BOM</dt><dd>UTF-16 Big Endian with BOM
+
+</dd>
+<dt>UTF-16LE</dt><dd>UTF-16 Little Endian without BOM
+
+</dd>
+<dt>UTF-16LE-BOM</dt><dd>UTF-16 Little Endian with BOM
+
+</dd>
+<dt>UTF8-MAC</dt><dd>NKDed UTF-8, a.k.a. UTF8-NFD (input only)
+
+</dd>
+</dl>
+<h3>&#8212;fb-{skip, html, xml, perl, java, subchar}</h3>
+<p>
+Specify the way that <a href="NKF.html#M001384">nkf</a> handles unassigned
+characters. Without this option, &#8212;fb-skip is assumed.
+</p>
+<h3>&#8212;prefix= <tt>escape character</tt> <tt>target character</tt> ..</h3>
+<p>
+When <a href="NKF.html#M001384">nkf</a> converts to Shift_JIS, <a
+href="NKF.html#M001384">nkf</a> adds a specified escape character to
+specified 2nd byte of Shift_JIS characters. 1st byte of argument is the
+escape character and following bytes are target characters.
+</p>
+<h3>&#8212;disable-cp932ext</h3>
+<p>
+Handle the characters extended in CP932 as unassigned characters.
+</p>
+<h3>&#8212;cap-input</h3>
+<p>
+Decode hex encoded characters.
+</p>
+<h3>&#8212;url-input</h3>
+<p>
+Unescape percent escaped characters.
+</p>
+<h3>&#8212;</h3>
+<p>
+Ignore rest of -option.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001385">guess1</a>&nbsp;&nbsp;
+      <a href="#M001386">guess2</a>&nbsp;&nbsp;
+      <a href="#M001384">nkf</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">AUTO</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(_AUTO)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Auto-Detect
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">JIS</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(_JIS)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+ISO-2022-JP
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">EUC</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(_EUC)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+EUC-JP
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SJIS</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(_SJIS)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Shift_JIS
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BINARY</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(_BINARY)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+BINARY
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NOCONV</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(_NOCONV)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+No conversion
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ASCII</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(_ASCII)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+ASCII
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">UTF8</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(_UTF8)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+UTF-8
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">UTF16</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(_UTF16)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+UTF-16
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">UTF32</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(_UTF32)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+UTF-32
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">UNKNOWN</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(_UNKNOWN)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+UNKNOWN
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">VERSION</td>
+          <td>=</td>
+          <td class="context-item-value">rb_str_new2(RUBY_NKF_VERSION)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Full version string of <a href="NKF.html#M001384">nkf</a>
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NKF_VERSION</td>
+          <td>=</td>
+          <td class="context-item-value">rb_str_new2(NKF_VERSION)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Version of <a href="NKF.html#M001384">nkf</a>
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NKF_RELEASE_DATE</td>
+          <td>=</td>
+          <td class="context-item-value">rb_str_new2(NKF_RELEASE_DATE)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Release date of <a href="NKF.html#M001384">nkf</a>
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="aliases-list">
+      <h3 class="section-bar">External Aliases</h3>
+
+      <div class="name-list">
+                        <table summary="aliases">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">guess2</td>
+          <td>-&gt;</td>
+          <td class="context-item-value">guess</td>
+        </tr>
+                        </table>
+      </div>
+    </div>
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001385" class="m-detail">
+        <a name="M001385"></a>
+
+        <div class="method-heading">
+          <a href="#M001385" class="method-signature">
+          <span class="method-name">NKF.guess1(str)  &rarr; integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns guessed encoding of <em>str</em> as integer.
+</p>
+<p>
+Algorithm described in: Ken Lunde. `Understanding Japanese Information
+Processing&#8217; Sebastopol, CA: O&#8216;Reilly &amp; Associates.
+</p>
+<pre>
+    case NKF.guess1(input)
+    when NKF::JIS
+      &quot;ISO-2022-JP&quot;
+    when NKF::SJIS
+      &quot;Shift_JIS&quot;
+    when NKF::EUC
+      &quot;EUC-JP&quot;
+    when NKF::UNKNOWN
+      &quot;UNKNOWN(ASCII)&quot;
+    when NKF::BINARY
+      &quot;BINARY&quot;
+    end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001385-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001385-source">
+<pre>
+/*
+ *  call-seq:
+ *     NKF.guess1(str)  -&gt; integer
+ *
+ *  Returns guessed encoding of _str_ as integer.
+ *
+ *  Algorithm described in:
+ *  Ken Lunde. `Understanding Japanese Information Processing'
+ *  Sebastopol, CA: O'Reilly &amp; Associates.
+ *
+ *      case NKF.guess1(input)
+ *      when NKF::JIS
+ *        &quot;ISO-2022-JP&quot;
+ *      when NKF::SJIS
+ *        &quot;Shift_JIS&quot;
+ *      when NKF::EUC
+ *        &quot;EUC-JP&quot;
+ *      when NKF::UNKNOWN
+ *        &quot;UNKNOWN(ASCII)&quot;
+ *      when NKF::BINARY
+ *        &quot;BINARY&quot;
+ *      end
+ */
+
+static VALUE
+rb_nkf_guess1(obj, src)
+  VALUE obj, src;
+{
+  unsigned char *p;
+  unsigned char *pend;
+  int sequence_counter = 0;
+
+  StringValue(src);
+  p = (unsigned char *)RSTRING(src)-&gt;ptr;
+  pend = p + RSTRING(src)-&gt;len;
+  if (p == pend) return INT2FIX(_UNKNOWN);
+
+#define INCR do {\
+      p++;\
+      if (p==pend) return INT2FIX(_UNKNOWN);\
+      sequence_counter++;\
+      if (sequence_counter % 2 == 1 &amp;&amp; *p != 0xa4)\
+        sequence_counter = 0;\
+      if (6 &lt;= sequence_counter) {\
+          sequence_counter = 0;\
+          return INT2FIX(_EUC);\
+      }\
+  } while (0)
+
+  if (*p == 0xa4)
+    sequence_counter = 1;
+
+  while (p&lt;pend) {
+    if (*p == '\033') {
+      return INT2FIX(_JIS);
+    }
+    if (*p &lt; '\006' || *p == 0x7f || *p == 0xff) {
+      return INT2FIX(_BINARY);
+    }
+    if (0x81 &lt;= *p &amp;&amp; *p &lt;= 0x8d) {
+      return INT2FIX(_SJIS);
+    }
+    if (0x8f &lt;= *p &amp;&amp; *p &lt;= 0x9f) {
+      return INT2FIX(_SJIS);
+    }
+    if (*p == 0x8e) {   /* SS2 */
+      INCR;
+      if ((0x40 &lt;= *p &amp;&amp; *p &lt;= 0x7e) ||
+          (0x80 &lt;= *p &amp;&amp; *p &lt;= 0xa0) ||
+          (0xe0 &lt;= *p &amp;&amp; *p &lt;= 0xfc))
+        return INT2FIX(_SJIS);
+    }
+    else if (0xa1 &lt;= *p &amp;&amp; *p &lt;= 0xdf) {
+      INCR;
+      if (0xf0 &lt;= *p &amp;&amp; *p &lt;= 0xfe)
+        return INT2FIX(_EUC);
+      if (0xe0 &lt;= *p &amp;&amp; *p &lt;= 0xef) {
+        while (p &lt; pend &amp;&amp; *p &gt;= 0x40) {
+          if (*p &gt;= 0x81) {
+            if (*p &lt;= 0x8d || (0x8f &lt;= *p &amp;&amp; *p &lt;= 0x9f)) {
+              return INT2FIX(_SJIS);
+            }
+            else if (0xfd &lt;= *p &amp;&amp; *p &lt;= 0xfe) {
+              return INT2FIX(_EUC);
+            }
+          }
+          INCR;
+        }
+      }
+      else if (*p &lt;= 0x9f) {
+        return INT2FIX(_SJIS);
+      }
+    }
+    else if (0xf0 &lt;= *p &amp;&amp; *p &lt;= 0xfe) {
+      return INT2FIX(_EUC);
+    }
+    else if (0xe0 &lt;= *p &amp;&amp; *p &lt;= 0xef) {
+      INCR;
+      if ((0x40 &lt;= *p &amp;&amp; *p &lt;= 0x7e) ||
+          (0x80 &lt;= *p &amp;&amp; *p &lt;= 0xa0)) {
+        return INT2FIX(_SJIS);
+      }
+      if (0xfd &lt;= *p &amp;&amp; *p &lt;= 0xfe) {
+        return INT2FIX(_EUC);
+      }
+    }
+    INCR;
+  }
+  return INT2FIX(_UNKNOWN);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001386" class="m-detail">
+        <a name="M001386"></a>
+
+        <div class="method-heading">
+          <a href="#M001386" class="method-signature">
+          <span class="method-name">NKF.guess2(str)  &rarr; integer<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Returns guessed encoding of <em>str</em> as integer by <a
+href="NKF.html#M001384">nkf</a> routine.
+</p>
+<pre>
+   case NKF.guess(input)
+   when NKF::ASCII
+     &quot;ASCII&quot;
+   when NKF::JIS
+     &quot;ISO-2022-JP&quot;
+   when NKF::SJIS
+     &quot;Shift_JIS&quot;
+   when NKF::EUC
+     &quot;EUC-JP&quot;
+   when NKF::UTF8
+     &quot;UTF-8&quot;
+   when NKF::UTF16
+     &quot;UTF-16&quot;
+   when NKF::UNKNOWN
+     &quot;UNKNOWN&quot;
+   when NKF::BINARY
+     &quot;BINARY&quot;
+   end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001386-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001386-source">
+<pre>
+/*
+ *  call-seq:
+ *     NKF.guess2(str)  -&gt; integer
+ *
+ *  Returns guessed encoding of _str_ as integer by nkf routine.
+ *
+ *     case NKF.guess(input)
+ *     when NKF::ASCII
+ *       &quot;ASCII&quot;
+ *     when NKF::JIS
+ *       &quot;ISO-2022-JP&quot;
+ *     when NKF::SJIS
+ *       &quot;Shift_JIS&quot;
+ *     when NKF::EUC
+ *       &quot;EUC-JP&quot;
+ *     when NKF::UTF8
+ *       &quot;UTF-8&quot;
+ *     when NKF::UTF16
+ *       &quot;UTF-16&quot;
+ *     when NKF::UNKNOWN
+ *       &quot;UNKNOWN&quot;
+ *     when NKF::BINARY
+ *       &quot;BINARY&quot;
+ *     end
+ */
+
+static VALUE
+rb_nkf_guess2(obj, src)
+  VALUE obj, src;
+{
+  int code = _BINARY;
+
+  reinit();
+
+  input_ctr = 0;
+  StringValue(src);
+  input = (unsigned char *)RSTRING(src)-&gt;ptr;
+  i_len = RSTRING(src)-&gt;len;
+
+  if(x0201_f == WISH_TRUE)
+    x0201_f = ((!iso2022jp_f)? TRUE : NO_X0201);
+
+  guess_f = TRUE;
+  kanji_convert( NULL );
+  guess_f = FALSE;
+
+  if (!is_inputcode_mixed) {
+    if (strcmp(input_codename, &quot;&quot;) == 0) {
+      code = _ASCII;
+    } else if (strcmp(input_codename, &quot;ISO-2022-JP&quot;) == 0) {
+      code = _JIS;
+    } else if (strcmp(input_codename, &quot;EUC-JP&quot;) == 0) {
+      code = _EUC;
+    } else if (strcmp(input_codename, &quot;Shift_JIS&quot;) == 0) {
+      code = _SJIS;
+    } else if (strcmp(input_codename, &quot;UTF-8&quot;) == 0) {
+      code = _UTF8;
+    } else if (strcmp(input_codename, &quot;UTF-16&quot;) == 0) {
+      code = _UTF16;
+    } else if (strlen(input_codename) &gt; 0) {
+      code = _UNKNOWN;
+    }
+  }
+
+  return INT2FIX( code );
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001384" class="m-detail">
+        <a name="M001384"></a>
+
+        <div class="method-heading">
+          <a href="#M001384" class="method-signature">
+          <span class="method-name">NKF.nkf(opt, str)   &rarr; string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Convert <em>str</em> and return converted result. Conversion details are
+specified by <em>opt</em> as <a href="String.html">String</a>.
+</p>
+<pre>
+   require 'nkf'
+   output = NKF.nkf(&quot;-s&quot;, input)
+</pre>
+<p>
+<b>Note</b> By default, <a href="NKF.html#M001384">nkf</a> decodes MIME
+encoded string. If you want not to decode input, use <a
+href="NKF.html#M001384">NKF.nkf</a> with <b>-m0</b> flag.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001384-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001384-source">
+<pre>
+/*
+ *  call-seq:
+ *     NKF.nkf(opt, str)   -&gt; string
+ *
+ *  Convert _str_ and return converted result.
+ *  Conversion details are specified by _opt_ as String.
+ *
+ *     require 'nkf'
+ *     output = NKF.nkf(&quot;-s&quot;, input)
+ *
+ *  *Note*
+ *  By default, nkf decodes MIME encoded string.
+ *  If you want not to decode input, use NKF.nkf with &lt;b&gt;-m0&lt;/b&gt; flag.
+ */
+
+static VALUE
+rb_nkf_kconv(obj, opt, src)
+  VALUE obj, opt, src;
+{
+  char *opt_ptr, *opt_end;
+  volatile VALUE v;
+
+  reinit();
+  StringValue(opt);
+  opt_ptr = RSTRING(opt)-&gt;ptr;
+  opt_end = opt_ptr + RSTRING(opt)-&gt;len;
+  nkf_split_options(opt_ptr);
+
+  incsize = INCSIZE;
+
+  input_ctr = 0;
+  StringValue(src);
+  input = (unsigned char *)RSTRING(src)-&gt;ptr;
+  i_len = RSTRING(src)-&gt;len;
+  result = rb_str_new(0, i_len*3 + 10);
+  v = result;
+
+  output_ctr = 0;
+  output     = (unsigned char *)RSTRING(result)-&gt;ptr;
+  o_len      = RSTRING(result)-&gt;len;
+  *output    = '\0';
+
+  if(x0201_f == WISH_TRUE)
+    x0201_f = ((!iso2022jp_f)? TRUE : NO_X0201);
+
+  kanji_convert(NULL);
+  RSTRING(result)-&gt;ptr[output_ctr] = '\0';
+  RSTRING(result)-&gt;len = output_ctr;
+  OBJ_INFECT(result, src);
+
+  return result;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 2 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a service of <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, AZ</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

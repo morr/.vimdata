@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>symlink (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.symlink(old_name, new_name)   =&gt; 0
+ *  
+ *  Creates a symbolic link called &lt;i&gt;new_name&lt;/i&gt; for the existing file
+ *  &lt;i&gt;old_name&lt;/i&gt;. Raises a &lt;code&gt;NotImplemented&lt;/code&gt; exception on
+ *  platforms that do not support symbolic links.
+ *     
+ *     File.symlink(&quot;testfile&quot;, &quot;link2test&quot;)   #=&gt; 0
+ *     
+ */
+
+static VALUE
+rb_file_s_symlink(klass, from, to)
+    VALUE klass, from, to;
+{
+#ifdef HAVE_SYMLINK
+    SafeStringValue(from);
+    SafeStringValue(to);
+
+    if (symlink(StringValueCStr(from), StringValueCStr(to)) &lt; 0) {
+        sys_fail2(from, to);
+    }
+    return INT2FIX(0);
+#else
+    rb_notimplement();
+    return Qnil;                /* not reached */
+#endif
+}</pre>
+</body>
+</html>

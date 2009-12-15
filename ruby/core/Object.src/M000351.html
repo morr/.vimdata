@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>clone (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.clone -&gt; an_object
+ *  
+ *  Produces a shallow copy of &lt;i&gt;obj&lt;/i&gt;---the instance variables of
+ *  &lt;i&gt;obj&lt;/i&gt; are copied, but not the objects they reference. Copies
+ *  the frozen and tainted state of &lt;i&gt;obj&lt;/i&gt;. See also the discussion
+ *  under &lt;code&gt;Object#dup&lt;/code&gt;.
+ *     
+ *     class Klass
+ *        attr_accessor :str
+ *     end
+ *     s1 = Klass.new      #=&gt; #&lt;Klass:0x401b3a38&gt;
+ *     s1.str = &quot;Hello&quot;    #=&gt; &quot;Hello&quot;
+ *     s2 = s1.clone       #=&gt; #&lt;Klass:0x401b3998 @str=&quot;Hello&quot;&gt;
+ *     s2.str[1,4] = &quot;i&quot;   #=&gt; &quot;i&quot;
+ *     s1.inspect          #=&gt; &quot;#&lt;Klass:0x401b3a38 @str=\&quot;Hi\&quot;&gt;&quot;
+ *     s2.inspect          #=&gt; &quot;#&lt;Klass:0x401b3998 @str=\&quot;Hi\&quot;&gt;&quot;
+ *
+ *  This method may have class-specific behavior.  If so, that
+ *  behavior will be documented under the #+initialize_copy+ method of
+ *  the class.
+ */
+
+VALUE
+rb_obj_clone(obj)
+    VALUE obj;
+{
+    VALUE clone;
+
+    if (rb_special_const_p(obj)) {
+        rb_raise(rb_eTypeError, &quot;can't clone %s&quot;, rb_obj_classname(obj));
+    }
+    clone = rb_obj_alloc(rb_obj_class(obj));
+    RBASIC(clone)-&gt;klass = rb_singleton_class_clone(obj);
+    RBASIC(clone)-&gt;flags = (RBASIC(obj)-&gt;flags | FL_TEST(clone, FL_TAINT)) &amp; ~(FL_FREEZE|FL_FINALIZE);
+    init_copy(clone, obj);
+    RBASIC(clone)-&gt;flags |= RBASIC(obj)-&gt;flags &amp; FL_FREEZE;
+
+    return clone;
+}</pre>
+</body>
+</html>

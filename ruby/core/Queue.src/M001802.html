@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>push (Queue)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/thread.rb, line 277</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">push</span>(<span class="ruby-identifier">obj</span>)
+    <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-ivar">@que</span>.<span class="ruby-identifier">push</span> <span class="ruby-identifier">obj</span>
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">t</span> = <span class="ruby-ivar">@waiting</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-identifier">t</span>.<span class="ruby-identifier">wakeup</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">t</span>
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">ThreadError</span>
+      <span class="ruby-keyword kw">retry</span>
+    <span class="ruby-keyword kw">ensure</span>
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">t</span>.<span class="ruby-identifier">run</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">t</span>
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">ThreadError</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

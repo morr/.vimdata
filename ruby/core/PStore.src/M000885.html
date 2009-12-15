@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>transaction (PStore)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/pstore.rb, line 284</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">transaction</span>(<span class="ruby-identifier">read_only</span>=<span class="ruby-keyword kw">false</span>)  <span class="ruby-comment cmt"># :yields:  pstore</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">PStore</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span>, <span class="ruby-value str">&quot;nested transaction&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@transaction</span>
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-ivar">@rdonly</span> = <span class="ruby-identifier">read_only</span>
+      <span class="ruby-ivar">@abort</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-ivar">@transaction</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-identifier">value</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">new_file</span> = <span class="ruby-ivar">@filename</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;.new&quot;</span>
+
+      <span class="ruby-identifier">content</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">read_only</span>
+        <span class="ruby-identifier">file</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-ivar">@filename</span>, <span class="ruby-constant">RDWR_ACCESS</span>)
+        <span class="ruby-identifier">file</span>.<span class="ruby-identifier">flock</span>(<span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-constant">LOCK_EX</span>)
+        <span class="ruby-identifier">commit_new</span>(<span class="ruby-identifier">file</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-constant">FileTest</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">new_file</span>)
+        <span class="ruby-identifier">content</span> = <span class="ruby-identifier">file</span>.<span class="ruby-identifier">read</span>()
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">file</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-ivar">@filename</span>, <span class="ruby-constant">RD_ACCESS</span>)
+          <span class="ruby-identifier">file</span>.<span class="ruby-identifier">flock</span>(<span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-constant">LOCK_SH</span>)
+          <span class="ruby-identifier">content</span> = (<span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">new_file</span>, <span class="ruby-constant">RD_ACCESS</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-identifier">n</span>.<span class="ruby-identifier">read</span>} <span class="ruby-keyword kw">rescue</span> <span class="ruby-identifier">file</span>.<span class="ruby-identifier">read</span>())
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">ENOENT</span>
+          <span class="ruby-identifier">content</span> = <span class="ruby-value str">&quot;&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">content</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;&quot;</span>
+        <span class="ruby-ivar">@table</span> = <span class="ruby-identifier">load</span>(<span class="ruby-identifier">content</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">read_only</span>
+          <span class="ruby-identifier">size</span> = <span class="ruby-identifier">content</span>.<span class="ruby-identifier">size</span>
+          <span class="ruby-identifier">md5</span> = <span class="ruby-constant">Digest</span><span class="ruby-operator">::</span><span class="ruby-constant">MD5</span>.<span class="ruby-identifier">digest</span>(<span class="ruby-identifier">content</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@table</span> = {}
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">content</span> = <span class="ruby-keyword kw">nil</span>             <span class="ruby-comment cmt"># unreference huge data</span>
+
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">catch</span>(<span class="ruby-identifier">:pstore_abort_transaction</span>) <span class="ruby-keyword kw">do</span>
+          <span class="ruby-identifier">value</span> = <span class="ruby-keyword kw">yield</span>(<span class="ruby-keyword kw">self</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span>
+        <span class="ruby-ivar">@abort</span> = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-identifier">raise</span>
+      <span class="ruby-keyword kw">ensure</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">read_only</span> <span class="ruby-keyword kw">and</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@abort</span>
+          <span class="ruby-identifier">tmp_file</span> = <span class="ruby-ivar">@filename</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;.tmp&quot;</span>
+          <span class="ruby-identifier">content</span> = <span class="ruby-identifier">dump</span>(<span class="ruby-ivar">@table</span>)
+          <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">md5</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">size</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">content</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">md5</span> <span class="ruby-operator">!=</span> <span class="ruby-constant">Digest</span><span class="ruby-operator">::</span><span class="ruby-constant">MD5</span>.<span class="ruby-identifier">digest</span>(<span class="ruby-identifier">content</span>)
+            <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">tmp_file</span>, <span class="ruby-constant">WR_ACCESS</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">write</span>(<span class="ruby-identifier">content</span>)}
+            <span class="ruby-constant">File</span>.<span class="ruby-identifier">rename</span>(<span class="ruby-identifier">tmp_file</span>, <span class="ruby-identifier">new_file</span>)
+            <span class="ruby-identifier">commit_new</span>(<span class="ruby-identifier">file</span>)
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">content</span> = <span class="ruby-keyword kw">nil</span>         <span class="ruby-comment cmt"># unreference huge data</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">ensure</span>
+      <span class="ruby-ivar">@table</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@transaction</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-identifier">file</span>.<span class="ruby-identifier">close</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">file</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">value</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

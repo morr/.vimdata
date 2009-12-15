@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>basename (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.basename(file_name [, suffix] ) -&gt; base_name
+ *  
+ *  Returns the last component of the filename given in &lt;i&gt;file_name&lt;/i&gt;,
+ *  which must be formed using forward slashes (``&lt;code&gt;/&lt;/code&gt;'')
+ *  regardless of the separator used on the local file system. If
+ *  &lt;i&gt;suffix&lt;/i&gt; is given and present at the end of &lt;i&gt;file_name&lt;/i&gt;,
+ *  it is removed.
+ *     
+ *     File.basename(&quot;/home/gumby/work/ruby.rb&quot;)          #=&gt; &quot;ruby.rb&quot;
+ *     File.basename(&quot;/home/gumby/work/ruby.rb&quot;, &quot;.rb&quot;)   #=&gt; &quot;ruby&quot;
+ */
+
+static VALUE
+rb_file_s_basename(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE fname, fext, basename;
+    char *name, *p;
+#if defined DOSISH_DRIVE_LETTER || defined DOSISH_UNC
+    char *root;
+#endif
+    int f, n;
+
+    if (rb_scan_args(argc, argv, &quot;11&quot;, &amp;fname, &amp;fext) == 2) {
+        StringValue(fext);
+    }
+    StringValue(fname);
+    if (RSTRING(fname)-&gt;len == 0 || !*(name = RSTRING(fname)-&gt;ptr))
+        return fname;
+    name = skipprefix(name);
+#if defined DOSISH_DRIVE_LETTER || defined DOSISH_UNC
+    root = name;
+#endif
+    while (isdirsep(*name))
+        name++;
+    if (!*name) {
+        p = name - 1;
+        f = 1;
+#if defined DOSISH_DRIVE_LETTER || defined DOSISH_UNC
+        if (name != root) {
+            /* has slashes */
+        }
+#ifdef DOSISH_DRIVE_LETTER
+        else if (*p == ':') {
+            p++;
+            f = 0;
+        }
+#endif
+#ifdef DOSISH_UNC
+        else {
+            p = &quot;/&quot;;
+        }
+#endif
+#endif
+    }
+    else {
+        if (!(p = strrdirsep(name))) {
+            p = name;
+        }
+        else {
+            while (isdirsep(*p)) p++; /* skip last / */
+        }
+#if USE_NTFS
+        n = ntfs_tail(p) - p;
+#else
+        n = chompdirsep(p) - p;
+#endif
+        if (NIL_P(fext) || !(f = rmext(p, n, StringValueCStr(fext)))) {
+            f = n;
+        }
+        if (f == RSTRING_LEN(fname)) return fname;
+    }
+    basename = rb_str_new(p, f);
+    OBJ_INFECT(basename, fname);
+    return basename;
+}</pre>
+</body>
+</html>

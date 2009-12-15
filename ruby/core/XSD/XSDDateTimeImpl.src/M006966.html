@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>screen_data (XSD::XSDDateTimeImpl)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/xsd/datatypes.rb, line 561</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">screen_data</span>(<span class="ruby-identifier">t</span>)
+    <span class="ruby-comment cmt"># convert t to a DateTime as an internal representation.</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:to_datetime</span>)      <span class="ruby-comment cmt"># 1.9 or later</span>
+      <span class="ruby-identifier">t</span>.<span class="ruby-identifier">to_datetime</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">DateTime</span>)
+      <span class="ruby-identifier">t</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Date</span>)
+      <span class="ruby-identifier">t</span> = <span class="ruby-identifier">screen_data_str</span>(<span class="ruby-identifier">t</span>)
+      <span class="ruby-identifier">t</span> <span class="ruby-operator">&lt;&lt;=</span> <span class="ruby-value">12</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">t</span>
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Time</span>)
+      <span class="ruby-identifier">jd</span> = <span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">civil_to_jd</span>(<span class="ruby-identifier">t</span>.<span class="ruby-identifier">year</span>, <span class="ruby-identifier">t</span>.<span class="ruby-identifier">mon</span>, <span class="ruby-identifier">t</span>.<span class="ruby-identifier">mday</span>, <span class="ruby-constant">DateTime</span><span class="ruby-operator">::</span><span class="ruby-constant">ITALY</span>)
+      <span class="ruby-identifier">fr</span> = <span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">time_to_day_fraction</span>(<span class="ruby-identifier">t</span>.<span class="ruby-identifier">hour</span>, <span class="ruby-identifier">t</span>.<span class="ruby-identifier">min</span>, [<span class="ruby-identifier">t</span>.<span class="ruby-identifier">sec</span>, <span class="ruby-value">59</span>].<span class="ruby-identifier">min</span>) <span class="ruby-operator">+</span>
+        <span class="ruby-identifier">t</span>.<span class="ruby-identifier">usec</span>.<span class="ruby-identifier">to_r</span> <span class="ruby-operator">/</span> <span class="ruby-value">1000000</span> <span class="ruby-operator">/</span> <span class="ruby-constant">SecInDay</span>
+      <span class="ruby-identifier">of</span> = <span class="ruby-identifier">t</span>.<span class="ruby-identifier">utc_offset</span>.<span class="ruby-identifier">to_r</span> <span class="ruby-operator">/</span> <span class="ruby-constant">SecInDay</span>
+      <span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">new0</span>(<span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">jd_to_ajd</span>(<span class="ruby-identifier">jd</span>, <span class="ruby-identifier">fr</span>, <span class="ruby-identifier">of</span>), <span class="ruby-identifier">of</span>, <span class="ruby-constant">DateTime</span><span class="ruby-operator">::</span><span class="ruby-constant">ITALY</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">screen_data_str</span>(<span class="ruby-identifier">t</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

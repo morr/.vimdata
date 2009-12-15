@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>parse (REXML::Parsers::SAX2Parser)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/parsers/sax2parser.rb, line 85</span>
+                        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse</span>
+                                <span class="ruby-ivar">@procs</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">sym</span>,<span class="ruby-identifier">match</span>,<span class="ruby-identifier">block</span><span class="ruby-operator">|</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">sym</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:start_document</span> }
+                                <span class="ruby-ivar">@listeners</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">sym</span>,<span class="ruby-identifier">match</span>,<span class="ruby-identifier">block</span><span class="ruby-operator">|</span> 
+                                        <span class="ruby-identifier">block</span>.<span class="ruby-identifier">start_document</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">sym</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:start_document</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">sym</span>.<span class="ruby-identifier">nil?</span>
+                                }
+                                <span class="ruby-identifier">root</span> = <span class="ruby-identifier">context</span> = []
+                                <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+                                        <span class="ruby-identifier">event</span> = <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">pull</span>
+                                        <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">0</span>]
+                                        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:end_document</span>
+                                                <span class="ruby-identifier">handle</span>( <span class="ruby-identifier">:end_document</span> )
+                                                <span class="ruby-keyword kw">break</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:start_doctype</span>
+            <span class="ruby-identifier">handle</span>( <span class="ruby-identifier">:doctype</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">event</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>])
+                                        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:end_doctype</span>
+                                                <span class="ruby-identifier">context</span> = <span class="ruby-identifier">context</span>[<span class="ruby-value">1</span>]
+                                        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:start_element</span>
+                                                <span class="ruby-ivar">@tag_stack</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>])
+                                                <span class="ruby-comment cmt"># find the observers for namespaces</span>
+                                                <span class="ruby-identifier">procs</span> = <span class="ruby-identifier">get_procs</span>( <span class="ruby-identifier">:start_prefix_mapping</span>, <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] )
+                                                <span class="ruby-identifier">listeners</span> = <span class="ruby-identifier">get_listeners</span>( <span class="ruby-identifier">:start_prefix_mapping</span>, <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] )
+                                                <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">procs</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">listeners</span>
+                                                        <span class="ruby-comment cmt"># break out the namespace declarations</span>
+                                                        <span class="ruby-comment cmt"># The attributes live in event[2]</span>
+                                                        <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>].<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span>, <span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>][<span class="ruby-identifier">n</span>] = <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">normalize</span>(<span class="ruby-identifier">v</span>)}
+                                                        <span class="ruby-identifier">nsdecl</span> = <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>].<span class="ruby-identifier">find_all</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">n</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^xmlns(:|$)/</span> }
+                                                        <span class="ruby-identifier">nsdecl</span>.<span class="ruby-identifier">collect!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">n</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span> [ <span class="ruby-identifier">n</span>[<span class="ruby-value">6</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>], <span class="ruby-identifier">value</span> ] }
+                                                        <span class="ruby-ivar">@namespace_stack</span>.<span class="ruby-identifier">push</span>({})
+                                                        <span class="ruby-identifier">nsdecl</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">n</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+                                                                <span class="ruby-ivar">@namespace_stack</span>[<span class="ruby-value">-1</span>][<span class="ruby-identifier">n</span>] = <span class="ruby-identifier">v</span>
+                                                                <span class="ruby-comment cmt"># notify observers of namespaces</span>
+                                                                <span class="ruby-identifier">procs</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">ob</span><span class="ruby-operator">|</span> <span class="ruby-identifier">ob</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">n</span>, <span class="ruby-identifier">v</span> ) } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">procs</span>
+                                                                <span class="ruby-identifier">listeners</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">ob</span><span class="ruby-operator">|</span> <span class="ruby-identifier">ob</span>.<span class="ruby-identifier">start_prefix_mapping</span>(<span class="ruby-identifier">n</span>, <span class="ruby-identifier">v</span>) } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">listeners</span>
+                                                        <span class="ruby-keyword kw">end</span>
+                                                <span class="ruby-keyword kw">end</span>
+                                                <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">=~</span> <span class="ruby-constant">Namespace</span><span class="ruby-operator">::</span><span class="ruby-constant">NAMESPLIT</span>
+                                                <span class="ruby-identifier">prefix</span> = <span class="ruby-identifier">$1</span>
+                                                <span class="ruby-identifier">local</span> = <span class="ruby-identifier">$2</span>
+                                                <span class="ruby-identifier">uri</span> = <span class="ruby-identifier">get_namespace</span>(<span class="ruby-identifier">prefix</span>)
+                                                <span class="ruby-comment cmt"># find the observers for start_element</span>
+                                                <span class="ruby-identifier">procs</span> = <span class="ruby-identifier">get_procs</span>( <span class="ruby-identifier">:start_element</span>, <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] )
+                                                <span class="ruby-identifier">listeners</span> = <span class="ruby-identifier">get_listeners</span>( <span class="ruby-identifier">:start_element</span>, <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] )
+                                                <span class="ruby-comment cmt"># notify observers</span>
+                                                <span class="ruby-identifier">procs</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">ob</span><span class="ruby-operator">|</span> <span class="ruby-identifier">ob</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">uri</span>, <span class="ruby-identifier">local</span>, <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>], <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>] ) } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">procs</span>
+                                                <span class="ruby-identifier">listeners</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">ob</span><span class="ruby-operator">|</span> 
+                                                        <span class="ruby-identifier">ob</span>.<span class="ruby-identifier">start_element</span>( <span class="ruby-identifier">uri</span>, <span class="ruby-identifier">local</span>, <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>], <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>] ) 
+                                                } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">listeners</span>
+                                        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:end_element</span>
+                                                <span class="ruby-ivar">@tag_stack</span>.<span class="ruby-identifier">pop</span>
+                                                <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">=~</span> <span class="ruby-constant">Namespace</span><span class="ruby-operator">::</span><span class="ruby-constant">NAMESPLIT</span>
+                                                <span class="ruby-identifier">prefix</span> = <span class="ruby-identifier">$1</span>
+                                                <span class="ruby-identifier">local</span> = <span class="ruby-identifier">$2</span>
+                                                <span class="ruby-identifier">uri</span> = <span class="ruby-identifier">get_namespace</span>(<span class="ruby-identifier">prefix</span>)
+                                                <span class="ruby-comment cmt"># find the observers for start_element</span>
+                                                <span class="ruby-identifier">procs</span> = <span class="ruby-identifier">get_procs</span>( <span class="ruby-identifier">:end_element</span>, <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] )
+                                                <span class="ruby-identifier">listeners</span> = <span class="ruby-identifier">get_listeners</span>( <span class="ruby-identifier">:end_element</span>, <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] )
+                                                <span class="ruby-comment cmt"># notify observers</span>
+                                                <span class="ruby-identifier">procs</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">ob</span><span class="ruby-operator">|</span> <span class="ruby-identifier">ob</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">uri</span>, <span class="ruby-identifier">local</span>, <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] ) } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">procs</span>
+                                                <span class="ruby-identifier">listeners</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">ob</span><span class="ruby-operator">|</span> 
+                                                        <span class="ruby-identifier">ob</span>.<span class="ruby-identifier">end_element</span>( <span class="ruby-identifier">uri</span>, <span class="ruby-identifier">local</span>, <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] ) 
+                                                } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">listeners</span>
+
+                                                <span class="ruby-identifier">namespace_mapping</span> = <span class="ruby-ivar">@namespace_stack</span>.<span class="ruby-identifier">pop</span>
+                                                <span class="ruby-comment cmt"># find the observers for namespaces</span>
+                                                <span class="ruby-identifier">procs</span> = <span class="ruby-identifier">get_procs</span>( <span class="ruby-identifier">:end_prefix_mapping</span>, <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] )
+                                                <span class="ruby-identifier">listeners</span> = <span class="ruby-identifier">get_listeners</span>( <span class="ruby-identifier">:end_prefix_mapping</span>, <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] )
+                                                <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">procs</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">listeners</span>
+                                                        <span class="ruby-identifier">namespace_mapping</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">prefix</span>, <span class="ruby-identifier">uri</span><span class="ruby-operator">|</span>
+                                                                <span class="ruby-comment cmt"># notify observers of namespaces</span>
+                                                                <span class="ruby-identifier">procs</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">ob</span><span class="ruby-operator">|</span> <span class="ruby-identifier">ob</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">prefix</span> ) } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">procs</span>
+                                                                <span class="ruby-identifier">listeners</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">ob</span><span class="ruby-operator">|</span> <span class="ruby-identifier">ob</span>.<span class="ruby-identifier">end_prefix_mapping</span>(<span class="ruby-identifier">prefix</span>) } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">listeners</span>
+                                                        <span class="ruby-keyword kw">end</span>
+                                                <span class="ruby-keyword kw">end</span>
+                                        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:text</span>
+            <span class="ruby-comment cmt">#normalized = @parser.normalize( event[1] )</span>
+            <span class="ruby-comment cmt">#handle( :characters, normalized )</span>
+            <span class="ruby-identifier">copy</span> = <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">clone</span>
+            <span class="ruby-ivar">@entities</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span> <span class="ruby-identifier">copy</span> = <span class="ruby-identifier">copy</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-node">&quot;&amp;#{key};&quot;</span>, <span class="ruby-identifier">value</span>) }
+            <span class="ruby-identifier">copy</span>.<span class="ruby-identifier">gsub!</span>( <span class="ruby-constant">Text</span><span class="ruby-operator">::</span><span class="ruby-constant">NUMERICENTITY</span> ) {<span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span>
+              <span class="ruby-identifier">m</span>=<span class="ruby-identifier">$1</span>
+              <span class="ruby-identifier">m</span> = <span class="ruby-node">&quot;0#{m}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">m</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?x</span>
+              [<span class="ruby-constant">Integer</span>(<span class="ruby-identifier">m</span>)].<span class="ruby-identifier">pack</span>(<span class="ruby-value str">'U*'</span>)
+            }
+            <span class="ruby-identifier">handle</span>( <span class="ruby-identifier">:characters</span>, <span class="ruby-identifier">copy</span> )
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:entitydecl</span>
+            <span class="ruby-ivar">@entities</span>[ <span class="ruby-identifier">event</span>[<span class="ruby-value">1</span>] ] = <span class="ruby-identifier">event</span>[<span class="ruby-value">2</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">3</span>
+                                                <span class="ruby-identifier">handle</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">event</span> )
+                                        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:processing_instruction</span>, <span class="ruby-identifier">:comment</span>, <span class="ruby-identifier">:attlistdecl</span>, 
+                                                <span class="ruby-identifier">:elementdecl</span>, <span class="ruby-identifier">:cdata</span>, <span class="ruby-identifier">:notationdecl</span>, <span class="ruby-identifier">:xmldecl</span>
+                                                <span class="ruby-identifier">handle</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">event</span> )
+                                        <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">handle</span>( <span class="ruby-identifier">:progress</span>, <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">position</span> )
+                                <span class="ruby-keyword kw">end</span>
+                        <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

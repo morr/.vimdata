@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>slice! (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.slice!(fixnum)           =&gt; fixnum or nil
+ *     str.slice!(fixnum, fixnum)   =&gt; new_str or nil
+ *     str.slice!(range)            =&gt; new_str or nil
+ *     str.slice!(regexp)           =&gt; new_str or nil
+ *     str.slice!(other_str)        =&gt; new_str or nil
+ *  
+ *  Deletes the specified portion from &lt;i&gt;str&lt;/i&gt;, and returns the portion
+ *  deleted. The forms that take a &lt;code&gt;Fixnum&lt;/code&gt; will raise an
+ *  &lt;code&gt;IndexError&lt;/code&gt; if the value is out of range; the &lt;code&gt;Range&lt;/code&gt;
+ *  form will raise a &lt;code&gt;RangeError&lt;/code&gt;, and the &lt;code&gt;Regexp&lt;/code&gt; and
+ *  &lt;code&gt;String&lt;/code&gt; forms will silently ignore the assignment.
+ *     
+ *     string = &quot;this is a string&quot;
+ *     string.slice!(2)        #=&gt; 105
+ *     string.slice!(3..6)     #=&gt; &quot; is &quot;
+ *     string.slice!(/s.*t/)   #=&gt; &quot;sa st&quot;
+ *     string.slice!(&quot;r&quot;)      #=&gt; &quot;r&quot;
+ *     string                  #=&gt; &quot;thing&quot;
+ */
+
+static VALUE
+rb_str_slice_bang(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    VALUE result;
+    VALUE buf[3];
+    int i;
+
+    if (argc &lt; 1 || 2 &lt; argc) {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments (%d for 1)&quot;, argc);
+    }
+    for (i=0; i&lt;argc; i++) {
+        buf[i] = argv[i];
+    }
+    buf[i] = rb_str_new(0,0);
+    result = rb_str_aref_m(argc, buf, str);
+    if (!NIL_P(result)) {
+        rb_str_aset_m(argc+1, buf, str);
+    }
+    return result;
+}</pre>
+</body>
+</html>

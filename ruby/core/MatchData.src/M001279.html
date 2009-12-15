@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>select (MatchData)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mtch.select([index]*)   =&gt; array
+ *  
+ *  Uses each &lt;i&gt;index&lt;/i&gt; to access the matching values, returning an
+ *  array of the corresponding matches.
+ *     
+ *     m = /(.)(.)(\d+)(\d)/.match(&quot;THX1138: The Movie&quot;)
+ *     m.to_a               #=&gt; [&quot;HX1138&quot;, &quot;H&quot;, &quot;X&quot;, &quot;113&quot;, &quot;8&quot;]
+ *     m.select(0, 2, -2)   #=&gt; [&quot;HX1138&quot;, &quot;X&quot;, &quot;113&quot;]
+ */
+
+static VALUE
+match_select(argc, argv, match)
+    int argc;
+    VALUE *argv;
+    VALUE match;
+{
+    if (argc &gt; 0) {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments (%d for 0)&quot;, argc);
+    }
+    else {
+        struct re_registers *regs;
+        VALUE target;
+        VALUE result = rb_ary_new();
+        int i;
+        int taint = OBJ_TAINTED(match);
+
+        match_check(match);
+        regs = RMATCH(match)-&gt;regs;
+        target = RMATCH(match)-&gt;str;
+
+        for (i=0; i&lt;regs-&gt;num_regs; i++) {
+            VALUE str = rb_str_substr(target, regs-&gt;beg[i], regs-&gt;end[i]-regs-&gt;beg[i]);
+            if (taint) OBJ_TAINT(str);
+            if (RTEST(rb_yield(str))) {
+                rb_ary_push(result, str);
+            }
+        }
+        return result;
+    }
+}</pre>
+</body>
+</html>

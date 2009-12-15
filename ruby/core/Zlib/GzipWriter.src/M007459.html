@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Zlib::GzipWriter)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq: Zlib::GzipWriter.new(io, level, strategy)
+ *
+ * Creates a GzipWriter object associated with +io+. +level+ and +strategy+
+ * should be the same as the arguments of Zlib::Deflate.new.  The GzipWriter
+ * object writes gzipped data to +io+.  At least, +io+ must respond to the
+ * +write+ method that behaves same as write method in IO class.
+ */
+static VALUE
+rb_gzwriter_initialize(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    struct gzfile *gz;
+    VALUE io, level, strategy;
+    int err;
+
+    rb_scan_args(argc, argv, &quot;12&quot;, &amp;io, &amp;level, &amp;strategy);
+    Data_Get_Struct(obj, struct gzfile, gz);
+
+    /* this is undocumented feature of zlib */
+    gz-&gt;level = ARG_LEVEL(level);
+    err = deflateInit2(&amp;gz-&gt;z.stream, gz-&gt;level, Z_DEFLATED,
+                       -MAX_WBITS, DEF_MEM_LEVEL, ARG_STRATEGY(strategy));
+    if (err != Z_OK) {
+        raise_zlib_error(err, gz-&gt;z.stream.msg);
+    }
+    gz-&gt;io = io;
+    ZSTREAM_READY(&amp;gz-&gt;z);
+
+    return obj;
+}</pre>
+</body>
+</html>

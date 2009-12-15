@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>[]= (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* 
+ *  call-seq:
+ *     array[index]         = obj                     -&gt;  obj
+ *     array[start, length] = obj or an_array or nil  -&gt;  obj or an_array or nil
+ *     array[range]         = obj or an_array or nil  -&gt;  obj or an_array or nil
+ *
+ *  Element Assignment---Sets the element at _index_,
+ *  or replaces a subarray starting at _start_ and
+ *  continuing for _length_ elements, or replaces a subarray
+ *  specified by _range_.  If indices are greater than
+ *  the current capacity of the array, the array grows
+ *  automatically. A negative indices will count backward
+ *  from the end of the array. Inserts elements if _length_ is
+ *  zero. If +nil+ is used in the second and third form,
+ *  deletes elements from _self_. An +IndexError+ is raised if a
+ *  negative index points past the beginning of the array. See also
+ *  &lt;code&gt;Array#push&lt;/code&gt;, and &lt;code&gt;Array#unshift&lt;/code&gt;.
+ * 
+ *     a = Array.new
+ *     a[4] = &quot;4&quot;;                 #=&gt; [nil, nil, nil, nil, &quot;4&quot;]
+ *     a[0, 3] = [ 'a', 'b', 'c' ] #=&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, nil, &quot;4&quot;]
+ *     a[1..2] = [ 1, 2 ]          #=&gt; [&quot;a&quot;, 1, 2, nil, &quot;4&quot;]
+ *     a[0, 2] = &quot;?&quot;               #=&gt; [&quot;?&quot;, 2, nil, &quot;4&quot;]
+ *     a[0..2] = &quot;A&quot;               #=&gt; [&quot;A&quot;, &quot;4&quot;]
+ *     a[-1]   = &quot;Z&quot;               #=&gt; [&quot;A&quot;, &quot;Z&quot;]
+ *     a[1..-1] = nil              #=&gt; [&quot;A&quot;]
+ */
+
+static VALUE
+rb_ary_aset(argc, argv, ary)
+    int argc;
+    VALUE *argv;
+    VALUE ary;
+{
+    long offset, beg, len;
+
+    if (argc == 3) {
+        if (SYMBOL_P(argv[0])) {
+            rb_raise(rb_eTypeError, &quot;Symbol as array index&quot;);
+        }
+        if (SYMBOL_P(argv[1])) {
+            rb_raise(rb_eTypeError, &quot;Symbol as subarray length&quot;);
+        }
+        rb_ary_splice(ary, NUM2LONG(argv[0]), NUM2LONG(argv[1]), argv[2]);
+        return argv[2];
+    }
+    if (argc != 2) {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments (%d for 2)&quot;, argc);
+    }
+    if (FIXNUM_P(argv[0])) {
+        offset = FIX2LONG(argv[0]);
+        goto fixnum;
+    }
+    if (SYMBOL_P(argv[0])) {
+        rb_raise(rb_eTypeError, &quot;Symbol as array index&quot;);
+    }
+    if (rb_range_beg_len(argv[0], &amp;beg, &amp;len, RARRAY(ary)-&gt;len, 1)) {
+        /* check if idx is Range */
+        rb_ary_splice(ary, beg, len, argv[1]);
+        return argv[1];
+    }
+
+    offset = NUM2LONG(argv[0]);
+fixnum:
+    rb_ary_store(ary, offset, argv[1]);
+    return argv[1];
+}</pre>
+</body>
+</html>

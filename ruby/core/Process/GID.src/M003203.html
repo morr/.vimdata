@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>re_exchangeable? (Process::GID)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process::GID.re_exchangeable?   =&gt; true or false
+ *
+ *  Returns +true+ if the real and effective group IDs of a
+ *  process may be exchanged on the current platform.
+ *
+ */
+
+static VALUE
+p_gid_exchangeable()
+{
+#if defined(HAVE_SETRESGID) &amp;&amp;  !defined(__CHECKER__)
+    return Qtrue;
+#elif defined(HAVE_SETREGID) &amp;&amp; !defined(OBSOLETE_SETREGID)
+    return Qtrue;
+#else
+    return Qfalse;
+#endif
+}</pre>
+</body>
+</html>

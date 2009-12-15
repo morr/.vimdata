@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>local_variables (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     local_variables    =&gt; array
+ *  
+ *  Returns the names of the current local variables.
+ *     
+ *     fred = 1
+ *     for i in 1..10
+ *        # ...
+ *     end
+ *     local_variables   #=&gt; [&quot;fred&quot;, &quot;i&quot;]
+ */
+
+static VALUE
+rb_f_local_variables()
+{
+    ID *tbl;
+    int n, i;
+    VALUE ary = rb_ary_new();
+    struct RVarmap *vars;
+
+    tbl = ruby_scope-&gt;local_tbl;
+    if (tbl) {
+        n = *tbl++;
+        for (i=2; i&lt;n; i++) {  /* skip first 2 ($_ and $~) */
+            if (!rb_is_local_id(tbl[i])) continue; /* skip flip states */
+            rb_ary_push(ary, rb_str_new2(rb_id2name(tbl[i])));
+        }
+    }
+
+    vars = ruby_dyna_vars;
+    while (vars) {
+        if (vars-&gt;id &amp;&amp; rb_is_local_id(vars-&gt;id)) { /* skip $_, $~ and flip states */
+            rb_ary_push(ary, rb_str_new2(rb_id2name(vars-&gt;id)));
+        }
+        vars = vars-&gt;next;
+    }
+
+    return ary;
+}</pre>
+</body>
+</html>

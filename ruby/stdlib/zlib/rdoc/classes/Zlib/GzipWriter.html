@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Zlib::GzipWriter</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Zlib::GzipWriter</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/zlib/zlib_c.html">
+                zlib/zlib.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="GzipFile.html">
+                Zlib::GzipFile
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="GzipWriter.html">Zlib::GzipWriter</a> is a class for writing
+gzipped files. <a href="GzipWriter.html">GzipWriter</a> should be used with
+an instance of IO, or IO-like, object.
+</p>
+<p>
+For example:
+</p>
+<pre>
+  Zlib::GzipWriter.open('hoge.gz') do |gz|
+    gz.write 'jugemu jugemu gokou no surikire...'
+  end
+
+  File.open('hoge.gz', 'w') do |f|
+    gz = Zlib::GzipWriter.new(f)
+    gz.write 'jugemu jugemu gokou no surikire...'
+    gz.close
+  end
+
+  # TODO: test these.  Are they equivalent?  Can GzipWriter.new take a
+  # block?
+</pre>
+<p>
+NOTE: Due to the limitation of Ruby&#8216;s finalizer, you must explicitly
+close <a href="GzipWriter.html">GzipWriter</a> objects by
+Zlib::GzipWriter#close etc. Otherwise, <a
+href="GzipWriter.html">GzipWriter</a> will be not able to <a
+href="GzipWriter.html#M001923">write</a> the gzip footer and will generate
+a broken gzip file.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001925">&lt;&lt;</a>&nbsp;&nbsp;
+      <a href="#M001917">comment=</a>&nbsp;&nbsp;
+      <a href="#M001922">flush</a>&nbsp;&nbsp;
+      <a href="#M001915">mtime=</a>&nbsp;&nbsp;
+      <a href="#M001921">new</a>&nbsp;&nbsp;
+      <a href="#M001920">open</a>&nbsp;&nbsp;
+      <a href="#M001916">orig_name=</a>&nbsp;&nbsp;
+      <a href="#M001918">pos</a>&nbsp;&nbsp;
+      <a href="#M001927">print</a>&nbsp;&nbsp;
+      <a href="#M001926">printf</a>&nbsp;&nbsp;
+      <a href="#M001924">putc</a>&nbsp;&nbsp;
+      <a href="#M001928">puts</a>&nbsp;&nbsp;
+      <a href="#M001919">tell</a>&nbsp;&nbsp;
+      <a href="#M001923">write</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001921" class="method-detail">
+        <a name="M001921"></a>
+
+        <div class="method-heading">
+          <a href="#M001921" class="method-signature">
+          <span class="method-name"> Zlib::GzipWriter.new(io, level, strategy)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="GzipWriter.html">GzipWriter</a> object associated with
+<tt>io</tt>. <tt>level</tt> and <tt>strategy</tt> should be the same as the
+arguments of <a href="Deflate.html#M001930">Zlib::Deflate.new</a>. The <a
+href="GzipWriter.html">GzipWriter</a> object writes gzipped data to
+<tt>io</tt>. At least, <tt>io</tt> must respond to the <tt><a
+href="GzipWriter.html#M001923">write</a></tt> method that behaves same as
+<a href="GzipWriter.html#M001923">write</a> method in IO class.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001921-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001921-source">
+<pre>
+/*
+ * call-seq: Zlib::GzipWriter.new(io, level, strategy)
+ *
+ * Creates a GzipWriter object associated with +io+. +level+ and +strategy+
+ * should be the same as the arguments of Zlib::Deflate.new.  The GzipWriter
+ * object writes gzipped data to +io+.  At least, +io+ must respond to the
+ * +write+ method that behaves same as write method in IO class.
+ */
+static VALUE
+rb_gzwriter_initialize(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    struct gzfile *gz;
+    VALUE io, level, strategy;
+    int err;
+
+    rb_scan_args(argc, argv, &quot;12&quot;, &amp;io, &amp;level, &amp;strategy);
+    Data_Get_Struct(obj, struct gzfile, gz);
+
+    /* this is undocumented feature of zlib */
+    gz-&gt;level = ARG_LEVEL(level);
+    err = deflateInit2(&amp;gz-&gt;z.stream, gz-&gt;level, Z_DEFLATED,
+                       -MAX_WBITS, DEF_MEM_LEVEL, ARG_STRATEGY(strategy));
+    if (err != Z_OK) {
+        raise_zlib_error(err, gz-&gt;z.stream.msg);
+    }
+    gz-&gt;io = io;
+    ZSTREAM_READY(&amp;gz-&gt;z);
+
+    return obj;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001920" class="method-detail">
+        <a name="M001920"></a>
+
+        <div class="method-heading">
+          <a href="#M001920" class="method-signature">
+          <span class="method-name"> Zlib::GzipWriter.open(filename, level=nil, strategy=nil) { |gz| ... }<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Opens a file specified by <tt>filename</tt> for writing gzip compressed
+data, and returns a <a href="GzipWriter.html">GzipWriter</a> object
+associated with that file. Further details of this method are found in <a
+href="GzipWriter.html#M001921">Zlib::GzipWriter.new</a> and
+Zlib::GzipWriter#wrap.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001920-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001920-source">
+<pre>
+/*
+ * call-seq: Zlib::GzipWriter.open(filename, level=nil, strategy=nil) { |gz| ... }
+ *
+ * Opens a file specified by +filename+ for writing gzip compressed data, and
+ * returns a GzipWriter object associated with that file.  Further details of
+ * this method are found in Zlib::GzipWriter.new and Zlib::GzipWriter#wrap.
+ */
+static VALUE
+rb_gzwriter_s_open(argc, argv, klass)
+    int argc;
+    VALUE *argv;
+    VALUE klass;
+{
+    return gzfile_s_open(argc, argv, klass, &quot;wb&quot;);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001925" class="method-detail">
+        <a name="M001925"></a>
+
+        <div class="method-heading">
+          <span class="method-name">&lt;&lt;</span><span class="method-args">(p1)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Document-method: &lt;&lt; Same as IO.
+</p>
+<p>
+Same as IO.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001917" class="method-detail">
+        <a name="M001917"></a>
+
+        <div class="method-heading">
+          <a href="#M001917" class="method-signature">
+          <span class="method-name">comment=</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+???
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001917-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001917-source">
+<pre>
+/*
+ * ???
+ */
+static VALUE
+rb_gzfile_set_comment(obj, str)
+    VALUE obj, str;
+{
+    struct gzfile *gz = get_gzfile(obj);
+    VALUE s;
+    char *p;
+
+    if (gz-&gt;z.flags &amp; GZFILE_FLAG_HEADER_FINISHED) {
+        rb_raise(cGzError, &quot;header is already written&quot;);
+    }
+    s = rb_str_dup(rb_str_to_str(str));
+    p = memchr(RSTRING(s)-&gt;ptr, '\0', RSTRING(s)-&gt;len);
+    if (p) {
+        rb_str_resize(s, p - RSTRING(s)-&gt;ptr);
+    }
+    gz-&gt;comment = s;
+    return str;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001922" class="method-detail">
+        <a name="M001922"></a>
+
+        <div class="method-heading">
+          <a href="#M001922" class="method-signature">
+          <span class="method-name"> flush(flush=nil)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Flushes all the internal buffers of the <a
+href="GzipWriter.html">GzipWriter</a> object. The meaning of <tt><a
+href="GzipWriter.html#M001922">flush</a></tt> is same as in <a
+href="Deflate.html#M001929">Zlib::Deflate#deflate</a>.
+<tt>Zlib::SYNC_FLUSH</tt> is used if <tt><a
+href="GzipWriter.html#M001922">flush</a></tt> is omitted. It is no use
+giving <a href="GzipWriter.html#M001922">flush</a> <tt>Zlib::NO_FLUSH</tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001922-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001922-source">
+<pre>
+/*
+ * call-seq: flush(flush=nil)
+ *
+ * Flushes all the internal buffers of the GzipWriter object.  The meaning of
+ * +flush+ is same as in Zlib::Deflate#deflate.  &lt;tt&gt;Zlib::SYNC_FLUSH&lt;/tt&gt; is used if
+ * +flush+ is omitted.  It is no use giving flush &lt;tt&gt;Zlib::NO_FLUSH&lt;/tt&gt;.
+ */
+static VALUE
+rb_gzwriter_flush(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    struct gzfile *gz = get_gzfile(obj);
+    VALUE v_flush;
+    int flush;
+
+    rb_scan_args(argc, argv, &quot;01&quot;, &amp;v_flush);
+
+    flush = FIXNUMARG(v_flush, Z_SYNC_FLUSH);
+    if (flush != Z_NO_FLUSH) {  /* prevent Z_BUF_ERROR */
+        zstream_run(&amp;gz-&gt;z, &quot;&quot;, 0, flush);
+    }
+
+    gzfile_write_raw(gz);
+    if (rb_respond_to(gz-&gt;io, id_flush)) {
+        rb_funcall(gz-&gt;io, id_flush, 0);
+    }
+    return obj;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001915" class="method-detail">
+        <a name="M001915"></a>
+
+        <div class="method-heading">
+          <a href="#M001915" class="method-signature">
+          <span class="method-name">mtime=</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+???
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001915-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001915-source">
+<pre>
+/*
+ * ???
+ */
+static VALUE
+rb_gzfile_set_mtime(obj, mtime)
+    VALUE obj, mtime;
+{
+    struct gzfile *gz = get_gzfile(obj);
+    VALUE val;
+
+    if (gz-&gt;z.flags &amp; GZFILE_FLAG_HEADER_FINISHED) {
+        rb_raise(cGzError, &quot;header is already written&quot;);
+    }
+
+    if (FIXNUM_P(mtime)) {
+        gz-&gt;mtime = FIX2INT(mtime);
+    }
+    else {
+        val = rb_Integer(mtime);
+        gz-&gt;mtime = FIXNUM_P(val) ? FIX2INT(val) : rb_big2ulong(val);
+    }
+    return mtime;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001916" class="method-detail">
+        <a name="M001916"></a>
+
+        <div class="method-heading">
+          <a href="#M001916" class="method-signature">
+          <span class="method-name">orig_name=</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+???
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001916-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001916-source">
+<pre>
+/*
+ * ???
+ */
+static VALUE
+rb_gzfile_set_orig_name(obj, str)
+    VALUE obj, str;
+{
+    struct gzfile *gz = get_gzfile(obj);
+    VALUE s;
+    char *p;
+
+    if (gz-&gt;z.flags &amp; GZFILE_FLAG_HEADER_FINISHED) {
+        rb_raise(cGzError, &quot;header is already written&quot;);
+    }
+    s = rb_str_dup(rb_str_to_str(str));
+    p = memchr(RSTRING(s)-&gt;ptr, '\0', RSTRING(s)-&gt;len);
+    if (p) {
+        rb_str_resize(s, p - RSTRING(s)-&gt;ptr);
+    }
+    gz-&gt;orig_name = s;
+    return str;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001918" class="method-detail">
+        <a name="M001918"></a>
+
+        <div class="method-heading">
+          <a href="#M001918" class="method-signature">
+          <span class="method-name">pos</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+???
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001918-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001918-source">
+<pre>
+/*
+ * ???
+ */
+static VALUE
+rb_gzfile_total_in(obj)
+    VALUE obj;
+{
+    return rb_uint2inum(get_gzfile(obj)-&gt;z.stream.total_in);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001927" class="method-detail">
+        <a name="M001927"></a>
+
+        <div class="method-heading">
+          <span class="method-name">print</span><span class="method-args">(...)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Document-method: <a href="GzipWriter.html#M001927">print</a> Same as IO.
+</p>
+<p>
+Same as IO.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001926" class="method-detail">
+        <a name="M001926"></a>
+
+        <div class="method-heading">
+          <span class="method-name">printf</span><span class="method-args">(...)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Document-method: <a href="GzipWriter.html#M001926">printf</a> Same as IO.
+</p>
+<p>
+Same as IO.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001924" class="method-detail">
+        <a name="M001924"></a>
+
+        <div class="method-heading">
+          <a href="#M001924" class="method-signature">
+          <span class="method-name">putc</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Same as IO.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001924-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001924-source">
+<pre>
+/*
+ * Same as IO.
+ */
+static VALUE
+rb_gzwriter_putc(obj, ch)
+    VALUE obj, ch;
+{
+    struct gzfile *gz = get_gzfile(obj);
+    char c = NUM2CHR(ch);
+
+    gzfile_write(gz, &amp;c, 1);
+    return ch;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001928" class="method-detail">
+        <a name="M001928"></a>
+
+        <div class="method-heading">
+          <span class="method-name">puts</span><span class="method-args">(...)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Document-method: <a href="GzipWriter.html#M001928">puts</a> Same as IO.
+</p>
+<p>
+Same as IO.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001919" class="method-detail">
+        <a name="M001919"></a>
+
+        <div class="method-heading">
+          <a href="#M001919" class="method-signature">
+          <span class="method-name">tell</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+???
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001919-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001919-source">
+<pre>
+/*
+ * ???
+ */
+static VALUE
+rb_gzfile_total_in(obj)
+    VALUE obj;
+{
+    return rb_uint2inum(get_gzfile(obj)-&gt;z.stream.total_in);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001923" class="method-detail">
+        <a name="M001923"></a>
+
+        <div class="method-heading">
+          <a href="#M001923" class="method-signature">
+          <span class="method-name">write</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Same as IO.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001923-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001923-source">
+<pre>
+/*
+ * Same as IO.
+ */
+static VALUE
+rb_gzwriter_write(obj, str)
+    VALUE obj, str;
+{
+    struct gzfile *gz = get_gzfile(obj);
+
+    if (TYPE(str) != T_STRING) {
+        str = rb_obj_as_string(str);
+    }
+    gzfile_write(gz, RSTRING(str)-&gt;ptr, RSTRING(str)-&gt;len);
+    return INT2FIX(RSTRING(str)-&gt;len);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

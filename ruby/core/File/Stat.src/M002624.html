@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>symlink? (File::Stat)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     stat.symlink?    =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; if &lt;i&gt;stat&lt;/i&gt; is a symbolic link,
+ *  &lt;code&gt;false&lt;/code&gt; if it isn't or if the operating system doesn't
+ *  support this feature. As &lt;code&gt;File::stat&lt;/code&gt; automatically
+ *  follows symbolic links, &lt;code&gt;symlink?&lt;/code&gt; will always be
+ *  &lt;code&gt;false&lt;/code&gt; for an object returned by
+ *  &lt;code&gt;File::stat&lt;/code&gt;.
+ *     
+ *     File.symlink(&quot;testfile&quot;, &quot;alink&quot;)   #=&gt; 0
+ *     File.stat(&quot;alink&quot;).symlink?         #=&gt; false
+ *     File.lstat(&quot;alink&quot;).symlink?        #=&gt; true
+ *     
+ */
+
+static VALUE
+rb_stat_l(obj)
+    VALUE obj;
+{
+#ifdef S_ISLNK
+    if (S_ISLNK(get_stat(obj)-&gt;st_mode)) return Qtrue;
+#endif
+    return Qfalse;
+}</pre>
+</body>
+</html>

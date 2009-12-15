@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>find (Enumerable)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     enum.detect(ifnone = nil) {| obj | block }  =&gt; obj or nil
+ *     enum.find(ifnone = nil)   {| obj | block }  =&gt; obj or nil
+ *  
+ *  Passes each entry in &lt;i&gt;enum&lt;/i&gt; to &lt;em&gt;block&lt;/em&gt;. Returns the
+ *  first for which &lt;em&gt;block&lt;/em&gt; is not &lt;code&gt;false&lt;/code&gt;.  If no
+ *  object matches, calls &lt;i&gt;ifnone&lt;/i&gt; and returns its result when it
+ *  is specified, or returns &lt;code&gt;nil&lt;/code&gt;
+ *     
+ *     (1..10).detect  {|i| i % 5 == 0 and i % 7 == 0 }   #=&gt; nil
+ *     (1..100).detect {|i| i % 5 == 0 and i % 7 == 0 }   #=&gt; 35
+ *     
+ */
+
+static VALUE
+enum_find(argc, argv, obj)
+    int argc;
+    VALUE* argv;
+    VALUE obj;
+{
+    VALUE memo = Qundef;
+    VALUE if_none;
+
+    rb_scan_args(argc, argv, &quot;01&quot;, &amp;if_none);
+    rb_iterate(rb_each, obj, find_i, (VALUE)&amp;memo);
+    if (memo != Qundef) {
+        return memo;
+    }
+    if (!NIL_P(if_none)) {
+        return rb_funcall(if_none, rb_intern(&quot;call&quot;), 0, 0);
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

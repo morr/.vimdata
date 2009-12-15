@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>method_missing (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.method_missing(symbol [, *args] )   =&gt; result
+ *  
+ *  Invoked by Ruby when &lt;i&gt;obj&lt;/i&gt; is sent a message it cannot handle.
+ *  &lt;i&gt;symbol&lt;/i&gt; is the symbol for the method called, and &lt;i&gt;args&lt;/i&gt;
+ *  are any arguments that were passed to it. By default, the interpreter
+ *  raises an error when this method is called. However, it is possible
+ *  to override the method to provide more dynamic behavior.
+ *  The example below creates
+ *  a class &lt;code&gt;Roman&lt;/code&gt;, which responds to methods with names
+ *  consisting of roman numerals, returning the corresponding integer
+ *  values.
+ *     
+ *     class Roman
+ *       def romanToInt(str)
+ *         # ...
+ *       end
+ *       def method_missing(methId)
+ *         str = methId.id2name
+ *         romanToInt(str)
+ *       end
+ *     end
+ *     
+ *     r = Roman.new
+ *     r.iv      #=&gt; 4
+ *     r.xxiii   #=&gt; 23
+ *     r.mm      #=&gt; 2000
+ */
+
+static VALUE
+rb_method_missing(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    ID id;
+    VALUE exc = rb_eNoMethodError;
+    char *format = 0;
+    NODE *cnode = ruby_current_node;
+
+    if (argc == 0 || !SYMBOL_P(argv[0])) {
+        rb_raise(rb_eArgError, &quot;no id given&quot;);
+    }
+
+    stack_check();
+
+    id = SYM2ID(argv[0]);
+
+    if (last_call_status &amp; CSTAT_PRIV) {
+        format = &quot;private method `%s' called for %s&quot;;
+    }
+    else if (last_call_status &amp; CSTAT_PROT) {
+        format = &quot;protected method `%s' called for %s&quot;;
+    }
+    else if (last_call_status &amp; CSTAT_VCALL) {
+        format = &quot;undefined local variable or method `%s' for %s&quot;;
+        exc = rb_eNameError;
+    }
+    else if (last_call_status &amp; CSTAT_SUPER) {
+        format = &quot;super: no superclass method `%s'&quot;;
+    }
+    if (!format) {
+        format = &quot;undefined method `%s' for %s&quot;;
+    }
+
+    ruby_current_node = cnode;
+    {
+        int n = 0;
+        VALUE args[3];
+
+        args[n++] = rb_funcall(rb_const_get(exc, rb_intern(&quot;message&quot;)), '!',
+                               3, rb_str_new2(format), obj, argv[0]);
+        args[n++] = argv[0];
+        if (exc == rb_eNoMethodError) {
+            args[n++] = rb_ary_new4(argc-1, argv+1);
+        }
+        exc = rb_class_new_instance(n, args, exc);
+        ruby_frame = ruby_frame-&gt;prev; /* pop frame for &quot;method_missing&quot; */
+        rb_exc_raise(exc);
+    }
+
+    return Qnil;                /* not reached */
+}</pre>
+</body>
+</html>

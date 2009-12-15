@@ -1,0 +1,1557 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Hash</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Hash</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/hash_c.html">
+                hash.c
+                </a>
+        <br />
+                <a href="../files/lib/pp_rb.html">
+                lib/pp.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+A <tt><a href="Hash.html">Hash</a></tt> is a collection of key-value pairs.
+It is similar to an <tt><a href="Array.html">Array</a></tt>, except that
+indexing is done via arbitrary <a href="Hash.html#M002866">keys</a> of any
+object type, not an integer <a href="Hash.html#M002855">index</a>. The
+order in which you traverse a hash by either key or value may seem
+arbitrary, and will generally not be in the insertion order.
+</p>
+<p>
+Hashes have a <em><a href="Hash.html#M002852">default</a> value</em> that
+is returned when accessing <a href="Hash.html#M002866">keys</a> that do not
+exist in the hash. By <a href="Hash.html#M002852">default</a>, that value
+is <tt>nil</tt>.
+</p>
+<p>
+<tt><a href="Hash.html">Hash</a></tt> uses <tt>key.eql?</tt> to test <a
+href="Hash.html#M002866">keys</a> for equality. If you need to use
+instances of your own classes as <a href="Hash.html#M002866">keys</a> in a
+<tt><a href="Hash.html">Hash</a></tt>, it is recommended that you define
+both the <tt>eql?</tt> and <tt>hash</tt> methods. The <tt>hash</tt> method
+must have the property that <tt>a.eql?(b)</tt> implies <tt>a.hash ==
+b.hash</tt>.
+</p>
+<pre>
+  class MyClass
+    attr_reader :str
+    def initialize(str)
+      @str = str
+    end
+    def eql?(o)
+      o.is_a?(MyClass) &amp;&amp; str == o.str
+    end
+    def hash
+      @str.hash
+    end
+  end
+
+  a = MyClass.new(&quot;some string&quot;)
+  b = MyClass.new(&quot;some string&quot;)
+  a.eql? b  #=&gt; true
+
+  h = {}
+
+  h[a] = 1
+  h[a]      #=&gt; 1
+  h[b]      #=&gt; 1
+
+  h[b] = 2
+  h[a]      #=&gt; 2
+  h[b]      #=&gt; 2
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002847">==</a>&nbsp;&nbsp;
+      <a href="#M002848">[]</a>&nbsp;&nbsp;
+      <a href="#M002839">[]</a>&nbsp;&nbsp;
+      <a href="#M002850">[]=</a>&nbsp;&nbsp;
+      <a href="#M002875">clear</a>&nbsp;&nbsp;
+      <a href="#M002852">default</a>&nbsp;&nbsp;
+      <a href="#M002853">default=</a>&nbsp;&nbsp;
+      <a href="#M002854">default_proc</a>&nbsp;&nbsp;
+      <a href="#M002870">delete</a>&nbsp;&nbsp;
+      <a href="#M002871">delete_if</a>&nbsp;&nbsp;
+      <a href="#M002861">each</a>&nbsp;&nbsp;
+      <a href="#M002863">each_key</a>&nbsp;&nbsp;
+      <a href="#M002864">each_pair</a>&nbsp;&nbsp;
+      <a href="#M002862">each_value</a>&nbsp;&nbsp;
+      <a href="#M002860">empty?</a>&nbsp;&nbsp;
+      <a href="#M002849">fetch</a>&nbsp;&nbsp;
+      <a href="#M002883">has_key?</a>&nbsp;&nbsp;
+      <a href="#M002884">has_value?</a>&nbsp;&nbsp;
+      <a href="#M002881">include?</a>&nbsp;&nbsp;
+      <a href="#M002855">index</a>&nbsp;&nbsp;
+      <a href="#M002856">indexes</a>&nbsp;&nbsp;
+      <a href="#M002857">indices</a>&nbsp;&nbsp;
+      <a href="#M002841">initialize_copy</a>&nbsp;&nbsp;
+      <a href="#M002846">inspect</a>&nbsp;&nbsp;
+      <a href="#M002876">invert</a>&nbsp;&nbsp;
+      <a href="#M002885">key?</a>&nbsp;&nbsp;
+      <a href="#M002866">keys</a>&nbsp;&nbsp;
+      <a href="#M002859">length</a>&nbsp;&nbsp;
+      <a href="#M002882">member?</a>&nbsp;&nbsp;
+      <a href="#M002880">merge</a>&nbsp;&nbsp;
+      <a href="#M002879">merge!</a>&nbsp;&nbsp;
+      <a href="#M002840">new</a>&nbsp;&nbsp;
+      <a href="#M002887">pretty_print</a>&nbsp;&nbsp;
+      <a href="#M002888">pretty_print_cycle</a>&nbsp;&nbsp;
+      <a href="#M002842">rehash</a>&nbsp;&nbsp;
+      <a href="#M002873">reject</a>&nbsp;&nbsp;
+      <a href="#M002874">reject!</a>&nbsp;&nbsp;
+      <a href="#M002878">replace</a>&nbsp;&nbsp;
+      <a href="#M002872">select</a>&nbsp;&nbsp;
+      <a href="#M002869">shift</a>&nbsp;&nbsp;
+      <a href="#M002858">size</a>&nbsp;&nbsp;
+      <a href="#M002865">sort</a>&nbsp;&nbsp;
+      <a href="#M002851">store</a>&nbsp;&nbsp;
+      <a href="#M002844">to_a</a>&nbsp;&nbsp;
+      <a href="#M002843">to_hash</a>&nbsp;&nbsp;
+      <a href="#M002845">to_s</a>&nbsp;&nbsp;
+      <a href="#M002877">update</a>&nbsp;&nbsp;
+      <a href="#M002886">value?</a>&nbsp;&nbsp;
+      <a href="#M002867">values</a>&nbsp;&nbsp;
+      <a href="#M002868">values_at</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="Enumerable.html">Enumerable</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M002839" class="method-detail">
+        <a name="M002839"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002839.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002839.html');return false;">
+          <span class="method-name">Hash[ [key =>|, value]* ]   => hash<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="Hash.html#M002840">new</a> hash populated with the given
+objects. Equivalent to the literal <tt>{ <em>key</em>, <em>value</em>,
+&#8230; }</tt>. Keys and <a href="Hash.html#M002867">values</a> occur in
+pairs, so there must be an even number of arguments.
+</p>
+<pre>
+   Hash[&quot;a&quot;, 100, &quot;b&quot;, 200]       #=&gt; {&quot;a&quot;=&gt;100, &quot;b&quot;=&gt;200}
+   Hash[&quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200]   #=&gt; {&quot;a&quot;=&gt;100, &quot;b&quot;=&gt;200}
+   { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }     #=&gt; {&quot;a&quot;=&gt;100, &quot;b&quot;=&gt;200}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002840" class="method-detail">
+        <a name="M002840"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002840.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002840.html');return false;">
+          <span class="method-name">Hash.new                          => hash<br />
+Hash.new(obj)                     => aHash<br />
+Hash.new {|hash, key| block }     => aHash<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="Hash.html#M002840">new</a>, empty hash. If this hash is
+subsequently accessed by a key that doesn&#8216;t correspond to a hash
+entry, the value returned depends on the style of <tt><a
+href="Hash.html#M002840">new</a></tt> used to create the hash. In the first
+form, the access returns <tt>nil</tt>. If <em>obj</em> is specified, this
+single object will be used for all <em><a
+href="Hash.html#M002852">default</a> <a
+href="Hash.html#M002867">values</a></em>. If a block is specified, it will
+be called with the hash object and the key, and should return the <a
+href="Hash.html#M002852">default</a> value. It is the block&#8216;s
+responsibility to <a href="Hash.html#M002851">store</a> the value in the
+hash if required.
+</p>
+<pre>
+   h = Hash.new(&quot;Go Fish&quot;)
+   h[&quot;a&quot;] = 100
+   h[&quot;b&quot;] = 200
+   h[&quot;a&quot;]           #=&gt; 100
+   h[&quot;c&quot;]           #=&gt; &quot;Go Fish&quot;
+   # The following alters the single default object
+   h[&quot;c&quot;].upcase!   #=&gt; &quot;GO FISH&quot;
+   h[&quot;d&quot;]           #=&gt; &quot;GO FISH&quot;
+   h.keys           #=&gt; [&quot;a&quot;, &quot;b&quot;]
+
+   # While this creates a new default object each time
+   h = Hash.new { |hash, key| hash[key] = &quot;Go Fish: #{key}&quot; }
+   h[&quot;c&quot;]           #=&gt; &quot;Go Fish: c&quot;
+   h[&quot;c&quot;].upcase!   #=&gt; &quot;GO FISH: C&quot;
+   h[&quot;d&quot;]           #=&gt; &quot;Go Fish: d&quot;
+   h.keys           #=&gt; [&quot;c&quot;, &quot;d&quot;]
+</pre>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002847" class="method-detail">
+        <a name="M002847"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002847.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002847.html');return false;">
+          <span class="method-name">hsh == other_hash    => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equality&#8212;Two hashes are equal if they <a
+href="Hash.html#M002861">each</a> contain the same number of <a
+href="Hash.html#M002866">keys</a> and if <a
+href="Hash.html#M002861">each</a> key-value pair is equal to (according to
+<tt><a href="Object.html">Object</a>#==</tt>) the corresponding elements in
+the other hash.
+</p>
+<pre>
+   h1 = { &quot;a&quot; =&gt; 1, &quot;c&quot; =&gt; 2 }
+   h2 = { 7 =&gt; 35, &quot;c&quot; =&gt; 2, &quot;a&quot; =&gt; 1 }
+   h3 = { &quot;a&quot; =&gt; 1, &quot;c&quot; =&gt; 2, 7 =&gt; 35 }
+   h4 = { &quot;a&quot; =&gt; 1, &quot;d&quot; =&gt; 2, &quot;f&quot; =&gt; 35 }
+   h1 == h2   #=&gt; false
+   h2 == h3   #=&gt; true
+   h3 == h4   #=&gt; false
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002848" class="method-detail">
+        <a name="M002848"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002848.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002848.html');return false;">
+          <span class="method-name">hsh[key]    =>  value<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Element Reference&#8212;Retrieves the <em>value</em> object corresponding
+to the <em>key</em> object. If not found, returns the a <a
+href="Hash.html#M002852">default</a> value (see <tt>Hash::new</tt> for
+details).
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h[&quot;a&quot;]   #=&gt; 100
+   h[&quot;c&quot;]   #=&gt; nil
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002850" class="method-detail">
+        <a name="M002850"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002850.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002850.html');return false;">
+          <span class="method-name">hsh[key] = value        => value<br />
+hsh.store(key, value)   => value<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Element Assignment&#8212;Associates the value given by <em>value</em> with
+the key given by <em>key</em>. <em>key</em> should not have its value
+changed while it is in use as a key (a <tt><a
+href="String.html">String</a></tt> passed as a key will be duplicated and
+frozen).
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h[&quot;a&quot;] = 9
+   h[&quot;c&quot;] = 4
+   h   #=&gt; {&quot;a&quot;=&gt;9, &quot;b&quot;=&gt;200, &quot;c&quot;=&gt;4}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002875" class="method-detail">
+        <a name="M002875"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002875.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002875.html');return false;">
+          <span class="method-name">hsh.clear &rarr; hsh<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Removes all key-value pairs from <em>hsh</em>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }   #=&gt; {&quot;a&quot;=&gt;100, &quot;b&quot;=&gt;200}
+   h.clear                          #=&gt; {}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002852" class="method-detail">
+        <a name="M002852"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002852.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002852.html');return false;">
+          <span class="method-name">hsh.default(key=nil)   => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="Hash.html#M002852">default</a> value, the value that
+would be returned by <em>hsh</em>[<em>key</em>] if <em>key</em> did not
+exist in <em>hsh</em>. See also <tt>Hash::new</tt> and <tt><a
+href="Hash.html#M002852">Hash#default</a>=</tt>.
+</p>
+<pre>
+   h = Hash.new                            #=&gt; {}
+   h.default                               #=&gt; nil
+   h.default(2)                            #=&gt; nil
+
+   h = Hash.new(&quot;cat&quot;)                     #=&gt; {}
+   h.default                               #=&gt; &quot;cat&quot;
+   h.default(2)                            #=&gt; &quot;cat&quot;
+
+   h = Hash.new {|h,k| h[k] = k.to_i*10}   #=&gt; {}
+   h.default                               #=&gt; 0
+   h.default(2)                            #=&gt; 20
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002853" class="method-detail">
+        <a name="M002853"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002853.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002853.html');return false;">
+          <span class="method-name">hsh.default = obj     => hsh<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the <a href="Hash.html#M002852">default</a> value, the value returned
+for a key that does not exist in the hash. It is not possible to set the a
+<a href="Hash.html#M002852">default</a> to a <tt><a
+href="Proc.html">Proc</a></tt> that will be executed on <a
+href="Hash.html#M002861">each</a> key lookup.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.default = &quot;Go fish&quot;
+   h[&quot;a&quot;]     #=&gt; 100
+   h[&quot;z&quot;]     #=&gt; &quot;Go fish&quot;
+   # This doesn't do what you might hope...
+   h.default = proc do |hash, key|
+     hash[key] = key + key
+   end
+   h[2]       #=&gt; #&lt;Proc:0x401b3948@-:6&gt;
+   h[&quot;cat&quot;]   #=&gt; #&lt;Proc:0x401b3948@-:6&gt;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002854" class="method-detail">
+        <a name="M002854"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002854.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002854.html');return false;">
+          <span class="method-name">hsh.default_proc &rarr; anObject<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+If <tt>Hash::new</tt> was invoked with a block, return that block,
+otherwise return <tt>nil</tt>.
+</p>
+<pre>
+   h = Hash.new {|h,k| h[k] = k*k }   #=&gt; {}
+   p = h.default_proc                 #=&gt; #&lt;Proc:0x401b3d08@-:1&gt;
+   a = []                             #=&gt; []
+   p.call(a, 2)
+   a                                  #=&gt; [nil, nil, 4]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002870" class="method-detail">
+        <a name="M002870"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002870.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002870.html');return false;">
+          <span class="method-name">hsh.delete(key)                   => value<br />
+hsh.delete(key) {| key | block }  => value<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Deletes and returns a key-value pair from <em>hsh</em> whose key is equal
+to <em>key</em>. If the key is not found, returns the <em><a
+href="Hash.html#M002852">default</a> value</em>. If the optional code block
+is given and the key is not found, pass in the key and return the result of
+<em>block</em>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.delete(&quot;a&quot;)                              #=&gt; 100
+   h.delete(&quot;z&quot;)                              #=&gt; nil
+   h.delete(&quot;z&quot;) { |el| &quot;#{el} not found&quot; }   #=&gt; &quot;z not found&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002871" class="method-detail">
+        <a name="M002871"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002871.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002871.html');return false;">
+          <span class="method-name">hsh.delete_if {| key, value | block }  &rarr; hsh<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Deletes every key-value pair from <em>hsh</em> for which <em>block</em>
+evaluates to <tt>true</tt>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200, &quot;c&quot; =&gt; 300 }
+   h.delete_if {|key, value| key &gt;= &quot;b&quot; }   #=&gt; {&quot;a&quot;=&gt;100}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002861" class="method-detail">
+        <a name="M002861"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002861.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002861.html');return false;">
+          <span class="method-name">hsh.each {| key, value | block } &rarr; hsh<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Calls <em>block</em> once for <a href="Hash.html#M002861">each</a> key in
+<em>hsh</em>, passing the key and value to the block as a two-element
+array. Because of the assignment semantics of block parameters, these
+elements will be split out if the block has two formal parameters. Also see
+<tt><a href="Hash.html#M002864">Hash.each_pair</a></tt>, which will be
+marginally more efficient for blocks with two parameters.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.each {|key, value| puts &quot;#{key} is #{value}&quot; }
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   a is 100
+   b is 200
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002863" class="method-detail">
+        <a name="M002863"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002863.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002863.html');return false;">
+          <span class="method-name">hsh.each_key {| key | block } &rarr; hsh<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Calls <em>block</em> once for <a href="Hash.html#M002861">each</a> key in
+<em>hsh</em>, passing the key as a parameter.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.each_key {|key| puts key }
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   a
+   b
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002864" class="method-detail">
+        <a name="M002864"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002864.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002864.html');return false;">
+          <span class="method-name">hsh.each_pair {| key_value_array | block } &rarr; hsh<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Calls <em>block</em> once for <a href="Hash.html#M002861">each</a> key in
+<em>hsh</em>, passing the key and value as parameters.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.each_pair {|key, value| puts &quot;#{key} is #{value}&quot; }
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   a is 100
+   b is 200
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002862" class="method-detail">
+        <a name="M002862"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002862.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002862.html');return false;">
+          <span class="method-name">hsh.each_value {| value | block } &rarr; hsh<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Calls <em>block</em> once for <a href="Hash.html#M002861">each</a> key in
+<em>hsh</em>, passing the value as a parameter.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.each_value {|value| puts value }
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   100
+   200
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002860" class="method-detail">
+        <a name="M002860"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002860.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002860.html');return false;">
+          <span class="method-name">hsh.empty?    => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if <em>hsh</em> contains no key-value pairs.
+</p>
+<pre>
+   {}.empty?   #=&gt; true
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002849" class="method-detail">
+        <a name="M002849"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002849.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002849.html');return false;">
+          <span class="method-name">hsh.fetch(key [, default] )       => obj<br />
+hsh.fetch(key) {| key | block }   => obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a value from the hash for the given key. If the key can&#8216;t be
+found, there are several options: With no other arguments, it will raise an
+<tt><a href="IndexError.html">IndexError</a></tt> exception; if <em><a
+href="Hash.html#M002852">default</a></em> is given, then that will be
+returned; if the optional code block is specified, then that will be run
+and its result returned.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.fetch(&quot;a&quot;)                            #=&gt; 100
+   h.fetch(&quot;z&quot;, &quot;go fish&quot;)                 #=&gt; &quot;go fish&quot;
+   h.fetch(&quot;z&quot;) { |el| &quot;go fish, #{el}&quot;}   #=&gt; &quot;go fish, z&quot;
+</pre>
+<p>
+The following example shows that an exception is raised if the key is not
+found and a <a href="Hash.html#M002852">default</a> value is not supplied.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.fetch(&quot;z&quot;)
+</pre>
+<p>
+<em>produces:</em>
+</p>
+<pre>
+   prog.rb:2:in `fetch': key not found (IndexError)
+    from prog.rb:2
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002883" class="method-detail">
+        <a name="M002883"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002883.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002883.html');return false;">
+          <span class="method-name">hsh.has_key?(key)    => true or false<br />
+hsh.include?(key)    => true or false<br />
+hsh.key?(key)        => true or false<br />
+hsh.member?(key)     => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if the given key is present in <em>hsh</em>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.has_key?(&quot;a&quot;)   #=&gt; true
+   h.has_key?(&quot;z&quot;)   #=&gt; false
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002884" class="method-detail">
+        <a name="M002884"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002884.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002884.html');return false;">
+          <span class="method-name">hsh.has_value?(value)    => true or false<br />
+hsh.value?(value)        => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if the given value is present for some key in
+<em>hsh</em>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.has_value?(100)   #=&gt; true
+   h.has_value?(999)   #=&gt; false
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002881" class="method-detail">
+        <a name="M002881"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002881.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002881.html');return false;">
+          <span class="method-name">hsh.has_key?(key)    => true or false<br />
+hsh.include?(key)    => true or false<br />
+hsh.key?(key)        => true or false<br />
+hsh.member?(key)     => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if the given key is present in <em>hsh</em>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.has_key?(&quot;a&quot;)   #=&gt; true
+   h.has_key?(&quot;z&quot;)   #=&gt; false
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002855" class="method-detail">
+        <a name="M002855"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002855.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002855.html');return false;">
+          <span class="method-name">hsh.index(value)    => key<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the key for a given value. If not found, returns <tt>nil</tt>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.index(200)   #=&gt; &quot;b&quot;
+   h.index(999)   #=&gt; nil
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002856" class="method-detail">
+        <a name="M002856"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002856.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002856.html');return false;">
+          <span class="method-name">hsh.indexes(key, ...)    => array<br />
+hsh.indices(key, ...)    => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Deprecated in favor of <tt><a
+href="Hash.html#M002872">Hash#select</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002857" class="method-detail">
+        <a name="M002857"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002857.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002857.html');return false;">
+          <span class="method-name">hsh.indexes(key, ...)    => array<br />
+hsh.indices(key, ...)    => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Deprecated in favor of <tt><a
+href="Hash.html#M002872">Hash#select</a></tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002841" class="method-detail">
+        <a name="M002841"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002841.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002841.html');return false;">
+          <span class="method-name">hsh.replace(other_hash) &rarr; hsh<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Replaces the contents of <em>hsh</em> with the contents of
+<em>other_hash</em>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.replace({ &quot;c&quot; =&gt; 300, &quot;d&quot; =&gt; 400 })   #=&gt; {&quot;c&quot;=&gt;300, &quot;d&quot;=&gt;400}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002846" class="method-detail">
+        <a name="M002846"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002846.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002846.html');return false;">
+          <span class="method-name">hsh.inspect  => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the contents of this hash as a string.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002876" class="method-detail">
+        <a name="M002876"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002876.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002876.html');return false;">
+          <span class="method-name">hsh.invert &rarr; aHash<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="Hash.html#M002840">new</a> hash created by using
+<em>hsh</em>&#8216;s <a href="Hash.html#M002867">values</a> as <a
+href="Hash.html#M002866">keys</a>, and the <a
+href="Hash.html#M002866">keys</a> as <a
+href="Hash.html#M002867">values</a>.
+</p>
+<pre>
+   h = { &quot;n&quot; =&gt; 100, &quot;m&quot; =&gt; 100, &quot;y&quot; =&gt; 300, &quot;d&quot; =&gt; 200, &quot;a&quot; =&gt; 0 }
+   h.invert   #=&gt; {0=&gt;&quot;a&quot;, 100=&gt;&quot;n&quot;, 200=&gt;&quot;d&quot;, 300=&gt;&quot;y&quot;}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002885" class="method-detail">
+        <a name="M002885"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002885.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002885.html');return false;">
+          <span class="method-name">hsh.has_key?(key)    => true or false<br />
+hsh.include?(key)    => true or false<br />
+hsh.key?(key)        => true or false<br />
+hsh.member?(key)     => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if the given key is present in <em>hsh</em>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.has_key?(&quot;a&quot;)   #=&gt; true
+   h.has_key?(&quot;z&quot;)   #=&gt; false
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002866" class="method-detail">
+        <a name="M002866"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002866.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002866.html');return false;">
+          <span class="method-name">hsh.keys    => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="Hash.html#M002840">new</a> array populated with the <a
+href="Hash.html#M002866">keys</a> from this hash. See also <tt><a
+href="Hash.html#M002867">Hash#values</a></tt>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200, &quot;c&quot; =&gt; 300, &quot;d&quot; =&gt; 400 }
+   h.keys   #=&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002859" class="method-detail">
+        <a name="M002859"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002859.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002859.html');return false;">
+          <span class="method-name">hsh.length    =>  fixnum<br />
+hsh.size      =>  fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the number of key-value pairs in the hash.
+</p>
+<pre>
+   h = { &quot;d&quot; =&gt; 100, &quot;a&quot; =&gt; 200, &quot;v&quot; =&gt; 300, &quot;e&quot; =&gt; 400 }
+   h.length        #=&gt; 4
+   h.delete(&quot;a&quot;)   #=&gt; 200
+   h.length        #=&gt; 3
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002882" class="method-detail">
+        <a name="M002882"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002882.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002882.html');return false;">
+          <span class="method-name">hsh.has_key?(key)    => true or false<br />
+hsh.include?(key)    => true or false<br />
+hsh.key?(key)        => true or false<br />
+hsh.member?(key)     => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if the given key is present in <em>hsh</em>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.has_key?(&quot;a&quot;)   #=&gt; true
+   h.has_key?(&quot;z&quot;)   #=&gt; false
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002880" class="method-detail">
+        <a name="M002880"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002880.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002880.html');return false;">
+          <span class="method-name">hsh.merge(other_hash)                              &rarr; a_hash<br />
+hsh.merge(other_hash){|key, oldval, newval| block} &rarr; a_hash<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="Hash.html#M002840">new</a> hash containing the contents
+of <em>other_hash</em> and the contents of <em>hsh</em>, overwriting
+entries in <em>hsh</em> with duplicate <a href="Hash.html#M002866">keys</a>
+with those from <em>other_hash</em>.
+</p>
+<pre>
+   h1 = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h2 = { &quot;b&quot; =&gt; 254, &quot;c&quot; =&gt; 300 }
+   h1.merge(h2)   #=&gt; {&quot;a&quot;=&gt;100, &quot;b&quot;=&gt;254, &quot;c&quot;=&gt;300}
+   h1             #=&gt; {&quot;a&quot;=&gt;100, &quot;b&quot;=&gt;200}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002879" class="method-detail">
+        <a name="M002879"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002879.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002879.html');return false;">
+          <span class="method-name">hsh.merge!(other_hash)                                 => hsh<br />
+hsh.update(other_hash)                                 => hsh<br />
+hsh.merge!(other_hash){|key, oldval, newval| block}    => hsh<br />
+hsh.update(other_hash){|key, oldval, newval| block}    => hsh<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Adds the contents of <em>other_hash</em> to <em>hsh</em>, overwriting
+entries with duplicate <a href="Hash.html#M002866">keys</a> with those from
+<em>other_hash</em>.
+</p>
+<pre>
+   h1 = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h2 = { &quot;b&quot; =&gt; 254, &quot;c&quot; =&gt; 300 }
+   h1.merge!(h2)   #=&gt; {&quot;a&quot;=&gt;100, &quot;b&quot;=&gt;254, &quot;c&quot;=&gt;300}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002887" class="method-detail">
+        <a name="M002887"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002887.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002887.html');return false;">
+          <span class="method-name">pretty_print</span><span class="method-args">(q)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M002888" class="method-detail">
+        <a name="M002888"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002888.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002888.html');return false;">
+          <span class="method-name">pretty_print_cycle</span><span class="method-args">(q)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M002842" class="method-detail">
+        <a name="M002842"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002842.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002842.html');return false;">
+          <span class="method-name">hsh.rehash &rarr; hsh<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Rebuilds the hash based on the current hash <a
+href="Hash.html#M002867">values</a> for <a
+href="Hash.html#M002861">each</a> key. If <a
+href="Hash.html#M002867">values</a> of key objects have changed since they
+were inserted, this method will reindex <em>hsh</em>. If <tt><a
+href="Hash.html#M002842">Hash#rehash</a></tt> is called while an iterator
+is traversing the hash, an <tt><a
+href="IndexError.html">IndexError</a></tt> will be raised in the iterator.
+</p>
+<pre>
+   a = [ &quot;a&quot;, &quot;b&quot; ]
+   c = [ &quot;c&quot;, &quot;d&quot; ]
+   h = { a =&gt; 100, c =&gt; 300 }
+   h[a]       #=&gt; 100
+   a[0] = &quot;z&quot;
+   h[a]       #=&gt; nil
+   h.rehash   #=&gt; {[&quot;z&quot;, &quot;b&quot;]=&gt;100, [&quot;c&quot;, &quot;d&quot;]=&gt;300}
+   h[a]       #=&gt; 100
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002873" class="method-detail">
+        <a name="M002873"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002873.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002873.html');return false;">
+          <span class="method-name">hsh.reject {| key, value | block }  &rarr; a_hash<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Same as <tt><a href="Hash.html#M002871">Hash#delete_if</a></tt>, but works
+on (and returns) a copy of the <em>hsh</em>. Equivalent to
+<tt><em>hsh</em>.dup.delete_if</tt>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002874" class="method-detail">
+        <a name="M002874"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002874.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002874.html');return false;">
+          <span class="method-name">hsh.reject! {| key, value | block }  &rarr; hsh or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <tt><a href="Hash.html#M002871">Hash#delete_if</a></tt>, but
+returns <tt>nil</tt> if no changes were made.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002878" class="method-detail">
+        <a name="M002878"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002878.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002878.html');return false;">
+          <span class="method-name">hsh.replace(other_hash) &rarr; hsh<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Replaces the contents of <em>hsh</em> with the contents of
+<em>other_hash</em>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.replace({ &quot;c&quot; =&gt; 300, &quot;d&quot; =&gt; 400 })   #=&gt; {&quot;c&quot;=&gt;300, &quot;d&quot;=&gt;400}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002872" class="method-detail">
+        <a name="M002872"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002872.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002872.html');return false;">
+          <span class="method-name">hsh.select {|key, value| block}   => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="Hash.html#M002840">new</a> array consisting of
+<tt>[key,value]</tt> pairs for which the block returns true. Also see
+<tt><a href="Hash.html#M002868">Hash.values_at</a></tt>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200, &quot;c&quot; =&gt; 300 }
+   h.select {|k,v| k &gt; &quot;a&quot;}  #=&gt; [[&quot;b&quot;, 200], [&quot;c&quot;, 300]]
+   h.select {|k,v| v &lt; 200}  #=&gt; [[&quot;a&quot;, 100]]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002869" class="method-detail">
+        <a name="M002869"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002869.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002869.html');return false;">
+          <span class="method-name">hsh.shift &rarr; anArray or obj<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Removes a key-value pair from <em>hsh</em> and returns it as the two-item
+array <tt>[</tt> <em>key, value</em> <tt>]</tt>, or the hash&#8216;s <a
+href="Hash.html#M002852">default</a> value if the hash is empty.
+</p>
+<pre>
+   h = { 1 =&gt; &quot;a&quot;, 2 =&gt; &quot;b&quot;, 3 =&gt; &quot;c&quot; }
+   h.shift   #=&gt; [1, &quot;a&quot;]
+   h         #=&gt; {2=&gt;&quot;b&quot;, 3=&gt;&quot;c&quot;}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002858" class="method-detail">
+        <a name="M002858"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002858.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002858.html');return false;">
+          <span class="method-name">hsh.length    =>  fixnum<br />
+hsh.size      =>  fixnum<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the number of key-value pairs in the hash.
+</p>
+<pre>
+   h = { &quot;d&quot; =&gt; 100, &quot;a&quot; =&gt; 200, &quot;v&quot; =&gt; 300, &quot;e&quot; =&gt; 400 }
+   h.length        #=&gt; 4
+   h.delete(&quot;a&quot;)   #=&gt; 200
+   h.length        #=&gt; 3
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002865" class="method-detail">
+        <a name="M002865"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002865.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002865.html');return false;">
+          <span class="method-name">hsh.sort                    => array <br />
+hsh.sort {| a, b | block }  => array <br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts <em>hsh</em> to a nested array of <tt>[</tt> <em>key, value</em>
+<tt>]</tt> arrays and sorts it, using <tt><a
+href="Array.html#M002185">Array#sort</a></tt>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 20, &quot;b&quot; =&gt; 30, &quot;c&quot; =&gt; 10  }
+   h.sort                       #=&gt; [[&quot;a&quot;, 20], [&quot;b&quot;, 30], [&quot;c&quot;, 10]]
+   h.sort {|a,b| a[1]&lt;=&gt;b[1]}   #=&gt; [[&quot;c&quot;, 10], [&quot;a&quot;, 20], [&quot;b&quot;, 30]]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002851" class="method-detail">
+        <a name="M002851"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002851.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002851.html');return false;">
+          <span class="method-name">hsh[key] = value        => value<br />
+hsh.store(key, value)   => value<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Element Assignment&#8212;Associates the value given by <em>value</em> with
+the key given by <em>key</em>. <em>key</em> should not have its value
+changed while it is in use as a key (a <tt><a
+href="String.html">String</a></tt> passed as a key will be duplicated and
+frozen).
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h[&quot;a&quot;] = 9
+   h[&quot;c&quot;] = 4
+   h   #=&gt; {&quot;a&quot;=&gt;9, &quot;b&quot;=&gt;200, &quot;c&quot;=&gt;4}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002844" class="method-detail">
+        <a name="M002844"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002844.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002844.html');return false;">
+          <span class="method-name">hsh.to_a &rarr; array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts <em>hsh</em> to a nested array of <tt>[</tt> <em>key, value</em>
+<tt>]</tt> arrays.
+</p>
+<pre>
+   h = { &quot;c&quot; =&gt; 300, &quot;a&quot; =&gt; 100, &quot;d&quot; =&gt; 400, &quot;c&quot; =&gt; 300  }
+   h.to_a   #=&gt; [[&quot;a&quot;, 100], [&quot;c&quot;, 300], [&quot;d&quot;, 400]]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002843" class="method-detail">
+        <a name="M002843"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002843.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002843.html');return false;">
+          <span class="method-name">hsh.to_hash   => hsh<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <em>self</em>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M002845" class="method-detail">
+        <a name="M002845"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002845.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002845.html');return false;">
+          <span class="method-name">hsh.to_s   => string<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts <em>hsh</em> to a string by converting the hash to an array of
+<tt>[</tt> <em>key, value</em> <tt>]</tt> pairs and then converting that
+array to a string using <tt><a
+href="Array.html#M002182">Array#join</a></tt> with the <a
+href="Hash.html#M002852">default</a> separator.
+</p>
+<pre>
+   h = { &quot;c&quot; =&gt; 300, &quot;a&quot; =&gt; 100, &quot;d&quot; =&gt; 400, &quot;c&quot; =&gt; 300  }
+   h.to_s   #=&gt; &quot;a100c300d400&quot;
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002877" class="method-detail">
+        <a name="M002877"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002877.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002877.html');return false;">
+          <span class="method-name">hsh.merge!(other_hash)                                 => hsh<br />
+hsh.update(other_hash)                                 => hsh<br />
+hsh.merge!(other_hash){|key, oldval, newval| block}    => hsh<br />
+hsh.update(other_hash){|key, oldval, newval| block}    => hsh<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Adds the contents of <em>other_hash</em> to <em>hsh</em>, overwriting
+entries with duplicate <a href="Hash.html#M002866">keys</a> with those from
+<em>other_hash</em>.
+</p>
+<pre>
+   h1 = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h2 = { &quot;b&quot; =&gt; 254, &quot;c&quot; =&gt; 300 }
+   h1.merge!(h2)   #=&gt; {&quot;a&quot;=&gt;100, &quot;b&quot;=&gt;254, &quot;c&quot;=&gt;300}
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002886" class="method-detail">
+        <a name="M002886"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002886.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002886.html');return false;">
+          <span class="method-name">hsh.has_value?(value)    => true or false<br />
+hsh.value?(value)        => true or false<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if the given value is present for some key in
+<em>hsh</em>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+   h.has_value?(100)   #=&gt; true
+   h.has_value?(999)   #=&gt; false
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002867" class="method-detail">
+        <a name="M002867"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002867.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002867.html');return false;">
+          <span class="method-name">hsh.values    => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="Hash.html#M002840">new</a> array populated with the <a
+href="Hash.html#M002867">values</a> from <em>hsh</em>. See also <tt><a
+href="Hash.html#M002866">Hash#keys</a></tt>.
+</p>
+<pre>
+   h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200, &quot;c&quot; =&gt; 300 }
+   h.values   #=&gt; [100, 200, 300]
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M002868" class="method-detail">
+        <a name="M002868"></a>
+
+        <div class="method-heading">
+          <a href="Hash.src/M002868.html" target="Code" class="method-signature"
+            onclick="popupCode('Hash.src/M002868.html');return false;">
+          <span class="method-name">hsh.values_at(key, ...)   => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return an array containing the <a href="Hash.html#M002867">values</a>
+associated with the given <a href="Hash.html#M002866">keys</a>. Also see
+<tt><a href="Hash.html#M002872">Hash.select</a></tt>.
+</p>
+<pre>
+  h = { &quot;cat&quot; =&gt; &quot;feline&quot;, &quot;dog&quot; =&gt; &quot;canine&quot;, &quot;cow&quot; =&gt; &quot;bovine&quot; }
+  h.values_at(&quot;cow&quot;, &quot;cat&quot;)  #=&gt; [&quot;bovine&quot;, &quot;feline&quot;]
+</pre>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+<div style="font-size: smaller; text-align:center" id="credits">
+ <!-- 2 --><p> <a href="http://www.ruby-doc.org">ruby-doc.org</a> is a service of <a href="http://www.jamesbritt.com">James Britt</a> and <a href="http://www.neurogami.com">Neurogami</a>, a <a href="http://www.neurogami.com"> Ruby application development company in Phoenix, AZ</a>. </p>
+  <p><span>Documentation content on <a href="http://ruby-doc.org">ruby-doc.org</a> is provided by </span><a href="http://www.ruby-doc.org/about">remarkable members</a> of the Ruby community.</p>
+  <p>For more information on the Ruby programming language, visit <a href="http://www.ruby-lang.org">ruby-lang.org</a>.</p>
+  <p>Want to help improve Ruby's API docs? See <a href="/documentation-guidelines.html"> Ruby Documentation Guidelines</a>.</p>
+  </div>
+
+
+
+</body>
+</html>

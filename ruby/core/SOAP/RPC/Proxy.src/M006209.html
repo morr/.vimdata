@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>route (SOAP::RPC::Proxy)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/rpc/proxy.rb, line 153</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">route</span>(<span class="ruby-identifier">req_header</span>, <span class="ruby-identifier">req_body</span>, <span class="ruby-identifier">reqopt</span>, <span class="ruby-identifier">resopt</span>)
+    <span class="ruby-identifier">req_env</span> = <span class="ruby-operator">::</span><span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">SOAPEnvelope</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">req_header</span>, <span class="ruby-identifier">req_body</span>)
+    <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">reqopt</span>[<span class="ruby-identifier">:envelopenamespace</span>].<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">set_envelopenamespace</span>(<span class="ruby-identifier">req_env</span>, <span class="ruby-identifier">reqopt</span>[<span class="ruby-identifier">:envelopenamespace</span>])
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">reqopt</span>[<span class="ruby-identifier">:external_content</span>] = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">conn_data</span> = <span class="ruby-identifier">marshal</span>(<span class="ruby-identifier">req_env</span>, <span class="ruby-identifier">reqopt</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ext</span> = <span class="ruby-identifier">reqopt</span>[<span class="ruby-identifier">:external_content</span>]
+      <span class="ruby-identifier">mime</span> = <span class="ruby-constant">MIMEMessage</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-identifier">ext</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">mime</span>.<span class="ruby-identifier">add_attachment</span>(<span class="ruby-identifier">v</span>.<span class="ruby-identifier">data</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">mime</span>.<span class="ruby-identifier">add_part</span>(<span class="ruby-identifier">conn_data</span>.<span class="ruby-identifier">send_string</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\r\n&quot;</span>)
+      <span class="ruby-identifier">mime</span>.<span class="ruby-identifier">close</span>
+      <span class="ruby-identifier">conn_data</span>.<span class="ruby-identifier">send_string</span> = <span class="ruby-identifier">mime</span>.<span class="ruby-identifier">content_str</span>
+      <span class="ruby-identifier">conn_data</span>.<span class="ruby-identifier">send_contenttype</span> = <span class="ruby-identifier">mime</span>.<span class="ruby-identifier">headers</span>[<span class="ruby-value str">'content-type'</span>].<span class="ruby-identifier">str</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">conn_data</span> = <span class="ruby-ivar">@streamhandler</span>.<span class="ruby-identifier">send</span>(<span class="ruby-ivar">@endpoint_url</span>, <span class="ruby-identifier">conn_data</span>,
+      <span class="ruby-identifier">reqopt</span>[<span class="ruby-identifier">:soapaction</span>])
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">conn_data</span>.<span class="ruby-identifier">receive_string</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">unmarshal</span>(<span class="ruby-identifier">conn_data</span>, <span class="ruby-identifier">resopt</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

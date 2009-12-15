@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>** (Bignum)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     big ** exponent   #=&gt; numeric
+ *
+ *  Raises _big_ to the _exponent_ power (which may be an integer, float,
+ *  or anything that will coerce to a number). The result may be
+ *  a Fixnum, Bignum, or Float
+ *
+ *    123456789 ** 2      #=&gt; 15241578750190521
+ *    123456789 ** 1.2    #=&gt; 5126464716.09932
+ *    123456789 ** -2     #=&gt; 6.5610001194102e-17
+ */
+
+VALUE
+rb_big_pow(x, y)
+    VALUE x, y;
+{
+    double d;
+    long yy;
+    
+    if (y == INT2FIX(0)) return INT2FIX(1);
+    switch (TYPE(y)) {
+      case T_FLOAT:
+        d = RFLOAT(y)-&gt;value;
+        break;
+
+      case T_BIGNUM:
+        rb_warn(&quot;in a**b, b may be too big&quot;);
+        d = rb_big2dbl(y);
+        break;
+
+      case T_FIXNUM:
+        yy = FIX2LONG(y);
+        if (yy &gt; 0) {
+            VALUE z = x;
+            const long BIGLEN_LIMIT = 1024*1024 / SIZEOF_BDIGITS;
+
+            if ((RBIGNUM(x)-&gt;len &gt; BIGLEN_LIMIT) ||
+                (RBIGNUM(x)-&gt;len &gt; BIGLEN_LIMIT / yy)) {
+                rb_warn(&quot;in a**b, b may be too big&quot;);
+                d = (double)yy;
+                break;
+            }
+            for (;;) {
+                yy -= 1;
+                if (yy == 0) break;
+                while (yy % 2 == 0) {
+                    yy /= 2;
+                    x = rb_big_mul0(x, x);
+                    bigtrunc(x);
+                }
+                z = rb_big_mul0(z, x);
+                bigtrunc(z);
+            }
+            return bignorm(z);
+        }
+        d = (double)yy;
+        break;
+
+      default:
+        return rb_num_coerce_bin(x, y);
+    }
+    return rb_float_new(pow(rb_big2dbl(x), d));
+}</pre>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>def_extend_command (IRB::ExtendCommandBundle)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb/extend-command.rb, line 116</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">def_extend_command</span>(<span class="ruby-identifier">cmd_name</span>, <span class="ruby-identifier">cmd_class</span>, <span class="ruby-identifier">load_file</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">aliases</span>)
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">cmd_class</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Symbol</span>
+        <span class="ruby-identifier">cmd_class</span> = <span class="ruby-identifier">cmd_class</span>.<span class="ruby-identifier">id2name</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Class</span>
+        <span class="ruby-identifier">cmd_class</span> = <span class="ruby-identifier">cmd_class</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">load_file</span>
+        <span class="ruby-identifier">eval</span> <span class="ruby-node">%[
+          def #{cmd_name}(*opts, &amp;b)
+            require &quot;#{load_file}&quot;
+            eval %[
+              def #{cmd_name}(*opts, &amp;b)
+                ExtendCommand::#{cmd_class}.execute(irb_context, *opts, &amp;b)
+              end
+            ]
+            send :#{cmd_name}, *opts, &amp;b
+          end
+        ]</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">eval</span> <span class="ruby-node">%[
+          def #{cmd_name}(*opts, &amp;b)
+            ExtendCommand::#{cmd_class}.execute(irb_context, *opts, &amp;b)
+          end
+        ]</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">ali</span>, <span class="ruby-identifier">flag</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">aliases</span>
+        <span class="ruby-ivar">@ALIASES</span>.<span class="ruby-identifier">push</span> [<span class="ruby-identifier">ali</span>, <span class="ruby-identifier">cmd_name</span>, <span class="ruby-identifier">flag</span>]
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

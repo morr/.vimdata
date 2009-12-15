@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (URI::Generic)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/uri/generic.rb, line 156</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">scheme</span>, 
+                   <span class="ruby-identifier">userinfo</span>, <span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span>, <span class="ruby-identifier">registry</span>, 
+                   <span class="ruby-identifier">path</span>, <span class="ruby-identifier">opaque</span>, 
+                   <span class="ruby-identifier">query</span>, 
+                   <span class="ruby-identifier">fragment</span>,
+                   <span class="ruby-identifier">arg_check</span> = <span class="ruby-keyword kw">false</span>)
+      <span class="ruby-ivar">@scheme</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@user</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@password</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@host</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@port</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@path</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@query</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@opaque</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@registry</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-ivar">@fragment</span> = <span class="ruby-keyword kw">nil</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">arg_check</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">scheme</span> = <span class="ruby-identifier">scheme</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">userinfo</span> = <span class="ruby-identifier">userinfo</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">host</span> = <span class="ruby-identifier">host</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">port</span> = <span class="ruby-identifier">port</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">path</span> = <span class="ruby-identifier">path</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">query</span> = <span class="ruby-identifier">query</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">opaque</span> = <span class="ruby-identifier">opaque</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">registry</span> = <span class="ruby-identifier">registry</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">fragment</span> = <span class="ruby-identifier">fragment</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">set_scheme</span>(<span class="ruby-identifier">scheme</span>)
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">set_userinfo</span>(<span class="ruby-identifier">userinfo</span>)
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">set_host</span>(<span class="ruby-identifier">host</span>)
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">set_port</span>(<span class="ruby-identifier">port</span>)
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">set_path</span>(<span class="ruby-identifier">path</span>)
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">set_query</span>(<span class="ruby-identifier">query</span>)
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">set_opaque</span>(<span class="ruby-identifier">opaque</span>)
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">set_registry</span>(<span class="ruby-identifier">registry</span>)
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">set_fragment</span>(<span class="ruby-identifier">fragment</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@registry</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">use_registry</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">InvalidURIError</span>, 
+          <span class="ruby-node">&quot;the scheme #{@scheme} does not accept registry part: #{@registry} (or bad hostname?)&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      
+      <span class="ruby-ivar">@scheme</span>.<span class="ruby-identifier">freeze</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@scheme</span>
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">set_path</span>(<span class="ruby-value str">''</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@path</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@opaque</span> <span class="ruby-comment cmt"># (see RFC2396 Section 5.2)</span>
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">set_port</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">default_port</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">default_port</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@port</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

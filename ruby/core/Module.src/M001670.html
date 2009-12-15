@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>&lt;= (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   mod &lt;= other   =&gt;  true, false, or nil
+ *
+ * Returns true if &lt;i&gt;mod&lt;/i&gt; is a subclass of &lt;i&gt;other&lt;/i&gt; or
+ * is the same as &lt;i&gt;other&lt;/i&gt;. Returns 
+ * &lt;code&gt;nil&lt;/code&gt; if there's no relationship between the two. 
+ * (Think of the relationship in terms of the class definition: 
+ * &quot;class A&lt;B&quot; implies &quot;A&lt;B&quot;).
+ *
+ */
+
+VALUE
+rb_class_inherited_p(mod, arg)
+    VALUE mod, arg;
+{
+    VALUE start = mod;
+
+    if (mod == arg) return Qtrue;
+    switch (TYPE(arg)) {
+      case T_MODULE:
+      case T_CLASS:
+        break;
+      default:
+        rb_raise(rb_eTypeError, &quot;compared with non class/module&quot;);
+    }
+
+    if (FL_TEST(mod, FL_SINGLETON)) {
+        if (RCLASS(mod)-&gt;m_tbl == RCLASS(arg)-&gt;m_tbl)
+            return Qtrue;
+        mod = RBASIC(mod)-&gt;klass;
+    }
+    while (mod) {
+        if (RCLASS(mod)-&gt;m_tbl == RCLASS(arg)-&gt;m_tbl)
+            return Qtrue;
+        mod = RCLASS(mod)-&gt;super;
+    }
+    /* not mod &lt; arg; check if mod &gt; arg */
+    while (arg) {
+        if (RCLASS(arg)-&gt;m_tbl == RCLASS(start)-&gt;m_tbl)
+            return Qfalse;
+        arg = RCLASS(arg)-&gt;super;
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

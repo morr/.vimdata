@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: YAML::Syck::Seq</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">YAML::Syck::Seq</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/syck/rubyext_c.html">
+                syck/rubyext.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Node.html">
+                YAML::Syck::Node
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Define <a href="Scalar.html">YAML::Syck::Scalar</a>, <a
+href="Seq.html">YAML::Syck::Seq</a>, <a href="Map.html">YAML::Syck::Map</a>
+&#8212;
+</p>
+<pre>
+    all are the publicly usable variants of YAML::Syck::Node
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001353">add</a>&nbsp;&nbsp;
+      <a href="#M001351">new</a>&nbsp;&nbsp;
+      <a href="#M001354">style=</a>&nbsp;&nbsp;
+      <a href="#M001352">value=</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001351" class="method-detail">
+        <a name="M001351"></a>
+
+        <div class="method-heading">
+          <a href="#M001351" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(p1, p2, p3)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+YAML::Syck::Seq.initialize
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001351-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001351-source">
+<pre>
+/*
+ * YAML::Syck::Seq.initialize
+ */
+VALUE
+syck_seq_initialize( self, type_id, val, style )
+    VALUE self, type_id, val, style;
+{
+    SyckNode *node;
+    Data_Get_Struct( self, SyckNode, node );
+
+    rb_iv_set( self, &quot;@kind&quot;, sym_seq );
+    rb_funcall( self, s_type_id_set, 1, type_id );
+    rb_funcall( self, s_value_set, 1, val );
+    rb_funcall( self, s_style_set, 1, style );
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001353" class="method-detail">
+        <a name="M001353"></a>
+
+        <div class="method-heading">
+          <a href="#M001353" class="method-signature">
+          <span class="method-name">add</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Seq.html#M001353">YAML::Syck::Seq.add</a>
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001353-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001353-source">
+<pre>
+/*
+ * YAML::Syck::Seq.add
+ */
+VALUE
+syck_seq_add_m( self, val )
+    VALUE self, val;
+{
+    SyckNode *node;
+    VALUE emitter = rb_ivar_get( self, s_emitter );
+    Data_Get_Struct( self, SyckNode, node );
+
+    if ( rb_respond_to( emitter, s_node_export ) ) {
+        val = rb_funcall( emitter, s_node_export, 1, val );
+    }
+    syck_seq_add( node, val );
+    rb_ary_push( rb_ivar_get( self, s_value ), val );
+
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001354" class="method-detail">
+        <a name="M001354"></a>
+
+        <div class="method-heading">
+          <a href="#M001354" class="method-signature">
+          <span class="method-name">style=</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+YAML::Syck::Seq.style=
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001354-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001354-source">
+<pre>
+/*
+ * YAML::Syck::Seq.style=
+ */
+VALUE
+syck_seq_style_set( self, style )
+    VALUE self, style;
+{
+    SyckNode *node;
+    Data_Get_Struct( self, SyckNode, node );
+
+    if ( style == sym_inline )
+    {
+        node-&gt;data.list-&gt;style = seq_inline;
+    } 
+    else
+    {
+        node-&gt;data.list-&gt;style = seq_none;
+    }
+
+    rb_iv_set( self, &quot;@style&quot;, style );
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001352" class="method-detail">
+        <a name="M001352"></a>
+
+        <div class="method-heading">
+          <a href="#M001352" class="method-signature">
+          <span class="method-name">value=</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+YAML::Syck::Seq.value=
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001352-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001352-source">
+<pre>
+/*
+ * YAML::Syck::Seq.value=
+ */
+VALUE
+syck_seq_value_set( self, val )
+    VALUE self, val;
+{
+    SyckNode *node;
+    Data_Get_Struct( self, SyckNode, node );
+
+    val = rb_check_array_type( val );
+    if ( !NIL_P( val ) ) {
+        int i;
+        syck_seq_empty( node );
+        for ( i = 0; i &lt; RARRAY( val )-&gt;len; i++ )
+        {
+            syck_seq_add( node, rb_ary_entry(val, i) );
+        }
+    }
+
+    rb_iv_set( self, &quot;@value&quot;, val );
+    return val;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

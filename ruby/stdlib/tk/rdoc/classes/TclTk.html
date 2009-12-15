@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: TclTk</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">TclTk</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/tk/lib/tcltk_rb.html">
+                tk/lib/tcltk.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+module <a href="TclTk.html">TclTk</a>: collection of tcl/tk utilities
+(supplies namespace.)
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M009277">_addcallback</a>&nbsp;&nbsp;
+      <a href="#M009278">_callcallback</a>&nbsp;&nbsp;
+      <a href="#M009279">_newname</a>&nbsp;&nbsp;
+      <a href="#M009276">dcb</a>&nbsp;&nbsp;
+      <a href="#M009275">deletecallbackkey</a>&nbsp;&nbsp;
+      <a href="#M009274">mainloop</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M009277" class="m-detail">
+        <a name="M009277"></a>
+
+        <div class="method-heading">
+          <a href="#M009277" class="method-signature">
+          <span class="method-name">_addcallback</span><span class="method-args">(ca)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+<a href="TclTk.html#M009277">TclTk._addcallback(ca)</a>: register callback
+</p>
+<pre>
+  ca: callback(TclTkCallback)
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009277-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009277-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tcltk.rb, line 52</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-constant">TclTk</span>.<span class="ruby-identifier">_addcallback</span>(<span class="ruby-identifier">ca</span>)
+  <span class="ruby-identifier">print</span>(<span class="ruby-value str">&quot;_addcallback: &quot;</span>, <span class="ruby-identifier">ca</span>.<span class="ruby-identifier">to_s</span>(), <span class="ruby-value str">&quot;\n&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$DEBUG</span>
+  <span class="ruby-ivar">@callback</span>[<span class="ruby-identifier">ca</span>.<span class="ruby-identifier">to_s</span>()] = <span class="ruby-identifier">ca</span>
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009278" class="m-detail">
+        <a name="M009278"></a>
+
+        <div class="method-heading">
+          <a href="#M009278" class="method-signature">
+          <span class="method-name">_callcallback</span><span class="method-args">(key, arg)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+<a href="TclTk.html#M009278">TclTk._callcallback</a>(key, arg): invoke
+registered callback
+</p>
+<pre>
+  key: key to select callback (to_s value of the TclTkCallback)
+  arg: parameter from tcl/tk interpreter
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009278-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009278-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tcltk.rb, line 60</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-constant">TclTk</span>.<span class="ruby-identifier">_callcallback</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">arg</span>)
+  <span class="ruby-identifier">print</span>(<span class="ruby-value str">&quot;_callcallback: &quot;</span>, <span class="ruby-ivar">@callback</span>[<span class="ruby-identifier">key</span>].<span class="ruby-identifier">inspect</span>, <span class="ruby-value str">&quot;\n&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$DEBUG</span>
+  <span class="ruby-ivar">@callback</span>[<span class="ruby-identifier">key</span>].<span class="ruby-identifier">_call</span>(<span class="ruby-identifier">arg</span>)
+  <span class="ruby-comment cmt"># throw out callback value</span>
+  <span class="ruby-comment cmt"># should return String to satisfy rb_eval_string()</span>
+  <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;&quot;</span>
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009279" class="m-detail">
+        <a name="M009279"></a>
+
+        <div class="method-heading">
+          <a href="#M009279" class="method-signature">
+          <span class="method-name">_newname</span><span class="method-args">(prefix)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+<a href="TclTk.html#M009279">TclTk._newname(prefix)</a>: generate unique
+name(String)
+</p>
+<pre>
+  prefix: prefix of the unique name
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009279-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009279-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tcltk.rb, line 70</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-constant">TclTk</span>.<span class="ruby-identifier">_newname</span>(<span class="ruby-identifier">prefix</span>)
+  <span class="ruby-comment cmt"># generated name counter is stored in @namecnt</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@namecnt</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">prefix</span>)
+    <span class="ruby-comment cmt"># first appearing prefix, initialize</span>
+    <span class="ruby-ivar">@namecnt</span>[<span class="ruby-identifier">prefix</span>] = <span class="ruby-value">1</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-comment cmt"># already appeared prefix, generate next name</span>
+    <span class="ruby-ivar">@namecnt</span>[<span class="ruby-identifier">prefix</span>] <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;#{prefix}#{@namecnt[prefix]}&quot;</span>
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009276" class="m-detail">
+        <a name="M009276"></a>
+
+        <div class="method-heading">
+          <a href="#M009276" class="method-signature">
+          <span class="method-name">dcb</span><span class="method-args">(ca, wid, w)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+<a href="TclTk.html#M009276">TclTk.dcb</a>(ca, wid, W): call <a
+href="TclTk.html#M009275">TclTk.deletecallbackkey</a>() for each callbacks
+</p>
+<pre>
+    in an array.
+    this is for callback for top-level &lt;Destroy&gt;
+  ca: array of callbacks(TclTkCallback)
+  wid: top-level widget(TclTkWidget)
+  w: information about window given by %W(String)
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009276-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009276-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tcltk.rb, line 42</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-constant">TclTk</span>.<span class="ruby-identifier">dcb</span>(<span class="ruby-identifier">ca</span>, <span class="ruby-identifier">wid</span>, <span class="ruby-identifier">w</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">wid</span>.<span class="ruby-identifier">to_s</span>() <span class="ruby-operator">==</span> <span class="ruby-identifier">w</span>
+    <span class="ruby-identifier">ca</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+      <span class="ruby-constant">TclTk</span>.<span class="ruby-identifier">deletecallbackkey</span>(<span class="ruby-identifier">i</span>)
+    }
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009275" class="m-detail">
+        <a name="M009275"></a>
+
+        <div class="method-heading">
+          <a href="#M009275" class="method-signature">
+          <span class="method-name">deletecallbackkey</span><span class="method-args">(ca)</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+<a href="TclTk.html#M009275">TclTk.deletecallbackkey(ca)</a>: remove
+callback from <a href="TclTk.html">TclTk</a> module
+</p>
+<pre>
+    this does not remove callbacks from tcl/tk interpreter
+    without calling this method, TclTkInterpreter will not be GCed
+  ca: callback(TclTkCallback)
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009275-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009275-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tcltk.rb, line 31</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-constant">TclTk</span>.<span class="ruby-identifier">deletecallbackkey</span>(<span class="ruby-identifier">ca</span>)
+  <span class="ruby-identifier">print</span>(<span class="ruby-value str">&quot;deletecallbackkey: &quot;</span>, <span class="ruby-identifier">ca</span>.<span class="ruby-identifier">to_s</span>(), <span class="ruby-value str">&quot;\n&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$DEBUG</span>
+  <span class="ruby-ivar">@callback</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">ca</span>.<span class="ruby-identifier">to_s</span>)
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M009274" class="m-detail">
+        <a name="M009274"></a>
+
+        <div class="method-heading">
+          <a href="#M009274" class="method-signature">
+          <span class="method-name">mainloop</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+<a href="TclTk.html#M009274">TclTk.mainloop</a>(): call <a
+href="TclTkLib.html#M009344">TclTkLib.mainloop</a>()
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M009274-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M009274-source">
+<pre>
+<span class="ruby-comment cmt"># File tk/lib/tcltk.rb, line 21</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-constant">TclTk</span>.<span class="ruby-identifier">mainloop</span>()
+  <span class="ruby-identifier">print</span>(<span class="ruby-value str">&quot;mainloop: start\n&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$DEBUG</span>
+  <span class="ruby-constant">TclTkLib</span>.<span class="ruby-identifier">mainloop</span>()
+  <span class="ruby-identifier">print</span>(<span class="ruby-value str">&quot;mainloop: end\n&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$DEBUG</span>
+<span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+ <!-- 2 --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is a service of <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, AZ</a>. </p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

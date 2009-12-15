@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Class)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Class.new(super_class=Object)   =&gt;    a_class
+ *  
+ *  Creates a new anonymous (unnamed) class with the given superclass
+ *  (or &lt;code&gt;Object&lt;/code&gt; if no parameter is given). You can give a
+ *  class a name by assigning the class object to a constant.
+ *     
+ */
+
+static VALUE
+rb_class_initialize(argc, argv, klass)
+    int argc;
+    VALUE *argv;
+    VALUE klass;
+{
+    VALUE super;
+
+    if (RCLASS(klass)-&gt;super != 0) {
+        rb_raise(rb_eTypeError, &quot;already initialized class&quot;);
+    }
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;super) == 0) {
+        super = rb_cObject;
+    }
+    else {
+        rb_check_inheritable(super);
+    }
+    RCLASS(klass)-&gt;super = super;
+    rb_make_metaclass(klass, RBASIC(super)-&gt;klass);
+    rb_mod_initialize(klass);
+    rb_class_inherited(super, klass);
+
+    return klass;
+}</pre>
+</body>
+</html>

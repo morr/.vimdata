@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>getrlimit (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.getrlimit(resource)   =&gt; [cur_limit, max_limit]
+ *
+ *  Gets the resource limit of the process.
+ *  _cur_limit_ means current (soft) limit and
+ *  _max_limit_ means maximum (hard) limit.
+ *
+ *  _resource_ indicates the kind of resource to limit:
+ *  such as &lt;code&gt;Process::RLIMIT_CORE&lt;/code&gt;,
+ *  &lt;code&gt;Process::RLIMIT_CPU&lt;/code&gt;, etc.
+ *  See Process.setrlimit for details.
+ *
+ *  _cur_limit_ and _max_limit_ may be &lt;code&gt;Process::RLIM_INFINITY&lt;/code&gt;,
+ *  &lt;code&gt;Process::RLIM_SAVED_MAX&lt;/code&gt; or
+ *  &lt;code&gt;Process::RLIM_SAVED_CUR&lt;/code&gt;.
+ *  See Process.setrlimit and the system getrlimit(2) manual for details.
+ */
+
+static VALUE
+proc_getrlimit(VALUE obj, VALUE resource)
+{
+#if defined(HAVE_GETRLIMIT) &amp;&amp; defined(RLIM2NUM)
+    struct rlimit rlim;
+
+    rb_secure(2);
+
+    if (getrlimit(NUM2INT(resource), &amp;rlim) &lt; 0) {
+        rb_sys_fail(&quot;getrlimit&quot;);
+    }
+    return rb_assoc_new(RLIM2NUM(rlim.rlim_cur), RLIM2NUM(rlim.rlim_max));
+#else
+    rb_notimplement();
+#endif
+}</pre>
+</body>
+</html>

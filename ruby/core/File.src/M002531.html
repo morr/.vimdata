@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>lchown (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     file.lchown(owner_int, group_int, file_name,..) =&gt; integer
+ *  
+ *  Equivalent to &lt;code&gt;File::chown&lt;/code&gt;, but does not follow symbolic
+ *  links (so it will change the owner associated with the link, not the
+ *  file referenced by the link). Often not available. Returns number
+ *  of files in the argument list.
+ *     
+ */
+
+static VALUE
+rb_file_s_lchown(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE o, g, rest;
+    struct chown_args arg;
+    long n;
+
+    rb_secure(2);
+    rb_scan_args(argc, argv, &quot;2*&quot;, &amp;o, &amp;g, &amp;rest);
+    if (NIL_P(o)) {
+        arg.owner = -1;
+    }
+    else {
+        arg.owner = NUM2INT(o);
+    }
+    if (NIL_P(g)) {
+        arg.group = -1;
+    }
+    else {
+        arg.group = NUM2INT(g);
+    }
+
+    n = apply2files(lchown_internal, rest, &amp;arg);
+    return LONG2FIX(n);
+}</pre>
+</body>
+</html>

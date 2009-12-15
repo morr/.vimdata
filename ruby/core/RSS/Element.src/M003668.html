@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>inherited (RSS::Element)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rss/rss.rb, line 448</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">inherited</span>(<span class="ruby-identifier">klass</span>)
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">const_set</span>(<span class="ruby-value str">&quot;MUST_CALL_VALIDATORS&quot;</span>, {})
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">const_set</span>(<span class="ruby-value str">&quot;MODELS&quot;</span>, [])
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">const_set</span>(<span class="ruby-value str">&quot;GET_ATTRIBUTES&quot;</span>, [])
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">const_set</span>(<span class="ruby-value str">&quot;HAVE_CHILDREN_ELEMENTS&quot;</span>, [])
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">const_set</span>(<span class="ruby-value str">&quot;TO_ELEMENT_METHODS&quot;</span>, [])
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">const_set</span>(<span class="ruby-value str">&quot;NEED_INITIALIZE_VARIABLES&quot;</span>, [])
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">const_set</span>(<span class="ruby-value str">&quot;PLURAL_FORMS&quot;</span>, {})
+
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">module_eval</span>(<span class="ruby-value str">&quot;public\n\n@tag_name = name.split(/::/).last\n@tag_name[0,1] = @tag_name[0,1].downcase\n@have_content = false\n\ndef self.must_call_validators\nsuper.merge(MUST_CALL_VALIDATORS)\nend\ndef self.models\nMODELS + super\nend\ndef self.get_attributes\nGET_ATTRIBUTES + super\nend\ndef self.have_children_elements\nHAVE_CHILDREN_ELEMENTS + super\nend\ndef self.to_element_methods\nTO_ELEMENT_METHODS + super\nend\ndef self.need_initialize_variables\nNEED_INITIALIZE_VARIABLES + super\nend\ndef self.plural_forms\nsuper.merge(PLURAL_FORMS)\nend\n\n\ndef self.install_must_call_validator(prefix, uri)\nMUST_CALL_VALIDATORS[uri] = prefix\nend\n\ndef self.install_model(tag, uri, occurs=nil, getter=nil)\ngetter ||= tag\nif m = MODELS.find {|t, u, o, g| t == tag and u == uri}\nm[2] = occurs\nelse\nMODELS &lt;&lt; [tag, uri, occurs, getter]\nend\nend\n\ndef self.install_get_attribute(name, uri, required=true,\ntype=nil, disp_name=nil,\nelement_name=nil)\ndisp_name ||= name\nelement_name ||= name\ndef_corresponded_attr_writer name, type, disp_name\nconvert_attr_reader name\nif type == :boolean and /^is/ =~ name\nalias_method \&quot;\\\#{$POSTMATCH}?\&quot;, name\nend\nGET_ATTRIBUTES &lt;&lt; [name, uri, required, element_name]\nadd_need_initialize_variable(disp_name)\nend\n\ndef self.def_corresponded_attr_writer(name, type=nil, disp_name=name)\ncase type\nwhen :integer\ninteger_writer name, disp_name\nwhen :positive_integer\npositive_integer_writer name, disp_name\nwhen :boolean\nboolean_writer name, disp_name\nwhen :w3cdtf, :rfc822, :rfc2822\ndate_writer name, type, disp_name\nelse\nattr_writer name\nend\nend\n\ndef self.content_setup(type=nil)\ndef_corresponded_attr_writer \&quot;content\&quot;, type\nconvert_attr_reader :content\n@have_content = true\nend\n\ndef self.have_content?\n@have_content\nend\n\ndef self.add_have_children_element(variable_name, plural_name)\nHAVE_CHILDREN_ELEMENTS &lt;&lt; [variable_name, plural_name]\nend\n\ndef self.add_to_element_method(method_name)\nTO_ELEMENT_METHODS &lt;&lt; method_name\nend\n\ndef self.add_need_initialize_variable(variable_name)\nNEED_INITIALIZE_VARIABLES &lt;&lt; variable_name\nend\n\ndef self.add_plural_form(singular, plural)\nPLURAL_FORMS[singular] = plural\nend\n\n&quot;</span>)
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

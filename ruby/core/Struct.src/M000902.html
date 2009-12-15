@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>[]= (Struct)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     struct[symbol] = obj    =&gt; obj
+ *     struct[fixnum] = obj    =&gt; obj
+ *  
+ *  Attribute Assignment---Assigns to the instance variable named by
+ *  &lt;i&gt;symbol&lt;/i&gt; or &lt;i&gt;fixnum&lt;/i&gt; the value &lt;i&gt;obj&lt;/i&gt; and
+ *  returns it. Will raise a &lt;code&gt;NameError&lt;/code&gt; if the named
+ *  variable does not exist, or an &lt;code&gt;IndexError&lt;/code&gt; if the index
+ *  is out of range.
+ *     
+ *     Customer = Struct.new(:name, :address, :zip)
+ *     joe = Customer.new(&quot;Joe Smith&quot;, &quot;123 Maple, Anytown NC&quot;, 12345)
+ *     
+ *     joe[&quot;name&quot;] = &quot;Luke&quot;
+ *     joe[:zip]   = &quot;90210&quot;
+ *     
+ *     joe.name   #=&gt; &quot;Luke&quot;
+ *     joe.zip    #=&gt; &quot;90210&quot;
+ */
+
+VALUE
+rb_struct_aset(s, idx, val)
+    VALUE s, idx, val;
+{
+    long i;
+
+    if (TYPE(idx) == T_STRING || TYPE(idx) == T_SYMBOL) {
+        return rb_struct_aset_id(s, rb_to_id(idx), val);
+    }
+
+    i = NUM2LONG(idx);
+    if (i &lt; 0) i = RSTRUCT(s)-&gt;len + i;
+    if (i &lt; 0) {
+        rb_raise(rb_eIndexError, &quot;offset %ld too small for struct(size:%ld)&quot;,
+                 i, RSTRUCT(s)-&gt;len);
+    }
+    if (RSTRUCT(s)-&gt;len &lt;= i) {
+        rb_raise(rb_eIndexError, &quot;offset %ld too large for struct(size:%ld)&quot;,
+                 i, RSTRUCT(s)-&gt;len);
+    }
+    rb_struct_modify(s);
+    return RSTRUCT(s)-&gt;ptr[i] = val;
+}</pre>
+</body>
+</html>

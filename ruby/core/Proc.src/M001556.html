@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>== (Proc)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   prc == other_proc   =&gt;  true or false
+ *
+ * Return &lt;code&gt;true&lt;/code&gt; if &lt;i&gt;prc&lt;/i&gt; is the same object as
+ * &lt;i&gt;other_proc&lt;/i&gt;, or if they are both procs with the same body.
+ */
+
+static VALUE
+proc_eq(self, other)
+    VALUE self, other;
+{
+    struct BLOCK *data, *data2;
+
+    if (self == other) return Qtrue;
+    if (TYPE(other) != T_DATA) return Qfalse;
+    if (RDATA(other)-&gt;dmark != (RUBY_DATA_FUNC)blk_mark) return Qfalse;
+    if (CLASS_OF(self) != CLASS_OF(other)) return Qfalse;
+    Data_Get_Struct(self, struct BLOCK, data);
+    Data_Get_Struct(other, struct BLOCK, data2);
+    if (data-&gt;body != data2-&gt;body) return Qfalse;
+    if (data-&gt;var != data2-&gt;var) return Qfalse;
+    if (data-&gt;scope != data2-&gt;scope) return Qfalse;
+    if (data-&gt;dyna_vars != data2-&gt;dyna_vars) return Qfalse;
+    if (data-&gt;flags != data2-&gt;flags) return Qfalse;
+
+    return Qtrue;
+}</pre>
+</body>
+</html>

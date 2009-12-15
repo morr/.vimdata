@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>global_variables (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     global_variables    =&gt; array
+ *  
+ *  Returns an array of the names of global variables.
+ *     
+ *     global_variables.grep /std/   #=&gt; [&quot;$stderr&quot;, &quot;$stdout&quot;, &quot;$stdin&quot;]
+ */
+
+VALUE
+rb_f_global_variables()
+{
+    VALUE ary = rb_ary_new();
+    char buf[4];
+    char *s = &quot;&amp;`'+123456789&quot;;
+
+    st_foreach(rb_global_tbl, gvar_i, ary);
+    if (!NIL_P(rb_backref_get())) {
+	while (*s) {
+	    sprintf(buf, &quot;$%c&quot;, *s++);
+	    rb_ary_push(ary, rb_str_new2(buf));
+	}
+    }
+    return ary;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>eql? (Bignum)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     big.eql?(obj)   =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; only if &lt;i&gt;obj&lt;/i&gt; is a
+ *  &lt;code&gt;Bignum&lt;/code&gt; with the same value as &lt;i&gt;big&lt;/i&gt;. Contrast this
+ *  with &lt;code&gt;Bignum#==&lt;/code&gt;, which performs type conversions.
+ *     
+ *     68719476736.eql?(68719476736.0)   #=&gt; false
+ */
+
+static VALUE
+rb_big_eql(x, y)
+    VALUE x, y;
+{
+    if (TYPE(y) != T_BIGNUM) return Qfalse;
+    if (RBIGNUM(x)-&gt;sign != RBIGNUM(y)-&gt;sign) return Qfalse;
+    if (RBIGNUM(x)-&gt;len != RBIGNUM(y)-&gt;len) return Qfalse;
+    if (MEMCMP(BDIGITS(x),BDIGITS(y),BDIGIT,RBIGNUM(y)-&gt;len) != 0) return Qfalse;
+    return Qtrue;
+}</pre>
+</body>
+</html>

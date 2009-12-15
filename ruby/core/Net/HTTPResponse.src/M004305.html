@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>read_body (Net::HTTPResponse)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/net/http.rb, line 2165</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">read_body</span>(<span class="ruby-identifier">dest</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@read</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">IOError</span>, <span class="ruby-node">&quot;#{self.class}\#read_body called twice&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">dest</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">block</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@body</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">to</span> = <span class="ruby-identifier">procdest</span>(<span class="ruby-identifier">dest</span>, <span class="ruby-identifier">block</span>)
+      <span class="ruby-identifier">stream_check</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@body_exist</span>
+        <span class="ruby-identifier">read_body_0</span> <span class="ruby-identifier">to</span>
+        <span class="ruby-ivar">@body</span> = <span class="ruby-identifier">to</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@body</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@read</span> = <span class="ruby-keyword kw">true</span>
+
+      <span class="ruby-ivar">@body</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

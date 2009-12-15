@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>block_given? (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     block_given?   =&gt; true or false
+ *     iterator?      =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; if &lt;code&gt;yield&lt;/code&gt; would execute a
+ *  block in the current context. The &lt;code&gt;iterator?&lt;/code&gt; form
+ *  is mildly deprecated.
+ *     
+ *     def try
+ *       if block_given?
+ *         yield
+ *       else
+ *         &quot;no block&quot;
+ *       end
+ *     end
+ *     try                  #=&gt; &quot;no block&quot;
+ *     try { &quot;hello&quot; }      #=&gt; &quot;hello&quot;
+ *     try do &quot;hello&quot; end   #=&gt; &quot;hello&quot;
+ */
+
+
+static VALUE
+rb_f_block_given_p()
+{
+    if (ruby_frame-&gt;prev &amp;&amp; ruby_frame-&gt;prev-&gt;iter == ITER_CUR &amp;&amp; ruby_block)
+        return Qtrue;
+    return Qfalse;
+}</pre>
+</body>
+</html>

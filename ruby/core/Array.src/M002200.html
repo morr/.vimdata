@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>replace (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.replace(other_array)  -&gt; array
+ *  
+ *  Replaces the contents of &lt;i&gt;self&lt;/i&gt; with the contents of
+ *  &lt;i&gt;other_array&lt;/i&gt;, truncating or expanding if necessary.
+ *     
+ *     a = [ &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot; ]
+ *     a.replace([ &quot;x&quot;, &quot;y&quot;, &quot;z&quot; ])   #=&gt; [&quot;x&quot;, &quot;y&quot;, &quot;z&quot;]
+ *     a                              #=&gt; [&quot;x&quot;, &quot;y&quot;, &quot;z&quot;]
+ */
+
+static VALUE
+rb_ary_replace(copy, orig)
+    VALUE copy, orig;
+{
+    VALUE shared;
+
+    rb_ary_modify(copy);
+    orig = to_ary(orig);
+    if (copy == orig) return copy;
+    shared = ary_make_shared(orig);
+    if (RARRAY(copy)-&gt;ptr &amp;&amp; !FL_TEST(copy, ELTS_SHARED))
+        free(RARRAY(copy)-&gt;ptr);
+    RARRAY(copy)-&gt;ptr = RARRAY(orig)-&gt;ptr;
+    RARRAY(copy)-&gt;len = RARRAY(orig)-&gt;len;
+    RARRAY(copy)-&gt;aux.shared = shared;
+    FL_SET(copy, ELTS_SHARED);
+
+    return copy;
+}</pre>
+</body>
+</html>

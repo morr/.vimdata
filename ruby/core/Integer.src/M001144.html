@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>chr (Integer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     int.chr    =&gt; string
+ *  
+ *  Returns a string containing the ASCII character represented by the
+ *  receiver's value.
+ *     
+ *     65.chr    #=&gt; &quot;A&quot;
+ *     ?a.chr    #=&gt; &quot;a&quot;
+ *     230.chr   #=&gt; &quot;\346&quot;
+ */
+
+static VALUE
+int_chr(num)
+    VALUE num;
+{
+    char c;
+    long i = NUM2LONG(num);
+
+    if (i &lt; 0 || 0xff &lt; i)
+        rb_raise(rb_eRangeError, &quot;%ld out of char range&quot;, i);
+    c = i;
+    return rb_str_new(&amp;c, 1);
+}</pre>
+</body>
+</html>

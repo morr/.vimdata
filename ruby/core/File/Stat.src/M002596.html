@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>mode (File::Stat)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     stat.mode   =&gt; fixnum
+ *  
+ *  Returns an integer representing the permission bits of
+ *  &lt;i&gt;stat&lt;/i&gt;. The meaning of the bits is platform dependent; on
+ *  Unix systems, see &lt;code&gt;stat(2)&lt;/code&gt;.
+ *     
+ *     File.chmod(0644, &quot;testfile&quot;)   #=&gt; 1
+ *     s = File.stat(&quot;testfile&quot;)
+ *     sprintf(&quot;%o&quot;, s.mode)          #=&gt; &quot;100644&quot;
+ */
+
+static VALUE
+rb_stat_mode(self)
+    VALUE self;
+{
+#ifdef __BORLANDC__
+    return UINT2NUM((unsigned short)(get_stat(self)-&gt;st_mode));
+#else
+    return UINT2NUM(get_stat(self)-&gt;st_mode);
+#endif
+}</pre>
+</body>
+</html>

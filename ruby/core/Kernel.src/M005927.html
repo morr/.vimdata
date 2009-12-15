@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>raise (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     raise
+ *     raise(string)
+ *     raise(exception [, string [, array]])
+ *     fail
+ *     fail(string)
+ *     fail(exception [, string [, array]])
+ *  
+ *  With no arguments, raises the exception in &lt;code&gt;$!&lt;/code&gt; or raises
+ *  a &lt;code&gt;RuntimeError&lt;/code&gt; if &lt;code&gt;$!&lt;/code&gt; is +nil+.
+ *  With a single +String+ argument, raises a
+ *  +RuntimeError+ with the string as a message. Otherwise,
+ *  the first parameter should be the name of an +Exception+
+ *  class (or an object that returns an +Exception+ object when sent
+ *  an +exception+ message). The optional second parameter sets the
+ *  message associated with the exception, and the third parameter is an
+ *  array of callback information. Exceptions are caught by the
+ *  +rescue+ clause of &lt;code&gt;begin...end&lt;/code&gt; blocks.
+ *     
+ *     raise &quot;Failed to create socket&quot;
+ *     raise ArgumentError, &quot;No parameters&quot;, caller
+ */
+
+static VALUE
+rb_f_raise(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    rb_raise_jump(rb_make_exception(argc, argv));
+    return Qnil;                /* not reached */
+}</pre>
+</body>
+</html>

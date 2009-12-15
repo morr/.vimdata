@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>preprocess (Net::Telnet)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/net/telnet.rb, line 434</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">preprocess</span>(<span class="ruby-identifier">string</span>)
+      <span class="ruby-comment cmt"># combine CR+NULL into CR</span>
+      <span class="ruby-identifier">string</span> = <span class="ruby-identifier">string</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-node">/#{CR}#{NULL}/n</span><span class="ruby-identifier">o</span>, <span class="ruby-constant">CR</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Telnetmode&quot;</span>]
+
+      <span class="ruby-comment cmt"># combine EOL into &quot;\n&quot;</span>
+      <span class="ruby-identifier">string</span> = <span class="ruby-identifier">string</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-node">/#{EOL}/n</span><span class="ruby-identifier">o</span>, <span class="ruby-value str">&quot;\n&quot;</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@options</span>[<span class="ruby-value str">&quot;Binmode&quot;</span>]
+
+      <span class="ruby-identifier">string</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-node">/#{IAC}(
+                   [#{IAC}#{AO}#{AYT}#{DM}#{IP}#{NOP}]|
+                   [#{DO}#{DONT}#{WILL}#{WONT}]
+                     [#{OPT_BINARY}-#{OPT_NEW_ENVIRON}#{OPT_EXOPL}]|
+                   #{SB}[^#{IAC}]*#{IAC}#{SE}
+                 )/</span><span class="ruby-identifier">xno</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-keyword kw">if</span>    <span class="ruby-constant">IAC</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>  <span class="ruby-comment cmt"># handle escaped IAC characters</span>
+          <span class="ruby-constant">IAC</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">AYT</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>  <span class="ruby-comment cmt"># respond to &quot;IAC AYT&quot; (are you there)</span>
+          <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-value str">&quot;nobody here but us pigeons&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-constant">EOL</span>)
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">DO</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">0</span>]  <span class="ruby-comment cmt"># respond to &quot;IAC DO x&quot;</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-constant">OPT_BINARY</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-ivar">@telnet_option</span>[<span class="ruby-value str">&quot;BINARY&quot;</span>] = <span class="ruby-keyword kw">true</span>
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">WILL</span> <span class="ruby-operator">+</span> <span class="ruby-constant">OPT_BINARY</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">WONT</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">1</span>])
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">DONT</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">0</span>]  <span class="ruby-comment cmt"># respond to &quot;IAC DON'T x&quot; with &quot;IAC WON'T x&quot;</span>
+          <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">WONT</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">1</span>])
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">WILL</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">0</span>]  <span class="ruby-comment cmt"># respond to &quot;IAC WILL x&quot;</span>
+          <span class="ruby-keyword kw">if</span>    <span class="ruby-constant">OPT_BINARY</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DO</span> <span class="ruby-operator">+</span> <span class="ruby-constant">OPT_BINARY</span>)
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">OPT_ECHO</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DO</span> <span class="ruby-operator">+</span> <span class="ruby-constant">OPT_ECHO</span>)
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">OPT_SGA</span>[<span class="ruby-value">0</span>]  <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-ivar">@telnet_option</span>[<span class="ruby-value str">&quot;SGA&quot;</span>] = <span class="ruby-keyword kw">true</span>
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DO</span> <span class="ruby-operator">+</span> <span class="ruby-constant">OPT_SGA</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DONT</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">1</span>])
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">WONT</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">0</span>]  <span class="ruby-comment cmt"># respond to &quot;IAC WON'T x&quot;</span>
+          <span class="ruby-keyword kw">if</span>    <span class="ruby-constant">OPT_ECHO</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DONT</span> <span class="ruby-operator">+</span> <span class="ruby-constant">OPT_ECHO</span>)
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">OPT_SGA</span>[<span class="ruby-value">0</span>]  <span class="ruby-operator">==</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span>]
+            <span class="ruby-ivar">@telnet_option</span>[<span class="ruby-value str">&quot;SGA&quot;</span>] = <span class="ruby-keyword kw">false</span>
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DONT</span> <span class="ruby-operator">+</span> <span class="ruby-constant">OPT_SGA</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">write</span>(<span class="ruby-constant">IAC</span> <span class="ruby-operator">+</span> <span class="ruby-constant">DONT</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">$1</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">1</span>])
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-value str">''</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

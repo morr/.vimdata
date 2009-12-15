@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>generate_method_info (Generators::RIGenerator)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/generators/ri_generator.rb, line 142</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generate_method_info</span>(<span class="ruby-identifier">cls_desc</span>, <span class="ruby-identifier">method</span>)
+      <span class="ruby-identifier">meth_desc</span> = <span class="ruby-constant">RI</span><span class="ruby-operator">::</span><span class="ruby-constant">MethodDescription</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-identifier">meth_desc</span>.<span class="ruby-identifier">name</span> = <span class="ruby-identifier">method</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">meth_desc</span>.<span class="ruby-identifier">full_name</span> = <span class="ruby-identifier">cls_desc</span>.<span class="ruby-identifier">full_name</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">method</span>.<span class="ruby-identifier">singleton</span>
+        <span class="ruby-identifier">meth_desc</span>.<span class="ruby-identifier">full_name</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;::&quot;</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">meth_desc</span>.<span class="ruby-identifier">full_name</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;#&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">meth_desc</span>.<span class="ruby-identifier">full_name</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">method</span>.<span class="ruby-identifier">name</span>
+
+      <span class="ruby-identifier">meth_desc</span>.<span class="ruby-identifier">comment</span> = <span class="ruby-identifier">markup</span>(<span class="ruby-identifier">method</span>.<span class="ruby-identifier">comment</span>)
+      <span class="ruby-identifier">meth_desc</span>.<span class="ruby-identifier">params</span> = <span class="ruby-identifier">params_of</span>(<span class="ruby-identifier">method</span>)
+      <span class="ruby-identifier">meth_desc</span>.<span class="ruby-identifier">visibility</span> = <span class="ruby-identifier">method</span>.<span class="ruby-identifier">visibility</span>.<span class="ruby-identifier">to_s</span>
+      <span class="ruby-identifier">meth_desc</span>.<span class="ruby-identifier">is_singleton</span> = <span class="ruby-identifier">method</span>.<span class="ruby-identifier">singleton</span>
+      <span class="ruby-identifier">meth_desc</span>.<span class="ruby-identifier">block_params</span> = <span class="ruby-identifier">method</span>.<span class="ruby-identifier">block_params</span>
+
+      <span class="ruby-identifier">meth_desc</span>.<span class="ruby-identifier">aliases</span> = <span class="ruby-identifier">method</span>.<span class="ruby-identifier">aliases</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span>
+        <span class="ruby-constant">RI</span><span class="ruby-operator">::</span><span class="ruby-constant">AliasName</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">a</span>.<span class="ruby-identifier">name</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@ri_writer</span>.<span class="ruby-identifier">add_method</span>(<span class="ruby-identifier">cls_desc</span>, <span class="ruby-identifier">meth_desc</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

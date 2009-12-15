@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>obj2xml (XSD::Mapping)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/xsd/mapping.rb, line 23</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">obj2xml</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-identifier">elename</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">io</span> = <span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">elename</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword kw">and</span> <span class="ruby-operator">!</span><span class="ruby-identifier">elename</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">QName</span>)
+      <span class="ruby-identifier">elename</span> = <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">QName</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">elename</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">elename</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">XSD</span><span class="ruby-operator">::</span><span class="ruby-constant">QName</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">nil</span>, <span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">name2elename</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">to_s</span>))
+    <span class="ruby-identifier">soap</span> = <span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">Mapping</span>.<span class="ruby-identifier">obj2soap</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-constant">MappingRegistry</span>)
+    <span class="ruby-identifier">soap</span>.<span class="ruby-identifier">elename</span> = <span class="ruby-identifier">elename</span>
+    <span class="ruby-identifier">generator</span> = <span class="ruby-constant">SOAP</span><span class="ruby-operator">::</span><span class="ruby-constant">SOAPGenerator</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">MappingOpt</span>)
+    <span class="ruby-identifier">generator</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-identifier">soap</span>, <span class="ruby-identifier">io</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

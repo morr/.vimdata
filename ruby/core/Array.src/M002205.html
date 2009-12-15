@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>slice (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/* 
+ *  call-seq:
+ *     array[index]                -&gt; obj      or nil
+ *     array[start, length]        -&gt; an_array or nil
+ *     array[range]                -&gt; an_array or nil
+ *     array.slice(index)          -&gt; obj      or nil
+ *     array.slice(start, length)  -&gt; an_array or nil
+ *     array.slice(range)          -&gt; an_array or nil
+ *
+ *  Element Reference---Returns the element at _index_,
+ *  or returns a subarray starting at _start_ and
+ *  continuing for _length_ elements, or returns a subarray
+ *  specified by _range_.
+ *  Negative indices count backward from the end of the
+ *  array (-1 is the last element). Returns nil if the index
+ *  (or starting index) are out of range.
+ *
+ *     a = [ &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot; ]
+ *     a[2] +  a[0] + a[1]    #=&gt; &quot;cab&quot;
+ *     a[6]                   #=&gt; nil
+ *     a[1, 2]                #=&gt; [ &quot;b&quot;, &quot;c&quot; ]
+ *     a[1..3]                #=&gt; [ &quot;b&quot;, &quot;c&quot;, &quot;d&quot; ]
+ *     a[4..7]                #=&gt; [ &quot;e&quot; ]
+ *     a[6..10]               #=&gt; nil
+ *     a[-3, 3]               #=&gt; [ &quot;c&quot;, &quot;d&quot;, &quot;e&quot; ]
+ *     # special cases
+ *     a[5]                   #=&gt; nil
+ *     a[5, 1]                #=&gt; []
+ *     a[5..10]               #=&gt; []
+ *
+ */
+
+VALUE
+rb_ary_aref(argc, argv, ary)
+    int argc;
+    VALUE *argv;
+    VALUE ary;
+{
+    VALUE arg;
+    long beg, len;
+
+    if (argc == 2) {
+        if (SYMBOL_P(argv[0])) {
+            rb_raise(rb_eTypeError, &quot;Symbol as array index&quot;);
+        }
+        beg = NUM2LONG(argv[0]);
+        len = NUM2LONG(argv[1]);
+        if (beg &lt; 0) {
+            beg += RARRAY(ary)-&gt;len;
+        }
+        return rb_ary_subseq(ary, beg, len);
+    }
+    if (argc != 1) {
+        rb_scan_args(argc, argv, &quot;11&quot;, 0, 0);
+    }
+    arg = argv[0];
+    /* special case - speeding up */
+    if (FIXNUM_P(arg)) {
+        return rb_ary_entry(ary, FIX2LONG(arg));
+    }
+    if (SYMBOL_P(arg)) {
+        rb_raise(rb_eTypeError, &quot;Symbol as array index&quot;);
+    }
+    /* check if idx is Range */
+    switch (rb_range_beg_len(arg, &amp;beg, &amp;len, RARRAY(ary)-&gt;len, 0)) {
+      case Qfalse:
+        break;
+      case Qnil:
+        return Qnil;
+      default:
+        return rb_ary_subseq(ary, beg, len);
+    }
+    return rb_ary_entry(ary, NUM2LONG(arg));
+}</pre>
+</body>
+</html>

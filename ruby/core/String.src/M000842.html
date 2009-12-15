@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sum (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str.sum(n=16)   =&gt; integer
+ *  
+ *  Returns a basic &lt;em&gt;n&lt;/em&gt;-bit checksum of the characters in &lt;i&gt;str&lt;/i&gt;,
+ *  where &lt;em&gt;n&lt;/em&gt; is the optional &lt;code&gt;Fixnum&lt;/code&gt; parameter, defaulting
+ *  to 16. The result is simply the sum of the binary value of each character in
+ *  &lt;i&gt;str&lt;/i&gt; modulo &lt;code&gt;2n - 1&lt;/code&gt;. This is not a particularly good
+ *  checksum.
+ */
+
+static VALUE
+rb_str_sum(argc, argv, str)
+    int argc;
+    VALUE *argv;
+    VALUE str;
+{
+    VALUE vbits;
+    int bits;
+    char *ptr, *p, *pend;
+    long len;
+
+    if (rb_scan_args(argc, argv, &quot;01&quot;, &amp;vbits) == 0) {
+        bits = 16;
+    }
+    else bits = NUM2INT(vbits);
+
+    ptr = p = RSTRING(str)-&gt;ptr;
+    len = RSTRING(str)-&gt;len;
+    pend = p + len;
+    if (bits &gt;= sizeof(long)*CHAR_BIT) {
+        VALUE sum = INT2FIX(0);
+
+        while (p &lt; pend) {
+            str_mod_check(str, ptr, len);
+            sum = rb_funcall(sum, '+', 1, INT2FIX((unsigned char)*p));
+            p++;
+        }
+        if (bits != 0) {
+            VALUE mod;
+
+            mod = rb_funcall(INT2FIX(1), rb_intern(&quot;&lt;&lt;&quot;), 1, INT2FIX(bits));
+            mod = rb_funcall(mod, '-', 1, INT2FIX(1));
+            sum = rb_funcall(sum, '&amp;', 1, mod);
+        }
+        return sum;
+    }
+    else {
+       unsigned long sum = 0;
+
+        while (p &lt; pend) {
+            str_mod_check(str, ptr, len);
+            sum += (unsigned char)*p;
+            p++;
+        }
+        if (bits != 0) {
+           sum &amp;= (((unsigned long)1)&lt;&lt;bits)-1;
+        }
+        return rb_int2inum(sum);
+    }
+}</pre>
+</body>
+</html>

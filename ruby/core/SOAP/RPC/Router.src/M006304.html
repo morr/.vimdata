@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>route (SOAP::RPC::Router)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/rpc/router.rb, line 153</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">route</span>(<span class="ruby-identifier">conn_data</span>)
+    <span class="ruby-comment cmt"># we cannot set request_default_encodingsyle before parsing the content.</span>
+    <span class="ruby-identifier">env</span> = <span class="ruby-identifier">unmarshal</span>(<span class="ruby-identifier">conn_data</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">env</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;illegal SOAP marshal format&quot;</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">op</span> = <span class="ruby-identifier">lookup_operation</span>(<span class="ruby-identifier">conn_data</span>.<span class="ruby-identifier">soapaction</span>, <span class="ruby-identifier">env</span>.<span class="ruby-identifier">body</span>)
+    <span class="ruby-identifier">headerhandler</span> = <span class="ruby-ivar">@headerhandler</span>.<span class="ruby-identifier">dup</span>
+    <span class="ruby-ivar">@headerhandlerfactory</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">headerhandler</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">f</span>.<span class="ruby-identifier">create</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">receive_headers</span>(<span class="ruby-identifier">headerhandler</span>, <span class="ruby-identifier">env</span>.<span class="ruby-identifier">header</span>)
+    <span class="ruby-identifier">soap_response</span> = <span class="ruby-identifier">default_encodingstyle</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">soap_response</span> =
+        <span class="ruby-identifier">op</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">env</span>.<span class="ruby-identifier">body</span>, <span class="ruby-ivar">@mapping_registry</span>, <span class="ruby-ivar">@literal_mapping_registry</span>,
+          <span class="ruby-identifier">create_mapping_opt</span>)
+      <span class="ruby-identifier">default_encodingstyle</span> = <span class="ruby-identifier">op</span>.<span class="ruby-identifier">response_default_encodingstyle</span>
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span>
+      <span class="ruby-identifier">soap_response</span> = <span class="ruby-identifier">fault</span>(<span class="ruby-identifier">$!</span>)
+      <span class="ruby-identifier">default_encodingstyle</span> = <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">conn_data</span>.<span class="ruby-identifier">is_fault</span> = <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">soap_response</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SOAPFault</span>)
+    <span class="ruby-identifier">header</span> = <span class="ruby-identifier">call_headers</span>(<span class="ruby-identifier">headerhandler</span>)
+    <span class="ruby-identifier">body</span> = <span class="ruby-constant">SOAPBody</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">soap_response</span>)
+    <span class="ruby-identifier">env</span> = <span class="ruby-constant">SOAPEnvelope</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">header</span>, <span class="ruby-identifier">body</span>)
+    <span class="ruby-identifier">marshal</span>(<span class="ruby-identifier">conn_data</span>, <span class="ruby-identifier">env</span>, <span class="ruby-identifier">default_encodingstyle</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

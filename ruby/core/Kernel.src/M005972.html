@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sleep (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     sleep([duration])    =&gt; fixnum
+ *
+ *  Suspends the current thread for _duration_ seconds (which may be any number,
+ *  including a +Float+ with fractional seconds). Returns the actual number of
+ *  seconds slept (rounded), which may be less than that asked for if another
+ *  thread calls &lt;code&gt;Thread#run&lt;/code&gt;. Zero arguments causes +sleep+ to sleep
+ *  forever.
+ *
+ *     Time.new    #=&gt; Wed Apr 09 08:56:32 CDT 2003
+ *     sleep 1.2   #=&gt; 1
+ *     Time.new    #=&gt; Wed Apr 09 08:56:33 CDT 2003
+ *     sleep 1.9   #=&gt; 2
+ *     Time.new    #=&gt; Wed Apr 09 08:56:35 CDT 2003
+ */
+
+static VALUE
+rb_f_sleep(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    int beg, end;
+
+    beg = time(0);
+    if (argc == 0) {
+        rb_thread_sleep_forever();
+    }
+    else if (argc == 1) {
+        rb_thread_wait_for(rb_time_interval(argv[0]));
+    }
+    else {
+        rb_raise(rb_eArgError, &quot;wrong number of arguments&quot;);
+    }
+
+    end = time(0) - beg;
+
+    return INT2FIX(end);
+}</pre>
+</body>
+</html>

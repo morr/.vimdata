@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>variables (WIN32OLE_TYPE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE_TYPE#variables
+ * 
+ *  Returns array of WIN32OLE_VARIABLE objects which represent variables 
+ *  defined in OLE class.
+ *     tobj = WIN32OLE_TYPE.new('Microsoft Excel 9.0 Object Library', 'XlSheetType')
+ *     vars = tobj.variables
+ *     vars.each do |v|
+ *       puts &quot;#{v.name} = #{v.value}&quot;
+ *     end
+ *     
+ *     The result of above sample script is follows:
+ *       xlChart = -4109
+ *       xlDialogSheet = -4116
+ *       xlExcel4IntlMacroSheet = 4
+ *       xlExcel4MacroSheet = 3
+ *       xlWorksheet = -4167
+ *
+ */
+static VALUE
+foletype_variables(self)
+    VALUE self;
+{
+    struct oletypedata *ptype;
+    Data_Get_Struct(self, struct oletypedata, ptype);
+    return ole_variables(ptype-&gt;pTypeInfo);
+}</pre>
+</body>
+</html>

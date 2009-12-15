@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>method (Object)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     obj.method(sym)    =&gt; method
+ *  
+ *  Looks up the named method as a receiver in &lt;i&gt;obj&lt;/i&gt;, returning a
+ *  &lt;code&gt;Method&lt;/code&gt; object (or raising &lt;code&gt;NameError&lt;/code&gt;). The
+ *  &lt;code&gt;Method&lt;/code&gt; object acts as a closure in &lt;i&gt;obj&lt;/i&gt;'s object
+ *  instance, so instance variables and the value of &lt;code&gt;self&lt;/code&gt;
+ *  remain available.
+ *     
+ *     class Demo
+ *       def initialize(n)
+ *         @iv = n
+ *       end
+ *       def hello()
+ *         &quot;Hello, @iv = #{@iv}&quot;
+ *       end
+ *     end
+ *     
+ *     k = Demo.new(99)
+ *     m = k.method(:hello)
+ *     m.call   #=&gt; &quot;Hello, @iv = 99&quot;
+ *     
+ *     l = Demo.new('Fred')
+ *     m = l.method(&quot;hello&quot;)
+ *     m.call   #=&gt; &quot;Hello, @iv = Fred&quot;
+ */
+
+static VALUE
+rb_obj_method(obj, vid)
+    VALUE obj;
+    VALUE vid;
+{
+    return mnew(CLASS_OF(obj), obj, rb_to_id(vid), rb_cMethod);
+}</pre>
+</body>
+</html>

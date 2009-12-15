@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>quote (Regexp)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Regexp.escape(str)   =&gt; a_str
+ *     Regexp.quote(str)    =&gt; a_str
+ *  
+ *  Escapes any characters that would have special meaning in a regular
+ *  expression. Returns a new escaped string, or self if no characters are
+ *  escaped.  For any string,
+ *  &lt;code&gt;Regexp.escape(&lt;i&gt;str&lt;/i&gt;)=~&lt;i&gt;str&lt;/i&gt;&lt;/code&gt; will be true.
+ *     
+ *     Regexp.escape('\\*?{}.')   #=&gt; \\\\\*\?\{\}\.
+ */
+
+static VALUE
+rb_reg_s_quote(argc, argv)
+    int argc;
+    VALUE *argv;
+{
+    VALUE str, kcode;
+    int kcode_saved = reg_kcode;
+
+    rb_scan_args(argc, argv, &quot;11&quot;, &amp;str, &amp;kcode);
+    if (!NIL_P(kcode)) {
+        rb_set_kcode(StringValuePtr(kcode));
+        curr_kcode = reg_kcode;
+        reg_kcode = kcode_saved;
+    }
+    StringValue(str);
+    str = rb_reg_quote(str);
+    rb_kcode_reset_option();
+    return str;
+}</pre>
+</body>
+</html>

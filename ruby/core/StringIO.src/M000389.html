@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>string= (StringIO)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *   strio.string = string  -&gt; string
+ *
+ * Changes underlying String object, the subject of IO.
+ */
+static VALUE
+strio_set_string(self, string)
+    VALUE self, string;
+{
+    struct StringIO *ptr = StringIO(self);
+
+    if (!OBJ_TAINTED(self)) rb_secure(4);
+    ptr-&gt;flags &amp;= ~FMODE_READWRITE;
+    StringValue(string);
+    ptr-&gt;flags = OBJ_FROZEN(string) ? FMODE_READABLE : FMODE_READWRITE;
+    ptr-&gt;pos = 0;
+    ptr-&gt;lineno = 0;
+    return ptr-&gt;string = string;
+}</pre>
+</body>
+</html>

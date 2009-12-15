@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>load (SOAP::Property)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/soap/property.rb, line 71</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load</span>(<span class="ruby-identifier">stream</span>)
+    <span class="ruby-identifier">key_prefix</span> = <span class="ruby-value str">&quot;&quot;</span>
+    <span class="ruby-identifier">stream</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">line</span>, <span class="ruby-identifier">lineno</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">line</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/\r?\n\z/</span>, <span class="ruby-value str">''</span>)
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">line</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">COMMENT_REGEXP</span>
+        <span class="ruby-keyword kw">next</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">CATDEF_REGEXP</span>
+        <span class="ruby-identifier">key_prefix</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">strip</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-constant">LINE_REGEXP</span>
+        <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">strip</span>, <span class="ruby-identifier">$2</span>.<span class="ruby-identifier">strip</span>
+        <span class="ruby-identifier">key</span> = <span class="ruby-node">&quot;#{key_prefix}.#{key}&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">key_prefix</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> = <span class="ruby-identifier">loadstr</span>(<span class="ruby-identifier">key</span>), <span class="ruby-identifier">loadstr</span>(<span class="ruby-identifier">value</span>)
+        <span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">value</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>.<span class="ruby-identifier">new</span>(
+          <span class="ruby-node">&quot;property format error at line #{lineno + 1}: `#{line}'&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">self</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

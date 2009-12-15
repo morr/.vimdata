@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>add_word_pair (SM::AttributeManager)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/markup/simple_markup/inline.rb, line 222</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_word_pair</span>(<span class="ruby-identifier">start</span>, <span class="ruby-identifier">stop</span>, <span class="ruby-identifier">name</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;Word flags may not start '&lt;'&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">start</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?&lt;</span>
+      <span class="ruby-identifier">bitmap</span> = <span class="ruby-constant">Attribute</span>.<span class="ruby-identifier">bitmap_for</span>(<span class="ruby-identifier">name</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">start</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">stop</span>
+        <span class="ruby-constant">MATCHING_WORD_PAIRS</span>[<span class="ruby-identifier">start</span>] = <span class="ruby-identifier">bitmap</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">pattern</span> = <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;(&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">escape</span>(<span class="ruby-identifier">start</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;)&quot;</span> <span class="ruby-operator">+</span>
+<span class="ruby-comment cmt">#                             &quot;([A-Za-z]+)&quot; +</span>
+                             <span class="ruby-value str">&quot;(\\S+)&quot;</span> <span class="ruby-operator">+</span>
+                             <span class="ruby-value str">&quot;(&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">escape</span>(<span class="ruby-identifier">stop</span>) <span class="ruby-operator">+</span><span class="ruby-value str">&quot;)&quot;</span>)
+        <span class="ruby-constant">WORD_PAIR_MAP</span>[<span class="ruby-identifier">pattern</span>] = <span class="ruby-identifier">bitmap</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-constant">PROTECTABLE</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">start</span>[<span class="ruby-value">0</span>,<span class="ruby-value">1</span>]
+      <span class="ruby-constant">PROTECTABLE</span>.<span class="ruby-identifier">uniq!</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

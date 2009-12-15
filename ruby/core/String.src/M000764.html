@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>== (String)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     str == obj   =&gt; true or false
+ *  
+ *  Equality---If &lt;i&gt;obj&lt;/i&gt; is not a &lt;code&gt;String&lt;/code&gt;, returns
+ *  &lt;code&gt;false&lt;/code&gt;. Otherwise, returns &lt;code&gt;true&lt;/code&gt; if &lt;i&gt;str&lt;/i&gt;
+ *  &lt;code&gt;&lt;=&gt;&lt;/code&gt; &lt;i&gt;obj&lt;/i&gt; returns zero.
+ */
+
+static VALUE
+rb_str_equal(str1, str2)
+    VALUE str1, str2;
+{
+    if (str1 == str2) return Qtrue;
+    if (TYPE(str2) != T_STRING) {
+        if (!rb_respond_to(str2, rb_intern(&quot;to_str&quot;))) {
+            return Qfalse;
+        }
+        return rb_equal(str2, str1);
+    }
+    if (RSTRING(str1)-&gt;len == RSTRING(str2)-&gt;len &amp;&amp;
+        rb_str_cmp(str1, str2) == 0) {
+        return Qtrue;
+    }
+    return Qfalse;
+}</pre>
+</body>
+</html>

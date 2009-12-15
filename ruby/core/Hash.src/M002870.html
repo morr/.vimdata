@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>delete (Hash)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     hsh.delete(key)                   =&gt; value
+ *     hsh.delete(key) {| key | block }  =&gt; value
+ *  
+ *  Deletes and returns a key-value pair from &lt;i&gt;hsh&lt;/i&gt; whose key is
+ *  equal to &lt;i&gt;key&lt;/i&gt;. If the key is not found, returns the
+ *  &lt;em&gt;default value&lt;/em&gt;. If the optional code block is given and the
+ *  key is not found, pass in the key and return the result of
+ *  &lt;i&gt;block&lt;/i&gt;.
+ *     
+ *     h = { &quot;a&quot; =&gt; 100, &quot;b&quot; =&gt; 200 }
+ *     h.delete(&quot;a&quot;)                              #=&gt; 100
+ *     h.delete(&quot;z&quot;)                              #=&gt; nil
+ *     h.delete(&quot;z&quot;) { |el| &quot;#{el} not found&quot; }   #=&gt; &quot;z not found&quot;
+ *     
+ */
+
+VALUE
+rb_hash_delete(hash, key)
+    VALUE hash, key;
+{
+    VALUE val;
+
+    rb_hash_modify(hash);
+    val = rb_hash_delete_key(hash, key);
+    if (val != Qundef) return val;
+    if (rb_block_given_p()) {
+        return rb_yield(key);
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>signal (MonitorMixin::ConditionVariable)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/monitor.rb, line 138</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">signal</span>
+      <span class="ruby-ivar">@monitor</span>.<span class="ruby-identifier">instance_eval</span> {<span class="ruby-identifier">mon_check_owner</span>()}
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-identifier">t</span> = <span class="ruby-ivar">@waiters</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-identifier">t</span>.<span class="ruby-identifier">wakeup</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">t</span>
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">critical</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">pass</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

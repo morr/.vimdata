@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>dst? (Time)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     time.isdst =&gt; true or false
+ *     time.dst?  =&gt; true or false
+ *  
+ *  Returns &lt;code&gt;true&lt;/code&gt; if &lt;i&gt;time&lt;/i&gt; occurs during Daylight
+ *  Saving Time in its time zone.
+ *     
+ *     Time.local(2000, 7, 1).isdst   #=&gt; true
+ *     Time.local(2000, 1, 1).isdst   #=&gt; false
+ *     Time.local(2000, 7, 1).dst?    #=&gt; true
+ *     Time.local(2000, 1, 1).dst?    #=&gt; false
+ */
+
+static VALUE
+time_isdst(time)
+    VALUE time;
+{
+    struct time_object *tobj;
+
+    GetTimeval(time, tobj);
+    if (tobj-&gt;tm_got == 0) {
+        time_get_tm(time, tobj-&gt;gmt);
+    }
+    return tobj-&gt;tm.tm_isdst?Qtrue:Qfalse;
+}</pre>
+</body>
+</html>

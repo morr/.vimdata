@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>getpriority (Process)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Process.getpriority(kind, integer)   =&gt; fixnum
+ *
+ *  Gets the scheduling priority for specified process, process group,
+ *  or user. &lt;em&gt;kind&lt;/em&gt; indicates the kind of entity to find: one
+ *  of &lt;code&gt;Process::PRIO_PGRP&lt;/code&gt;,
+ *  &lt;code&gt;Process::PRIO_USER&lt;/code&gt;, or
+ *  &lt;code&gt;Process::PRIO_PROCESS&lt;/code&gt;. _integer_ is an id
+ *  indicating the particular process, process group, or user (an id
+ *  of 0 means _current_). Lower priorities are more favorable
+ *  for scheduling. Not available on all platforms.
+ *
+ *     Process.getpriority(Process::PRIO_USER, 0)      #=&gt; 19
+ *     Process.getpriority(Process::PRIO_PROCESS, 0)   #=&gt; 19
+ */
+
+static VALUE
+proc_getpriority(obj, which, who)
+    VALUE obj, which, who;
+{
+#ifdef HAVE_GETPRIORITY
+    int prio, iwhich, iwho;
+
+    rb_secure(2);
+    iwhich = NUM2INT(which);
+    iwho   = NUM2INT(who);
+
+    errno = 0;
+    prio = getpriority(iwhich, iwho);
+    if (errno) rb_sys_fail(0);
+    return INT2FIX(prio);
+#else
+    rb_notimplement();
+#endif
+}</pre>
+</body>
+</html>

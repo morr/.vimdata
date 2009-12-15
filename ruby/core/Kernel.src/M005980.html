@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>chop (Kernel)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     chop   =&gt; string
+ *  
+ *  Equivalent to &lt;code&gt;($_.dup).chop!&lt;/code&gt;, except &lt;code&gt;nil&lt;/code&gt;
+ *  is never returned. See &lt;code&gt;String#chop!&lt;/code&gt;.
+ *     
+ *     a  =  &quot;now\r\n&quot;
+ *     $_ = a
+ *     chop   #=&gt; &quot;now&quot;
+ *     $_     #=&gt; &quot;now&quot;
+ *     chop   #=&gt; &quot;no&quot;
+ *     chop   #=&gt; &quot;n&quot;
+ *     chop   #=&gt; &quot;&quot;
+ *     chop   #=&gt; &quot;&quot;
+ *     a      #=&gt; &quot;now\r\n&quot;
+ */
+
+static VALUE
+rb_f_chop()
+{
+    VALUE str = uscore_get();
+
+    if (RSTRING(str)-&gt;len &gt; 0) {
+        str = rb_str_dup(str);
+        rb_str_chop_bang(str);
+        rb_lastline_set(str);
+    }
+    return str;
+}</pre>
+</body>
+</html>

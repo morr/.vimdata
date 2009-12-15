@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>predicate_to_string (REXML::Parsers::XPathParser)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rexml/parsers/xpathparser.rb, line 130</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">predicate_to_string</span>( <span class="ruby-identifier">path</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+        <span class="ruby-identifier">string</span> = <span class="ruby-value str">&quot;&quot;</span>
+        <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">path</span>[<span class="ruby-value">0</span>]
+        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:and</span>, <span class="ruby-identifier">:or</span>, <span class="ruby-identifier">:mult</span>, <span class="ruby-identifier">:plus</span>, <span class="ruby-identifier">:minus</span>, <span class="ruby-identifier">:neq</span>, <span class="ruby-identifier">:eq</span>, <span class="ruby-identifier">:lt</span>, <span class="ruby-identifier">:gt</span>, <span class="ruby-identifier">:lteq</span>, <span class="ruby-identifier">:gteq</span>, <span class="ruby-identifier">:div</span>, <span class="ruby-identifier">:mod</span>, <span class="ruby-identifier">:union</span>
+          <span class="ruby-identifier">op</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">op</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:eq</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;=&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:lt</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;&lt;&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:gt</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;&gt;&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:lteq</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;&lt;=&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:gteq</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;&gt;=&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:neq</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;!=&quot;</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:union</span>
+            <span class="ruby-identifier">op</span> = <span class="ruby-value str">&quot;|&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">left</span> = <span class="ruby-identifier">predicate_to_string</span>( <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+          <span class="ruby-identifier">right</span> = <span class="ruby-identifier">predicate_to_string</span>( <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">left</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">op</span>.<span class="ruby-identifier">to_s</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">right</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:function</span>
+          <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+          <span class="ruby-identifier">name</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">name</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;( &quot;</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">predicate_to_string</span>( <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; )&quot;</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:literal</span>
+          <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">shift</span>.<span class="ruby-identifier">inspect</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword kw">yield</span>( <span class="ruby-identifier">path</span> )
+          <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">string</span>.<span class="ruby-identifier">squeeze</span>(<span class="ruby-value str">&quot; &quot;</span>)
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

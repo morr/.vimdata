@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each (WIN32OLE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     WIN32OLE#each {|i|...}
+ * 
+ *  Iterates over each item of OLE collection which has IEnumVARIANT interface.
+ *
+ *     excel = WIN32OLE.new('Excel.Application')
+ *     book = excel.workbooks.add
+ *     sheets = book.worksheets(1)
+ *     cells = sheets.cells(&quot;A1:A5&quot;)
+ *     cells.each do |cell|
+ *       cell.value = 10
+ *     end
+ */
+static VALUE
+fole_each(self)
+    VALUE self;
+{
+    LCID    lcid = LOCALE_SYSTEM_DEFAULT;
+
+    struct oledata *pole;
+
+    unsigned int argErr;
+    EXCEPINFO excepinfo;
+    DISPPARAMS dispParams;
+    VARIANT result;
+    HRESULT hr;
+    IEnumVARIANT *pEnum = NULL;
+
+    VariantInit(&amp;result);
+    dispParams.rgvarg = NULL;
+    dispParams.rgdispidNamedArgs = NULL;
+    dispParams.cNamedArgs = 0;
+    dispParams.cArgs = 0;
+    memset(&amp;excepinfo, 0, sizeof(excepinfo));
+    
+    OLEData_Get_Struct(self, pole);
+    hr = pole-&gt;pDispatch-&gt;lpVtbl-&gt;Invoke(pole-&gt;pDispatch, DISPID_NEWENUM,
+                                         &amp;IID_NULL, lcid,
+                                         DISPATCH_METHOD | DISPATCH_PROPERTYGET,
+                                         &amp;dispParams, &amp;result,
+                                         &amp;excepinfo, &amp;argErr);
+
+    if (FAILED(hr)) {
+        VariantClear(&amp;result);
+        ole_raise(hr, eWIN32OLE_RUNTIME_ERROR, &quot;failed to get IEnum Interface&quot;);
+    }
+
+    if (V_VT(&amp;result) == VT_UNKNOWN)
+        hr = V_UNKNOWN(&amp;result)-&gt;lpVtbl-&gt;QueryInterface(V_UNKNOWN(&amp;result),
+                                                        &amp;IID_IEnumVARIANT,
+                                                        (void**)&amp;pEnum);
+    else if (V_VT(&amp;result) == VT_DISPATCH)
+        hr = V_DISPATCH(&amp;result)-&gt;lpVtbl-&gt;QueryInterface(V_DISPATCH(&amp;result),
+                                                         &amp;IID_IEnumVARIANT,
+                                                         (void**)&amp;pEnum);
+    if (FAILED(hr) || !pEnum) {
+        VariantClear(&amp;result);
+        ole_raise(hr, rb_eRuntimeError, &quot;failed to get IEnum Interface&quot;);
+    }
+
+    VariantClear(&amp;result);
+    rb_ensure(ole_each_sub, (VALUE)pEnum, ole_ienum_free, (VALUE)pEnum);
+    return Qnil;
+}</pre>
+</body>
+</html>

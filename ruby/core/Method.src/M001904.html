@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_s (Method)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *   meth.to_s      =&gt;  string
+ *   meth.inspect   =&gt;  string
+ *
+ *  Show the name of the underlying method.
+ *
+ *    &quot;cat&quot;.method(:count).inspect   #=&gt; &quot;#&lt;Method: String#count&gt;&quot;
+ */
+
+static VALUE
+method_inspect(method)
+    VALUE method;
+{
+    struct METHOD *data;
+    VALUE str;
+    const char *s;
+    char *sharp = &quot;#&quot;;
+
+    Data_Get_Struct(method, struct METHOD, data);
+    str = rb_str_buf_new2(&quot;#&lt;&quot;);
+    s = rb_obj_classname(method);
+    rb_str_buf_cat2(str, s);
+    rb_str_buf_cat2(str, &quot;: &quot;);
+
+    if (FL_TEST(data-&gt;klass, FL_SINGLETON)) {
+        VALUE v = rb_iv_get(data-&gt;klass, &quot;__attached__&quot;);
+
+        if (data-&gt;recv == Qundef) {
+            rb_str_buf_append(str, rb_inspect(data-&gt;klass));
+        }
+        else if (data-&gt;recv == v) {
+            rb_str_buf_append(str, rb_inspect(v));
+            sharp = &quot;.&quot;;
+        }
+        else {
+            rb_str_buf_append(str, rb_inspect(data-&gt;recv));
+            rb_str_buf_cat2(str, &quot;(&quot;);
+            rb_str_buf_append(str, rb_inspect(v));
+            rb_str_buf_cat2(str, &quot;)&quot;);
+            sharp = &quot;.&quot;;
+        }
+    }
+    else {
+        rb_str_buf_cat2(str, rb_class2name(data-&gt;rklass));
+        if (data-&gt;rklass != data-&gt;klass) {
+            VALUE klass = data -&gt; klass;
+            if (TYPE(klass) == T_ICLASS) {
+                klass = RBASIC(klass)-&gt;klass;
+            }
+            rb_str_buf_cat2(str, &quot;(&quot;);
+            rb_str_buf_cat2(str, rb_class2name(klass));
+            rb_str_buf_cat2(str, &quot;)&quot;);
+        }
+    }
+    rb_str_buf_cat2(str, sharp);
+    rb_str_buf_cat2(str, rb_id2name(data-&gt;oid));
+    rb_str_buf_cat2(str, &quot;&gt;&quot;);
+
+    return str;
+}</pre>
+</body>
+</html>

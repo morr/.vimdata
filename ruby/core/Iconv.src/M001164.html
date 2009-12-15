@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Iconv)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * Document-method: new
+ * call-seq: Iconv.new(to, from)
+ *
+ * Creates new code converter from a coding-system designated with +from+
+ * to another one designated with +to+.
+ * 
+ * === Parameters
+ *
+ * +to+::   encoding name for destination
+ * +from+:: encoding name for source
+ *
+ * === Exceptions
+ *
+ * TypeError::       if +to+ or +from+ aren't String
+ * InvalidEncoding:: if designated converter couldn't find out
+ * SystemCallError:: if &lt;tt&gt;iconv_open(3)&lt;/tt&gt; fails
+ */
+static VALUE
+iconv_initialize
+    (self, to, from)
+    VALUE self;
+    VALUE to;
+    VALUE from;
+{
+    iconv_free(check_iconv(self));
+    DATA_PTR(self) = NULL;
+    DATA_PTR(self) = (void *)ICONV2VALUE(iconv_create(to, from));
+    return self;
+}</pre>
+</body>
+</html>

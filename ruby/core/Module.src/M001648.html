@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>private_class_method (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mod.private_class_method(symbol, ...)   =&gt; mod
+ *  
+ *  Makes existing class methods private. Often used to hide the default
+ *  constructor &lt;code&gt;new&lt;/code&gt;.
+ *     
+ *     class SimpleSingleton  # Not thread safe
+ *       private_class_method :new
+ *       def SimpleSingleton.create(*args, &amp;block)
+ *         @me = new(*args, &amp;block) if ! @me
+ *         @me
+ *       end
+ *     end
+ */
+
+static VALUE
+rb_mod_private_method(argc, argv, obj)
+    int argc;
+    VALUE *argv;
+    VALUE obj;
+{
+    set_method_visibility(CLASS_OF(obj), argc, argv, NOEX_PRIVATE);
+    return obj;
+}</pre>
+</body>
+</html>

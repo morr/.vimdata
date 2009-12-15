@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>tmpdir (Dir)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/tmpdir.rb, line 37</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Dir</span><span class="ruby-operator">::</span><span class="ruby-identifier">tmpdir</span>
+    <span class="ruby-identifier">tmp</span> = <span class="ruby-value str">'.'</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$SAFE</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">tmp</span> = <span class="ruby-ivar">@@systmpdir</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">dir</span> <span class="ruby-keyword kw">in</span> [<span class="ruby-constant">ENV</span>[<span class="ruby-value str">'TMPDIR'</span>], <span class="ruby-constant">ENV</span>[<span class="ruby-value str">'TMP'</span>], <span class="ruby-constant">ENV</span>[<span class="ruby-value str">'TEMP'</span>],
+                  <span class="ruby-constant">ENV</span>[<span class="ruby-value str">'USERPROFILE'</span>], <span class="ruby-ivar">@@systmpdir</span>, <span class="ruby-value str">'/tmp'</span>]
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">dir</span> <span class="ruby-keyword kw">and</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">directory?</span>(<span class="ruby-identifier">dir</span>) <span class="ruby-keyword kw">and</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">writable?</span>(<span class="ruby-identifier">dir</span>)
+          <span class="ruby-identifier">tmp</span> = <span class="ruby-identifier">dir</span>
+          <span class="ruby-keyword kw">break</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">tmp</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

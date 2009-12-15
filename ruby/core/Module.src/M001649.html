@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>module_eval (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mod.class_eval(string [, filename [, lineno]])  =&gt; obj
+ *     mod.module_eval {|| block }                     =&gt; obj
+ *  
+ *  Evaluates the string or block in the context of _mod_. This can
+ *  be used to add methods to a class. &lt;code&gt;module_eval&lt;/code&gt; returns
+ *  the result of evaluating its argument. The optional _filename_
+ *  and _lineno_ parameters set the text for error messages.
+ *     
+ *     class Thing
+ *     end
+ *     a = %q{def hello() &quot;Hello there!&quot; end}
+ *     Thing.module_eval(a)
+ *     puts Thing.new.hello()
+ *     Thing.module_eval(&quot;invalid code&quot;, &quot;dummy&quot;, 123)
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     Hello there!
+ *     dummy:123:in `module_eval': undefined local variable
+ *         or method `code' for Thing:Class
+ */
+
+VALUE
+rb_mod_module_eval(argc, argv, mod)
+    int argc;
+    VALUE *argv;
+    VALUE mod;
+{
+    return specific_eval(argc, argv, mod, mod);
+}</pre>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each_cons (Enumerable)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *    each_cons(n) {...}
+ *
+ *  Iterates the given block for each array of consecutive &lt;n&gt;
+ *  elements.
+ *
+ *  e.g.:
+ *      (1..10).each_cons(3) {|a| p a}
+ *      # outputs below
+ *      [1, 2, 3]
+ *      [2, 3, 4]
+ *      [3, 4, 5]
+ *      [4, 5, 6]
+ *      [5, 6, 7]
+ *      [6, 7, 8]
+ *      [7, 8, 9]
+ *      [8, 9, 10]
+ *
+ */
+static VALUE
+enum_each_cons(obj, n)
+    VALUE obj, n;
+{
+    long size = NUM2LONG(n);
+    NODE *memo;
+
+    if (size &lt;= 0) rb_raise(rb_eArgError, &quot;invalid size&quot;);
+    memo = rb_node_newnode(NODE_MEMO, rb_ary_new2(size), 0, size);
+
+    rb_iterate(rb_each, obj, each_cons_i, (VALUE)memo);
+
+    return Qnil;
+}</pre>
+</body>
+</html>

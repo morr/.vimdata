@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>begin (MatchData)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     mtch.begin(n)   =&gt; integer
+ *  
+ *  Returns the offset of the start of the &lt;em&gt;n&lt;/em&gt;th element of the match
+ *  array in the string.
+ *     
+ *     m = /(.)(.)(\d+)(\d)/.match(&quot;THX1138.&quot;)
+ *     m.begin(0)   #=&gt; 1
+ *     m.begin(2)   #=&gt; 2
+ */
+
+static VALUE
+match_begin(match, n)
+    VALUE match, n;
+{
+    int i = NUM2INT(n);
+
+    match_check(match);
+    if (i &lt; 0 || RMATCH(match)-&gt;regs-&gt;num_regs &lt;= i)
+        rb_raise(rb_eIndexError, &quot;index %d out of matches&quot;, i);
+
+    if (RMATCH(match)-&gt;regs-&gt;beg[i] &lt; 0)
+        return Qnil;
+
+    return INT2FIX(RMATCH(match)-&gt;regs-&gt;beg[i]);
+}</pre>
+</body>
+</html>

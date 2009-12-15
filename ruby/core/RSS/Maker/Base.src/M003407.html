@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>append_features (RSS::Maker::Base)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rss/maker/base.rb, line 10</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">append_features</span>(<span class="ruby-identifier">klass</span>)
+        <span class="ruby-keyword kw">super</span>
+
+        <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">module_eval</span>(<span class="ruby-value str">&quot;\nOTHER_ELEMENTS = []\nNEED_INITIALIZE_VARIABLES = []\n\ndef self.inherited(subclass)\nsubclass.const_set(\&quot;OTHER_ELEMENTS\&quot;, [])\nsubclass.const_set(\&quot;NEED_INITIALIZE_VARIABLES\&quot;, [])\n\nsubclass.module_eval(&lt;&lt;-EOEOC, __FILE__, __LINE__)\ndef self.other_elements\nOTHER_ELEMENTS + super\nend\n\ndef self.need_initialize_variables\nNEED_INITIALIZE_VARIABLES + super\nend\nEOEOC\nend\n\ndef self.add_other_element(variable_name)\nOTHER_ELEMENTS &lt;&lt; variable_name\nend\n\ndef self.other_elements\nOTHER_ELEMENTS\nend\n\ndef self.add_need_initialize_variable(variable_name, init_value=\&quot;nil\&quot;)\nNEED_INITIALIZE_VARIABLES &lt;&lt; [variable_name, init_value]\nend\n\ndef self.need_initialize_variables\nNEED_INITIALIZE_VARIABLES\nend\n\ndef self.def_array_element(name)\ninclude Enumerable\nextend Forwardable\n\ndef_delegators(\&quot;@\\\#{name}\&quot;, :&lt;&lt;, :[], :[]=, :first, :last)\ndef_delegators(\&quot;@\\\#{name}\&quot;, :push, :pop, :shift, :unshift)\ndef_delegators(\&quot;@\\\#{name}\&quot;, :each, :size)\n\nadd_need_initialize_variable(name, \&quot;[]\&quot;)\nend\n&quot;</span>, <span class="ruby-keyword kw">__FILE__</span>, <span class="ruby-keyword kw">__LINE__</span>)
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

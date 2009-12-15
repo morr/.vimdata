@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>exception (Exception)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  Document-method: exception
+ *
+ *  call-seq:
+ *     exc.exception(string) -&gt; an_exception or exc
+ *  
+ *  With no argument, or if the argument is the same as the receiver,
+ *  return the receiver. Otherwise, create a new
+ *  exception object of the same class as the receiver, but with a
+ *  message equal to &lt;code&gt;string.to_str&lt;/code&gt;.
+ *     
+ */
+
+static VALUE
+exc_exception(argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE exc;
+
+    if (argc == 0) return self;
+    if (argc == 1 &amp;&amp; self == argv[0]) return self;
+    exc = rb_obj_clone(self);
+    exc_initialize(argc, argv, exc);
+
+    return exc;
+}</pre>
+</body>
+</html>

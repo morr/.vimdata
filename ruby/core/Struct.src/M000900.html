@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each_pair (Struct)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     struct.each_pair {|sym, obj| block }     =&gt; struct
+ *  
+ *  Calls &lt;i&gt;block&lt;/i&gt; once for each instance variable, passing the name
+ *  (as a symbol) and the value as parameters.
+ *     
+ *     Customer = Struct.new(:name, :address, :zip)
+ *     joe = Customer.new(&quot;Joe Smith&quot;, &quot;123 Maple, Anytown NC&quot;, 12345)
+ *     joe.each_pair {|name, value| puts(&quot;#{name} =&gt; #{value}&quot;) }
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     name =&gt; Joe Smith
+ *     address =&gt; 123 Maple, Anytown NC
+ *     zip =&gt; 12345
+ */
+
+static VALUE
+rb_struct_each_pair(s)
+    VALUE s;
+{
+    VALUE members;
+    long i;
+
+    members = rb_struct_members(s);
+    for (i=0; i&lt;RSTRUCT(s)-&gt;len; i++) {
+        rb_yield_values(2, rb_ary_entry(members, i), RSTRUCT(s)-&gt;ptr[i]);
+    }
+    return s;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>ole_method (WIN32OLE)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *   call-seq:
+ *      WIN32OLE#ole_method_help(method)
+ * 
+ *   Returns WIN32OLE_METHOD object corresponding with method 
+ *   specified by 1st argument.
+ *
+ *      excel = WIN32OLE.new('Excel.Application')
+ *      method = excel.ole_method_help('Quit')
+ *
+ */
+static VALUE
+fole_method_help( self, cmdname )
+    VALUE self;
+    VALUE cmdname;
+{
+    ITypeInfo *pTypeInfo;
+    HRESULT hr;
+    struct oledata *pole;
+    VALUE method, obj;
+    LCID    lcid = LOCALE_SYSTEM_DEFAULT;
+
+    Check_SafeStr(cmdname);
+    OLEData_Get_Struct(self, pole);
+    hr = typeinfo_from_ole(pole, &amp;pTypeInfo);
+    if(FAILED(hr))
+        ole_raise(hr, rb_eRuntimeError, &quot;failed to get ITypeInfo&quot;);
+    method = folemethod_s_allocate(cWIN32OLE_METHOD);
+    obj = olemethod_from_typeinfo(method, pTypeInfo, cmdname);
+    OLE_RELEASE(pTypeInfo);
+    if (obj == Qnil)
+        rb_raise(eWIN32OLE_RUNTIME_ERROR, &quot;not found %s&quot;,
+                 StringValuePtr(cmdname));
+    return obj;
+}</pre>
+</body>
+</html>

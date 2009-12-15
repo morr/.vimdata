@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Scanf::FormatSpecifier)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/scanf.rb, line 331</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">str</span>)
+      <span class="ruby-ivar">@spec_string</span> = <span class="ruby-identifier">str</span>
+      <span class="ruby-identifier">h</span> = <span class="ruby-value str">'[A-Fa-f0-9]'</span>
+
+      <span class="ruby-ivar">@re_string</span>, <span class="ruby-ivar">@handler</span> = 
+        <span class="ruby-keyword kw">case</span> <span class="ruby-ivar">@spec_string</span>
+
+          <span class="ruby-comment cmt"># %[[:...:]]</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?(\[\[:[a-z]+:\]\])/</span>
+          [ <span class="ruby-node">&quot;(#{$1}+)&quot;</span>, <span class="ruby-identifier">:extract_plain</span> ]
+
+          <span class="ruby-comment cmt"># %5[[:...:]]</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?(\d+)(\[\[:[a-z]+:\]\])/</span>
+          [ <span class="ruby-node">&quot;(#{$2}{1,#{$1}})&quot;</span>, <span class="ruby-identifier">:extract_plain</span> ]
+
+          <span class="ruby-comment cmt"># %[...]</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?\[([^\]]*)\]/</span>
+          <span class="ruby-identifier">yes</span> = <span class="ruby-identifier">$1</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-regexp re">/^\^/</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">yes</span>) <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">no</span> = <span class="ruby-identifier">yes</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>] <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">no</span> = <span class="ruby-value str">'^'</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">yes</span> <span class="ruby-keyword kw">end</span>
+          [ <span class="ruby-node">&quot;([#{yes}]+)(?=[#{no}]|\\z)&quot;</span>, <span class="ruby-identifier">:extract_plain</span> ]
+
+          <span class="ruby-comment cmt"># %5[...]</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?(\d+)\[([^\]]*)\]/</span>
+          <span class="ruby-identifier">yes</span> = <span class="ruby-identifier">$2</span>
+          <span class="ruby-identifier">w</span> = <span class="ruby-identifier">$1</span>
+          [ <span class="ruby-node">&quot;([#{yes}]{1,#{w}})&quot;</span>, <span class="ruby-identifier">:extract_plain</span> ]
+
+          <span class="ruby-comment cmt"># %i</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?i/</span>
+          [ <span class="ruby-node">&quot;([-+]?(?:(?:0[0-7]+)|(?:0[Xx]#{h}+)|(?:[1-9]\\d*)))&quot;</span>, <span class="ruby-identifier">:extract_integer</span> ]
+
+          <span class="ruby-comment cmt"># %5i</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?(\d+)i/</span>
+          <span class="ruby-identifier">n</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+          <span class="ruby-identifier">s</span> = <span class="ruby-value str">&quot;(&quot;</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;[1-9]\\d{1,#{n-1}}|&quot;</span> <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;0[0-7]{1,#{n-1}}|&quot;</span> <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">2</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;[-+]0[0-7]{1,#{n-2}}|&quot;</span> <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">2</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;[-+][1-9]\\d{1,#{n-2}}|&quot;</span> <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">2</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;0[Xx]#{h}{1,#{n-2}}|&quot;</span> <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">3</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;[-+]0[Xx]#{h}{1,#{n-3}}|&quot;</span> <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;\\d&quot;</span>
+          <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;)&quot;</span>
+          [ <span class="ruby-identifier">s</span>, <span class="ruby-identifier">:extract_integer</span> ]
+
+          <span class="ruby-comment cmt"># %d, %u</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?[du]/</span>
+          [ <span class="ruby-value str">'([-+]?\d+)'</span>, <span class="ruby-identifier">:extract_decimal</span> ]
+
+          <span class="ruby-comment cmt"># %5d, %5u</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?(\d+)[du]/</span>
+          <span class="ruby-identifier">n</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+          <span class="ruby-identifier">s</span> = <span class="ruby-value str">&quot;(&quot;</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;[-+]\\d{1,#{n-1}}|&quot;</span> <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;\\d{1,#{$1}})&quot;</span>
+          [ <span class="ruby-identifier">s</span>, <span class="ruby-identifier">:extract_decimal</span> ]
+
+          <span class="ruby-comment cmt"># %x</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?[Xx]/</span>
+          [ <span class="ruby-node">&quot;([-+]?(?:0[Xx])?#{h}+)&quot;</span>, <span class="ruby-identifier">:extract_hex</span> ]
+
+          <span class="ruby-comment cmt"># %5x</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?(\d+)[Xx]/</span>
+          <span class="ruby-identifier">n</span> = <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+          <span class="ruby-identifier">s</span> = <span class="ruby-value str">&quot;(&quot;</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">3</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;[-+]0[Xx]#{h}{1,#{n-3}}|&quot;</span> <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">2</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;0[Xx]#{h}{1,#{n-2}}|&quot;</span> <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;[-+]#{h}{1,#{n-1}}|&quot;</span> <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;#{h}{1,#{n}}&quot;</span>
+          <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;)&quot;</span>
+          [ <span class="ruby-identifier">s</span>, <span class="ruby-identifier">:extract_hex</span> ]
+
+          <span class="ruby-comment cmt"># %o</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?o/</span>
+          [ <span class="ruby-value str">'([-+]?[0-7]+)'</span>, <span class="ruby-identifier">:extract_octal</span> ]
+
+          <span class="ruby-comment cmt"># %5o</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?(\d+)o/</span>
+          [ <span class="ruby-node">&quot;([-+][0-7]{1,#{$1.to_i-1}}|[0-7]{1,#{$1}})&quot;</span>, <span class="ruby-identifier">:extract_octal</span> ]
+
+          <span class="ruby-comment cmt"># %f</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?f/</span>
+          [ <span class="ruby-value str">'([-+]?((\d+(?&gt;(?=[^\d.]|$)))|(\d*(\.(\d*([eE][-+]?\d+)?)))))'</span>, <span class="ruby-identifier">:extract_float</span> ]
+
+          <span class="ruby-comment cmt"># %5f</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?(\d+)f/</span>
+          [ <span class="ruby-node">&quot;(\\S{1,#{$1}})&quot;</span>, <span class="ruby-identifier">:extract_float</span> ]
+
+          <span class="ruby-comment cmt"># %5s</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?(\d+)s/</span>
+          [ <span class="ruby-node">&quot;(\\S{1,#{$1}})&quot;</span>, <span class="ruby-identifier">:extract_plain</span> ]
+
+          <span class="ruby-comment cmt"># %s</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?s/</span>
+          [ <span class="ruby-value str">'(\S+)'</span>, <span class="ruby-identifier">:extract_plain</span> ]
+
+          <span class="ruby-comment cmt"># %c</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/\s%\*?c/</span>
+          [ <span class="ruby-value str">&quot;\\s*(.)&quot;</span>, <span class="ruby-identifier">:extract_plain</span> ]
+
+          <span class="ruby-comment cmt"># %c</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?c/</span>
+          [ <span class="ruby-value str">&quot;(.)&quot;</span>, <span class="ruby-identifier">:extract_plain</span> ]
+
+          <span class="ruby-comment cmt"># %5c (whitespace issues are handled by the count_*_space? methods)</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%\*?(\d+)c/</span>
+          [ <span class="ruby-node">&quot;(.{1,#{$1}})&quot;</span>, <span class="ruby-identifier">:extract_plain</span> ]
+
+          <span class="ruby-comment cmt"># %%</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/%%/</span>
+          [ <span class="ruby-value str">'(\s*%)'</span>, <span class="ruby-identifier">:nil_proc</span> ]
+
+          <span class="ruby-comment cmt"># literal characters</span>
+        <span class="ruby-keyword kw">else</span>
+          [ <span class="ruby-node">&quot;(#{Regexp.escape(@spec_string)})&quot;</span>, <span class="ruby-identifier">:nil_proc</span> ]
+        <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@re_string</span> = <span class="ruby-value str">'\A'</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@re_string</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

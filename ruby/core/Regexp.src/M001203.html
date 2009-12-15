@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>=== (Regexp)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     rxp === str   =&gt; true or false
+ *  
+ *  Case Equality---Synonym for &lt;code&gt;Regexp#=~&lt;/code&gt; used in case statements.
+ *     
+ *     a = &quot;HELLO&quot;
+ *     case a
+ *     when /^[a-z]*$/; print &quot;Lower case\n&quot;
+ *     when /^[A-Z]*$/; print &quot;Upper case\n&quot;
+ *     else;            print &quot;Mixed case\n&quot;
+ *     end
+ *     
+ *  &lt;em&gt;produces:&lt;/em&gt;
+ *     
+ *     Upper case
+ */
+
+VALUE
+rb_reg_eqq(re, str)
+    VALUE re, str;
+{
+    long start;
+
+    if (TYPE(str) != T_STRING) {
+        str = rb_check_string_type(str);
+        if (NIL_P(str)) {
+            rb_backref_set(Qnil);
+            return Qfalse;
+        }
+    }
+    StringValue(str);
+    start = rb_reg_search(re, str, 0, 0);
+    if (start &lt; 0) {
+        return Qfalse;
+    }
+    return Qtrue;
+}</pre>
+</body>
+</html>

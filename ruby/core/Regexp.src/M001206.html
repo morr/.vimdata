@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>to_s (Regexp)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     rxp.to_s   =&gt; str
+ *  
+ *  Returns a string containing the regular expression and its options (using the
+ *  &lt;code&gt;(?xxx:yyy)&lt;/code&gt; notation. This string can be fed back in to
+ *  &lt;code&gt;Regexp::new&lt;/code&gt; to a regular expression with the same semantics as
+ *  the original. (However, &lt;code&gt;Regexp#==&lt;/code&gt; may not return true when
+ *  comparing the two, as the source of the regular expression itself may
+ *  differ, as the example shows).  &lt;code&gt;Regexp#inspect&lt;/code&gt; produces a
+ *  generally more readable version of &lt;i&gt;rxp&lt;/i&gt;.
+ *     
+ *     r1 = /ab+c/ix         #=&gt; /ab+c/ix
+ *     s1 = r1.to_s          #=&gt; &quot;(?ix-m:ab+c)&quot;
+ *     r2 = Regexp.new(s1)   #=&gt; /(?ix-m:ab+c)/
+ *     r1 == r2              #=&gt; false
+ *     r1.source             #=&gt; &quot;ab+c&quot;
+ *     r2.source             #=&gt; &quot;(?ix-m:ab+c)&quot;
+ */
+
+static VALUE
+rb_reg_to_s(re)
+    VALUE re;
+{
+    int options;
+    const int embeddable = RE_OPTION_MULTILINE|RE_OPTION_IGNORECASE|RE_OPTION_EXTENDED;
+    long len;
+    const char* ptr;
+    VALUE str = rb_str_buf_new2(&quot;(?&quot;);
+
+    rb_reg_check(re);
+
+    options = RREGEXP(re)-&gt;ptr-&gt;options;
+    ptr = RREGEXP(re)-&gt;str;
+    len = RREGEXP(re)-&gt;len;
+  again:
+    if (len &gt;= 4 &amp;&amp; ptr[0] == '(' &amp;&amp; ptr[1] == '?') {
+        int err = 1;
+        ptr += 2;
+        if ((len -= 2) &gt; 0) {
+            do {
+                if (*ptr == 'm') {
+                    options |= RE_OPTION_MULTILINE;
+                }
+                else if (*ptr == 'i') {
+                    options |= RE_OPTION_IGNORECASE;
+                }
+                else if (*ptr == 'x') {
+                    options |= RE_OPTION_EXTENDED;
+                }
+                else break;
+                ++ptr;
+            } while (--len &gt; 0);
+        }
+        if (len &gt; 1 &amp;&amp; *ptr == '-') {
+            ++ptr;
+            --len;
+            do {
+                if (*ptr == 'm') {
+                    options &amp;= ~RE_OPTION_MULTILINE;
+                }
+                else if (*ptr == 'i') {
+                    options &amp;= ~RE_OPTION_IGNORECASE;
+                }
+                else if (*ptr == 'x') {
+                    options &amp;= ~RE_OPTION_EXTENDED;
+                }
+                else break;
+                ++ptr;
+            } while (--len &gt; 0);
+        }
+        if (*ptr == ')') {
+            --len;
+            ++ptr;
+            goto again;
+        }
+        if (*ptr == ':' &amp;&amp; ptr[len-1] == ')') {
+            Regexp *rp;
+            rb_kcode_set_option(re);
+            rp = ALLOC(Regexp);
+            MEMZERO((char *)rp, Regexp, 1);
+            err = re_compile_pattern(++ptr, len -= 2, rp) != 0;
+            rb_kcode_reset_option();
+            re_free_pattern(rp);
+        }
+        if (err) {
+            options = RREGEXP(re)-&gt;ptr-&gt;options;
+            ptr = RREGEXP(re)-&gt;str;
+            len = RREGEXP(re)-&gt;len;
+        }
+    }
+
+    if (options &amp; RE_OPTION_MULTILINE) rb_str_buf_cat2(str, &quot;m&quot;);
+    if (options &amp; RE_OPTION_IGNORECASE) rb_str_buf_cat2(str, &quot;i&quot;);
+    if (options &amp; RE_OPTION_EXTENDED) rb_str_buf_cat2(str, &quot;x&quot;);
+
+    if ((options &amp; embeddable) != embeddable) {
+        rb_str_buf_cat2(str, &quot;-&quot;);
+        if (!(options &amp; RE_OPTION_MULTILINE)) rb_str_buf_cat2(str, &quot;m&quot;);
+        if (!(options &amp; RE_OPTION_IGNORECASE)) rb_str_buf_cat2(str, &quot;i&quot;);
+        if (!(options &amp; RE_OPTION_EXTENDED)) rb_str_buf_cat2(str, &quot;x&quot;);
+    }
+
+    rb_str_buf_cat2(str, &quot;:&quot;);
+    rb_reg_expr_str(str, ptr, len);
+    rb_str_buf_cat2(str, &quot;)&quot;);
+
+    OBJ_INFECT(str, re);
+    return str;
+}</pre>
+</body>
+</html>

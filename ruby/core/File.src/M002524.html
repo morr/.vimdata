@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>atime (File)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     File.atime(file_name)  =&gt;  time
+ *  
+ *  Returns the last access time for the named file as a Time object).
+ *     
+ *     File.atime(&quot;testfile&quot;)   #=&gt; Wed Apr 09 08:51:48 CDT 2003
+ *     
+ */
+
+static VALUE
+rb_file_s_atime(klass, fname)
+    VALUE klass, fname;
+{
+    struct stat st;
+
+    if (rb_stat(fname, &amp;st) &lt; 0)
+        rb_sys_fail(StringValueCStr(fname));
+    return rb_time_new(st.st_atime, 0);
+}</pre>
+</body>
+</html>

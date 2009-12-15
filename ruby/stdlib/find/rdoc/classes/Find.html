@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Find</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Find</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/find_rb.html">
+                find.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The <tt><a href="Find.html">Find</a></tt> module supports the top-down
+traversal of a set of file paths.
+</p>
+<p>
+For example, to total the size of all files under your home directory,
+ignoring anything in a &quot;dot&quot; directory (e.g. $HOME/.ssh):
+</p>
+<pre>
+  require 'find'
+
+  total_size = 0
+
+  Find.find(ENV[&quot;HOME&quot;]) do |path|
+    if FileTest.directory?(path)
+      if File.basename(path)[0] == ?.
+        Find.prune       # Don't look any further into this directory.
+      else
+        next
+      end
+    else
+      total_size += FileTest.size(path)
+    end
+  end
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000727">find</a>&nbsp;&nbsp;
+      <a href="#M000728">prune</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000727" class="m-detail">
+        <a name="M000727"></a>
+
+        <div class="method-heading">
+          <a href="#M000727" class="method-signature">
+          <span class="method-name">find</span><span class="method-args">(*paths) {|path| ...}</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Calls the associated block with the name of every file and directory listed
+as arguments, then recursively on their subdirectories, and so on.
+</p>
+<p>
+See the <tt><a href="Find.html">Find</a></tt> module documentation for an
+example.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000727-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000727-source">
+<pre>
+<span class="ruby-comment cmt"># File find.rb, line 35</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">find</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">paths</span>) <span class="ruby-comment cmt"># :yield: path</span>
+    <span class="ruby-identifier">paths</span>.<span class="ruby-identifier">collect!</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">d</span>.<span class="ruby-identifier">dup</span>}
+    <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">file</span> = <span class="ruby-identifier">paths</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-identifier">catch</span>(<span class="ruby-identifier">:prune</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">file</span>.<span class="ruby-identifier">dup</span>.<span class="ruby-identifier">taint</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span> <span class="ruby-identifier">file</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">lstat</span>(<span class="ruby-identifier">file</span>).<span class="ruby-identifier">directory?</span> <span class="ruby-keyword kw">then</span>
+            <span class="ruby-identifier">d</span> = <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">file</span>)
+            <span class="ruby-keyword kw">begin</span>
+              <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">f</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">d</span>
+                <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">f</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;.&quot;</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">f</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;..&quot;</span>
+                <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-constant">ALT_SEPARATOR</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">file</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^(?:[\/\\]|[A-Za-z]:[\/\\]?)$/</span> <span class="ruby-keyword kw">then</span>
+                  <span class="ruby-identifier">f</span> = <span class="ruby-identifier">file</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">f</span>
+                <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">file</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;/&quot;</span> <span class="ruby-keyword kw">then</span>
+                  <span class="ruby-identifier">f</span> = <span class="ruby-value str">&quot;/&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">f</span>
+                <span class="ruby-keyword kw">else</span>
+                  <span class="ruby-identifier">f</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">file</span>, <span class="ruby-identifier">f</span>)
+                <span class="ruby-keyword kw">end</span>
+                <span class="ruby-identifier">paths</span>.<span class="ruby-identifier">unshift</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">untaint</span>
+              <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">ensure</span>
+              <span class="ruby-identifier">d</span>.<span class="ruby-identifier">close</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">ENOENT</span>, <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">EACCES</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000728" class="m-detail">
+        <a name="M000728"></a>
+
+        <div class="method-heading">
+          <a href="#M000728" class="method-signature">
+          <span class="method-name">prune</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="m-description">
+          <p>
+Skips the current file or directory, restarting the loop with the next
+entry. If the current file is a directory, that directory will not be
+recursively entered. Meaningful only within the block associated with
+Find::find.
+</p>
+<p>
+See the <tt><a href="Find.html">Find</a></tt> module documentation for an
+example.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000728-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000728-source">
+<pre>
+<span class="ruby-comment cmt"># File find.rb, line 74</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">prune</span>
+    <span class="ruby-identifier">throw</span> <span class="ruby-identifier">:prune</span>
+  <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+<div id='credits' style='font-size:smaller' >
+<!-- 1  --><p> <a href='http://www.ruby-doc.org'>ruby-doc.org</a> is hosted and maintained by <a href='http://www.jamesbritt.com'>James Britt</a> and <a href='http://www.happycamperstudios.com'>Happy Camper Studios</a>, a <a href='http://www.happycamperstudios.com'> Ruby application development company in Phoenix, Arizona</a>. The site was created in 2002 as part of the Ruby Documentation Project to promote the Ruby language and to help other Ruby hackers.</p>
+ <p>Documentation content on ruby-doc.org is provided by <a href='http://www.ruby-doc.org/about'>remarkable members</a> of the Ruby community.</p>
+<p>For more information on the Ruby programming language, visit <a href='http://www.ruby-lang.org'>ruby-lang.org</a>.</p>
+<p>Want to help improve Ruby's API docs? See <a href='/documentation-guidelines.html'> Ruby Documentation Guidelines</a>.</p>
+</div>
+
+</body>
+</html>

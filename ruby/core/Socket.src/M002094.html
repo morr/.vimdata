@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>accept (Socket)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ * call-seq:
+ *      socket.accept =&gt; [ socket, string ]
+ * 
+ * Accepts an incoming connection returning an array containing a new
+ * Socket object and a string holding the +struct+ sockaddr information about 
+ * the caller.
+ * 
+ * === Example
+ *      # In one script, start this first
+ *      require 'socket'
+ *      include Socket::Constants
+ *      socket = Socket.new( AF_INET, SOCK_STREAM, 0 )
+ *      sockaddr = Socket.pack_sockaddr_in( 2200, 'localhost' )
+ *      socket.bind( sockaddr )
+ *      socket.listen( 5 )
+ *      client, client_sockaddr = socket.accept
+ *      puts &quot;The client said, '#{client.readline.chomp}'&quot;
+ *      client.puts &quot;Hello from script one!&quot;
+ *      socket.close
+ * 
+ *      # In another script, start this second
+ *      require 'socket'
+ *      include Socket::Constants
+ *      socket = Socket.new( AF_INET, SOCK_STREAM, 0 )
+ *      sockaddr = Socket.pack_sockaddr_in( 2200, 'localhost' )
+ *      socket.connect( sockaddr )
+ *      socket.puts &quot;Hello from script 2.&quot; 
+ *      puts &quot;The server said, '#{socket.readline.chomp}'&quot;
+ *      socket.close 
+ * 
+ * === Unix-based Exceptions
+ * On unix-based based systems the following system exceptions may be raised if the
+ * call to _accept_ fails:
+ * * Errno::EAGAIN - O_NONBLOCK is set for the +socket+ file descriptor and no 
+ *   connections are parent to be accepted
+ * * Errno::EWOULDBLOCK - same as Errno::EAGAIN
+ * * Errno::EBADF - the +socket+ is not a valid file descriptor
+ * * Errno::ECONNABORTED - a connection has been aborted
+ * * Errno::EFAULT - the socket's internal address or address length parameter 
+ *   cannot be access or written
+ * * Errno::EINTR - the _accept_ method was interrupted by a signal that was 
+ *   caught before a valid connection arrived
+ * * Errno::EINVAL - the +socket+ is not accepting connections
+ * * Errno::EMFILE - OPEN_MAX file descriptors are currently open in the calling 
+ *   process
+ * * Errno::ENOBUFS - no buffer space is available
+ * * Errno::ENOMEM - there was insufficient memory available to complete the
+ *   operation
+ * * Errno::ENOSR - there was insufficient STREAMS resources available to 
+ *   complete the operation
+ * * Errno::ENFILE - the maximum number of file descriptors in the system are 
+ *   already open
+ * * Errno::ENOTSOCK - the +socket+ does not refer to a socket
+ * * Errno::EOPNOTSUPP - the socket type for the calling +socket+ does not 
+ *   support accept connections
+ * * Errno::EPROTO - a protocol error has occurred
+ * 
+ * === Windows Exceptions
+ * On Windows systems the following system exceptions may be raised if 
+ * the call to _accept_ fails:
+ * * Errno::ECONNRESET - an incoming connection was indicated, but was 
+ *   terminated by the remote peer prior to accepting the connection
+ * * Errno::EFAULT - the socket's internal address or address length parameter
+ *   is too small or is not a valid part of the user space address
+ * * Errno::EINVAL - the _listen_ method was not invoked prior to calling _accept_
+ * * Errno::EINPROGRESS - a blocking Windows Sockets 1.1 call is in progress or
+ *   the service provider is still processing a callback function
+ * * Errno::EMFILE - the queue is not empty, upong etry to _accept_ and there are
+ *   no socket descriptors available
+ * * Errno::ENETDOWN - the network is down
+ * * Errno::ENOBUFS - no buffer space is available
+ * * Errno::ENOTSOCK - +socket+ is not a socket
+ * * Errno::EOPNOTSUPP - +socket+ is not a type that supports connection-oriented
+ *   service.
+ * * Errno::EWOULDBLOCK - +socket+ is marked as nonblocking and no connections are
+ *   present to be accepted
+ * 
+ * === See
+ * * accept manual pages on unix-based systems
+ * * accept function in Microsoft's Winsock functions reference
+ */
+static VALUE
+sock_accept(sock)
+    VALUE sock;
+{
+    OpenFile *fptr;
+    VALUE sock2;
+    char buf[1024];
+    socklen_t len = sizeof buf;
+
+    GetOpenFile(sock, fptr);
+    sock2 = s_accept(rb_cSocket,fileno(fptr-&gt;f),(struct sockaddr*)buf,&amp;len);
+
+    return rb_assoc_new(sock2, rb_str_new(buf, len));
+}</pre>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>parse (RI::Options)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/ri/ri_options.rb, line 238</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse</span>(<span class="ruby-identifier">args</span>)
+    
+      <span class="ruby-identifier">old_argv</span> = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">dup</span>
+
+      <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">replace</span>(<span class="ruby-identifier">args</span>)
+
+      <span class="ruby-keyword kw">begin</span>
+
+        <span class="ruby-identifier">go</span> = <span class="ruby-constant">GetoptLong</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">*</span><span class="ruby-constant">OptionList</span>.<span class="ruby-identifier">options</span>)
+        <span class="ruby-identifier">go</span>.<span class="ruby-identifier">quiet</span> = <span class="ruby-keyword kw">true</span>
+
+        <span class="ruby-identifier">go</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">opt</span>, <span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">opt</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--help&quot;</span>       <span class="ruby-keyword kw">then</span> <span class="ruby-constant">OptionList</span>.<span class="ruby-identifier">usage</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--version&quot;</span>    <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">show_version</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--list-names&quot;</span> <span class="ruby-keyword kw">then</span> <span class="ruby-ivar">@list_names</span> = <span class="ruby-keyword kw">true</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--no-pager&quot;</span>   <span class="ruby-keyword kw">then</span> <span class="ruby-ivar">@use_stdout</span> = <span class="ruby-keyword kw">true</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--classes&quot;</span>    <span class="ruby-keyword kw">then</span> <span class="ruby-ivar">@list_classes</span> = <span class="ruby-keyword kw">true</span>
+
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--system&quot;</span>     <span class="ruby-keyword kw">then</span> <span class="ruby-ivar">@use_system</span> = <span class="ruby-keyword kw">true</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--site&quot;</span>       <span class="ruby-keyword kw">then</span> <span class="ruby-ivar">@use_site</span> = <span class="ruby-keyword kw">true</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--home&quot;</span>       <span class="ruby-keyword kw">then</span> <span class="ruby-ivar">@use_home</span> = <span class="ruby-keyword kw">true</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--gems&quot;</span>       <span class="ruby-keyword kw">then</span> <span class="ruby-ivar">@use_gems</span> = <span class="ruby-keyword kw">true</span>
+
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--doc-dir&quot;</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">directory?</span>(<span class="ruby-identifier">arg</span>)
+              <span class="ruby-ivar">@doc_dirs</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">arg</span>
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Invalid directory: #{arg}&quot;</span>
+              <span class="ruby-identifier">exit</span> <span class="ruby-value">1</span>
+            <span class="ruby-keyword kw">end</span>
+
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--format&quot;</span>
+            <span class="ruby-ivar">@formatter</span> = <span class="ruby-constant">RI</span><span class="ruby-operator">::</span><span class="ruby-constant">TextFormatter</span>.<span class="ruby-identifier">for</span>(<span class="ruby-identifier">arg</span>)
+            <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@formatter</span>
+              <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">print</span> <span class="ruby-value str">&quot;Invalid formatter (should be one of &quot;</span>
+              <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-constant">RI</span><span class="ruby-operator">::</span><span class="ruby-constant">TextFormatter</span>.<span class="ruby-identifier">list</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;)&quot;</span>
+              <span class="ruby-identifier">exit</span> <span class="ruby-value">1</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--width&quot;</span>
+            <span class="ruby-keyword kw">begin</span>
+              <span class="ruby-ivar">@width</span> = <span class="ruby-constant">Integer</span>(<span class="ruby-identifier">arg</span>)
+            <span class="ruby-keyword kw">rescue</span> 
+              <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Invalid width: '#{arg}'&quot;</span>
+              <span class="ruby-identifier">exit</span> <span class="ruby-value">1</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">InvalidOption</span>, <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">MissingArgument</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">error</span>
+        <span class="ruby-constant">OptionList</span>.<span class="ruby-identifier">error</span>(<span class="ruby-identifier">error</span>.<span class="ruby-identifier">message</span>)
+
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

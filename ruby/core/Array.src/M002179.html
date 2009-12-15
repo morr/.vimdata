@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>rindex (Array)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     array.rindex(obj)    -&gt;  int or nil
+ *  
+ *  Returns the index of the last object in &lt;i&gt;array&lt;/i&gt; 
+ *  &lt;code&gt;==&lt;/code&gt; to &lt;i&gt;obj&lt;/i&gt;. Returns &lt;code&gt;nil&lt;/code&gt; if
+ *  no match is found.
+ *     
+ *     a = [ &quot;a&quot;, &quot;b&quot;, &quot;b&quot;, &quot;b&quot;, &quot;c&quot; ]
+ *     a.rindex(&quot;b&quot;)   #=&gt; 3
+ *     a.rindex(&quot;z&quot;)   #=&gt; nil
+ */
+
+static VALUE
+rb_ary_rindex(ary, val)
+    VALUE ary;
+    VALUE val;
+{
+    long i = RARRAY(ary)-&gt;len;
+
+    while (i--) {
+        if (i &gt; RARRAY(ary)-&gt;len) {
+            i = RARRAY(ary)-&gt;len;
+            continue;
+        }
+        if (rb_equal(RARRAY(ary)-&gt;ptr[i], val))
+            return LONG2NUM(i);
+    }
+    return Qnil;
+}</pre>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>create_source_code_file (Generators::HtmlMethod)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/rdoc/generators/html_generator.rb, line 1026</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">create_source_code_file</span>(<span class="ruby-identifier">code_body</span>)
+      <span class="ruby-identifier">meth_path</span> = <span class="ruby-ivar">@html_class</span>.<span class="ruby-identifier">path</span>.<span class="ruby-identifier">sub</span>(<span class="ruby-regexp re">/\.html$/</span>, <span class="ruby-value str">'.src'</span>)
+      <span class="ruby-constant">File</span>.<span class="ruby-identifier">makedirs</span>(<span class="ruby-identifier">meth_path</span>)
+      <span class="ruby-identifier">file_path</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">meth_path</span>, <span class="ruby-ivar">@seq</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;.html&quot;</span>
+
+      <span class="ruby-identifier">template</span> = <span class="ruby-constant">TemplatePage</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">RDoc</span><span class="ruby-operator">::</span><span class="ruby-constant">Page</span><span class="ruby-operator">::</span><span class="ruby-constant">SRC_PAGE</span>)
+      <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">file_path</span>, <span class="ruby-value str">&quot;w&quot;</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">values</span> = {
+          <span class="ruby-value str">'title'</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">escapeHTML</span>(<span class="ruby-identifier">index_name</span>),
+          <span class="ruby-value str">'code'</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">code_body</span>,
+          <span class="ruby-value str">'style_url'</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">style_url</span>(<span class="ruby-identifier">file_path</span>, <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">css</span>),
+          <span class="ruby-value str">'charset'</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">charset</span>
+        }
+        <span class="ruby-identifier">template</span>.<span class="ruby-identifier">write_html_on</span>(<span class="ruby-identifier">f</span>, <span class="ruby-identifier">values</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-constant">HTMLGenerator</span>.<span class="ruby-identifier">gen_url</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">file_path</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

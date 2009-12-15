@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Iconv</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Iconv</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/iconv/iconv_c.html">
+                iconv/iconv.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Data
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Document-class: <a href="Iconv/BrokenLibrary.html">Iconv::BrokenLibrary</a>
+</p>
+<p>
+Detected a bug of underlying <a href="Iconv.html#M000352">iconv</a>(3)
+libray.
+</p>
+<ul>
+<li>returns an error without setting errno properly
+
+</li>
+</ul>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000357">charset_map</a>&nbsp;&nbsp;
+      <a href="#M000355">close</a>&nbsp;&nbsp;
+      <a href="#M000353">conv</a>&nbsp;&nbsp;
+      <a href="#M000356">iconv</a>&nbsp;&nbsp;
+      <a href="#M000352">iconv</a>&nbsp;&nbsp;
+      <a href="#M000354">new</a>&nbsp;&nbsp;
+      <a href="#M000351">open</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="Iconv/Failure.html" class="link">Iconv::Failure</a><br />
+Class <a href="Iconv/BrokenLibrary.html" class="link">Iconv::BrokenLibrary</a><br />
+Class <a href="Iconv/IllegalSequence.html" class="link">Iconv::IllegalSequence</a><br />
+Class <a href="Iconv/InvalidCharacter.html" class="link">Iconv::InvalidCharacter</a><br />
+Class <a href="Iconv/InvalidEncoding.html" class="link">Iconv::InvalidEncoding</a><br />
+Class <a href="Iconv/OutOfRange.html" class="link">Iconv::OutOfRange</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000357" class="method-detail">
+        <a name="M000357"></a>
+
+        <div class="method-heading">
+          <span class="method-name"> Iconv.charset_map<br />
+</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the map from canonical name to system dependent name.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000353" class="method-detail">
+        <a name="M000353"></a>
+
+        <div class="method-heading">
+          <a href="#M000353" class="method-signature">
+          <span class="method-name"> Iconv.conv(to, from, str)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Document-method: Iconv::conv
+</p>
+<p>
+Shorthand for
+</p>
+<pre>
+  Iconv.iconv(to, from, str).join
+</pre>
+<p>
+See <a href="Iconv.html#M000352">Iconv.iconv</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000353-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000353-source">
+<pre>
+/*
+ * Document-method: Iconv::conv
+ * call-seq: Iconv.conv(to, from, str)
+ *
+ * Shorthand for
+ *   Iconv.iconv(to, from, str).join
+ * See Iconv.iconv.
+ */
+static VALUE
+iconv_s_conv
+    (self, to, from, str)
+    VALUE self, to, from, str;
+{
+    struct iconv_env_t arg;
+
+    arg.argc = 1;
+    arg.argv = &amp;str;
+    arg.append = rb_str_append;
+    arg.ret = rb_str_new(0, 0);
+    arg.cd = iconv_create(to, from);
+    return rb_ensure(iconv_s_convert, (VALUE)&amp;arg, iconv_free, ICONV2VALUE(arg.cd));
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000352" class="method-detail">
+        <a name="M000352"></a>
+
+        <div class="method-heading">
+          <a href="#M000352" class="method-signature">
+          <span class="method-name"> Iconv.iconv(to, from, *strs)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Shorthand for
+</p>
+<pre>
+  Iconv.open(to, from) { |cd|
+    (strs + [nil]).collect { |s| cd.iconv(s) }
+  }
+</pre>
+<h3>Parameters</h3>
+<table>
+<tr><td valign="top"><tt>to, from</tt>:</td><td>see <a href="Iconv.html#M000354">Iconv.new</a>
+
+</td></tr>
+<tr><td valign="top"><tt>strs</tt>:</td><td>strings to be converted
+
+</td></tr>
+</table>
+<h3>Exceptions</h3>
+<p>
+Exceptions thrown by <a href="Iconv.html#M000354">Iconv.new</a>, <a
+href="Iconv.html#M000351">Iconv.open</a> and <a
+href="Iconv.html#M000352">Iconv#iconv</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000352-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000352-source">
+<pre>
+/*
+ * Document-method: iconv
+ * call-seq: Iconv.iconv(to, from, *strs)
+ *
+ * Shorthand for
+ *   Iconv.open(to, from) { |cd|
+ *     (strs + [nil]).collect { |s| cd.iconv(s) }
+ *   }
+ *
+ * === Parameters
+ *
+ * &lt;tt&gt;to, from&lt;/tt&gt;:: see Iconv.new
+ * &lt;tt&gt;strs&lt;/tt&gt;:: strings to be converted
+ *
+ * === Exceptions
+ *
+ * Exceptions thrown by Iconv.new, Iconv.open and Iconv#iconv.
+ */
+static VALUE
+iconv_s_iconv
+    (argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    struct iconv_env_t arg;
+
+    if (argc &lt; 2)               /* needs `to' and `from' arguments at least */
+        rb_raise(rb_eArgError, &quot;wrong number of arguments (%d for %d)&quot;, argc, 2);
+
+    arg.argc = argc -= 2;
+    arg.argv = argv + 2;
+    arg.append = rb_ary_push;
+    arg.ret = rb_ary_new2(argc);
+    arg.cd = iconv_create(argv[0], argv[1]);
+    return rb_ensure(iconv_s_convert, (VALUE)&amp;arg, iconv_free, ICONV2VALUE(arg.cd));
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000354" class="method-detail">
+        <a name="M000354"></a>
+
+        <div class="method-heading">
+          <a href="#M000354" class="method-signature">
+          <span class="method-name"> Iconv.new(to, from)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates <a href="Iconv.html#M000354">new</a> code converter from a
+coding-system designated with <tt>from</tt> to another one designated with
+<tt>to</tt>.
+</p>
+<h3>Parameters</h3>
+<table>
+<tr><td valign="top"><tt>to</tt>:</td><td>encoding name for destination
+
+</td></tr>
+<tr><td valign="top"><tt>from</tt>:</td><td>encoding name for source
+
+</td></tr>
+</table>
+<h3>Exceptions</h3>
+<table>
+<tr><td valign="top">TypeError:</td><td>if <tt>to</tt> or <tt>from</tt> aren&#8216;t String
+
+</td></tr>
+<tr><td valign="top"><a href="Iconv/InvalidEncoding.html">InvalidEncoding</a>:</td><td>if designated converter couldn&#8216;t find out
+
+</td></tr>
+<tr><td valign="top">SystemCallError:</td><td>if <tt>iconv_open(3)</tt> fails
+
+</td></tr>
+</table>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000354-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000354-source">
+<pre>
+/*
+ * Document-method: new
+ * call-seq: Iconv.new(to, from)
+ *
+ * Creates new code converter from a coding-system designated with +from+
+ * to another one designated with +to+.
+ * 
+ * === Parameters
+ *
+ * +to+::   encoding name for destination
+ * +from+:: encoding name for source
+ *
+ * === Exceptions
+ *
+ * TypeError::       if +to+ or +from+ aren't String
+ * InvalidEncoding:: if designated converter couldn't find out
+ * SystemCallError:: if &lt;tt&gt;iconv_open(3)&lt;/tt&gt; fails
+ */
+static VALUE
+iconv_initialize
+    (self, to, from)
+    VALUE self;
+    VALUE to;
+    VALUE from;
+{
+    iconv_free(check_iconv(self));
+    DATA_PTR(self) = NULL;
+    DATA_PTR(self) = (void *)ICONV2VALUE(iconv_create(to, from));
+    return self;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000351" class="method-detail">
+        <a name="M000351"></a>
+
+        <div class="method-heading">
+          <a href="#M000351" class="method-signature">
+          <span class="method-name"> Iconv.open(to, from) { |iconv| ... }<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equivalent to <a href="Iconv.html#M000354">Iconv.new</a> except that when
+it is called with a block, it yields with the <a
+href="Iconv.html#M000354">new</a> instance and closes it, and returns the
+result which returned from the block.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000351-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000351-source">
+<pre>
+/*
+ * Document-method: open
+ * call-seq: Iconv.open(to, from) { |iconv| ... }
+ *
+ * Equivalent to Iconv.new except that when it is called with a block, it
+ * yields with the new instance and closes it, and returns the result which
+ * returned from the block.
+ */
+static VALUE
+iconv_s_open
+    (self, to, from)
+    VALUE self;
+    VALUE to;
+    VALUE from;
+{
+    VALUE cd = ICONV2VALUE(iconv_create(to, from));
+
+    self = Data_Wrap_Struct(self, NULL, ICONV_FREE, (void *)cd);
+    if (rb_block_given_p()) {
+        return rb_ensure(rb_yield, self, (VALUE(*)())iconv_finish, self);
+    }
+    else {
+        return self;
+    }
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000355" class="method-detail">
+        <a name="M000355"></a>
+
+        <div class="method-heading">
+          <span class="method-name">close</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Finishes conversion.
+</p>
+<p>
+After calling this, calling <a href="Iconv.html#M000352">Iconv#iconv</a>
+will cause an exception, but multiple calls of <a
+href="Iconv.html#M000355">close</a> are guaranteed to end successfully.
+</p>
+<p>
+Returns a string containing the byte sequence to change the output buffer
+to its initial shift state.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000356" class="method-detail">
+        <a name="M000356"></a>
+
+        <div class="method-heading">
+          <a href="#M000356" class="method-signature">
+          <span class="method-name"> Iconv.iconv(to, from, *strs)<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Shorthand for
+</p>
+<pre>
+  Iconv.open(to, from) { |cd|
+    (strs + [nil]).collect { |s| cd.iconv(s) }
+  }
+</pre>
+<h3>Parameters</h3>
+<table>
+<tr><td valign="top"><tt>to, from</tt>:</td><td>see <a href="Iconv.html#M000354">Iconv.new</a>
+
+</td></tr>
+<tr><td valign="top"><tt>strs</tt>:</td><td>strings to be converted
+
+</td></tr>
+</table>
+<h3>Exceptions</h3>
+<p>
+Exceptions thrown by <a href="Iconv.html#M000354">Iconv.new</a>, <a
+href="Iconv.html#M000351">Iconv.open</a> and <a
+href="Iconv.html#M000352">Iconv#iconv</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000356-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000356-source">
+<pre>
+/*
+ * Document-method: iconv
+ * call-seq: iconv(str, start=0, length=-1)
+ *
+ * Converts string and returns the result.
+ * * If +str+ is a String, converts &lt;tt&gt;str[start, length]&lt;/tt&gt; and returns the converted string.
+ * * If +str+ is +nil+, places converter itself into initial shift state and
+ *   just returns a string containing the byte sequence to change the output
+ *   buffer to its initial shift state.
+ * * Otherwise, raises an exception.
+ *
+ * === Parameters
+ *
+ * str::    string to be converted, or nil
+ * start::  starting offset
+ * length:: conversion length; nil or -1 means whole the string from start
+ *
+ * === Exceptions
+ *
+ * * IconvIllegalSequence
+ * * IconvInvalidCharacter
+ * * IconvOutOfRange
+ *
+ * === Examples
+ *
+ * See the Iconv documentation.
+ */
+static VALUE
+iconv_iconv
+    (argc, argv, self)
+    int argc;
+    VALUE *argv;
+    VALUE self;
+{
+    VALUE str, n1, n2;
+    VALUE cd = check_iconv(self);
+    long start = 0, length = 0, slen = 0;
+
+    rb_scan_args(argc, argv, &quot;12&quot;, &amp;str, &amp;n1, &amp;n2);
+    if (!NIL_P(str)) slen = RSTRING_LEN(StringValue(str));
+    if (argc != 2 || !RTEST(rb_range_beg_len(n1, &amp;start, &amp;length, slen, 0))) {
+        if (NIL_P(n1) || ((start = NUM2LONG(n1)) &lt; 0 ? (start += slen) &gt;= 0 : start &lt; slen)) {
+            if (NIL_P(n2)) {
+                length = -1;
+            }
+            else if ((length = NUM2LONG(n2)) &gt;= slen - start) {
+                length = slen - start;
+            }
+        }
+    }
+
+    return iconv_convert(VALUE2ICONV(cd), str, start, length, NULL);
+}
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

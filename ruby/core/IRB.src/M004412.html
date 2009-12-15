@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>parse_opts (IRB)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/irb/init.rb, line 127</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">parse_opts</span>
+    <span class="ruby-identifier">load_path</span> = []
+    <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">opt</span> = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">opt</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;-f&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:RC</span>] = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;-m&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:MATH_MODE</span>] = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;-d&quot;</span>
+        <span class="ruby-identifier">$DEBUG</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^-r(.+)?/</span>
+        <span class="ruby-identifier">opt</span> = <span class="ruby-identifier">$1</span> <span class="ruby-operator">||</span> <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:LOAD_MODULES</span>].<span class="ruby-identifier">push</span> <span class="ruby-identifier">opt</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">opt</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^-I(.+)?/</span>
+        <span class="ruby-identifier">opt</span> = <span class="ruby-identifier">$1</span> <span class="ruby-operator">||</span> <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>
+        <span class="ruby-identifier">load_path</span>.<span class="ruby-identifier">concat</span>(<span class="ruby-identifier">opt</span>.<span class="ruby-identifier">split</span>(<span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-constant">PATH_SEPARATOR</span>)) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">opt</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^-K(.)/</span>
+        <span class="ruby-identifier">$KCODE</span> = <span class="ruby-identifier">$1</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--inspect&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:INSPECT_MODE</span>] = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--noinspect&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:INSPECT_MODE</span>] = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--readline&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:USE_READLINE</span>] = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--noreadline&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:USE_READLINE</span>] = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--echo&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:ECHO</span>] = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--noecho&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:ECHO</span>] = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--verbose&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:VERBOSE</span>] = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--noverbose&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:VERBOSE</span>] = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--prompt-mode&quot;</span>, <span class="ruby-value str">&quot;--prompt&quot;</span>
+        <span class="ruby-identifier">prompt_mode</span> = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>.<span class="ruby-identifier">upcase</span>.<span class="ruby-identifier">tr</span>(<span class="ruby-value str">&quot;-&quot;</span>, <span class="ruby-value str">&quot;_&quot;</span>).<span class="ruby-identifier">intern</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:PROMPT_MODE</span>] = <span class="ruby-identifier">prompt_mode</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--noprompt&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:PROMPT_MODE</span>] = <span class="ruby-identifier">:NULL</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--inf-ruby-mode&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:PROMPT_MODE</span>] = <span class="ruby-identifier">:INF_RUBY</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--sample-book-mode&quot;</span>, <span class="ruby-value str">&quot;--simple-prompt&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:PROMPT_MODE</span>] = <span class="ruby-identifier">:SIMPLE</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--tracer&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:USE_TRACER</span>] = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--back-trace-limit&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:BACK_TRACE_LIMIT</span>] = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>.<span class="ruby-identifier">to_i</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--context-mode&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:CONTEXT_MODE</span>] = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>.<span class="ruby-identifier">to_i</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--single-irb&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:SINGLE_IRB</span>] = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--irb_debug&quot;</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:DEBUG_LEVEL</span>] = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>.<span class="ruby-identifier">to_i</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;-v&quot;</span>, <span class="ruby-value str">&quot;--version&quot;</span>
+        <span class="ruby-identifier">print</span> <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">version</span>, <span class="ruby-value str">&quot;\n&quot;</span>
+        <span class="ruby-identifier">exit</span> <span class="ruby-value">0</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;-h&quot;</span>, <span class="ruby-value str">&quot;--help&quot;</span>
+        <span class="ruby-identifier">require</span> <span class="ruby-value str">&quot;irb/help&quot;</span>
+        <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">print_usage</span>
+        <span class="ruby-identifier">exit</span> <span class="ruby-value">0</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^-/</span>
+        <span class="ruby-constant">IRB</span>.<span class="ruby-identifier">fail</span> <span class="ruby-constant">UnrecognizedSwitch</span>, <span class="ruby-identifier">opt</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@CONF</span>[<span class="ruby-identifier">:SCRIPT</span>] = <span class="ruby-identifier">opt</span>
+        <span class="ruby-identifier">$0</span> = <span class="ruby-identifier">opt</span>
+        <span class="ruby-keyword kw">break</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-constant">RUBY_VERSION</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-constant">FEATURE_IOPT_CHANGE_VERSION</span>
+      <span class="ruby-identifier">load_path</span>.<span class="ruby-identifier">collect!</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">path</span><span class="ruby-operator">|</span>
+        <span class="ruby-regexp re">/\A\.\//</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">path</span> <span class="ruby-value">? </span><span class="ruby-identifier">path</span> <span class="ruby-operator">:</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">$LOAD_PATH</span>.<span class="ruby-identifier">unshift</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">load_path</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

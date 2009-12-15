@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>nesting (Module)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre>/*
+ *  call-seq:
+ *     Module.nesting    =&gt; array
+ *  
+ *  Returns the list of +Modules+ nested at the point of call.
+ *     
+ *     module M1
+ *       module M2
+ *         $a = Module.nesting
+ *       end
+ *     end
+ *     $a           #=&gt; [M1::M2, M1]
+ *     $a[0].name   #=&gt; &quot;M1::M2&quot;
+ */
+
+static VALUE
+rb_mod_nesting()
+{
+    NODE *cbase = ruby_cref;
+    VALUE ary = rb_ary_new();
+
+    while (cbase &amp;&amp; cbase-&gt;nd_next) {
+        if (!NIL_P(cbase-&gt;nd_clss)) rb_ary_push(ary, cbase-&gt;nd_clss);
+        cbase = cbase-&gt;nd_next;
+    }
+    if (ruby_wrapper &amp;&amp; RARRAY(ary)-&gt;len == 0) {
+        rb_ary_push(ary, ruby_wrapper);
+    }
+    return ary;
+}</pre>
+</body>
+</html>
