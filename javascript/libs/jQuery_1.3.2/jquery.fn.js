@@ -1,7 +1,7 @@
 /*!
  * jQuery JavaScript Library v1.3.2
  *
- * hack RjsTags
+ * hack for RjsTags
  *
  */
 jQuery.fn.extend({
